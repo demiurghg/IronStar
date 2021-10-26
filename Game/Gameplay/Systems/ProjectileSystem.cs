@@ -23,6 +23,19 @@ namespace IronStar.Gameplay.Systems
 		readonly WeaponSystem	weaponSystem;
 		float lastDeltaTime = 0;
 
+		class HitData
+		{
+			public HitData( Vector3 location, Vector3 normal, Entity entity )
+			{
+				Location	=	location;
+				Normal		=	normal;
+				HitEntity	=	entity;
+			}
+			public Vector3 Location;
+			public Vector3 Normal;
+			public Entity HitEntity;
+		}
+
 		public ProjectileSystem( GameState gs, PhysicsCore physics )
 		{
 			this.rand			=	new Random();
@@ -33,18 +46,42 @@ namespace IronStar.Gameplay.Systems
 
 		protected override ProjectileController Create( Entity entity, Transform transform, ProjectileComponent projectile )
 		{
+			var gs			=	entity.gs;
 			var position	=	MathConverter.Convert( transform.Position );
 			var orient		=	MathConverter.Convert( transform.Rotation );
 			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
 			var velocity	=	direction * projectile.Velocity;
+			var attacker	=	projectile.Attacker;
+			var projRay		=	new BEPUutilities.Ray( position, direction );
+			var traceDist	=	projectile.Velocity * lastDeltaTime;
+			var origin		=	position + direction * traceDist;
 
-			var projectileController = new ProjectileController( position, orient, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
-			projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
-			projectileController.Tag = entity;
+			var raycastCallback		=	new ProjectileRaycastCallback( gs, MathConverter.Convert(projRay), attacker, entity, transform );
 
-			physics.Add( projectileController );
+			var hitData				=	physics.Raycast( MathConverter.Convert(projRay), traceDist, raycastCallback, RaycastOptions.SortResults );
 
-			return projectileController;
+			if (hitData!=null)
+			{
+				 InflictDamage( entity, projectile, hitData.HitEntity, hitData.Location, MathConverter.Convert(direction), hitData.Normal );
+				 return null;
+			}
+			else
+			{
+				var projectileController = new ProjectileController( origin, orient, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Attacker ) );
+				projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
+				projectileController.Tag = entity;
+
+				physics.Add( projectileController );
+				return projectileController;
+			}
+		}
+
+
+		private void InflictDamage( Entity entity, ProjectileComponent projectile, Entity hitEntity, Vector3 location, Vector3 direction, Vector3 normal )
+		{
+			weaponSystem.InflictDamage( projectile.Attacker, hitEntity, projectile.Damage, projectile.Impulse, location, direction, normal, projectile.ExplosionFX );
+			weaponSystem.Explode( projectile.Attacker, hitEntity, projectile.Damage, projectile.Impulse, projectile.Radius, location, normal, null );
+			entity.Kill();
 		}
 
 		
@@ -57,18 +94,16 @@ namespace IronStar.Gameplay.Systems
 			var normal		=	MathConverter.Convert( e.Normal );		
 			var hitEntity	=	(e.HitObject as ConvexCollidable)?.Entity.Tag as Entity;
 
-			entity.gs.Invoke( () => 
-			{
-				weaponSystem.InflictDamage( projectile.Sender, hitEntity, projectile.Damage, projectile.Impulse, location, direction, normal, projectile.ExplosionFX );
-				weaponSystem.Explode( projectile.Sender, hitEntity, projectile.Damage, projectile.Impulse, projectile.Radius, location, normal, null );
-				entity.Kill();
-			});
+			InflictDamage( entity, projectile, hitEntity, location, direction, normal );
 		}
 
 		
 		protected override void Destroy( Entity entity, ProjectileController projectileController )
 		{
-			physics.Remove( projectileController );
+			if (projectileController!=null)
+			{
+				physics.Remove( projectileController );
+			}
 		}
 
 		
@@ -76,17 +111,76 @@ namespace IronStar.Gameplay.Systems
 		{
 			lastDeltaTime = gameTime.ElapsedSec;
 
-			if (!MathUtil.NearEqual(projectile.Velocity, 0))
+			if (controller!=null)
 			{
-				PhysicsCore.UpdateTransformFromMotionState( controller.MotionState, transform );
+				if (!MathUtil.NearEqual(projectile.Velocity, 0))
+				{
+					PhysicsCore.UpdateTransformFromMotionState( controller.MotionState, transform );
+				}
+
+				projectile.LifeTime	-= gameTime.ElapsedSec;
+
+				if (projectile.LifeTime<0)
+				{
+					InflictDamage( entity, projectile, null, transform.Position, transform.TransformMatrix.Forward, Vector3.Up );
+				}
+			}
+		}
+
+
+		class ProjectileRaycastCallback : IRaycastCallback<HitData>
+		{
+			readonly Ray ray;
+			readonly Entity attacker;
+			readonly Entity projectile;
+			readonly ProjectileComponent projectileComponent;
+			readonly Transform kinematicState;
+			readonly GameState gs;
+			readonly WeaponSystem ws;
+			HitData hitData = null;
+
+			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, Transform ks )
+			{
+				this.ray		=	ray;
+				this.ws			=	gs.GetService<WeaponSystem>();
+				this.attacker	=	attacker;
+				this.projectile	=	projectile;
+				this.gs			=	gs;
+
+				this.kinematicState	=	ks;
+				projectileComponent	=	projectile.GetComponent<ProjectileComponent>();
 			}
 
-			projectile.LifeTime	-= gameTime.ElapsedSec;
+			public void Begin( int count ) {}
 
-			if (projectile.LifeTime<0)
+			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
 			{
-				weaponSystem.Explode( projectile.Sender, null, projectile.Damage, projectile.Impulse, projectile.Radius, transform.Position, Vector3.Up, projectile.ExplosionFX );
-				entity.Kill();
+				if (entity==attacker) 
+				{
+					return false;
+				}
+				else
+				{
+					hitData	=	new HitData( location, normal, isStatic ? null : entity );
+					return true;
+				}
+
+				//	inflict damage to instantly hit by projectile entity :
+				/*ws.InflictDamage( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, location, ray.Direction, normal, projectileComponent.ExplosionFX );
+				ws.Explode( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, projectileComponent.Radius, location, normal, null );
+
+				hitSomething = true;
+
+				//	kill projectile, 
+				//	we dont need it any more :
+				projectile.Kill();	 */
+
+				return true;
+			}
+
+			public HitData End() 
+			{
+				return hitData;;
 			}
 		}
 	}

@@ -159,7 +159,7 @@
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />
-    <Compile Include="ECS\IEntityFactory.cs" />
+    <Compile Include="ECS\IFactory.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
@@ -241,7 +241,11 @@
     <Compile Include="Gameplay\Components\PlayerComponent.cs" />
     <Compile Include="Gameplay\Components\PlayerStartComponent.cs" />
     <Compile Include="GameException.cs" />
-    <Compile Include="Gameplay\AmmoType.cs" />
+    <Compile Include="Gameplay\Weaponry\AmmoDescriptor.cs" />
+    <Compile Include="Gameplay\Weaponry\AmmoType.cs" />
+    <Compile Include="Gameplay\Weaponry\SpreadMode.cs" />
+    <Compile Include="Gameplay\Weaponry\WeaponDescriptor.cs" />
+    <Compile Include="Gameplay\Weaponry\WeaponType.cs" />
     <Compile Include="Gameplay\WeaponState.cs" />
     <Compile Include="IronStar.Cheats.cs" />
     <Compile Include="IronStar.Activator.cs" />

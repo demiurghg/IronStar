@@ -13,23 +13,49 @@ using IronStar.SFX;
 
 namespace IronStar.ECSFactories
 {
-	[EntityFactory("PLASMA")]
 	public class PlasmaFactory : EntityFactory
 	{
+		int		damage;
+		float	impulse;
+		Entity	attacker;
+
+		public PlasmaFactory( Vector3 position, Quaternion rotation, Vector3 dir, float lag, Entity attacker, int damage, float impulse )
+		{
+			this.Position	=	position + dir * 500 * lag;
+			this.Rotation	=	rotation;
+			this.damage		=	damage;
+			this.impulse	=	impulse;
+			this.attacker	=	attacker;
+		}
+
 		public override void Construct( Entity e, IGameState gs )
 		{
-			e.AddComponent( new ProjectileComponent( 500, 3, 10, "plasmaExplosion") );
+			base.Construct( e, gs );
+			e.AddComponent( new ProjectileComponent( attacker, 500, 3, 10, "plasmaExplosion", damage, impulse) );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
 		}
 	}
 
 
-	[EntityFactory("ROCKET")]
 	public class RocketFactory : EntityFactory
 	{
+		int		damage;
+		float	impulse;
+		Entity	attacker;
+
+		public RocketFactory( Vector3 position, Quaternion rotation, Vector3 dir, float lag, Entity attacker, int damage, float impulse )
+		{
+			this.Position	=	position + dir * 300 * lag;
+			this.Rotation	=	rotation;
+			this.damage		=	damage;
+			this.impulse	=	impulse;
+			this.attacker	=	attacker;
+		}
+
 		public override void Construct( Entity e, IGameState gs )
 		{
-			e.AddComponent( new ProjectileComponent(300, 12, 10, "rocketExplosion") );
+			base.Construct( e, gs );
+			e.AddComponent( new ProjectileComponent( attacker, 300, 12, 10, "rocketExplosion", damage, impulse) );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
 		}
 	}

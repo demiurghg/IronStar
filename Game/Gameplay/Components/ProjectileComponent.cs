@@ -11,7 +11,7 @@ namespace IronStar.Gameplay.Components
 {
 	public class ProjectileComponent : Component
 	{
-		public Entity	Sender;
+		public Entity	Attacker;
 		public int		Damage;
 		public float	Impulse;
 
@@ -24,16 +24,9 @@ namespace IronStar.Gameplay.Components
 		{
 		}
 
-		public ProjectileComponent( float velocity, float radius, float lifetime, string explosionFX )
+		public ProjectileComponent( Entity attacker, float velocity, float radius, float lifetime, string explosionFX, int damage, float impulse )
 		{
-			Velocity	=	velocity;
-			Radius		=	radius;
-			LifeTime	=	lifetime;
-			ExplosionFX	=	explosionFX;
-		}
-
-		public ProjectileComponent( float velocity, float radius, float lifetime, string explosionFX, int damage, float impulse )
-		{
+			Attacker	=	attacker;
 			Velocity	=	velocity;
 			Radius		=	radius;
 			LifeTime	=	lifetime;

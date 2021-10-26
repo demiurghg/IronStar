@@ -14,6 +14,7 @@ using IronStar.AI;
 using System.Runtime.CompilerServices;
 using IronStar.SFX;
 using BEPUutilities.Threading;
+using IronStar.ECSFactories;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -350,7 +351,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		class BeamRaycastCallback : IRaycastCallback
+		class BeamRaycastCallback : IRaycastCallback<bool>
 		{
 			readonly Ray ray;
 			readonly Entity attacker;
@@ -385,7 +386,7 @@ namespace IronStar.Gameplay.Systems
 				return true;
 			}
 
-			public void End() 
+			public bool End() 
 			{
 				//	run trail FX:
 				var beamOrigin	 =	ray.Position;
@@ -393,6 +394,8 @@ namespace IronStar.Gameplay.Systems
 				var basis		=	MathUtil.ComputeAimedBasis( ray.Direction );
 
 				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+
+				return true;
 			}
 		}
 
@@ -417,78 +420,14 @@ namespace IronStar.Gameplay.Systems
 			var d	=	-GetFireDirection( q, weapon.MaxSpread );
 
 			//	create projectile without transform :
-			var projectileEntity	=	gs.Spawn( weapon.ProjectileClass );
-			var projectileComponent	=	projectileEntity.GetComponent<ProjectileComponent>();
-				projectileComponent.Sender	=	attacker;
-				projectileComponent.Impulse	=	weapon.Impulse;
-				projectileComponent.Damage	=	weapon.Damage;
+			IFactory projFactory = null;
 
-			//	estimate projectile position :
-			var projectileVelocity	=	projectileComponent.Velocity;
-			var projectileDistance	=	projectileVelocity * gameTime.ElapsedSec * 2; // magic number??
+			#warning Use factory or delegate defined in weapon descriptor
+			// #TODO #ECS #WEAPON -- use factory or delegate defined in weapon descriptor
+			if (weapon.ProjectileClass=="ROCKET") projFactory = new RocketFactory( p, q, d, dt, attacker, weapon.Damage, weapon.Impulse );
+			if (weapon.ProjectileClass=="PLASMA") projFactory = new PlasmaFactory( p, q, d, dt, attacker, weapon.Damage, weapon.Impulse );
 
-			var projectileRay		=	new Ray( p, d );
-
-			//	create estimated projectile transform to add it if no collision is found :
-			var kinematicState		=	new Transform( p + d * projectileDistance, q, 1 );
-
-			//	run raycast query to find instant porjectile position OR run projectile simulation :
-			var raycastCallback		=	new ProjectileRaycastCallback( gs, projectileRay, attacker, projectileEntity, kinematicState );
-
-			physics.Raycast( projectileRay, projectileDistance, raycastCallback, RaycastOptions.SortResults );
-		}
-
-
-		class ProjectileRaycastCallback : IRaycastCallback
-		{
-			readonly Ray ray;
-			readonly Entity attacker;
-			readonly Entity projectile;
-			readonly ProjectileComponent projectileComponent;
-			readonly Transform kinematicState;
-			readonly GameState gs;
-			readonly WeaponSystem ws;
-			bool hitSomething = false;
-
-			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, Transform ks )
-			{
-				this.ray		=	ray;
-				this.ws			=	gs.GetService<WeaponSystem>();
-				this.attacker	=	attacker;
-				this.projectile	=	projectile;
-				this.gs			=	gs;
-
-				this.kinematicState	=	ks;
-				projectileComponent	=	projectile.GetComponent<ProjectileComponent>();
-			}
-
-			public void Begin( int count ) {}
-
-			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
-			{
-				if (entity==attacker) return false;
-
-				//	inflict damage to instantly hit by projectile entity :
-				ws.InflictDamage( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, location, ray.Direction, normal, projectileComponent.ExplosionFX );
-				ws.Explode( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, projectileComponent.Radius, location, normal, null );
-
-				hitSomething = true;
-
-				//	kill projectile, 
-				//	we dont need it any more :
-				projectile.Kill();
-
-				return true;
-			}
-
-			public void End() 
-			{
-				if (!hitSomething)
-				{
-					//	nothing hit, add transform and continue projectile simulation :
-					projectile.AddComponent( kinematicState );
-				}
-			}
+			var projectileEntity	=	gs.Spawn( projFactory );
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -536,7 +475,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		class ExplodeOverlapCallback : IRaycastCallback
+		class ExplodeOverlapCallback : IRaycastCallback<bool>
 		{
 			Vector3	origin;
 			int		damage;
@@ -559,7 +498,7 @@ namespace IronStar.Gameplay.Systems
 
 			public void Begin( int count ) {}
 
-			public void End() {}
+			public bool End() { return false; }
 			
 			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
 			{

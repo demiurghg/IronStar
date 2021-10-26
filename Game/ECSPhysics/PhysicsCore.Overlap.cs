@@ -29,23 +29,23 @@ namespace IronStar.ECSPhysics
 {
 	public partial class PhysicsCore
 	{
-		public void Overlap( Vector3 origin, float radius, IRaycastCallback callback )
+		public T Overlap<T>( Vector3 origin, float radius, IRaycastCallback<T> callback )
 		{
-			var overlap = new DeferredOverlap(origin, radius, callback);
-			overlap.Execute(Space);
+			var overlap = new DeferredOverlap<T>(origin, radius, callback);
+			return overlap.Execute(Space);
 			//Query(  );
 		}
 
 
-		class DeferredOverlap : ISpaceQuery
+		class DeferredOverlap<T> : ISpaceQuery<T>
 		{
 			readonly Vector3 origin;
 			readonly float radius;
-			readonly IRaycastCallback callback;
+			readonly IRaycastCallback<T> callback;
 
 			readonly List<RayCastResult> results;
 			
-			public DeferredOverlap ( Vector3 origin, float radius, IRaycastCallback callback )
+			public DeferredOverlap ( Vector3 origin, float radius, IRaycastCallback<T> callback )
 			{
 				this.origin		=	origin;
 				this.callback	=	callback;
@@ -54,7 +54,7 @@ namespace IronStar.ECSPhysics
 				results			=	new List<RayCastResult>(10);
 			}
 
-			public void Execute( Space space )
+			public T Execute( Space space )
 			{
 				BU.BoundingSphere	sphere		= new BU.BoundingSphere(MathConverter.Convert(origin), radius);
 				SphereShape			sphereShape = new SphereShape(radius);
@@ -76,10 +76,10 @@ namespace IronStar.ECSPhysics
 					}
 				}
 
-				RunCallback();
+				return RunCallback();
 			}
 
-			void RunCallback()
+			T RunCallback()
 			{
 				callback.Begin( results.Count );
 
@@ -98,7 +98,7 @@ namespace IronStar.ECSPhysics
 					}
 				}
 
-				callback.End();
+				return callback.End();
 			}
 		}
 	}

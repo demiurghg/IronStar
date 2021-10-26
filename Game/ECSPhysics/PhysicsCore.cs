@@ -218,9 +218,6 @@ namespace IronStar.ECSPhysics
 				action?.Invoke();
 			}
 
-			//	execute queries :
-			ExecuteSpatialQueries();
-
 			//	apply impulses :
 			ApplyDeferredImpulses();
 

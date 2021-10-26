@@ -27,34 +27,34 @@ using System.Collections.Concurrent;
 
 namespace IronStar.ECSPhysics
 {
-	public interface IRaycastCallback
+	public interface IRaycastCallback<TResult>
 	{
 		void Begin( int count );
 		bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic );
-		void End();
+		TResult End();
 	}
 
 
 	public partial class PhysicsCore
 	{
-		public void Raycast( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
+		public T Raycast<T>( Ray ray, float maxDistance, IRaycastCallback<T> callback, RaycastOptions options )
 		{
-			var raycast = new DeferredRaycast(ray, maxDistance, callback, options);
-			raycast.Execute( Space );
+			var raycast = new DeferredRaycast<T>(ray, maxDistance, callback, options);
+			return raycast.Execute( Space );
 			//queryRequests.Enqueue( raycast );
 		}
 
 
-		class DeferredRaycast : ISpaceQuery
+		class DeferredRaycast<T> : ISpaceQuery<T>
 		{
 			readonly Ray ray;
 			readonly float maxDistance;
-			readonly IRaycastCallback callback;
+			readonly IRaycastCallback<T> callback;
 			readonly RaycastOptions options;  
 
 			List<RayCastResult> results;
 			
-			public DeferredRaycast ( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
+			public DeferredRaycast ( Ray ray, float maxDistance, IRaycastCallback<T> callback, RaycastOptions options )
 			{
 				this.ray			=	ray;
 				this.callback		=	callback;
@@ -62,7 +62,7 @@ namespace IronStar.ECSPhysics
 				this.options		=	options;
 			}
 
-			public void Execute( Space space )
+			public T Execute( Space space )
 			{
 				results				=	new List<RayCastResult>(10);
 
@@ -74,10 +74,10 @@ namespace IronStar.ECSPhysics
 					results.Sort( RayCastResultComparison );
 				}
 
-				RunCallback();
+				return RunCallback();
 			}
 
-			void RunCallback()
+			T RunCallback()
 			{
 				callback.Begin( results.Count );
 
@@ -96,7 +96,7 @@ namespace IronStar.ECSPhysics
 					}
 				}
 
-				callback.End();
+				return callback.End();
 			}
 		}
 	}

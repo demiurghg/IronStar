@@ -43,24 +43,6 @@ namespace IronStar.ECSPhysics
 			else return 1; 
 		}
 
-		readonly Queue<ISpaceQuery> queryRequests = new Queue<ISpaceQuery>();
-
-
-		public void Query( ISpaceQuery query )
-		{
-			queryRequests.Enqueue( query );
-		}
-
-		
-		void ExecuteSpatialQueries()
-		{
-			while ( queryRequests.Any() )
-			{
-				queryRequests.Dequeue().Execute( Space );
-			}
-		}
-
-
 		public bool RayCastAgainstEntity ( Vector3 from, Vector3 to, out Vector3 pos, out float distance, out Entity hitEntity )
 		{
 			lock (Space)

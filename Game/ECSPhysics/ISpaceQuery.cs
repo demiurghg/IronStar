@@ -7,8 +7,8 @@ using BEPUphysics;
 
 namespace IronStar.ECSPhysics
 {
-	public interface ISpaceQuery
+	public interface ISpaceQuery<TResult>
 	{
-		void Execute( Space space );
+		TResult Execute( Space space );
 	}
 }

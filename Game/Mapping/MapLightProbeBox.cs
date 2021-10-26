@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapLightProbeBox : MapNode, IEntityFactory 
+	public class MapLightProbeBox : MapNode, IFactory 
 	{
 		[Category("Light probe")]
 		[AESlider(0,256,8,0.25f)]

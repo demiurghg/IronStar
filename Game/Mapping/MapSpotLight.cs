@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
-	public class MapSpotLight : MapNode, IEntityFactory {
+	public class MapSpotLight : MapNode, IFactory {
 
 
 		[AECategory("Light Color")]

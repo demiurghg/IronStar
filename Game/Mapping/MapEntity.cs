@@ -16,7 +16,7 @@ using IronStar.ECS;
 
 namespace IronStar.Mapping 
 {
-	public class MapEntity : MapNode, IEntityFactory 
+	public class MapEntity : MapNode, IFactory 
 	{
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace IronStar.Mapping
 
 		public void Construct( Entity entity, IGameState gs )
 		{
-			( (IEntityFactory)Factory ).Construct( entity, gs );
+			( (IFactory)Factory ).Construct( entity, gs );
 		}
 
 

@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapOmniLight : MapNode, IEntityFactory 
+	public class MapOmniLight : MapNode, IFactory 
 	{
 		[AECategory("Omni-light")]
 		[AESlider(0, 100, 1, 0.125f)]

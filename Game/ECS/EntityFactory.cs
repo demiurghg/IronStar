@@ -8,7 +8,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.ECS
 {
-	public class EntityFactory : IEntityFactory, ICloneable
+	public class EntityFactory : IFactory, ICloneable
 	{
 		[AEIgnore]
 		public Vector3 Position { get; set; } = Vector3.Zero;

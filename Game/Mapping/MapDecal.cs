@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapDecal : MapNode, IEntityFactory
+	public class MapDecal : MapNode, IFactory
 	{
 		[AECategory("Decal Image")]
 		[AEAtlasImage(@"decals/decals")]

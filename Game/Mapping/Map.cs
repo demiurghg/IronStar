@@ -20,7 +20,7 @@ using IronStar.ECS;
 
 namespace IronStar.Mapping 
 {
-	public partial class Map : IPrecachable, IEntityFactory 
+	public partial class Map : IPrecachable, IFactory 
 	{
 		/// <summary>
 		/// 

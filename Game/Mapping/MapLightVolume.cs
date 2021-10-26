@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapLightVolume : MapNode, IEntityFactory 
+	public class MapLightVolume : MapNode, IFactory 
 	{
 		[AECategory("Light Volume")]
 		[AESlider(4, 256, 4, 1)]

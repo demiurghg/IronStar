@@ -25,9 +25,9 @@ namespace IronStar.ECS
 	{
 		struct SpawnData
 		{
-			public SpawnData( Entity e, IEntityFactory f ) { Entity = e; Factory = f; }
+			public SpawnData( Entity e, IFactory f ) { Entity = e; Factory = f; }
 			public readonly Entity Entity;
-			public readonly IEntityFactory Factory;
+			public readonly IFactory Factory;
 		}
 
 		struct ComponentData
@@ -60,7 +60,7 @@ namespace IronStar.ECS
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
 		readonly ConcurrentQueue<ComponentData>	componentToAdd;
 		readonly HashSet<Entity>				refreshed;
-		readonly ConcurrentQueue<Action>		invokeQueue;
+		[Obsolete] readonly ConcurrentQueue<Action>		invokeQueue;
 		uint									killAllBarrierId = 0;
 
 		readonly GameServiceContainer services;
@@ -419,7 +419,7 @@ namespace IronStar.ECS
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public Entity Spawn(IEntityFactory factory)
+		public Entity Spawn(IFactory factory)
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
 

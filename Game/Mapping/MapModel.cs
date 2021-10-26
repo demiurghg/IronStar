@@ -35,7 +35,7 @@ namespace IronStar.Mapping
 	}
 
 
-	public class MapModel : MapNode, IEntityFactory 
+	public class MapModel : MapNode, IFactory 
 	{
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 

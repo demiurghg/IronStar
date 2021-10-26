@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronStar.Gameplay
+namespace IronStar.Gameplay.Weaponry
 {
-	public enum AmmoType : byte 
+	public enum AmmoType
 	{
-		Energy		=	0x00,
 		Bullets		=	0x01,
 		Shells		=	0x02,
 		Cells		=	0x03,

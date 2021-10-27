@@ -46,7 +46,8 @@ namespace IronStar.UI.HUD
 		{
 			var inventory	=	player?.GetComponent<InventoryComponent>();
 
-			if (inventory!=null)
+			#warning TODO HUD
+			/*if (inventory!=null)
 			{
 				var weapon	=	inventory.ActiveWeapon?.GetComponent<WeaponComponent>();
 
@@ -64,7 +65,7 @@ namespace IronStar.UI.HUD
 				{
 					hudFrame.Ammo.Visible = false;
 				}
-			}
+			} */
 		}
 
 

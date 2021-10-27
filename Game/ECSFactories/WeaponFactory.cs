@@ -9,6 +9,7 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.ECSFactories
 {

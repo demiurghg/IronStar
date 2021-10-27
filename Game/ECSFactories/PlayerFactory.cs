@@ -49,6 +49,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new BobbingComponent() );
 
 			e.AddComponent( new InventoryComponent() );
+			e.AddComponent( new WeaponStateComponent() );
 		}
 	}
 }

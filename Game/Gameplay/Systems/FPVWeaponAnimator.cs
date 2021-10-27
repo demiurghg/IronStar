@@ -12,6 +12,7 @@ using IronStar.Animation;
 using Fusion;
 using IronStar.SFX2;
 using IronStar.Gameplay.Components;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Systems 
 {
@@ -96,7 +97,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Update ( GameTime gameTime, WeaponComponent weapon, StepComponent steps, UserCommandComponent uc )
+		public void Update ( GameTime gameTime, WeaponStateComponent weapon, StepComponent steps, UserCommandComponent uc )
 		{
 			UpdateWeaponStates(gameTime, weapon, steps);
 			UpdateMovements(gameTime, steps, uc);
@@ -110,9 +111,10 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateWeaponStates ( GameTime gameTime, WeaponComponent weapon, StepComponent steps )
+		void UpdateWeaponStates ( GameTime gameTime, WeaponStateComponent state,  StepComponent steps )
 		{
-			var weaponState	=	weapon.State;
+			var weaponState	=	state.State;
+			var weapon		=	Arsenal.Get( state.ActiveWeapon );
 
 			var fireEvent	=	oldWeaponState != weaponState;
 			oldWeaponState	=	weaponState;
@@ -127,7 +129,8 @@ namespace IronStar.Gameplay.Systems
 				//Log.Message("{0}", weaponState );
 
 				//	hide inactive weapon :
-				model.Visible = weaponState!=WeaponState.Inactive;
+				#warning TRACK VIEW WEAPON MODEL VISIBILITY
+				model.Visible = true;
 
 				//	recoil & cooldown :
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 

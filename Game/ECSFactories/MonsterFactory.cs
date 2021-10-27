@@ -46,6 +46,7 @@ namespace IronStar.ECSFactories
 
 			var inventory	=	new InventoryComponent(InventoryFlags.InfiniteAmmo);
 			e.AddComponent( inventory );
+			e.AddComponent( new WeaponStateComponent() );
 			e.AddComponent( new BehaviorComponent() );
 
 			var weapons = new[]

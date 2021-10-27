@@ -19,16 +19,9 @@ namespace IronStar.Gameplay.Components
 
 	public class InventoryComponent : Component, IEnumerable<Entity>
 	{
-		public WeaponState	WeaponState		=	WeaponState.Idle;
-		public bool 		RequestAttack	=	false;
-		public int			WeaponTimer		=	0;
-		public int			ShotCounter		=	0;
-
-		public WeaponType	CurrentWeapon	=	WeaponType.None;
-		public WeaponType	PendingWeapon	=	WeaponType.None;
-
-		public readonly short[] Ammo		=	new short[ (int)AmmoType.Max ];
-		public readonly short[] Weapons		=	new short[ (int)WeaponType.Max ];
+		//	#TODO #REFACTOR -- replace with AmmoCollection and WeaponCollection respectively
+		public readonly short[] Ammo	=	new short[ (int)AmmoType.Max ];
+		public readonly short[] Weapon	=	new short[ (int)WeaponType.Max ];
 		
 
 
@@ -41,11 +34,16 @@ namespace IronStar.Gameplay.Components
 
 		public InventoryComponent( InventoryFlags flags = InventoryFlags.None )
 		{
+			Ammo	[ (int)AmmoType.Bullets			] = 500;
+			Weapon	[ (int)WeaponType.Machinegun	] = 1;
 			this.flags	=	flags;
 		}
 
 		private InventoryComponent( InventoryFlags flags, Entity aw, Entity pw, IEnumerable<Entity> items )
 		{
+			for (int i=0; i<Ammo.Length; i++) Ammo[i] = 500;
+			for (int i=0; i<Weapon.Length; i++) Weapon[i] = 1;
+
 			this.flags			=	flags;
 			this.activeWeapon	=	aw;
 			this.pendingWeapon	=	pw;
@@ -83,6 +81,7 @@ namespace IronStar.Gameplay.Components
 		/// </summary>
 		/// <param name="weaponEntity">Weapon to set</param>
 		/// <returns>Return false, if weapon is already current or does not exist in inventory. True otherwice.</returns>
+		[Obsolete]
 		public bool SwitchWeapon( Entity weaponEntity )
 		{
 			if (items.Contains(weaponEntity) && activeWeapon!=weaponEntity) 
@@ -97,6 +96,7 @@ namespace IronStar.Gameplay.Components
 		/// <summary>
 		/// Completes switching of the weapon.
 		/// </summary>
+		[Obsolete]
 		public void FinalizeWeaponSwitch()
 		{
 			activeWeapon	=	pendingWeapon;

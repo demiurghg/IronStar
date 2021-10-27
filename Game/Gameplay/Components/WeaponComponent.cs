@@ -5,15 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IronStar.ECS;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Components
 {
-	public enum SpreadMode
-	{
-		Const,
-		Variable,
-	}
-
 	public class WeaponComponent : Component
 	{
 		public TimeSpan	TimeWarmup		=	TimeSpan.FromMilliseconds(0);

@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace IronStar.Gameplay.Weaponry
 {
-	class AmmoDescriptor
+	class Ammo
 	{
 		readonly string NiceName;
 		readonly int Capacity;
 
-		public AmmoDescriptor( int capacity, string niceName )
+		public Ammo( int capacity, string niceName )
 		{
 			Capacity	=	capacity;
 			NiceName	=	niceName;

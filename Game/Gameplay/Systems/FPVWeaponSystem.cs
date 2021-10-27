@@ -11,6 +11,7 @@ using IronStar.Gameplay.Components;
 using IronStar.SFX2;
 using IronStar.Animation;
 using Fusion.Core.Extensions;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -46,7 +47,7 @@ namespace IronStar.Gameplay.Systems
 		readonly Aspect weaponAspect	=	new Aspect().Include<WeaponComponent>();
 
 		RenderModelInstance	renderModel = null;
-		Entity activeWeapon = null;
+		WeaponType activeWeapon = WeaponType.None;
 
 		WeaponAnimator		animator;
 
@@ -79,24 +80,21 @@ namespace IronStar.Gameplay.Systems
 				var inventory		=	playerEntity.GetComponent<InventoryComponent>();
 				var steps			=	playerEntity.GetComponent<StepComponent>();
 				var uc				=	playerEntity.GetComponent<UserCommandComponent>();
+				var weaponState		=	playerEntity.GetComponent<WeaponStateComponent>();
 
-				var weaponEntity	=	inventory?.ActiveWeapon;
-				var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
-				var	model			=	weaponEntity?.GetComponent<RenderModel>();
-
-				if (activeWeapon!=weaponEntity)
+				if (activeWeapon!=weaponState.ActiveWeapon)
 				{
-					ChangeWeaponModel( gs, model );
-					activeWeapon = weaponEntity;
+					activeWeapon = weaponState.ActiveWeapon;
+					ChangeWeaponModel( gs, activeWeapon );
 				}
 
 				renderModel?.SetTransform( rw.Camera.CameraMatrix );
-				animator?.Update( gameTime, weapon, steps, uc );  
+				animator?.Update( gameTime, weaponState, steps, uc );  
 			}
 		}
 
 
-		void ChangeWeaponModel( IGameState gs, RenderModel model )
+		void ChangeWeaponModel( IGameState gs, WeaponType weaponType )
 		{
 			var rs = gs.Game.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;
@@ -105,9 +103,10 @@ namespace IronStar.Gameplay.Systems
 			renderModel?.RemoveInstances();
 			animator	=	null;
 
-			if (model!=null)
+			if (weaponType!=WeaponType.None)
 			{
-				renderModel	=	new RenderModelInstance( gs, model, rw.Camera.CameraMatrix, CAMERA_NODE );
+				var weapon = Arsenal.Get(weaponType);
+				renderModel	=	new RenderModelInstance( gs, weapon.ViewRenderModel, rw.Camera.CameraMatrix, CAMERA_NODE );
 				animator	=	new WeaponAnimator(fx, renderModel); 
 				renderModel.AddInstances();
 			}

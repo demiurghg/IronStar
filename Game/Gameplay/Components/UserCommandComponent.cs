@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using IronStar.ECS;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay
 {
@@ -19,7 +20,7 @@ namespace IronStar.Gameplay
 
 		public UserAction Action;
 
-		public string Weapon;
+		public WeaponType Weapon;
 
 		public float DYaw;
 		public float DPitch;
@@ -40,19 +41,19 @@ namespace IronStar.Gameplay
 			Move	=	move;
 			Strafe	=	strafe;
 
-			if (action.HasFlag( UserAction.Weapon1 )) Weapon = "MACHINEGUN"		;
-			if (action.HasFlag( UserAction.Weapon2 )) Weapon = "MACHINEGUN2"	;
-			if (action.HasFlag( UserAction.Weapon3 )) Weapon = "SHOTGUN"		;
-			if (action.HasFlag( UserAction.Weapon4 )) Weapon = "PLASMAGUN"		;
-			if (action.HasFlag( UserAction.Weapon5 )) Weapon = "ROCKETLAUNCHER"	;
-			if (action.HasFlag( UserAction.Weapon6 )) Weapon = "MACHINEGUN"		;
-			if (action.HasFlag( UserAction.Weapon7 )) Weapon = "RAILGUN"		;
-			if (action.HasFlag( UserAction.Weapon8 )) Weapon = "MACHINEGUN"		;
+			if (action.HasFlag( UserAction.Weapon1 )) Weapon = WeaponType.Machinegun	;
+			if (action.HasFlag( UserAction.Weapon2 )) Weapon = WeaponType.Machinegun2	;
+			if (action.HasFlag( UserAction.Weapon3 )) Weapon = WeaponType.Shotgun		;
+			if (action.HasFlag( UserAction.Weapon4 )) Weapon = WeaponType.Plasmagun		;
+			if (action.HasFlag( UserAction.Weapon5 )) Weapon = WeaponType.RocketLauncher;
+			if (action.HasFlag( UserAction.Weapon6 )) Weapon = WeaponType.Railgun		;
+			if (action.HasFlag( UserAction.Weapon7 )) Weapon = WeaponType.Machinegun	;
+			if (action.HasFlag( UserAction.Weapon8 )) Weapon = WeaponType.Machinegun	;
 		}
 
 		public void ResetControl()
 		{
-			Weapon	=	null;
+			Weapon	=	WeaponType.None;
 			Action	=	UserAction.None;
 			Move	=	0;
 			Strafe	=	0;

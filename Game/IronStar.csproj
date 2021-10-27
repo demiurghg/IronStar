@@ -218,6 +218,7 @@
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
+    <Compile Include="Gameplay\Components\WeaponStateComponent.cs" />
     <Compile Include="Gameplay\DataAssets\DataAsset.cs" />
     <Compile Include="Gameplay\GameUtil.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
@@ -241,10 +242,11 @@
     <Compile Include="Gameplay\Components\PlayerComponent.cs" />
     <Compile Include="Gameplay\Components\PlayerStartComponent.cs" />
     <Compile Include="GameException.cs" />
-    <Compile Include="Gameplay\Weaponry\AmmoDescriptor.cs" />
+    <Compile Include="Gameplay\Weaponry\Ammo.cs" />
     <Compile Include="Gameplay\Weaponry\AmmoType.cs" />
+    <Compile Include="Gameplay\Weaponry\Arsenal.cs" />
     <Compile Include="Gameplay\Weaponry\SpreadMode.cs" />
-    <Compile Include="Gameplay\Weaponry\WeaponDescriptor.cs" />
+    <Compile Include="Gameplay\Weaponry\Weapon.cs" />
     <Compile Include="Gameplay\Weaponry\WeaponType.cs" />
     <Compile Include="Gameplay\WeaponState.cs" />
     <Compile Include="IronStar.Cheats.cs" />

@@ -44,6 +44,7 @@
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
+    "Exposure": 1.0,
     "Intensity": 2000.0,
     "Scattering": 0.0,
     "BeamFactor": 0.0,

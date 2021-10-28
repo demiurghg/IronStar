@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core.Mathematics;
+using IronStar.ECS;
+using IronStar.ECSFactories;
 
 namespace IronStar.Gameplay.Weaponry
 {
@@ -17,6 +19,14 @@ namespace IronStar.Gameplay.Weaponry
 		readonly static Weapon rlauncher;
 		readonly static Weapon railgun;
 
+		public static readonly Color ColorMachinegun		=	new Color( 250, 80, 20 ); 
+		public static readonly Color ColorShotgun			=	new Color( 250, 80, 20 ); 
+		public static readonly Color ColorRocketLauncher	=	new Color( 250, 80, 20 ); 
+		public static readonly Color ColorRailgun			=	new Color( 107, 136, 255 );
+		public static readonly Color ColorPlasmagun			=	new Color( 107, 136, 255 );
+
+		const float ColorIntensity	=	3.0f;
+
 		const float IMPULSE_LIGHT	=	5.0f;
 		const float IMPULSE_MEDIUM	=	200.0f;
 		const float IMPULSE_HEAVY	=	500.0f;
@@ -24,7 +34,7 @@ namespace IronStar.Gameplay.Weaponry
 		static Arsenal()
 		{
 			machinegun	=	new Weapon("MACHINEGUN")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
+								.ViewModel	( ColorMachinegun, ColorIntensity, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
@@ -32,7 +42,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			machinegun2	=	new Weapon("MACHINEGUN2")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\battle_rifle\\battle_rifle_view")
+								.ViewModel	( ColorMachinegun, ColorIntensity, 0.04f, "scenes\\weapon2\\battle_rifle\\battle_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
 								.Attack		( 5, IMPULSE_LIGHT, 1.0f, SpreadMode.Variable, "machinegunMuzzle" )
@@ -40,31 +50,31 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			shotgun		=	new Weapon("SHOTGUN")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
+								.ViewModel	( ColorShotgun, ColorIntensity, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
 								.Attack		( 7, IMPULSE_MEDIUM, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
-								.Beam		( 1, null, "shotgunHit" )
+								.Beam		( 10, null, "shotgunHit" )
 								;
 
 			plasmagun		=	new Weapon("PLASMAGUN")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
+								.ViewModel	( ColorPlasmagun, ColorIntensity, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_view")
 								.Ammo		( 1, AmmoType.Cells )
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 0.0f, SpreadMode.Const, "plasmaMuzzle" )
-								.Beam		( 1, "*trail_bullet", "bulletHit" )
+								.Projectile	( 1, (gs,ad)=> gs.Spawn( new PlasmaFactory(ad) ) )
 								;
 
 			rlauncher		=	new Weapon("ROCKET_LAUNCHER")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
-								.Ammo		( 1, AmmoType.Cells )
-								.Cooldown	( 100 )
-								.Attack		( 7, IMPULSE_HEAVY, 0.0f, SpreadMode.Const, "machinegunMuzzle" )
-								.Beam		( 1, "*trail_bullet", "bulletHit" )
+								.ViewModel	( ColorRocketLauncher, ColorIntensity, 0.03f, "scenes\\weapon2\\rocket_launcher\\rocket_launcher_view")
+								.Ammo		( 1, AmmoType.Rockets )
+								.Cooldown	( 750 )
+								.Attack		( 100, IMPULSE_HEAVY, 0.0f, SpreadMode.Const, "rocketMuzzle" )
+								.Projectile	( 1, (gs,ad)=> gs.Spawn( new RocketFactory(ad) ) )
 								;
 
 			railgun			=	new Weapon("RAILGUN")
-								.ViewModel	( Color.Orange, 3, 0.03f, "scenes\\weapon2\\gauss_rifle\\gauss_rifle_view")
+								.ViewModel	( ColorRailgun, ColorIntensity, 0.03f, "scenes\\weapon2\\gauss_rifle\\gauss_rifle_view")
 								.Ammo		( 1, AmmoType.Slugs )
 								.Cooldown	( 1500 )
 								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "railMuzzle" )

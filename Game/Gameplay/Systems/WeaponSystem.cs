@@ -178,7 +178,7 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Warmup:	
 					if (timeout) 
 					{
-						Fire(actualGameTime, weapon, povTransform, attacker);
+						Fire(actualGameTime, weapon, state, povTransform, attacker);
 
 						state.Counter++;
 						
@@ -219,10 +219,11 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Drop:	
 					if (timeout) 
 					{
+						var pendingWeapon	=	Arsenal.Get( state.PendingWeapon );
 						state.ActiveWeapon	=	state.PendingWeapon;
 						state.PendingWeapon	=	WeaponType.None;
 						state.State			=	WeaponState.Raise;
-						state.Timer			=	TimeSpan.Zero;
+						state.Timer			=	pendingWeapon.TimeRaise;
 					}
 					break;
 
@@ -288,31 +289,31 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		bool Fire ( GameTime gameTime, Weapon weapon, Matrix povTransform, Entity attacker )
+		bool Fire ( GameTime gameTime, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
 		{
 			var gs = attacker.gs;
 
-			if (weapon.SpreadMode==SpreadMode.Const) weapon.Spread = weapon.MaxSpread;
+			if (weapon.SpreadMode==SpreadMode.Const) state.Spread = weapon.MaxSpread;
 
 			if (weapon.IsBeamWeapon) 
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireBeam( gs, weapon, povTransform, attacker );
+					FireBeam( gs, weapon, state, povTransform, attacker );
 				}
 			} 
 			else 
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireProjectile( gs, gameTime, weapon, povTransform, attacker );
+					FireProjectile( gs, gameTime, weapon, state, povTransform, attacker );
 				}
 			}
 
 			if (weapon.SpreadMode==SpreadMode.Variable)
 			{
-				weapon.Spread	+=	weapon.MaxSpread * SPREAD_INCREMENT;
-				weapon.Spread	=	MathUtil.Clamp( weapon.Spread, 0, weapon.MaxSpread );
+				state.Spread	+=	weapon.MaxSpread * SPREAD_INCREMENT;
+				state.Spread	=	MathUtil.Clamp( state.Spread, 0, weapon.MaxSpread );
 			}
 
 			return true;
@@ -323,11 +324,13 @@ namespace IronStar.Gameplay.Systems
 		 *	Beam weapon :
 		-----------------------------------------------------------------------------------------*/
 
-		void FireBeam ( GameState gs, Weapon weapon, Matrix povTransform, Entity attacker )
+		void FireBeam ( GameState gs, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
 		{
+			Log.Debug("SPREAD: {0}", state.Spread);
+
 			var p	=	povTransform.TranslationVector;
 			var q	=	Quaternion.RotationMatrix( povTransform );
-			var d	=	-GetFireDirection( q, weapon.Spread );
+			var d	=	-GetFireDirection( q, state.Spread );
 			var ray	=	new Ray(p,d);
 
 			physics.Raycast( ray, BEAM_RANGE, new BeamRaycastCallback( gs, ray, attacker, weapon ), RaycastOptions.SortResults );
@@ -393,15 +396,20 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( GameState gs, GameTime gameTime, Weapon weapon, Matrix povTransform, Entity attacker )
+		void FireProjectile ( GameState gs, GameTime gameTime, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
 		{
-			var dt	=	gameTime.ElapsedSec;
-			var t	=	attacker.GetComponent<Transform>();
-			var p	=	povTransform.TranslationVector;
-			var q	=	Quaternion.RotationMatrix( povTransform );
-			var d	=	-GetFireDirection( q, weapon.MaxSpread );
+			var attackData	=	new AttackData();
+			var transform	=	attacker.GetComponent<Transform>();
+			
+			attackData.Attacker		=	attacker;
+			attackData.DeltaTime	=	gameTime.ElapsedSec;
+			attackData.Origin		=	povTransform.TranslationVector;
+			attackData.Rotation		=	Quaternion.RotationMatrix( povTransform );
+			attackData.Direction	=	-GetFireDirection( attackData.Rotation, state.Spread );
+			attackData.Impulse		=	weapon.Impulse;
+			attackData.Damage		=	weapon.Damage;
 
-			weapon.ProjectileSpawn( p, q, d, dt, attacker, weapon.Damage, weapon.Impulse );
+			weapon.ProjectileSpawn( gs, attackData );
 		}
 
 		/*-----------------------------------------------------------------------------------------

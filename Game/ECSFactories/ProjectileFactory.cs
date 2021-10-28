@@ -10,52 +10,39 @@ using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
 using IronStar.SFX;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.ECSFactories
 {
-	public class PlasmaFactory : EntityFactory
+	public class PlasmaFactory : IFactory
 	{
-		int		damage;
-		float	impulse;
-		Entity	attacker;
+		AttackData ad;
 
-		public PlasmaFactory( Vector3 position, Quaternion rotation, Vector3 dir, float lag, Entity attacker, int damage, float impulse )
+		public PlasmaFactory( AttackData attackData )
 		{
-			this.Position	=	position + dir * 500 * lag;
-			this.Rotation	=	rotation;
-			this.damage		=	damage;
-			this.impulse	=	impulse;
-			this.attacker	=	attacker;
+			ad = attackData;
 		}
 
-		public override void Construct( Entity e, IGameState gs )
+		public void Construct( Entity e, IGameState gs )
 		{
-			base.Construct( e, gs );
-			e.AddComponent( new ProjectileComponent( attacker, 500, 3, 10, "plasmaExplosion", damage, impulse) );
+			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 500, 3, 10, "plasmaExplosion", ad.Damage, ad.Impulse) );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
 		}
 	}
 
 
-	public class RocketFactory : EntityFactory
+	public class RocketFactory : IFactory
 	{
-		int		damage;
-		float	impulse;
-		Entity	attacker;
+		AttackData ad;
 
-		public RocketFactory( Vector3 position, Quaternion rotation, Vector3 dir, float lag, Entity attacker, int damage, float impulse )
+		public RocketFactory( AttackData attackData )
 		{
-			this.Position	=	position + dir * 300 * lag;
-			this.Rotation	=	rotation;
-			this.damage		=	damage;
-			this.impulse	=	impulse;
-			this.attacker	=	attacker;
+			ad = attackData;
 		}
 
-		public override void Construct( Entity e, IGameState gs )
+		public void Construct( Entity e, IGameState gs )
 		{
-			base.Construct( e, gs );
-			e.AddComponent( new ProjectileComponent( attacker, 300, 12, 10, "rocketExplosion", damage, impulse) );
+			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 300, 12, 10, "rocketExplosion", ad.Damage, ad.Impulse) );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
 		}
 	}

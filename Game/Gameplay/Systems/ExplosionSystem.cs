@@ -18,7 +18,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				explosive.Initiated = true;
 				entity.AddComponent( new FXComponent(explosive.BurningFX, true) );
-				entity.AddComponent( new ProjectileComponent(entity, 0, explosive.Radius, explosive.Timeout, explosive.ExplosionFX, explosive.Damage, explosive.Impulse) );
+				entity.AddComponent( new ProjectileComponent(entity, explosive.Radius, explosive.Timeout, explosive.ExplosionFX, explosive.Damage, explosive.Impulse) );
 			}
 		}
 	}

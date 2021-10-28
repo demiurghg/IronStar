@@ -9,38 +9,48 @@ using IronStar.SFX2;
 
 namespace IronStar.Gameplay.Weaponry
 {
-	public delegate Entity SpawnMethod( Vector3 position, Quaternion rotation, Vector3 direction, float dt, Entity attacker, float damage, float impulse );
+	public struct AttackData
+	{
+		public Entity		Attacker;
+		public float		DeltaTime;
+		public Vector3		Origin;
+		public Vector3		Direction;
+		public Quaternion	Rotation;
+		public int			Damage;
+		public float		Impulse;
+	}
+
+	public delegate Entity SpawnMethod( GameState gs, AttackData attackData );
 	
 	public class Weapon
 	{
-		public string		NiceName		=	null;
+		public string		NiceName		{ get; private set; }	=	null;
+		public RenderModel	ViewRenderModel	{ get; private set; }	=	null;
 
-		public RenderModel	ViewRenderModel;
+		public TimeSpan		TimeWarmup		{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
+		public TimeSpan		TimeCooldown	{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
+		public TimeSpan		TimeOverheat	{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
+		public TimeSpan		TimeReload		{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
+		public TimeSpan		TimeDrop		{ get; private set; }	=	TimeSpan.FromMilliseconds(350);
+		public TimeSpan		TimeRaise		{ get; private set; }	=	TimeSpan.FromMilliseconds(350);
+		public TimeSpan		TimeNoAmmo		{ get; private set; }	=	TimeSpan.FromMilliseconds(250);
 
-		public TimeSpan		TimeWarmup		=	TimeSpan.FromMilliseconds(0);
-		public TimeSpan		TimeCooldown	=	TimeSpan.FromMilliseconds(0);
-		public TimeSpan		TimeOverheat	=	TimeSpan.FromMilliseconds(0);
-		public TimeSpan		TimeReload		=	TimeSpan.FromMilliseconds(0);
-		public TimeSpan		TimeDrop		=	TimeSpan.FromMilliseconds(350);
-		public TimeSpan		TimeRaise		=	TimeSpan.FromMilliseconds(350);
-		public TimeSpan		TimeNoAmmo		=	TimeSpan.FromMilliseconds(250);
+		public string		BeamHitFX		{ get; private set; }	=	null;
+		public string		BeamTrailFX		{ get; private set; }	=	null;
+		public string		MuzzleFX		{ get; private set; }	=	null;
 
-		public string		BeamHitFX		=	null;
-		public string		BeamTrailFX		=	null;
-		public string		MuzzleFX		=	null;
+		public SpawnMethod	ProjectileSpawn	{ get; private set; }	=	null;
+		public int			ProjectileCount	{ get; private set; }	=	1;
 
-		public SpawnMethod	ProjectileSpawn	=	null;
-		public int			ProjectileCount	=	1;
+		public int			Damage			{ get; private set; }	=	0;
+		public float		Impulse			{ get; private set; }	=	0;
+		public float		MaxSpread		{ get; private set; }	=	0;
 
-		public int			Damage			=	0;
-		public float		Impulse			=	0;
-		public float		MaxSpread		=	0;
+		public SpreadMode	SpreadMode		{ get; private set; }	=	SpreadMode.Const;
+		public float		Spread			{ get; private set; }	=	0;
 
-		public SpreadMode	SpreadMode		=	SpreadMode.Const;
-		public float		Spread			=	0;
-
-		public AmmoType		AmmoType		=	AmmoType.Bullets;
-		public int			AmmoConsumption	=	1;
+		public AmmoType		AmmoType		{ get; private set; }	=	AmmoType.Bullets;
+		public int			AmmoConsumption	{ get; private set; }=	1;
 		
 		public bool			IsBeamWeapon { get { return ProjectileSpawn==null; } }
 
@@ -92,10 +102,11 @@ namespace IronStar.Gameplay.Weaponry
 
 		public Weapon Attack( int damage, float impulse, float spread, SpreadMode spreadMode, string muzzleFx )
 		{
-			Damage				=	damage;
-			Impulse				=	impulse;
-			MaxSpread			=	spread;
-			MuzzleFX			=	muzzleFx;
+			Damage		=	damage;
+			Impulse		=	impulse;
+			MaxSpread	=	spread;
+			MuzzleFX	=	muzzleFx;
+			SpreadMode	=	spreadMode;
 
 			return this;
 		}

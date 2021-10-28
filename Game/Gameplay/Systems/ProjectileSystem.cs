@@ -16,7 +16,7 @@ using BEPUutilities.Threading;
 
 namespace IronStar.Gameplay.Systems
 {
-	class ProjectileSystem : ProcessingSystem<ProjectileController,Transform,ProjectileComponent>
+	class ProjectileSystem : ProcessingSystem<ProjectileController,ProjectileComponent>
 	{
 		readonly PhysicsCore	physics;
 		readonly Random			rand;
@@ -44,40 +44,54 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		protected override ProjectileController Create( Entity entity, Transform transform, ProjectileComponent projectile )
+		protected override ProjectileController Create( Entity entity, ProjectileComponent projectile )
 		{
 			var gs			=	entity.gs;
-			var position	=	MathConverter.Convert( transform.Position );
-			var orient		=	MathConverter.Convert( transform.Rotation );
-			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
+			var position	=	projectile.Origin;
+			var orient		=	projectile.Rotation;
+			var direction	=	projectile.Direction;
 			var velocity	=	direction * projectile.Velocity;
 			var attacker	=	projectile.Attacker;
-			var projRay		=	new BEPUutilities.Ray( position, direction );
-			var traceDist	=	projectile.Velocity * lastDeltaTime;
-			var origin		=	position + direction * traceDist;
+			var projRay		=	new Ray( position, direction );
+			var traceDist	=	projectile.Velocity * lastDeltaTime * 2;
+			var targetPos	=	position + direction * traceDist;
 
-			var raycastCallback		=	new ProjectileRaycastCallback( gs, MathConverter.Convert(projRay), attacker, entity, transform );
+			var transform	=	entity.GetComponent<Transform>();
 
-			var hitData				=	physics.Raycast( MathConverter.Convert(projRay), traceDist, raycastCallback, RaycastOptions.SortResults );
-
-			if (hitData!=null)
+			//	no transoform is specified
+			//	search by raycasting against the world
+			if (transform==null)
 			{
-				 InflictDamage( entity, projectile, hitData.HitEntity, hitData.Location, MathConverter.Convert(direction), hitData.Normal );
-				 return null;
+				var raycastCallback	=	new ProjectileRaycastCallback( attacker );
+				var raycastResult	=	physics.Raycast( projRay, traceDist, raycastCallback, RaycastOptions.SortResults );
+
+				if (raycastResult!=null)
+				{
+					 InflictDamageAndDestroyProjectile( entity, projectile, raycastResult.HitEntity, raycastResult.Location, direction, raycastResult.Normal );
+					 return null;
+				}
+				else
+				{
+					transform	 = new Transform( targetPos, orient, 1.0f );
+					entity.AddComponent( transform );
+				}
 			}
-			else
-			{
-				var projectileController = new ProjectileController( origin, orient, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Attacker ) );
+
+			var bpPosition	=	MathConverter.Convert( transform.Position );
+			var bpRotation	=	MathConverter.Convert( transform.Rotation );
+			var bpVelocity	=	MathConverter.Convert( velocity );
+
+			var projectileController = new ProjectileController( bpPosition, bpRotation, bpVelocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Attacker ) );
 				projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
 				projectileController.Tag = entity;
 
-				physics.Add( projectileController );
-				return projectileController;
-			}
+			physics.Add( projectileController );
+
+			return projectileController;
 		}
 
 
-		private void InflictDamage( Entity entity, ProjectileComponent projectile, Entity hitEntity, Vector3 location, Vector3 direction, Vector3 normal )
+		private void InflictDamageAndDestroyProjectile( Entity entity, ProjectileComponent projectile, Entity hitEntity, Vector3 location, Vector3 direction, Vector3 normal )
 		{
 			weaponSystem.InflictDamage( projectile.Attacker, hitEntity, projectile.Damage, projectile.Impulse, location, direction, normal, projectile.ExplosionFX );
 			weaponSystem.Explode( projectile.Attacker, hitEntity, projectile.Damage, projectile.Impulse, projectile.Radius, location, normal, null );
@@ -88,13 +102,13 @@ namespace IronStar.Gameplay.Systems
 		private void ProjectileController_CollisionDetected( object controller, ProjectileController.CollisionDetectedEventArgs e )
 		{
 			var entity		=	(controller as ProjectileController).Tag as Entity;
-			var direction	=	entity.GetComponent<Transform>().TransformMatrix.Forward;
 			var projectile	=	entity.GetComponent<ProjectileComponent>();
+			var direction	=	projectile.Direction;
 			var location	=	MathConverter.Convert( e.Location );
 			var normal		=	MathConverter.Convert( e.Normal );		
 			var hitEntity	=	(e.HitObject as ConvexCollidable)?.Entity.Tag as Entity;
 
-			InflictDamage( entity, projectile, hitEntity, location, direction, normal );
+			InflictDamageAndDestroyProjectile( entity, projectile, hitEntity, location, direction, normal );
 		}
 
 		
@@ -106,12 +120,18 @@ namespace IronStar.Gameplay.Systems
 			}
 		}
 
-		
-		protected override void Process( Entity entity, GameTime gameTime, ProjectileController controller, Transform transform, ProjectileComponent projectile )
+		public override void Update( IGameState gs, GameTime gameTime )
 		{
-			lastDeltaTime = gameTime.ElapsedSec;
+			lastDeltaTime	=	gameTime.ElapsedSec;
+			base.Update( gs, gameTime );
+		}
 
-			if (controller!=null)
+
+		protected override void Process( Entity entity, GameTime gameTime, ProjectileController controller, ProjectileComponent projectile )
+		{
+			var transform	=	entity.GetComponent<Transform>();
+
+			if (controller!=null && transform!=null)
 			{
 				if (!MathUtil.NearEqual(projectile.Velocity, 0))
 				{
@@ -122,7 +142,7 @@ namespace IronStar.Gameplay.Systems
 
 				if (projectile.LifeTime<0)
 				{
-					InflictDamage( entity, projectile, null, transform.Position, transform.TransformMatrix.Forward, Vector3.Up );
+					InflictDamageAndDestroyProjectile( entity, projectile, null, transform.Position, transform.TransformMatrix.Forward, Vector3.Up );
 				}
 			}
 		}
@@ -130,25 +150,12 @@ namespace IronStar.Gameplay.Systems
 
 		class ProjectileRaycastCallback : IRaycastCallback<HitData>
 		{
-			readonly Ray ray;
 			readonly Entity attacker;
-			readonly Entity projectile;
-			readonly ProjectileComponent projectileComponent;
-			readonly Transform kinematicState;
-			readonly GameState gs;
-			readonly WeaponSystem ws;
-			HitData hitData = null;
+			HitData hitData;
 
-			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, Transform ks )
+			public ProjectileRaycastCallback( Entity attacker )
 			{
-				this.ray		=	ray;
-				this.ws			=	gs.GetService<WeaponSystem>();
 				this.attacker	=	attacker;
-				this.projectile	=	projectile;
-				this.gs			=	gs;
-
-				this.kinematicState	=	ks;
-				projectileComponent	=	projectile.GetComponent<ProjectileComponent>();
 			}
 
 			public void Begin( int count ) {}
@@ -164,18 +171,6 @@ namespace IronStar.Gameplay.Systems
 					hitData	=	new HitData( location, normal, isStatic ? null : entity );
 					return true;
 				}
-
-				//	inflict damage to instantly hit by projectile entity :
-				/*ws.InflictDamage( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, location, ray.Direction, normal, projectileComponent.ExplosionFX );
-				ws.Explode( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, projectileComponent.Radius, location, normal, null );
-
-				hitSomething = true;
-
-				//	kill projectile, 
-				//	we dont need it any more :
-				projectile.Kill();	 */
-
-				return true;
 			}
 
 			public HitData End() 

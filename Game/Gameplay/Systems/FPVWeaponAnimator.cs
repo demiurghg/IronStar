@@ -126,8 +126,6 @@ namespace IronStar.Gameplay.Systems
 
 			if (fireEvent) 
 			{
-				//Log.Message("{0}", weaponState );
-
 				//	hide inactive weapon :
 				#warning TRACK VIEW WEAPON MODEL VISIBILITY
 				model.Visible = true;

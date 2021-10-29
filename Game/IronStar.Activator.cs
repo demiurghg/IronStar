@@ -30,7 +30,7 @@ namespace IronStar
 {
 	partial class IronStar : Game
 	{
-		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
+		public static IGameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
@@ -67,7 +67,7 @@ namespace IronStar
 
 			//	game logic :
 			gs.AddSystem( new HealthSystem() );
-			gs.AddSystem( new PickupSystem() );
+			//gs.AddSystem( new PickupSystem() );
 			gs.AddSystem( new ExplosionSystem() );
 
 			//	AI :
@@ -83,6 +83,7 @@ namespace IronStar
 			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 
+			/*
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :
@@ -116,7 +117,9 @@ namespace IronStar
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
 			return gs;
+			//return new MTGameState( game, gs, null, TimeSpan.FromSeconds(1.0f/60.0f) );
 		}
+
 
 		static void LoadContent( RenderWorld rw, ContentManager content, string mapName )
 		{

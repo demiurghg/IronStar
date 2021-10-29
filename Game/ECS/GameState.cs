@@ -54,13 +54,11 @@ namespace IronStar.ECS
 		readonly SystemCollection			systems;
 		readonly ComponentCollection		components;
 
-		readonly ConcurrentQueue<Entity>		spawnQueue2;
 		readonly ConcurrentQueue<SpawnData>		spawnQueue3;
 		readonly ConcurrentQueue<Entity>		killQueue;
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
 		readonly ConcurrentQueue<ComponentData>	componentToAdd;
 		readonly HashSet<Entity>				refreshed;
-		[Obsolete] readonly ConcurrentQueue<Action>		invokeQueue;
 		uint									killAllBarrierId = 0;
 
 		readonly GameServiceContainer services;
@@ -76,11 +74,6 @@ namespace IronStar.ECS
 
 		public TimeSpan TimeStep { get { return timeStep; } }
 
-		ParallelLooper	looper;
-
-		public IParallelLooper Looper { get { return looper; } }
-
-
 		/// <summary>
 		/// Game state constructor
 		/// </summary>
@@ -88,12 +81,6 @@ namespace IronStar.ECS
 		public GameState( Game game, ContentManager content, TimeSpan timeStep )
 		{
 			mainThread		=	Thread.CurrentThread;
-
-			looper			=	new ParallelLooper();
-			looper.AddThread();
-			looper.AddThread();
-			looper.AddThread();
-			looper.AddThread();
 
 			this.game		=	game;
 			this.content	=	content;
@@ -103,14 +90,12 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawnQueue2			=	new ConcurrentQueue<Entity>();
 			spawnQueue3			=	new ConcurrentQueue<SpawnData>();
 			componentToRemove	=	new ConcurrentQueue<ComponentData>();
 			componentToAdd		=	new ConcurrentQueue<ComponentData>();
 			killQueue			=	new ConcurrentQueue<Entity>();
 			refreshed			=	new HashSet<Entity>();
-			invokeQueue			=	new ConcurrentQueue<Action>();
-
+			
 			services	=	new GameServiceContainer();
 
 			factories	=	new EntityFactoryCollection();
@@ -145,8 +130,6 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
-				SafeDispose( ref looper );
-
 				KillAll();
 				RefreshEntities();
 
@@ -334,17 +317,6 @@ namespace IronStar.ECS
 			ComponentData cd;
 			SpawnData sd;
 
-			while (invokeQueue.TryDequeue(out a))
-			{
-				a.Invoke();
-			}
-
-			while (spawnQueue2.TryDequeue(out e)) 
-			{
-				entities.Add( e );
-				Refresh( e );
-			}
-
 			while (spawnQueue3.TryDequeue(out sd))
 			{
 				entities.Add( sd.Entity );
@@ -374,12 +346,6 @@ namespace IronStar.ECS
 			}
 			
 			refreshed.Clear();
-		}
-
-
-		public void Invoke( Action action )
-		{
-			invokeQueue.Enqueue( action );
 		}
 
 
@@ -425,16 +391,6 @@ namespace IronStar.ECS
 
 			return entity;
 		}
-
-		public Entity Spawn()
-		{
-			var entity = new Entity( this, IdGenerator.Next() );
-
-			spawnQueue2.Enqueue( entity );
-
-			return entity;
-		}
-
 
 		void Refresh ( Entity entity )
 		{

@@ -161,6 +161,7 @@
     <Compile Include="ECS\BufferedList.cs" />
     <Compile Include="ECS\IFactory.cs" />
     <Compile Include="ECS\IGameState.cs" />
+    <Compile Include="ECS\MTGameState.cs" />
     <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />

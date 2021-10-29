@@ -436,48 +436,6 @@ namespace IronStar.ECS
 		}
 
 
-		public Entity Spawn( string classname )
-		{
-			EntityFactory factory;
-
-			if (factories.TryGetValue( classname, out factory ))
-			{
-				var e = Spawn();
-				factory.Construct(e, this);
-				return e;
-			}
-			else
-			{
-				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
-				return Spawn();;
-			}
-		}
-
-
-		public Entity Spawn( string classname, Vector3 position, Quaternion rotation )
-		{
-			var e = Spawn(classname);
-
-			Teleport( e, position, rotation );
-			
-			return e;
-		}
-
-
-		public Entity Spawn( params IComponent[] components )
-		{
-			var entity = Spawn();
-
-			foreach ( var component in components )
-			{
-				entity.AddComponent(component);
-			}
-
-			return entity;
-		}
-
-
-		
 		void Refresh ( Entity entity )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
@@ -504,33 +462,6 @@ namespace IronStar.ECS
 			killAllBarrierId = IdGenerator.Next();
 		}
 
-
-		/*-----------------------------------------------------------------------------------------------
-		 *	Movement stuff :
-		-----------------------------------------------------------------------------------------------*/
-
-		/// <summary>
-		/// Teleports given entity to new place defined by position and rotation.
-		/// This method executed immediately from udpate thread.
-		/// If called outside of the update thread transformation will be applied at the beginning of the next update frame
-		/// </summary>
-		/// <param name="e">Entity</param>
-		/// <param name="position">New entity position</param>pp
-		/// <param name="rotation">New entity rotation</param>
-		public void Teleport( Entity e, Vector3 position, Quaternion rotation )
-		{
-			var t = e.GetComponent<Transform>();
-
-			if (t!=null)
-			{
-				t.Teleport( position, rotation, Vector3.Zero, Vector3.Zero );
-			}
-			else
-			{
-				Log.Warning("Teleport: {0} has not {1} component", e, nameof(Transform) );
-				//AddEntityComponentInternal( e, new Transform(p,r) );
-			}
-		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Component stuff :

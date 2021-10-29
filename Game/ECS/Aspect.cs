@@ -104,24 +104,24 @@ namespace IronStar.ECS
 		}
 
 
-		public Aspect Include<T1>()				{ return Include( typeof(T1) ); }
-		public Aspect Include<T1,T2>()			{ return Include( typeof(T1), typeof(T2) ); }
-		public Aspect Include<T1,T2,T3>()		{ return Include( typeof(T1), typeof(T2), typeof(T3) ); }
-		public Aspect Include<T1,T2,T3,T4>()	{ return Include( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
+		public Aspect Include<T1>()			where T1:IComponent																{ return Include( typeof(T1) ); }
+		public Aspect Include<T1,T2>()		where T1:IComponent where T2:IComponent 										{ return Include( typeof(T1), typeof(T2) ); }
+		public Aspect Include<T1,T2,T3>()	where T1:IComponent where T2:IComponent where T3:IComponent 					{ return Include( typeof(T1), typeof(T2), typeof(T3) ); }
+		public Aspect Include<T1,T2,T3,T4>()where T1:IComponent where T2:IComponent where T3:IComponent where T4:IComponent	{ return Include( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
 
-		public Aspect Exclude<T1>()				{ return Exclude( typeof(T1) ); }
-		public Aspect Exclude<T1,T2>()			{ return Exclude( typeof(T1), typeof(T2) ); }
-		public Aspect Exclude<T1,T2,T3>()		{ return Exclude( typeof(T1), typeof(T2), typeof(T3) ); }
-		public Aspect Exclude<T1,T2,T3,T4>()	{ return Exclude( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
+		public Aspect Exclude<T1>()			where T1:IComponent																{ return Exclude( typeof(T1) ); }
+		public Aspect Exclude<T1,T2>()		where T1:IComponent where T2:IComponent 										{ return Exclude( typeof(T1), typeof(T2) ); }
+		public Aspect Exclude<T1,T2,T3>()	where T1:IComponent where T2:IComponent where T3:IComponent 					{ return Exclude( typeof(T1), typeof(T2), typeof(T3) ); }
+		public Aspect Exclude<T1,T2,T3,T4>()where T1:IComponent where T2:IComponent where T3:IComponent where T4:IComponent	{ return Exclude( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
 
-		public Aspect Single<T1>()				{ return Single( typeof(T1) ); }
-		public Aspect Single<T1,T2>()			{ return Single( typeof(T1), typeof(T2) ); }
-		public Aspect Single<T1,T2,T3>()		{ return Single( typeof(T1), typeof(T2), typeof(T3) ); }
-		public Aspect Single<T1,T2,T3,T4>()		{ return Single( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
+		public Aspect Single<T1>()			where T1:IComponent																{ return Single( typeof(T1) ); }
+		public Aspect Single<T1,T2>()		where T1:IComponent where T2:IComponent 										{ return Single( typeof(T1), typeof(T2) ); }
+		public Aspect Single<T1,T2,T3>()	where T1:IComponent where T2:IComponent where T3:IComponent 					{ return Single( typeof(T1), typeof(T2), typeof(T3) ); }
+		public Aspect Single<T1,T2,T3,T4>()	where T1:IComponent where T2:IComponent where T3:IComponent where T4:IComponent	{ return Single( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
 
-		public Aspect Any<T1>()					{ return Any( typeof(T1) ); }
-		public Aspect Any<T1,T2>()				{ return Any( typeof(T1), typeof(T2) ); }
-		public Aspect Any<T1,T2,T3>()			{ return Any( typeof(T1), typeof(T2), typeof(T3) ); }
-		public Aspect Any<T1,T2,T3,T4>()		{ return Any( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
+		public Aspect Any<T1>()				where T1:IComponent																{ return Any( typeof(T1) ); }
+		public Aspect Any<T1,T2>()			where T1:IComponent where T2:IComponent 										{ return Any( typeof(T1), typeof(T2) ); }
+		public Aspect Any<T1,T2,T3>()		where T1:IComponent where T2:IComponent where T3:IComponent 					{ return Any( typeof(T1), typeof(T2), typeof(T3) ); }
+		public Aspect Any<T1,T2,T3,T4>()	where T1:IComponent where T2:IComponent where T3:IComponent where T4:IComponent	{ return Any( typeof(T1), typeof(T2), typeof(T3), typeof(T4) ); }
 	}
 }

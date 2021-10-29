@@ -17,6 +17,12 @@ namespace IronStar.ECS
 		public Quaternion Rotation { get; set; } = Quaternion.Identity;
 
 		[AEIgnore]
+		public Vector3 LinearVelocity { get; set; } = Vector3.Zero;
+
+		[AEIgnore]
+		public Vector3 AngularVelocity { get; set; } = Vector3.Zero;
+
+		[AEIgnore]
 		public float Scaling { get; set; } = 1;
 
 		public object Clone()
@@ -26,7 +32,7 @@ namespace IronStar.ECS
 
 		public virtual void Construct( Entity e, IGameState gs )
 		{
-			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
+			e.AddComponent( new Transform( Position, Rotation, Scaling, LinearVelocity, AngularVelocity ) );
 		}
 	}
 

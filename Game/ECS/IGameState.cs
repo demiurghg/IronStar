@@ -17,14 +17,7 @@ namespace IronStar.ECS
 
 		ContentManager Content { get; }
 
-		//Entity Spawn();
 		Entity Spawn(IFactory factory);
-
-		[Obsolete]
-		Entity Spawn(string classname);
-
-		[Obsolete]
-		Entity Spawn(string classname, Vector3 position, Quaternion rotation);
 
 		void KillAll();
 

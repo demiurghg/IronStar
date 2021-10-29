@@ -126,10 +126,6 @@ namespace IronStar.Gameplay.Systems
 
 			if (fireEvent) 
 			{
-				//	hide inactive weapon :
-				#warning TRACK VIEW WEAPON MODEL VISIBILITY
-				model.Visible = true;
-
 				//	recoil & cooldown :
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 
 				{

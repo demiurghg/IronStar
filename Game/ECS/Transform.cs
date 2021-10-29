@@ -87,6 +87,15 @@ namespace IronStar.ECS
 			LinearVelocity	=	velocity;
 		}
 
+		public Transform ( Vector3 p, Quaternion r, float scaling, Vector3 linearVelocity, Vector3 angularVelocity )
+		{
+			Position		=	p;
+			Rotation		=	r;
+			Scaling			=	scaling;
+			LinearVelocity	=	linearVelocity;
+			AngularVelocity	=	angularVelocity;
+		}
+
 		/// <summary>
 		/// Creates new transform
 		/// </summary>

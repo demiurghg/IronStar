@@ -21,7 +21,7 @@ namespace IronStar.Editor.Systems
 												.Include<Transform>()
 												.Exclude<DynamicBox>()
 												.Exclude<SFX2.OmniLight,SFX2.SpotLight,SFX2.LightProbeSphere,SFX2.LightProbeBox>()
-												.Exclude<Decal>()
+												.Exclude<SFX2.DecalComponent>()
 												.Exclude<SFX2.RenderModel>()
 												;
 

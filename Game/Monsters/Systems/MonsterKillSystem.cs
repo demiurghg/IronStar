@@ -11,6 +11,7 @@ using IronStar.ECS;
 using IronStar.Gameplay.Components;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
+using IronStar.ECSFactories;
 
 namespace IronStar.Monsters.Systems
 {
@@ -55,10 +56,12 @@ namespace IronStar.Monsters.Systems
 			{
 				var pos0 = position + Vector3.Up;
 				var pos1 = position + rand.GaussRadialDistribution( 1, 0.3f ) + Vector3.Up;
-				var gib	 = gs.Spawn("GIBLET", pos1, Quaternion.Identity);
-				var imp  = rand.GaussRadialDistribution( 10, 5 );
-
-				physics.ApplyImpulse( gib, pos0, imp );
+				var fact = new GibletFactory();
+				fact.Position			=	pos1;
+				fact.Rotation			=	Quaternion.RotationYawPitchRoll( rand.NextFloat(0, MathUtil.TwoPi), rand.NextFloat(0, MathUtil.TwoPi), rand.NextFloat(0, MathUtil.TwoPi) );
+				fact.LinearVelocity		=	(rand.GaussRadialDistribution( 0, 1 ) + Vector3.Up) * 30;
+				fact.AngularVelocity	=	rand.GaussRadialDistribution( 5, 2 );
+				var gib	 = gs.Spawn(fact);
 			}
 		}
 	}

@@ -129,19 +129,15 @@ namespace IronStar.ECSPhysics
 			var crouchingSpeed	=	cc.crouchingSpeed * velScale;
 			var proneSpeed		=	cc.proneSpeed * velScale;
 
-			#warning REMOVE THIS
-			physics.Invoke( ()=>
-			{
-				controller.StandingSpeed	=	standingSpeed	;
-				controller.CrouchingSpeed	=	crouchingSpeed	;
-				controller.ProneSpeed		=	proneSpeed		;
+			controller.StandingSpeed	=	standingSpeed	;
+			controller.CrouchingSpeed	=	crouchingSpeed	;
+			controller.ProneSpeed		=	proneSpeed		;
 
-				controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
+			controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
 
-				controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
+			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 
-				controller.TryToJump = jump;
-			});
+			controller.TryToJump = jump;
 		}
 	}
 }

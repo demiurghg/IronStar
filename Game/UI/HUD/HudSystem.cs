@@ -12,6 +12,7 @@ using Fusion.Engine.Graphics;
 using IronStar.ECS;
 using IronStar.ECSFactories;
 using IronStar.Gameplay.Components;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.UI.HUD
 {
@@ -45,27 +46,22 @@ namespace IronStar.UI.HUD
 		void UpdateWeaponStatus( IGameState gs, GameTime gameTime, Entity player )
 		{
 			var inventory	=	player?.GetComponent<InventoryComponent>();
+			var wpnState	=	player?.GetComponent<WeaponStateComponent>();
 
-			#warning TODO HUD
-			/*if (inventory!=null)
+			hudFrame.Ammo.Visible	=	false;
+
+			if (inventory!=null && wpnState!=null && wpnState.ActiveWeapon!=WeaponType.None)
 			{
-				var weapon	=	inventory.ActiveWeapon?.GetComponent<WeaponComponent>();
+				var weapon	=	Arsenal.Get( wpnState.ActiveWeapon );
+				var ammo	=	Arsenal.Get( weapon.AmmoType );
 
-				AmmoComponent ammo;
-				NameComponent ammoName;
-				inventory.FindItem(gs, (a,n) => n.Name == weapon?.AmmoClass, out ammo, out ammoName );
-
-				if (weapon!=null)
+				if (ammo!=null)
 				{
 					hudFrame.Ammo.Visible	=	true;
-					hudFrame.Ammo.Value		=	ammo==null ? 0 : ammo.Count;
-					hudFrame.Ammo.MaxValue	=	ammo==null ? 0 : ammo.Capacity;
+					hudFrame.Ammo.Value		=	inventory.GetAmmoCount( weapon.AmmoType );
+					hudFrame.Ammo.MaxValue	=	ammo.Capacity;
 				}
-				else
-				{
-					hudFrame.Ammo.Visible = false;
-				}
-			} */
+			}
 		}
 
 

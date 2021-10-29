@@ -19,13 +19,10 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>().Single<WeaponComponent,AmmoComponent>();
-		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,Transform,WeaponComponent>().Include<NameComponent>();
-		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform,AmmoComponent>().Include<NameComponent>();
-		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,Transform>();
+		readonly Aspect pickupAspect	=	new Aspect().Include<PickupComponent,TouchDetector,PowerupComponent>();
+		readonly Aspect recipientAspect	=	new Aspect().Include<PlayerComponent>().Any<HealthComponent,InventoryComponent>();
 
 
-		
 		public PickupSystem()
 		{
 		}
@@ -33,7 +30,7 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			var pickupEntities = gs.QueryEntities( itemAspect );
+			var pickupEntities = gs.QueryEntities( pickupAspect );
 
 			foreach ( var pickupItem in pickupEntities )
 			{
@@ -41,110 +38,47 @@ namespace IronStar.Gameplay.Systems
 
 				foreach ( var touchEntity in touchDetector )
 				{
-					if ( inventoryAspect.Accept(touchEntity) && PickItemUp( gs, touchEntity, pickupItem ) )
+					if (recipientAspect.Accept(touchEntity) )
 					{
-						break;
+						if ( TryPickItemUp( gs, touchEntity, pickupItem ) )
+						{
+							break;
+						}
 					}
 				}
 			}
 		}
 
 
-		bool PickItemUp( IGameState gs, Entity recipient, Entity pickupItem )
+		bool TryPickItemUp( IGameState gs, Entity recipient, Entity pickupItem )
 		{
 			var inventory	=	recipient.GetComponent<InventoryComponent>();
+			var wpnState	=	recipient.GetComponent<WeaponStateComponent>();
+			var health		=	recipient.GetComponent<HealthComponent>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
+			var powerup		=	pickupItem.GetComponent<PowerupComponent>();
 
-				
-			if (   TryPickAsWeapon( gs, inventory, pickupItem )
-				|| TryPickAsAmmo( gs, inventory, pickupItem )
-			)
+			bool success	=	false;
+
+			if (inventory!=null)
+			{
+				success |= inventory.TryGiveWeapon( powerup.Weapon, wpnState );
+				success |= inventory.TryGiveAmmo( powerup.Ammo, powerup.AmmoCount );
+			}
+
+			if (health!=null)
+			{
+				success |= health.TryGiveArmor ( powerup.Armor  );
+				success |= health.TryGiveHealth( powerup.Health );
+			}
+
+			if (success)
 			{
 				FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );
-				pickupItem.RemoveComponent<Transform>();
-
-				return true;
+				pickupItem.Kill();
 			}
-			else
-			{
-				return false;
-			}
-		}
 
-
-
-		bool TryPickAsWeapon( IGameState gs, InventoryComponent inventory, Entity weaponEntity )
-		{
-			if ( weaponAspect.Accept( weaponEntity ) )
-			{
-				var name	=	weaponEntity.GetComponent<NameComponent>()?.Name;
-				var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
-
-				var existingWeaponEntity = inventory.FindItem<WeaponComponent,NameComponent>( gs, (w,n) => n.Name==name );
-
-				if ( existingWeaponEntity==null )
-				{
-					inventory.AddItem( weaponEntity );
-					inventory.SwitchWeapon( weaponEntity );
-				}
-				else 
-				{
-					inventory.SwitchWeapon( existingWeaponEntity );
-					weaponEntity.Kill();
-				}
-
-				var ammoEntity = gs.Spawn( weapon.AmmoClass );
-				
-				if (ammoEntity!=null)
-				{
-					TryPickAsAmmo( gs, inventory, ammoEntity ); 
-					ammoEntity.RemoveComponent<Transform>();
-				}
-
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-
-		bool TryPickAsAmmo( IGameState gs, InventoryComponent inventory, Entity ammoEntity, bool forcePick = false )
-		{
-			if ( ammoAspect.Accept( ammoEntity ) )
-			{
-				var name = ammoEntity.GetComponent<NameComponent>().Name;
-				var ammo = ammoEntity.GetComponent<AmmoComponent>();
-
-				AmmoComponent existingAmmo;
-				NameComponent existingName;
-
-				var existingAmmoEntity = inventory.FindItem( gs, (a,n) => n.Name==name, out existingAmmo, out existingName );
-
-				if ( existingAmmoEntity!=null )
-				{
-					if ( existingAmmo.Count < existingAmmo.Capacity || forcePick )
-					{
-						existingAmmo.Count = MathUtil.Clamp( existingAmmo.Count + ammo.Count, 0, existingAmmo.Capacity );
-						ammoEntity.Kill();
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				}
-				else
-				{
-					inventory.AddItem( ammoEntity );
-					return true;
-				}
-			}
-			else
-			{
-				return false;
-			}
+			return success;
 		}
 	}
 }

@@ -23,8 +23,10 @@ namespace IronStar.ECSFactories
 
 			weapon.RemoveComponent<Transform>();
 
-			inventory.AddItem( weapon );
-			inventory.SwitchWeapon( weapon );
+			#warning GIVE MONSTERS WEAPON
+			// #TODO -- give monsters weapon
+			//inventory.AddItem( weapon );
+			//inventory.SwitchWeapon( weapon );
 		}
 
 		public override void Construct( Entity e, IGameState gs )

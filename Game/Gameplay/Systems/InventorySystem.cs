@@ -12,6 +12,7 @@ using IronStar.SFX;
 
 namespace IronStar.Gameplay.Systems
 {
+	[Obsolete]
 	public class InventorySystem : StatelessSystem<InventoryComponent>
 	{
 		public override void Add( IGameState gs, Entity e )
@@ -23,17 +24,17 @@ namespace IronStar.Gameplay.Systems
 		{
 			base.Remove( gs, e );
 
-			var inventory = e.GetComponent<InventoryComponent>();
+			/*var inventory = e.GetComponent<InventoryComponent>();
 
 			foreach ( var item in inventory )
 			{
 				item.Kill();
-			}
+			}*/
 		}
 
 		protected override void Process( Entity entity, GameTime gameTime, InventoryComponent component1 )
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 		}
 	}
 }

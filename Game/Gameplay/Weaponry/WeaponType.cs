@@ -15,6 +15,5 @@ namespace IronStar.Gameplay.Weaponry
 		Plasmagun,
 		RocketLauncher,
 		Railgun,
-		Max,
 	}
 }

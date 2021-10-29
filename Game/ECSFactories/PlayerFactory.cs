@@ -10,6 +10,7 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.ECSFactories
 {
@@ -48,8 +49,13 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 			e.AddComponent( new BobbingComponent() );
 
-			e.AddComponent( new InventoryComponent() );
-			e.AddComponent( new WeaponStateComponent() );
+			var inventory	=	new InventoryComponent();
+			var weaponState	=	new WeaponStateComponent();
+			inventory.TryGiveWeapon( WeaponType.Machinegun );
+			weaponState.TrySwitchWeapon( WeaponType.Machinegun );
+			
+			e.AddComponent( inventory );
+			e.AddComponent( weaponState );
 		}
 	}
 }

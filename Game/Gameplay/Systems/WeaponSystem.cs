@@ -81,28 +81,14 @@ namespace IronStar.Gameplay.Systems
 		{
 			var povTransform	=	GameUtil.ComputePovTransform( userCmd, transform, chctrl, bob );
 
-			if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
-			{
-				inventory.FinalizeWeaponSwitch();
-			}
-
-			//	tell inventory to switch to another weapon :
 			SwitchWeapon( gs, userCmd, inventory, wpnState );
 
-			if (!isAlive)
-			{
-				/*wpnState.SwitchWeapon(inventory, WeaponType.None);
-				wpnState.FinalizeWeaponSwitch();*/
-			}
-			else
-			{			
-				var attack	= userCmd.Action.HasFlag( UserAction.Attack );
-				var weapon	= Arsenal.Get( wpnState.ActiveWeapon );;
+			var attack	= userCmd.Action.HasFlag( UserAction.Attack ) && isAlive;
+			var weapon	= Arsenal.Get( wpnState.ActiveWeapon );
 
-				FadeSpread( gameTime, weapon, wpnState );
-				AdvanceWeaponTimer( gameTime, weapon, wpnState );
-				UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weapon, wpnState );
-			}
+			FadeSpread( gameTime, weapon, wpnState );
+			AdvanceWeaponTimer( gameTime, weapon, wpnState );
+			UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weapon, wpnState, !isAlive );
 		}
 
 		
@@ -110,14 +96,9 @@ namespace IronStar.Gameplay.Systems
 		{
 			if (userCmd.Weapon!=WeaponType.None)
 			{
-				#warning CHECK INVENTORY HAS GIVEN WEAPON
-				if (true /* INVENTORY HAS GIVEN WEAPON */)
+				if (inventory.HasWeapon(userCmd.Weapon))
 				{
-					if (wpnState.ActiveWeapon!=userCmd.Weapon)
-					{
-						wpnState.PendingWeapon	=	userCmd.Weapon;
-						return true;
-					}
+					return wpnState.TrySwitchWeapon(userCmd.Weapon);
 				}
 			}
 
@@ -125,7 +106,6 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		//	#TODO #REFACTOR -- move to GameUtil
 		/*-----------------------------------------------------------------------------------------------
 		 * Weapon state
 		-----------------------------------------------------------------------------------------------*/
@@ -141,21 +121,25 @@ namespace IronStar.Gameplay.Systems
 
 		void FadeSpread( GameTime gameTime, Weapon weapon, WeaponStateComponent state  )
 		{
-			if (weapon.SpreadMode==SpreadMode.Variable)
+			if (weapon!=null)
 			{
-				state.Spread *= (float)Math.Pow( SPREAD_FADEOUT, Math.Min(1, gameTime.ElapsedSec) );
+				if (weapon.SpreadMode==SpreadMode.Variable)
+				{
+					state.Spread *= (float)Math.Pow( SPREAD_FADEOUT, Math.Min(1, gameTime.ElapsedSec) );
+				}
 			}
 		}
 
 
-		void UpdateWeaponFSM (GameTime gameTime, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, Weapon weapon, WeaponStateComponent state )
+		void UpdateWeaponFSM (GameTime gameTime, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, Weapon weapon, WeaponStateComponent state, bool dead )
 		{
 			var timeout	=	state.Timer <= TimeSpan.Zero;
+			var armed	=	weapon != null;
 
 			switch (state.State) 
 			{
 				case WeaponState.Idle:	
-					if (attack) 
+					if (attack && armed) 
 					{
 						if (TryConsumeAmmo(gs, inventory, weapon)) 
 						{
@@ -168,10 +152,10 @@ namespace IronStar.Gameplay.Systems
 							state.Timer += weapon.TimeNoAmmo;
 						}
 					}
-					if (state.HasPengingWeapon) 
+					if (state.HasPengingWeapon || dead) 
 					{
 						state.State =  WeaponState.Drop;	
-						state.Timer =  weapon.TimeDrop;
+						state.Timer =  armed ? weapon.TimeDrop : TimeSpan.Zero;
 					}
 					break;
 
@@ -219,6 +203,15 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Drop:	
 					if (timeout) 
 					{
+						state.State	=	WeaponState.Inactive;
+						state.Timer =	TimeSpan.Zero;
+						state.ActiveWeapon = WeaponType.None;
+					}
+					break;
+
+				case WeaponState.Inactive:		
+					if (state.HasPengingWeapon) 
+					{
 						var pendingWeapon	=	Arsenal.Get( state.PendingWeapon );
 						state.ActiveWeapon	=	state.PendingWeapon;
 						state.PendingWeapon	=	WeaponType.None;
@@ -246,43 +239,9 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		AmmoComponent GetAmmo( IGameState gs, InventoryComponent inventory, WeaponComponent weapon )
-		{
-			AmmoComponent ammo;
-			NameComponent name;
-			
-			inventory.FindItem<AmmoComponent,NameComponent>( gs, (a,n) => n.Name == weapon.AmmoClass, out ammo, out name );
-
-			return ammo;
-		}
-
-
 		bool TryConsumeAmmo( IGameState gs, InventoryComponent inventory, Weapon weapon )
 		{
-			return true;
-			
-			#warning TRY_CONSUME_AMMO_!_!_!
-			/*if (inventory.Flags.HasFlag(InventoryFlags.InfiniteAmmo))
-			{
-				return true;
-			}
-
-			var ammo		=	GetAmmo( gs, inventory, weapon );
-
-			if (ammo==null) 
-			{
-				return false;
-			}
-
-			if (ammo.Count >= weapon.AmmoConsumption)
-			{
-				ammo.Count -= weapon.AmmoConsumption;
-				return true;
-			}
-			else
-			{
-				return false;
-			}			*/
+			return inventory.TryConsumeAmmo( weapon.AmmoType, weapon.AmmoConsumption );
 		}
 
 

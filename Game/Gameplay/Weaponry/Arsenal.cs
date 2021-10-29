@@ -12,12 +12,19 @@ namespace IronStar.Gameplay.Weaponry
 {
 	static class Arsenal
 	{
-		readonly static Weapon machinegun;
-		readonly static Weapon machinegun2;
-		readonly static Weapon shotgun;
-		readonly static Weapon plasmagun;
-		readonly static Weapon rlauncher;
-		readonly static Weapon railgun;
+		readonly static Weapon	machinegun;
+		readonly static Weapon	machinegun2;
+		readonly static Weapon	shotgun;
+		readonly static Weapon	plasmagun;
+		readonly static Weapon	rlauncher;
+		readonly static Weapon	railgun;
+
+		readonly static Ammo	bullets		=	new Ammo(200, "BULLETS"	);
+		readonly static Ammo	shells		=	new Ammo(200, "SHELLS"	);
+		readonly static Ammo	cells		=	new Ammo(200, "CELLS"	);
+		readonly static Ammo	slugs		=	new Ammo( 50, "SLUGS"	);
+		readonly static Ammo	rockets		=	new Ammo( 50, "ROCKETS"	);
+		readonly static Ammo	grenades	=	new Ammo( 50, "GRENADES");
 
 		public static readonly Color ColorMachinegun		=	new Color( 250, 80, 20 ); 
 		public static readonly Color ColorShotgun			=	new Color( 250, 80, 20 ); 
@@ -93,10 +100,24 @@ namespace IronStar.Gameplay.Weaponry
 				case WeaponType.Plasmagun:		return plasmagun;
 				case WeaponType.RocketLauncher:	return rlauncher;
 				case WeaponType.Railgun:		return railgun;
+				default: return null;
+			}
+		}
+
+
+		public static Ammo Get( AmmoType ammoType )
+		{
+			switch (ammoType)
+			{
+				case AmmoType.Bullets:	return bullets	;
+				case AmmoType.Shells:	return shells	;
+				case AmmoType.Cells:	return cells	;
+				case AmmoType.Slugs:	return slugs	;
+				case AmmoType.Rockets:	return rockets	;
+				case AmmoType.Grenades:	return grenades	;
 				default: 
-					Log.Warning("Bad weapon type " + weaponType.ToString());
-					return machinegun;
-					break;
+					Log.Warning("Bad ammo type " + ammoType.ToString());
+					return null;
 			}
 		}
 	}

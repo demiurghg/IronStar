@@ -32,8 +32,8 @@ namespace IronStar.SFX2
 		public readonly RenderWorld	rw;
 		public readonly ContentManager content;
 
-		readonly Aspect skinnedAspect = new Aspect().Include<RenderModelInstance,Transform,RenderModel,BoneComponent>();
-		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,Transform,RenderModel>()
+		readonly Aspect skinnedAspect = new Aspect().Include<Transform,RenderModel,BoneComponent>();
+		readonly Aspect rigidAspect   = new Aspect().Include<Transform,RenderModel>()
 													.Exclude<BoneComponent>();
 
 

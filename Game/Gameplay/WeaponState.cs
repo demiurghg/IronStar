@@ -17,6 +17,7 @@ namespace IronStar.Gameplay
 		Drop		,
 		Raise		,
 		NoAmmo		,
+		Inactive	,
 		//Event		,
 	}
 }

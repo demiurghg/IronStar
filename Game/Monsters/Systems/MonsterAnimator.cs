@@ -15,6 +15,7 @@ using IronStar.SFX2;
 using IronStar.SFX;
 using IronStar.Animation;
 using Fusion.Engine.Graphics.Scenes;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Monsters.Systems
 {
@@ -63,25 +64,25 @@ namespace IronStar.Monsters.Systems
 		{
 			var e				=	monsterEntity;
 			var inventory		=	e.GetComponent<InventoryComponent>();
-			var weaponEntity	=	inventory?.ActiveWeapon;
-			var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
+			var weaponState		=	e.GetComponent<WeaponStateComponent>();
+			var weapon			=	Arsenal.Get( weaponState.ActiveWeapon );
 			var crossfade		=	TimeSpan.FromMilliseconds(50);
 
 			if (weapon!=null)
 			{
-				if (weapon.State!=prevWeaponState)
+				if (weaponState.State!=prevWeaponState)
 				{
-					prevWeaponState	=	weapon.State;
+					prevWeaponState	=	weaponState.State;
 
-					if (weapon.State==WeaponState.Cooldown || weapon.State==WeaponState.Cooldown2)
+					if (weaponState.State==WeaponState.Cooldown || weaponState.State==WeaponState.Cooldown2)
 					{
 						torsoLayer.Sequence("attack", SequenceMode.Immediate|SequenceMode.Hold, crossfade );
 					}
-					else if (weapon.State==WeaponState.Drop)
+					else if (weaponState.State==WeaponState.Drop)
 					{
 						torsoLayer.Sequence("drop", SequenceMode.Immediate|SequenceMode.Hold, crossfade);
 					}
-					else if (weapon.State==WeaponState.Raise)
+					else if (weaponState.State==WeaponState.Raise)
 					{
 						torsoLayer.Sequence("raise", SequenceMode.Immediate|SequenceMode.Hold, crossfade);
 					}

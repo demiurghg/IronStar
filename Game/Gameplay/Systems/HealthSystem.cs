@@ -38,47 +38,8 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			PickupPowerups( gs, gameTime );
+			//PickupPowerups( gs, gameTime );
 			ApplyDamage( gs, gameTime );
-		}
-
-
-		void PickupPowerups( IGameState gs, GameTime gameTime )
-		{
-			var powerupEntities	=	gs.QueryEntities( powerupAspect );
-			var playerEntity	=	gs.QueryEntities( playerAspect ).LastOrDefault();
-			var playerHealth	=	playerEntity?.GetComponent<HealthComponent>();
-
-			if (playerHealth==null)
-			{
-				return;
-			}
-
-			foreach ( var powerupEntity in powerupEntities )
-			{
-				var touch		=	powerupEntity.GetComponent<TouchDetector>();
-				var powerup		=	powerupEntity.GetComponent<PowerupComponent>();
-				var pickup		=	powerupEntity.GetComponent<PickupComponent>();
-
-				if (touch.Contains( playerEntity ))
-				{
-					bool containsHealth	=	powerup.Health > 0;
-					bool containsArmor	=	powerup.Armor > 0;
-					bool needHealth		=	playerHealth.Health < playerHealth.MaxHealth;
-					bool needArmor		=	playerHealth.Armor  < playerHealth.MaxArmor;
-
-					bool shouldPickup	=	(needHealth && containsHealth) || (needArmor && containsArmor);
-
-					if (shouldPickup)
-					{
-						playerHealth.Health	=	Math.Min( playerHealth.Health + powerup.Health, playerHealth.MaxHealth );
-						playerHealth.Armor	=	Math.Min( playerHealth.Armor  + powerup.Armor , playerHealth.MaxArmor );
-
-						powerupEntity.Kill();
-						FXPlayback.SpawnFX( gs, pickup?.FXName, powerupEntity );
-					}
-				}
-			}
 		}
 
 

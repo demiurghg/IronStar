@@ -44,6 +44,34 @@ namespace IronStar.Gameplay.Components
 			Action	=	action;
 		}
 
+
+		public bool TryGiveHealth( int amount )
+		{
+			if ( Health < MaxHealth && amount > 0 )
+			{
+				Health = Math.Min( MaxHealth, Health + amount );
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		
+		public bool TryGiveArmor( int amount )
+		{
+			if ( Armor < MaxHealth && amount > 0 )
+			{
+				Armor = Math.Min( MaxArmor, Armor + amount );
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		
 		public void InflictDamage( int damage, Entity attacker )
 		{

@@ -8,8 +8,8 @@ namespace IronStar.Gameplay.Weaponry
 {
 	class Ammo
 	{
-		readonly string NiceName;
-		readonly int Capacity;
+		readonly public string NiceName;
+		readonly public int Capacity;
 
 		public Ammo( int capacity, string niceName )
 		{

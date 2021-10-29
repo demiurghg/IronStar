@@ -14,6 +14,5 @@ namespace IronStar.Gameplay.Weaponry
 		Slugs,
 		Rockets,
 		Grenades,
-		Max,
 	}
 }

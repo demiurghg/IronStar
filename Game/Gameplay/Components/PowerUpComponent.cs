@@ -5,13 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IronStar.ECS;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Components
 {
 	public class PowerupComponent : Component
 	{
-		public int Health;
-		public int Armor;
+		public int Health			=	0;
+		public int Armor			=	0;
+
+		public WeaponType Weapon	=	WeaponType.None;
+		public AmmoType Ammo		=	AmmoType.Bullets;
+		public int AmmoCount		=	0;
 
 		public PowerupComponent()
 		{
@@ -24,6 +29,19 @@ namespace IronStar.Gameplay.Components
 
 			Health	=	health;
 			Armor	=	armor;
+		}
+
+		public PowerupComponent( WeaponType weapon, AmmoType ammo, int count )
+		{
+			Weapon		=	weapon;
+			Ammo		=	ammo;
+			AmmoCount	=	count;
+		}
+
+		public PowerupComponent( AmmoType ammo, int count )
+		{
+			Ammo		=	ammo;
+			AmmoCount	=	count;
 		}
 	}
 }

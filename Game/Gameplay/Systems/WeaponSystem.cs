@@ -34,8 +34,6 @@ namespace IronStar.Gameplay.Systems
 		public readonly FXPlayback fxPlayback;
 		public readonly IGameState gs;
 
-
-		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
 		Aspect armedEntityAspect	=	new Aspect().Include<InventoryComponent,WeaponStateComponent,UserCommandComponent,CharacterController>()
 													.Include<Transform>();
 

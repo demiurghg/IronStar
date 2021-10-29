@@ -44,8 +44,6 @@ namespace IronStar.Gameplay.Systems
 											.Include<InventoryComponent>()
 											;
 
-		readonly Aspect weaponAspect	=	new Aspect().Include<WeaponComponent>();
-
 		RenderModelInstance	renderModel = null;
 		WeaponType activeWeapon = WeaponType.None;
 

@@ -209,12 +209,10 @@
     <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
-    <Compile Include="Gameplay\Components\AmmoComponent.cs" />
     <Compile Include="Gameplay\Components\ProjectileComponent.cs" />
     <Compile Include="Gameplay\Components\BobbingComponent.cs" />
     <Compile Include="Gameplay\Components\StepComponent.cs" />
     <Compile Include="Gameplay\Components\UserCommand.cs" />
-    <Compile Include="Gameplay\Components\WeaponComponent.cs" />
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />

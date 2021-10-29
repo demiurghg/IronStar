@@ -10,6 +10,7 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
+using IronStar.Gameplay.Weaponry;
 using IronStar.SFX2;
 
 namespace IronStar.ECSFactories
@@ -17,16 +18,10 @@ namespace IronStar.ECSFactories
 	[EntityFactory("MONSTER_MARINE")]
 	public class MonsterMarineFactory : EntityFactory
 	{
-		void GiveWeapon(IGameState gs, InventoryComponent inventory, string weaponName)
+		void GiveWeapon(IGameState gs, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
 		{
-			var weapon		=	gs.Spawn(weaponName);
-
-			weapon.RemoveComponent<Transform>();
-
-			#warning GIVE MONSTERS WEAPON
-			// #TODO -- give monsters weapon
-			//inventory.AddItem( weapon );
-			//inventory.SwitchWeapon( weapon );
+			inventory.TryGiveWeapon(weapon);
+			state.TrySwitchWeapon(weapon);
 		}
 
 		public override void Construct( Entity e, IGameState gs )
@@ -47,23 +42,19 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			var inventory	=	new InventoryComponent(InventoryFlags.InfiniteAmmo);
+			var weaponState	=	new WeaponStateComponent();
 			e.AddComponent( inventory );
-			e.AddComponent( new WeaponStateComponent() );
+			e.AddComponent( weaponState );
 			e.AddComponent( new BehaviorComponent() );
 
 			var weapons = new[]
 			{
-				//"WEAPON_RAILGUN",
-				"WEAPON_MACHINEGUN",
-				"WEAPON_PLASMAGUN",
-				//"WEAPON_PLASMAGUN",
-				//"WEAPON_PLASMAGUN",
-				//"WEAPON_ROCKETLAUNCHER",
-				"WEAPON_ROCKETLAUNCHER",
+				WeaponType.Machinegun,
+				WeaponType.Plasmagun,
+				WeaponType.RocketLauncher,
 			};
 
-			//GiveWeapon( e, "WEAPON_PLASMAGUN");
-			GiveWeapon( gs, inventory, weapons[ MathUtil.Random.Next(weapons.Length) ] );
+			GiveWeapon( gs, inventory, weaponState, weapons[ MathUtil.Random.Next(weapons.Length) ] );
 		}
 	}
 }

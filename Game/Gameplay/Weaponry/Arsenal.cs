@@ -60,7 +60,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorShotgun, ColorIntensity, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
-								.Attack		( 7, IMPULSE_MEDIUM, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
+								.Attack		( 10, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
 								.Beam		( 10, null, "shotgunHit" )
 								;
 

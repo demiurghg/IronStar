@@ -87,8 +87,6 @@ namespace IronStar.ECS
 		/// <param name="game"></param>
 		public GameState( Game game, ContentManager content, TimeSpan timeStep )
 		{
-			ECSTypeManager.Scan();
-
 			mainThread		=	Thread.CurrentThread;
 
 			looper			=	new ParallelLooper();

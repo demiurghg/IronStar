@@ -12,8 +12,7 @@ namespace IronStar.ECS
 	{
 		static List<Type> componentTypes	= new List<Type>();
 
-
-		public static void Scan()
+		static ECSTypeManager()
 		{
 			componentTypes	=	Misc.GatherInterfaceImplementations( typeof(IComponent) )
 									.ToList();
@@ -34,7 +33,8 @@ namespace IronStar.ECS
 		public static long GetComponentBit( Type componentType )
 		{
 			int index = componentTypes.IndexOf( componentType );
-			return index < 0L ? 0L : (1L << index);
+			if (index<0) throw new ArgumentException("Bad component type : {0}", componentType.ToString());
+			return (1L << index);
 		}
 
 

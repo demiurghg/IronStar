@@ -51,13 +51,12 @@ namespace IronStar.ECS
 		}
 
 		
-		public void Interpolate( GameState gs, GameTime gameTime, Action<T,float> interpolate )
+		public void Interpolate( GameState gs, GameTime gameTime, Action<T,float> interpolate, double timestep )
 		{
 			lock (flipLock)
 			{
 				double timestamp	=	readTimestamp.TotalSeconds;
 				double time			=	gameTime.Current.TotalSeconds;
-				double timestep		=	gs.TimeStep.TotalSeconds;
 
 				float alpha = MathUtil.Clamp( (float)((time - timestamp)/timestep), 0, 1 );
 

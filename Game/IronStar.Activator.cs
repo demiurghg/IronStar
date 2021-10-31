@@ -34,7 +34,7 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(16));
+			var gs			=	new GameState(game, content);
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;
@@ -67,7 +67,7 @@ namespace IronStar
 
 			//	game logic :
 			gs.AddSystem( new HealthSystem() );
-			//gs.AddSystem( new PickupSystem() );
+			gs.AddSystem( new PickupSystem() );
 			gs.AddSystem( new ExplosionSystem() );
 
 			//	AI :
@@ -83,7 +83,6 @@ namespace IronStar
 			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 
-			/*
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :

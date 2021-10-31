@@ -48,7 +48,6 @@ namespace IronStar.ECS
 		public ContentManager Content { get { return content; } }
 		readonly ContentManager content;
 		readonly Game game;
-		readonly TimeSpan timeStep;
 
 		readonly EntityCollection			entities;
 		readonly SystemCollection			systems;
@@ -72,19 +71,16 @@ namespace IronStar.ECS
 		readonly Thread mainThread;
 		bool terminate = false;
 
-		public TimeSpan TimeStep { get { return timeStep; } }
-
 		/// <summary>
 		/// Game state constructor
 		/// </summary>
 		/// <param name="game"></param>
-		public GameState( Game game, ContentManager content, TimeSpan timeStep )
+		public GameState( Game game, ContentManager content )
 		{
 			mainThread		=	Thread.CurrentThread;
 
 			this.game		=	game;
 			this.content	=	content;
-			this.timeStep	=	timeStep;
 
 			entities	=	new EntityCollection();
 			systems		=	new SystemCollection(this);
@@ -182,66 +178,6 @@ namespace IronStar.ECS
 							Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
 						}
 					}*/
-				}
-			}
-		}
-
-
-		public void UpdateParallelLoop()
-		{
-			long	 frames			=	0;
-			TimeSpan dt				=	timeStep;
-			TimeSpan currentTime	=	GameTime.CurrentTime;
-			TimeSpan accumulator	=	TimeSpan.Zero;
-			var		 stopwatch		=	new Stopwatch();
-
-			StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
-			StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
-
-			while (!terminate)
-			{
-				TimeSpan newTime	=	GameTime.CurrentTime;
-				TimeSpan frameTime	=	newTime - currentTime;
-				currentTime			=	newTime;
-
-				accumulator	+=	frameTime;
-
-				while (accumulator >= dt)
-				{
-					StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
-
-					accumulator -= dt;
-				}
-
-				Thread.Sleep(0);
-			}
-
-			KillAll();
-			RefreshEntities();
-		}
-
-
-		void StepSimulation( Stopwatch stopwatch, TimeSpan dt, GameTime gameTime )
-		{
-			stopwatch.Reset();
-			stopwatch.Start();
-
-			RefreshEntities();
-
-			foreach ( var system in systems )
-			{
-				system.Update( this, gameTime );
-			}
-
-			stopwatch.Stop();
-			if (stopwatch.Elapsed > dt)
-			{
-				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
-
-				foreach ( var system in systems )
-				{
-					if (system.ProfilingTime.Ticks > dt.Ticks / 10)
-					Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
 				}
 			}
 		}

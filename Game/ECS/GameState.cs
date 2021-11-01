@@ -18,6 +18,7 @@ using Fusion.Core.Shell;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using BEPUutilities.Threading;
+using System.IO;
 
 namespace IronStar.ECS
 {
@@ -273,15 +274,16 @@ namespace IronStar.ECS
 			KillAllInternal();
 
 			//	refresh component and system bindings :
-			foreach (var re in refreshed)
+			var refreshList = refreshed.ToArray();
+			refreshed.Clear();
+
+			foreach (var re in refreshList)
 			{
 				foreach ( var system in systems )
 				{
 					system.Changed(re);
 				}
 			}
-			
-			refreshed.Clear();
 		}
 
 
@@ -410,9 +412,6 @@ namespace IronStar.ECS
 
 		/// <summary>
 		/// Gets entity's component of given type
-		/// Result depends on thread where if called from.
-		/// In update thread this method returns latest component value.
-		/// In main thread this method returns interpolated or buffered value.
 		/// </summary>
 		/// <param name="entity">Entity to get component from</param>
 		/// <param name="componentType">Component type</param>
@@ -445,6 +444,96 @@ namespace IronStar.ECS
 			}
 		}
 
+		/*-----------------------------------------------------------------------------------------------
+		 *	Save/Load :
+		-----------------------------------------------------------------------------------------------*/
+
+		public void Save( Stream stream, TimeSpan time, TimeSpan dt )
+		{
+			using ( var writer = new BinaryWriter( stream ) )
+			{
+				//	write timing
+				writer.Write( time );
+				writer.Write( dt );
+
+				//	write entity IDs :
+				writer.Write( entities.Count );
+				foreach ( var pair in entities )
+				{
+					writer.Write( pair.Key );
+				}
+
+				//	write component data :
+				foreach ( var type in ECSTypeManager.GetComponentTypes() )
+				{
+					var compBuffer	=	components[type];
+
+					writer.Write( compBuffer.Count );
+
+					foreach ( var compPair in compBuffer.Updating )
+					{
+						writer.Write( compPair.Key );
+						compPair.Value.Save( this, writer ); 
+					}
+				}
+			}
+		}
+
+
+		public void Load( Stream stream )
+		{
+			using ( var reader = new BinaryReader( stream ) )
+			{
+				//	read timing :
+				var time	=	reader.Read<TimeSpan>();
+				var dt		=	reader.Read<TimeSpan>();
+
+				//	read entity IDs :
+				int entityCount = reader.ReadInt32();
+				HashSet<uint> newIDs = new HashSet<uint>(entityCount);
+
+				for (int i=0; i<entityCount; i++)
+				{
+					newIDs.Add( reader.ReadUInt32() );
+				}
+
+				//	add new / remove old entities :
+				foreach ( var e in entities )
+				{
+					if (!newIDs.Contains(e.Value.ID))
+					{
+						e.Value.Kill();
+					}
+				}
+
+				foreach ( var id in newIDs )
+				{
+					if (!entities.Contains(id))
+					{
+						var e = new Entity(this, id);
+						entities.Add( e );
+						Refresh( e );
+					}
+				}
+
+				//	read component data :
+				#warning TODO LOAD ...
+				foreach ( var type in ECSTypeManager.GetComponentTypes() )
+				{
+					var cBuffer	=	components[type];
+
+					int componentCount	=	reader.ReadInt32();
+					var componentDict	=	new Dictionary<uint,IComponent>( componentCount );
+
+					for (int i=0; i<componentCount; i++)
+					{
+						/*uint id = reader.ReadUInt32();
+						wrirter.Write( compPair.Key );
+						compPair.Value.Save( this, writer );  */
+					}
+				}
+			}
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Queries :
@@ -459,7 +548,6 @@ namespace IronStar.ECS
 		{
 			return entities[ id ];
 		}
-
 
 		public IEnumerable<Entity> QueryEntities( Aspect aspect )
 		{

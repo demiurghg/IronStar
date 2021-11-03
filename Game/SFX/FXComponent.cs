@@ -13,7 +13,7 @@ using IronStar.ECS;
 
 namespace IronStar.SFX 
 {
-	public class FXComponent : Component
+	public class FXComponent : IComponent
 	{
 		public string	FXName;
 		public bool		Looped;
@@ -22,6 +22,28 @@ namespace IronStar.SFX
 		{
 			FXName	=	fxName;
 			Looped	=	looped;
+		}
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( FXName );
+			writer.Write( Looped );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			FXName	=	reader.ReadString();
+			Looped	=	reader.ReadBoolean();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

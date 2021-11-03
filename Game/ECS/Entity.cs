@@ -181,11 +181,5 @@ namespace IronStar.ECS
 				return (transform==null) ? Vector3.Zero : transform.Position;
 			}
 		}
-
-
-		public string Name 
-		{
-			get { return GetComponent<NameComponent>()?.Name; }
-		}
 	}
 }

@@ -22,7 +22,6 @@ using System.IO;
 using IronStar.AI;
 using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
-using IronStar.ECSGraphics;
 using IronStar.Gameplay;
 using IronStar.Editor.Systems;
 
@@ -30,11 +29,54 @@ namespace IronStar
 {
 	partial class IronStar : Game
 	{
+		class TrackData
+		{
+			public long Bits;
+		}
+
+		class TrackSystem : ProcessingSystem<TrackData,Transform>
+		{
+			protected override TrackData Create( Entity entity, Transform component1 )
+			{
+				Log.Debug("ADD: {0}", entity.ToString());
+				return new TrackData() { Bits = entity.ComponentMapping };
+			}
+
+			protected override void Destroy( Entity entity, TrackData resource )
+			{
+				Log.Debug("REM: {0}", entity.ToString());
+			}
+
+			protected override void Process( Entity entity, GameTime gameTime, TrackData resource, Transform component1 )
+			{
+				if (entity.ComponentMapping!=resource.Bits)
+				{
+					var oldBits	=	entity.ComponentMapping;
+					var newBits	=	resource.Bits;
+					var diff	=	oldBits ^ newBits;
+
+					for (int i=0; i<64; i++)
+					{
+						long bit = 1L << i;
+
+						if ((diff & bit) != 0)
+						{
+							if ( (newBits & bit) !=0 ) Log.Debug("ADD COMPONENT: {0}", ECSTypeManager.GetComponentType(bit).Name );
+							if ( (oldBits & bit) !=0 ) Log.Debug("REM COMPONENT: {0}", ECSTypeManager.GetComponentType(bit).Name );
+						}
+					}
+
+					resource.Bits = entity.ComponentMapping;
+				}
+			}
+		}
+
 		public static IGameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
 			var gs			=	new GameState(game, content);
+			var gs2			=	new GameState(game, content);
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;
@@ -50,6 +92,8 @@ namespace IronStar
 
 			//	player system :
 			gs.AddSystem( new PlayerInputSystem() );
+
+			gs.AddSystem( new TrackSystem() );
 			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	weapon system :
@@ -84,8 +128,8 @@ namespace IronStar
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 
 			gs.AddSystem( fxPlayback );
-
-			//	rendering :
+			  
+			// rendering :
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
 			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
@@ -115,8 +159,8 @@ namespace IronStar
 			LoadContent(rw, content, mapName);
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
-			return gs;
-			//return new MTGameState( game, gs, null, TimeSpan.FromSeconds(1.0f/60.0f) );
+			//return gs;
+			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/60.0f) );
 		}
 
 

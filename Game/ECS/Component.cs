@@ -11,15 +11,11 @@ namespace IronStar.ECS
 	/// #TODO #ECS -- implement Clone and Interpolate using reflection and IL generator.
 	/// https://stackoverflow.com/questions/966451/fastest-way-to-do-shallow-copy-in-c-sharp
 	/// </summary>
-	public class Component : IComponent
+	public abstract class Component : IComponent
 	{
-		public virtual void Load( GameState gs, Stream stream )
-		{
-		}
+		public virtual void Save( GameState gs, BinaryWriter writer ) {}
 
-		public virtual void Save( GameState gs, Stream stream )
-		{
-		}
+		public virtual void Load( GameState gs, BinaryReader reader ) {}
 
 		public virtual IComponent Clone()
 		{

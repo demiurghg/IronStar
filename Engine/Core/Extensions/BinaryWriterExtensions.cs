@@ -7,23 +7,73 @@ using System.IO;
 using System.Runtime.InteropServices;
 using SharpDX;
 using Fusion.Core.Content;
+using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Core.Extensions {
-	public static class BinaryWriterExtensions {
-
+namespace Fusion.Core.Extensions 
+{
+	public static class BinaryWriterExtensions 
+	{
 		public static void WriteFourCC ( this BinaryWriter writer, string fourCC )
 		{
 			writer.Write( ContentUtils.MakeFourCC(fourCC) );
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Math types :
+		-----------------------------------------------------------------------------------------*/
 
-
-		static void WriteGeneric<T>( BinaryWriter writer, object src, int elementCount )
+		public static void Write( this BinaryWriter writer, Color value )
 		{
-			var size = elementCount * Marshal.SizeOf( typeof( T ) );
+			writer.Write( value.ToRgba() );
+		}
+
+		public static void Write( this BinaryWriter writer, Vector2 value )
+		{
+			writer.Write( value.X );
+			writer.Write( value.Y );
+		}
+
+		public static void Write( this BinaryWriter writer, Vector3 value )
+		{
+			writer.Write( value.X );
+			writer.Write( value.Y );
+			writer.Write( value.Z );
+		}
+
+		public static void Write( this BinaryWriter writer, Vector4 value )
+		{
+			writer.Write( value.X );
+			writer.Write( value.Y );
+			writer.Write( value.Z );
+			writer.Write( value.W );
+		}
+
+		public static void Write( this BinaryWriter writer, Quaternion value )
+		{
+			writer.Write( value.X );
+			writer.Write( value.Y );
+			writer.Write( value.Z );
+			writer.Write( value.W );
+		}
+
+		public static void Write( this BinaryWriter writer, Matrix value )
+		{
+			writer.Write( value.Column1 );
+			writer.Write( value.Column2 );
+			writer.Write( value.Column3 );
+			writer.Write( value.Column4 );
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Structures :
+		-----------------------------------------------------------------------------------------*/
+
+		public static void WriteArray( this BinaryWriter writer, object sourceArray, Type elementType, int elementCount )
+		{
+			var size = elementCount * Marshal.SizeOf( elementType );
 			var buffer = new byte[ size ];
-			var handle = GCHandle.Alloc( src, GCHandleType.Pinned );
+			var handle = GCHandle.Alloc( sourceArray, GCHandleType.Pinned );
 			var ds = new DataStream( handle.AddrOfPinnedObject(), size, true, false );
 			ds.ReadRange( buffer, 0, size );
 			writer.Write( buffer );
@@ -32,19 +82,17 @@ namespace Fusion.Core.Extensions {
 		}
 
 
-
 		public static void Write<T>( this BinaryWriter writer, T structure ) where T : struct
 		{
-			WriteGeneric<T>( writer, structure, 1 );
+			WriteArray( writer, structure, typeof(T), 1 );
 		}
-
 
 
 		public static void Write<T>( this BinaryWriter writer, T[] array ) where T : struct
 		{
 			if (array.Length>0)
 			{
-				WriteGeneric<T>( writer, array, array.Length );
+				WriteArray( writer, array, typeof(T), array.Length );
 			}
 		}
 
@@ -55,13 +103,13 @@ namespace Fusion.Core.Extensions {
 			{
 				throw new ArgumentOutOfRangeException("count > array.Length");
 			}
-			WriteGeneric<T>( writer, array, count );
+			WriteArray( writer, array, typeof(T), count );
 		}
 
 
 		public static void Write<T>( this BinaryWriter writer, T[,] array ) where T : struct
 		{
-			WriteGeneric<T>( writer, array, array.Length );
+			WriteArray( writer, array, typeof(T), array.Length );
 		}
 	}
 }

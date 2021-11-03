@@ -13,7 +13,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.SFX2
 {
-	public class LightProbeBox : Component
+	public class LightProbeBox : IComponent
 	{
 		public readonly string name;
 
@@ -47,6 +47,40 @@ namespace IronStar.SFX2
 		public LightProbeBox ( string name )
 		{
 			this.name	=	name;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Width			);
+			writer.Write( Height		);
+			writer.Write( Depth			);
+			writer.Write( ShellWidth	);
+			writer.Write( ShellHeight	);
+			writer.Write( ShellDepth	);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Width		=	reader.ReadSingle();
+			Height		=	reader.ReadSingle();
+			Depth		=	reader.ReadSingle();
+			ShellWidth	=	reader.ReadSingle();
+			ShellHeight	=	reader.ReadSingle();
+			ShellDepth	=	reader.ReadSingle();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

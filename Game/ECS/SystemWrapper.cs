@@ -34,6 +34,12 @@ namespace IronStar.ECS
 		}
 
 
+		public override string ToString()
+		{
+			return string.Format("[{0}, {1}]", System.GetType().Name, Bit);
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{									
 			stopwatch.Reset();

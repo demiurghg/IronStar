@@ -7,6 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Content;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace IronStar.ECS
 {
@@ -30,6 +33,8 @@ namespace IronStar.ECS
 		Thread		gameThread;
 		TimeSpan	timestep;
 
+		ConcurrentQueue<Action> commandQueue = new ConcurrentQueue<Action>();
+
 
 		public MTGameState( Game game, IGameState simulation, IGameState presentation, TimeSpan timestep )
 		{
@@ -42,7 +47,7 @@ namespace IronStar.ECS
 			gameThread.Name				=	"ECS Thread";
 			gameThread.IsBackground		=	true;
 
-			gameThread.Start();
+			//gameThread.Start();
 		}
 
 
@@ -92,6 +97,24 @@ namespace IronStar.ECS
 		}
 
 		/*-----------------------------------------------------------------------------------------
+		 *	Update :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Update( GameTime gameTime )
+		{
+			simulation.Update(gameTime);
+
+			using ( var ms = new MemoryStream() ) 
+			{
+				((GameState)simulation).Save( ms, gameTime.Current, gameTime.Elapsed );
+		
+				//ms.Seek(0, SeekOrigin.Begin);
+
+				//((GameState)presentation).Load( ms );
+			}
+		}
+
+		/*-----------------------------------------------------------------------------------------
 		 *	Interface implementation :
 		-----------------------------------------------------------------------------------------*/
 
@@ -105,15 +128,9 @@ namespace IronStar.ECS
 			simulation.KillAll();
 		}
 
-
 		public Entity Spawn( IFactory factory )
 		{
 			return simulation.Spawn(factory);
-		}
-
-		public void Update( GameTime gameTime )
-		{
-			presentation?.Update(gameTime);
 		}
 	}
 }

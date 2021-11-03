@@ -9,155 +9,105 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
-	class ComponentBuffer : IDictionary<uint,IComponent>
+	/// <summary>
+	/// #TODO #ECS #REFACTOR -- move interpolation to separate class
+	/// </summary>
+	class ComponentBuffer
 	{
-		Dictionary<uint,IComponent>	dict = new Dictionary<uint, IComponent>();
+		public Dictionary<uint, IComponent> Updating { get { return updating; } }
 
-		public IComponent this[uint key]
+		Dictionary<uint, IComponent>	updating;
+		Dictionary<uint, IComponent>	present;
+		Dictionary<uint, IComponent>	previous;
+		Dictionary<uint, IComponent>	lerped;
+		object flipLock = new object();
+		TimeSpan timestamp;
+		TimeSpan timestep;
+
+		public ComponentBuffer()
 		{
-			get
-			{
-				lock(dict)
-				{
-					return ( (IDictionary<uint, IComponent>)dict )[key];
-				}
-			}
-
-			set
-			{
-				lock(dict)
-				{
-					( (IDictionary<uint, IComponent>)dict )[key]=value;
-				}
-			}
+			updating	=	new Dictionary<uint, IComponent>();
+			present		=	new Dictionary<uint, IComponent>();
+			previous	=	new Dictionary<uint, IComponent>();
+			lerped		=	new Dictionary<uint, IComponent>();
 		}
 
-		public int Count
+		public int Count { get { return updating.Count; } }
+
+		
+		public void Add( uint id, IComponent c )
 		{
-			get
-			{
-				lock(dict)
-				{
-					return ( (IDictionary<uint, IComponent>)dict ).Count;
-				}
-			}
+			updating.Add( id, c );
 		}
 
-		public bool IsReadOnly
+		
+		public void Remove( uint id )
 		{
-			get
-			{
-				return false;
-			}
+			updating.Remove( id );
 		}
 
-		public ICollection<uint> Keys
-		{
-			get
-			{
-				lock(dict)
-				{
-					return ( (IDictionary<uint, IComponent>)dict ).Keys;
-				}
-			}
-		}
-
-		public ICollection<IComponent> Values
-		{
-			get
-			{
-				lock(dict)
-				{
-					return ( (IDictionary<uint, IComponent>)dict ).Values;
-				}
-			}
-		}
-
-		public void Add( KeyValuePair<uint, IComponent> item )
-		{
-			lock(dict)
-			{
-				( (IDictionary<uint, IComponent>)dict ).Add( item );
-			}
-		}
-
-		public void Add( uint key, IComponent value )
-		{
-			lock(dict)
-			{
-				( (IDictionary<uint, IComponent>)dict ).Add( key, value );
-			}
-		}
-
+		
 		public void Clear()
 		{
-			lock(dict)
+			updating.Clear();
+		}
+
+		
+		public bool TryGetValue( uint id, out IComponent component )
+		{
+			return updating.TryGetValue(id, out component);
+		}
+
+		
+		public void CommitChanges( TimeSpan timestamp, TimeSpan timestep )
+		{
+			lock (flipLock)
 			{
-				( (IDictionary<uint, IComponent>)dict ).Clear();
+				this.timestamp	=	timestamp;
+				this.timestep	=	timestep;
+
+				Misc.Swap( ref present, ref previous );
+				present.Clear();
+
+				foreach ( var keyValue in updating )
+				{
+					present.Add( keyValue.Key, keyValue.Value.Clone() );
+				}
 			}
 		}
 
-		public bool Contains( KeyValuePair<uint, IComponent> item )
+
+		public bool TryGetInterpolatedValue( uint id, out IComponent component )
 		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).Contains( item );
-			}
+			return lerped.TryGetValue( id, out component );
 		}
 
-		public bool ContainsKey( uint key )
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).ContainsKey( key );
-			}
-		}
 
-		public void CopyTo( KeyValuePair<uint, IComponent>[] array, int arrayIndex )
-		{
-			lock(dict)
+		public void Interpolate( TimeSpan time )
+		{ 
+			lock (flipLock)
 			{
-				( (IDictionary<uint, IComponent>)dict ).CopyTo( array, arrayIndex );
-			}
-		}
+				double	ftimestamp	=	timestamp.TotalSeconds;
+				double	ftimestep	=	timestep.TotalSeconds;
+				double	ftime		=	time.TotalSeconds;
 
-		public IEnumerator<KeyValuePair<uint, IComponent>> GetEnumerator()
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).GetEnumerator();
-			}
-		}
+				float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), 0, 1 );
 
-		public bool Remove( KeyValuePair<uint, IComponent> item )
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).Remove( item );
-			}
-		}
+				lerped.Clear();
 
-		public bool Remove( uint key )
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).Remove( key );
-			}
-		}
+				foreach ( var keyValue in present )
+				{
+					IComponent prev = null;
 
-		public bool TryGetValue( uint key, out IComponent value )
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).TryGetValue( key, out value );
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			lock(dict)
-			{
-				return ( (IDictionary<uint, IComponent>)dict ).GetEnumerator();
+					if (previous.TryGetValue( keyValue.Key, out prev))
+					{
+						lerped.Add( keyValue.Key, keyValue.Value.Interpolate(prev, factor) );
+					}
+					else
+					{
+						lerped.Add( keyValue.Key, keyValue.Value );
+					}
+				}
 			}
 		}
 	}

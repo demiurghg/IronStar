@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay
 {
-	public class UserCommandComponent : Component
+	public class UserCommandComponent : IComponent
 	{
 		public float Yaw  ;
 		public float Pitch;
@@ -49,6 +50,45 @@ namespace IronStar.Gameplay
 			if (action.HasFlag( UserAction.Weapon6 )) Weapon = WeaponType.Railgun		;
 			if (action.HasFlag( UserAction.Weapon7 )) Weapon = WeaponType.Machinegun	;
 			if (action.HasFlag( UserAction.Weapon8 )) Weapon = WeaponType.Machinegun	;
+		}
+
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Yaw			);
+			writer.Write( Pitch			);
+			writer.Write( Roll			);
+			writer.Write( Move			);
+			writer.Write( Strafe		);
+			writer.Write( (int)Action	);
+			writer.Write( (int)Weapon	);
+			writer.Write( DYaw			);
+			writer.Write( DPitch		);
+		}
+
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Yaw		=	reader.ReadSingle();
+			Pitch	=	reader.ReadSingle();
+			Roll	=	reader.ReadSingle();
+			Move	=	reader.ReadSingle();
+			Strafe	=	reader.ReadSingle();
+			Action	=	(UserAction)reader.ReadInt32();
+			Weapon	=	(WeaponType)reader.ReadInt32();
+			DYaw	=	reader.ReadSingle();
+			DPitch	=	reader.ReadSingle();
+		}
+
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 
 		public void ResetControl()

@@ -11,7 +11,7 @@ using IronStar.ECS;
 
 namespace IronStar.AI
 {
-	public class BehaviorComponent : Component
+	public class BehaviorComponent : IComponent
 	{
 		public TimeSpan ThinkQuantum;
 		public TimeSpan ThinkCooldown;
@@ -22,7 +22,7 @@ namespace IronStar.AI
 
 		public Entity LastSeenTarget	=	null;
 
-
+		[DoNotSave]
 		public readonly Blackboard Blackboard;
 
 		public BehaviorComponent()
@@ -30,6 +30,30 @@ namespace IronStar.AI
 			Blackboard		=	new Blackboard();
 			ThinkQuantum	=	TimeSpan.FromSeconds(0.35f);
 			ThinkCooldown	=	MathUtil.Random.NextTime( TimeSpan.Zero, ThinkQuantum );
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			#warning TODO : SAVE BehaviorComponent
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			#warning TODO : LOAD BehaviorComponent
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

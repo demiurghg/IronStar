@@ -103,6 +103,12 @@ namespace IronStar.ECS
 			return this;
 		}
 
+		public Aspect Any()
+		{
+			anySet = ~(0L);
+			return this;
+		}
+
 
 		public Aspect Include<T1>()			where T1:IComponent																{ return Include( typeof(T1) ); }
 		public Aspect Include<T1,T2>()		where T1:IComponent where T2:IComponent 										{ return Include( typeof(T1), typeof(T2) ); }

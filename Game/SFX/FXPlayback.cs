@@ -62,10 +62,6 @@ namespace IronStar.SFX
 		}
 
 
-		public void Add( IGameState gs, ECS.Entity e ) {}
-		public void Remove( IGameState gs, ECS.Entity e ) {}
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -228,6 +224,8 @@ namespace IronStar.SFX
 			fxEvent.Velocity = t.LinearVelocity;
 
 			var attached	=	entity.ContainsComponent<AttachmentComponent>();
+
+			Log.Debug("Create FX: {0}, {1}", fx.FXName, entity);
 
 			return RunFX( fxEvent, fx.Looped, attached ); 
 		}

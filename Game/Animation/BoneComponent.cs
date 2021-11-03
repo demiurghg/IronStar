@@ -19,7 +19,7 @@ using System.IO;
 
 namespace IronStar.Animation 
 {
-	public class BoneComponent : Component
+	public class BoneComponent : IComponent
 	{
 		public Matrix[] Bones { get { return bones; } }
 		readonly Matrix[] bones;
@@ -34,9 +34,28 @@ namespace IronStar.Animation
 			bones = Misc.CreateArray( RenderSystem.MaxBones, Matrix.Identity );
 		}
 
-		public override IComponent Clone()
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( bones, RenderSystem.MaxBones );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			reader.Read( bones, RenderSystem.MaxBones );
+		}
+
+		public IComponent Clone()
 		{
 			return new BoneComponent( bones );
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

@@ -26,7 +26,7 @@ using IronStar.Gameplay;
 
 namespace IronStar.ECSPhysics 
 {
-	public class MaterialComponent : Component
+	public class MaterialComponent : IComponent
 	{
 		public MaterialType	Material;
 
@@ -40,6 +40,30 @@ namespace IronStar.ECSPhysics
 		{
 			var mtrl = e?.GetComponent<MaterialComponent>();
 			return (mtrl==null)? MaterialType.Metal : mtrl.Material;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( (int)Material );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Material	=	(MaterialType)reader.ReadInt32();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

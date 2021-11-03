@@ -30,79 +30,36 @@ using AffineTransform = BEPUutilities.AffineTransform;
 
 namespace IronStar.ECSPhysics 
 {
-	public class StaticCollisionComponent : Component
+	public class StaticCollisionComponent : IComponent
 	{
 		public bool Walkable { get; set; } =  true;
 		public bool Collidable { get; set; } =  true;
 
-		/*-----------------------------------------------------------------------------------------------
-		 *	Scene management operations :
-		-----------------------------------------------------------------------------------------------*/
 
-		/*Scene			scene;
-		StaticMesh[]	staticMeshes;
-		Matrix[]		transforms;
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
 
-		void LoadScene ( GameState gs )
+		public void Save( GameState gs, BinaryWriter writer )
 		{
-			var content		=	gs.GetService<ContentManager>();
-			var physics		=	gs.GetService<PhysicsEngineSystem>();
-			
-			scene			=	string.IsNullOrWhiteSpace(ScenePath) ? Scene.Empty : content.Load( ScenePath, Scene.Empty );
-
-			transforms		=	new Matrix[ scene.Nodes.Count ];
-			staticMeshes	=	new StaticMesh[ scene.Nodes.Count ];
-
-			scene.ComputeAbsoluteTransforms( transforms );
-
-			for ( int i=0; i<scene.Nodes.Count; i++ ) 
-			{
-				var node	=	scene.Nodes[i];
-				int meshIdx	=	node.MeshIndex;
-
-				if (AcceptNode(node) && meshIdx>=0)
-				{
-					staticMeshes[i]	=	CreateStaticMesh( scene.Meshes[ meshIdx ], transforms[i] * Transform );
-					physics.Space.Add( staticMeshes[i] );
-				}
-				else
-				{
-					staticMeshes[i]	=	null;
-				}
-			}
+			writer.Write( Walkable   );
+			writer.Write( Collidable );
 		}
 
-		
-		bool AcceptNode ( Node node )
+		public void Load( GameState gs, BinaryReader reader )
 		{
-			if ( string.IsNullOrWhiteSpace( CollisionFilter) ) return true;
-
-			return node.Name.StartsWith( CollisionFilter );
+			Walkable	=	reader.ReadBoolean();
+			Collidable	=	reader.ReadBoolean();
 		}
 
-
-		StaticMesh CreateStaticMesh( Mesh mesh, Matrix transform )
+		public IComponent Clone()
 		{
-			var verts	=	mesh.Vertices.Select( v => MathConverter.Convert( v.Position ) ).ToArray();
-			var inds	=	mesh.GetIndices(0);
-
-			var aft		=	new AffineTransform() { Matrix = MathConverter.Convert(transform) };
-
-			return	new StaticMesh( verts, inds, aft );
+			return (IComponent)MemberwiseClone();
 		}
 
-
-		public void UnloadScene(GameState gs)
+		public IComponent Interpolate( IComponent previous, float factor )
 		{
-			var physics		=	gs.GetService<PhysicsEngineSystem>();
-
-			foreach ( var mesh in staticMeshes )
-			{
-				if (mesh!=null) 
-				{	
-					physics.Space.Remove( mesh );
-				}
-			}
-		}	*/
+			return Clone();
+		}
 	}
 }

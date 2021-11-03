@@ -127,8 +127,6 @@
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
-    <Compile Include="ECSGraphics\BillboardComponent.cs" />
-    <Compile Include="ECSGraphics\BillboardSystem.cs" />
     <Compile Include="ECSGraphics\LightVolumeSystem.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
@@ -155,13 +153,14 @@
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />
     <Compile Include="ECS\Collections\StateInterpolator.cs" />
-    <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />
     <Compile Include="ECS\IFactory.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\MTGameState.cs" />
+    <Compile Include="ECS\Serialization\ComponentSerializer.cs" />
+    <Compile Include="ECS\Serialization\SaveAttribute.cs" />
     <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
@@ -175,6 +174,7 @@
     <Compile Include="ECS\IComponent.cs" />
     <Compile Include="ECS\Entity.cs" />
     <Compile Include="ECS\GameState.cs" />
+    <Compile Include="ECS\Utils\EcsUtils.cs" />
     <Compile Include="ECS\Utils\HashFunc.cs" />
     <Compile Include="ECS\Utils\IdGenerator.cs" />
     <Compile Include="ECS\ISystem.cs" />
@@ -206,8 +206,6 @@
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />
-    <Compile Include="Gameplay\Components\MonsterComponent.cs" />
-    <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\ProjectileComponent.cs" />

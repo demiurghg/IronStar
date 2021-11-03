@@ -18,22 +18,56 @@ namespace IronStar.Gameplay.Components
 		InfiniteAmmo	=	0x01,
 	}
 
-	public class InventoryComponent : Component
+	public class InventoryComponent : IComponent
 	{
-		readonly int[] ammo		=	new int[ (int)Misc.MaxEnumValue<AmmoType>()   + 1 ];
-		readonly int[] weapon	=	new int[ (int)Misc.MaxEnumValue<WeaponType>() + 1 ];
+		readonly int MaxAmmoTypes;
+		readonly int MaxWeaponTypes;
+
+		readonly int[] ammo		;
+		readonly int[] weapon	;
 
 		public InventoryFlags Flags { get { return flags; } }
 		InventoryFlags flags;
 
 		public InventoryComponent( InventoryFlags flags = InventoryFlags.None )
 		{
-			this.flags	=	flags;
+			MaxAmmoTypes	=	(int)Misc.MaxEnumValue<AmmoType>()	 + 1;
+			MaxWeaponTypes	=	(int)Misc.MaxEnumValue<WeaponType>() + 1;
+
+			ammo			=	new int[ MaxAmmoTypes ];
+			weapon			=	new int[ MaxWeaponTypes ];
+
+			this.flags		=	flags;
 		}
 
-		public override IComponent Clone()
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
 		{
-			return (InventoryComponent)MemberwiseClone();
+			writer.Write( (int)flags );
+
+			writer.Write( ammo,	  MaxAmmoTypes );
+			writer.Write( weapon, MaxWeaponTypes );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			flags	=	(InventoryFlags)reader.ReadInt32();
+			reader.Read( ammo,	 MaxAmmoTypes );
+			reader.Read( weapon, MaxWeaponTypes );
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 
 		/*-----------------------------------------------------------------------------------------------

@@ -7,12 +7,27 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using IronStar.ECS;
 using IronStar.Animation;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Gameplay.Components
 {
 	public class CameraComponent : IComponent
 	{
 		public Matrix	AnimTransform;
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( AnimTransform );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			AnimTransform	=	reader.Read<Matrix>();
+		}
 
 		public IComponent Clone()
 		{
@@ -25,16 +40,6 @@ namespace IronStar.Gameplay.Components
 			var lerp	=	AnimationUtils.Lerp( prev, AnimTransform, factor );
 
 			return new CameraComponent { AnimTransform = lerp };
-		}
-
-		public void Load( GameState gs, Stream stream )
-		{
-			throw new NotImplementedException();
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

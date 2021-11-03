@@ -4,57 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using BEPUphysics.EntityStateManagement;
 using System.Diagnostics;
+using System.IO;
 
 namespace IronStar.ECS
 {
-	public class Transform : Component
+	public class Transform : IComponent
 	{
-		/// <summary>
-		/// Entity position :
-		/// </summary>
-		public Vector3	Position;
+		public Vector3		Position		=	Vector3.Zero;
+		public Quaternion	Rotation		=	Quaternion.Identity;
+		public float		Scaling			=	1.0f;
+		public Vector3		LinearVelocity	=	Vector3.Zero;
+		public Vector3		AngularVelocity	=	Vector3.Zero;
 
-		/// <summary>
-		/// Entity rotation
-		/// </summary>
-		public Quaternion	Rotation = Quaternion.Identity;
-
-		/// <summary>
-		/// Entity scaling
-		/// </summary>
-		public float Scaling = 1;
-
-		/// <summary>
-		/// Increased each time when entity is teleported
-		/// </summary>
-		public byte TeleportCount;
-
-		/// <summary>
-		/// Entity linear velocity
-		/// </summary>
-		public Vector3 LinearVelocity;
-
-		/// <summary>
-		/// Entity angular velocity
-		/// </summary>
-		public Vector3 AngularVelocity;
-
-		/// <summary>
-		/// Creates new transform
-		/// </summary>
-		/// <param name="p"></param>
-		/// <param name="r"></param>
 		public Transform ()
 		{
 		}
 
-		/// <summary>
-		/// Creates new transform
-		/// </summary>
-		/// <param name="p"></param>
-		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r )
 		{
 			Position	=	p;
@@ -62,11 +30,6 @@ namespace IronStar.ECS
 			Scaling		=	1;
 		}
 
-		/// <summary>
-		/// Creates new transform
-		/// </summary>
-		/// <param name="p"></param>
-		/// <param name="r"></param>
 		public Transform ( Matrix t )
 		{
 			Vector3 s;
@@ -74,11 +37,6 @@ namespace IronStar.ECS
 			Scaling = s.X;
 		}
 
-		/// <summary>
-		/// Creates new transform
-		/// </summary>
-		/// <param name="p"></param>
-		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r, Vector3 velocity )
 		{
 			Position		=	p;
@@ -96,11 +54,6 @@ namespace IronStar.ECS
 			AngularVelocity	=	angularVelocity;
 		}
 
-		/// <summary>
-		/// Creates new transform
-		/// </summary>
-		/// <param name="p"></param>
-		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r, float s )
 		{
 			Position	=	p;
@@ -130,14 +83,52 @@ namespace IronStar.ECS
 			this.Rotation			=	rotation;
 			this.LinearVelocity		=	linearVelocity;
 			this.AngularVelocity	=	angularVelocity;
-
-			TeleportCount++;
 		}
 
-		public override IComponent Interpolate( IComponent previuous, float factor )
+		public Matrix TransformMatrix 
 		{
-			var prev	=	(Transform)previuous;
-			factor		=	(prev.TeleportCount != TeleportCount) ? 1 : factor;
+			get 
+			{ 
+				return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); 
+			}
+			set 
+			{
+				Vector3 s;
+				value.Decompose( out s, out Rotation, out Position );
+				Scaling = s.X;
+			}
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Position			);
+			writer.Write( Rotation			);
+			writer.Write( Scaling			);
+			writer.Write( LinearVelocity	);
+			writer.Write( AngularVelocity	);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Position		=	reader.ReadVector3();
+			Rotation		=	reader.ReadQuaternion();
+			Scaling			=	reader.ReadSingle();
+			LinearVelocity	=	reader.ReadVector3();
+			AngularVelocity	=	reader.ReadVector3();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			var prev	=	(Transform)previous;
 			
 			var p	= Vector3	.Lerp ( prev.Position,	Position,	factor );
 			var r	= Quaternion.Slerp( prev.Rotation,	Rotation,	factor );
@@ -152,25 +143,7 @@ namespace IronStar.ECS
 				Scaling			=	s,
 				LinearVelocity	=	lv,
 				AngularVelocity	=	av,
-				TeleportCount	=	TeleportCount,
 			};
-		}
-
-		/// <summary>
-		/// Gets entity transform matrix
-		/// </summary>
-		public Matrix TransformMatrix 
-		{
-			get 
-			{ 
-				return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); 
-			}
-			set 
-			{
-				Vector3 s;
-				value.Decompose( out s, out Rotation, out Position );
-				Scaling = s.X;
-			}
 		}
 	}
 }

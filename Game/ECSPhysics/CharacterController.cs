@@ -25,10 +25,11 @@ using IronStar.ECS;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterController : Component
+	public class CharacterController : IComponent
 	{
 		const float	scale = 3.0f;
 
+		//	#TODO #PHYSICS #ECS #CHARACTER -- use predefined character settings (shared table/descriptor)
 		public float	height					=	1.7f		*	scale; 
 		public float	crouchingHeight			=	1.7f * .7f	*	scale; 
 		public float	proneHeight				=	1.7f * 0.3f	*	scale; 
@@ -50,11 +51,11 @@ namespace IronStar.ECSPhysics
 		public float	maximumGlueForce		=	5000		*	scale;
 		public float	stepHeight				=	0.1f		*	scale;
 
-		public Vector3 offsetCrouch	{ get { return Vector3.Up * crouchingHeight	/ 2; } }
-		public Vector3 offsetStanding	{ get { return Vector3.Up * height	/ 2; } }
-
 		public bool		IsCrouching;
 		public bool		HasTraction;
+
+		public Vector3	offsetCrouch	{ get { return Vector3.Up * crouchingHeight	/ 2; } }
+		public Vector3	offsetStanding	{ get { return Vector3.Up * height	/ 2; } }
 
 		public Vector3	PovOffset { get { return Vector3.Up * CalcPovHeight(); } }
 
@@ -84,6 +85,75 @@ namespace IronStar.ECSPhysics
 		float CalcPovHeight()
 		{
 			return CalcPovHeight( height, crouchingHeight, IsCrouching );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( height				);	
+			writer.Write( crouchingHeight		);	
+			writer.Write( proneHeight			);	
+			writer.Write( radius				);	
+			writer.Write( margin				);	
+			writer.Write( mass					);
+			writer.Write( maximumTractionSlope	);
+			writer.Write( maximumSupportSlope	);	
+			writer.Write( standingSpeed			);
+			writer.Write( crouchingSpeed		);	
+			writer.Write( proneSpeed			);	
+			writer.Write( tractionForce			);
+			writer.Write( slidingSpeed			);
+			writer.Write( slidingForce			);
+			writer.Write( airSpeed				);
+			writer.Write( airForce				);
+			writer.Write( jumpSpeed				);
+			writer.Write( slidingJumpSpeed		);
+			writer.Write( maximumGlueForce		);
+			writer.Write( stepHeight			);	
+
+			writer.Write( IsCrouching			);	
+			writer.Write( HasTraction			);	
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			height					=	reader.ReadSingle();
+			crouchingHeight			=	reader.ReadSingle();
+			proneHeight				=	reader.ReadSingle();
+			radius					=	reader.ReadSingle();
+			margin					=	reader.ReadSingle();
+			mass					=	reader.ReadSingle();
+			maximumTractionSlope	=	reader.ReadSingle();
+			maximumSupportSlope		=	reader.ReadSingle();
+			standingSpeed			=	reader.ReadSingle();
+			crouchingSpeed			=	reader.ReadSingle();
+			proneSpeed				=	reader.ReadSingle();
+			tractionForce			=	reader.ReadSingle();
+			slidingSpeed			=	reader.ReadSingle();
+			slidingForce			=	reader.ReadSingle();
+			airSpeed				=	reader.ReadSingle();
+			airForce				=	reader.ReadSingle();
+			jumpSpeed				=	reader.ReadSingle();
+			slidingJumpSpeed		=	reader.ReadSingle();
+			maximumGlueForce		=	reader.ReadSingle();
+			stepHeight				=	reader.ReadSingle();
+
+			IsCrouching				=	reader.ReadBoolean();
+			HasTraction				=	reader.ReadBoolean();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

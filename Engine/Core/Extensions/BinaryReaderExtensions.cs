@@ -7,7 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using SharpDX;
 using Fusion.Core.Content;
-
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Extensions {
 	public static class BinaryReaderExtensions {
@@ -27,6 +27,48 @@ namespace Fusion.Core.Extensions {
 			return ContentUtils.MakeFourCC( reader.ReadUInt32() );
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Math types :
+		-----------------------------------------------------------------------------------------*/
+
+		public static Color ReadColor( this BinaryReader reader )
+		{
+			return Color.FromRgba( reader.ReadInt32() );
+		}
+
+		public static Vector2 ReadVector2( this BinaryReader reader )
+		{
+			return new Vector2( reader.ReadSingle(), reader.ReadSingle() );
+		}
+
+		public static Vector3 ReadVector3( this BinaryReader reader )
+		{
+			return new Vector3( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
+		}
+
+		public static Vector4 ReadVector4( this BinaryReader reader )
+		{
+			return new Vector4( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
+		}
+
+		public static Quaternion ReadQuaternion( this BinaryReader reader )
+		{
+			return new Quaternion( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
+		}
+
+		public static Matrix ReadMatrix( this BinaryReader reader )
+		{
+			var value		= new Matrix();
+			value.Column1	= ReadVector4( reader );
+			value.Column2	= ReadVector4( reader );
+			value.Column3	= ReadVector4( reader );
+			value.Column4	= ReadVector4( reader );
+			return value;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Structures :
+		-----------------------------------------------------------------------------------------*/
 
 		public static void Read<T> ( this BinaryReader reader, T[] array, int count ) where T: struct
 		{

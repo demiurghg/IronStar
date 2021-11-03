@@ -15,7 +15,7 @@ namespace IronStar.Gameplay.Components
 		Dead,
 	}
 
-	public class HealthComponent : Component
+	public class HealthComponent : IComponent
 	{
 		public readonly int MaxHealth = 100;
 		public readonly int MaxArmor  = 100;
@@ -111,6 +111,28 @@ namespace IronStar.Gameplay.Components
 			}
 
 			return Health > 0 ? HealthStatus.Alive : HealthStatus.Dead;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

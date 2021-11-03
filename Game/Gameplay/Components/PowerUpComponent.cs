@@ -9,7 +9,7 @@ using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Components
 {
-	public class PowerupComponent : Component
+	public class PowerupComponent : IComponent
 	{
 		public int Health			=	0;
 		public int Armor			=	0;
@@ -42,6 +42,39 @@ namespace IronStar.Gameplay.Components
 		{
 			Ammo		=	ammo;
 			AmmoCount	=	count;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Health		);	
+			writer.Write( Armor			);
+			writer.Write( (int)Weapon	);
+			writer.Write( (int)Ammo		);
+			writer.Write( AmmoCount		);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Health		=	reader.ReadInt32();
+			Armor		=	reader.ReadInt32();
+			Weapon		=	(WeaponType)reader.ReadInt32();
+			Ammo		=	(AmmoType)	reader.ReadInt32();
+			AmmoCount	=	reader.ReadInt32();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

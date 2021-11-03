@@ -8,8 +8,33 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class KeyComponent : Component
+	public class KeyComponent : IComponent
 	{
 		public string	Name;
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Name );
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Name	=	reader.ReadString();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
+		}
 	}
 }

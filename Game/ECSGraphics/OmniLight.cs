@@ -1,11 +1,13 @@
 ﻿using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using IronStar.ECS;
 using Fusion.Core.Shell;
 using Fusion.Widgets.Advanced;
+using System.IO;
 
 namespace IronStar.SFX2
 {
-	public class OmniLight : Component
+	public class OmniLight : IComponent
 	{
 		[AECategory("Omni-light")]
 		[AESlider(0, 100, 1, 0.125f)]
@@ -40,41 +42,37 @@ namespace IronStar.SFX2
 			get; set; 
 		}
 		
-		/*Color lightColor = Color.White;
-		float lightIntensity = 8;
 
-		RSOmniLight light;
-		LightSet lightSet;
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
 
-
-		public OmniLight ()
+		public void Save( GameState gs, BinaryWriter writer )
 		{
-			light	=	new RSOmniLight();
-			light.RadiusOuter	=	15;
-			light.RadiusInner	=	0.25f;
+			writer.Write( OuterRadius		);
+			writer.Write( TubeRadius		);
+			writer.Write( TubeLength		);
+			writer.Write( LightColor		);
+			writer.Write( LightIntensity	);
 		}
 
-
-		public override void Added( GameState gs, Entity entity )
+		public void Load( GameState gs, BinaryReader reader )
 		{
-			base.Added( gs, entity );
-
-			lightSet	=	gs.GetService<RenderSystem>().RenderWorld.LightSet;
-			lightSet.OmniLights.Add ( light );
+			OuterRadius		=	reader.ReadSingle(); 
+			TubeRadius		=	reader.ReadSingle();
+			TubeLength		=	reader.ReadSingle();
+			LightColor		=	reader.Read<Color>();
+			LightIntensity	=	reader.ReadSingle();
 		}
 
-
-		public override void Removed( GameState gs )
+		public IComponent Clone()
 		{
-			lightSet.OmniLights.Remove ( light );
-			base.Removed( gs );
+			return (IComponent)MemberwiseClone();
 		}
 
-
-		public void SetTransform( Matrix transform )
+		public IComponent Interpolate( IComponent previous, float factor )
 		{
-			light.Position0	=	transform.TranslationVector + transform.Right * TubeLength * 0.5f;
-			light.Position1	=	transform.TranslationVector + transform.Left  * TubeLength * 0.5f;
-		}	  */
+			return Clone();
+		}
 	}
 }

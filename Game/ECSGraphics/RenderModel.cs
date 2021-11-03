@@ -8,6 +8,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Core.Input;
 using Fusion.Engine.Client;
@@ -28,7 +29,7 @@ namespace IronStar.SFX2
 		FirstPointView	=	0x0001,
 	}
 
-	public partial class RenderModel : Component
+	public partial class RenderModel : IComponent
 	{
 		//	pure component data :
 		public string	scenePath;
@@ -38,11 +39,11 @@ namespace IronStar.SFX2
 		public RMFlags	rmFlags;
 
 		public Size2	lightmapSize;
-		public string	lightmapName;
+		public string	lightmapName	=	"";
 
-		public string	cmPrefix;
+		public string	cmPrefix	=	"";
 
-		public bool		NoShadow { get; set; }
+		public bool		NoShadow;
 		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
 
 
@@ -82,6 +83,50 @@ namespace IronStar.SFX2
 		public bool AcceptVisibleNode ( Node node )
 		{
 			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : !node.Name.StartsWith(cmPrefix);
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( scenePath		);
+			writer.Write( transform		);
+			writer.Write( color			);
+			writer.Write( intensity		);
+			writer.Write( (int)rmFlags	);
+
+			writer.Write( lightmapSize	);
+			writer.Write( lightmapName	);
+
+			writer.Write( cmPrefix		);
+			writer.Write( NoShadow		);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			scenePath		=	reader.ReadString();
+			transform		=	reader.ReadMatrix();
+			color			=	reader.ReadColor();
+			intensity		=	reader.ReadSingle();
+			rmFlags			=	(RMFlags)reader.ReadInt32();
+
+			lightmapSize	=	reader.Read<Size2>();
+			lightmapName	=	reader.ReadString();
+
+			cmPrefix		=	reader.ReadString();
+			NoShadow		=	reader.ReadBoolean();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

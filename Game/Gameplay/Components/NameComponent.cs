@@ -8,7 +8,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class NameComponent : Component
+	public class NameComponent : IComponent
 	{
 		public string	Name;
 

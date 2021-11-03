@@ -28,7 +28,7 @@ using IronStar.ECS;
 
 namespace IronStar.ECSPhysics 
 {
-	public class DynamicBox : Component
+	public class DynamicBox : IComponent
 	{
 		public float			Width	{ get; set; } =	1;
 		public float			Height	{ get; set; } =	1;
@@ -46,6 +46,38 @@ namespace IronStar.ECSPhysics
 			this.Height	=	height	;
 			this.Depth	=	depth	;
 			this.Mass	=	mass	;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( Width			);
+			writer.Write( Height		);	
+			writer.Write( Depth			);
+			writer.Write( Mass			);
+			writer.Write( (int)Group	);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			Width	=	reader.ReadSingle();	
+			Height	=	reader.ReadSingle();
+			Depth	=	reader.ReadSingle();	
+			Mass	=	reader.ReadSingle();	
+			Group	=	(CollisionGroup)reader.ReadInt32();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
 		}
 	}
 }

@@ -450,30 +450,33 @@ namespace IronStar.ECS
 
 		public void Save( Stream stream, TimeSpan time, TimeSpan dt )
 		{
-			using ( var writer = new BinaryWriter( stream ) )
+			using ( new CVEvent( "GameState.Save" ) )
 			{
-				//	write timing
-				writer.Write( time );
-				writer.Write( dt );
-
-				//	write entity IDs :
-				writer.Write( entities.Count );
-				foreach ( var pair in entities )
+				using ( var writer = new BinaryWriter( stream ) )
 				{
-					writer.Write( pair.Key );
-				}
+					//	write timing
+					writer.Write( time );
+					writer.Write( dt );
 
-				//	write component data :
-				foreach ( var type in ECSTypeManager.GetComponentTypes() )
-				{
-					var compBuffer	=	components[type];
-
-					writer.Write( compBuffer.Count );
-
-					foreach ( var compPair in compBuffer.Updating )
+					//	write entity IDs :
+					writer.Write( entities.Count );
+					foreach ( var pair in entities )
 					{
-						writer.Write( compPair.Key );
-						compPair.Value.Save( this, writer ); 
+						writer.Write( pair.Key );
+					}
+
+					//	write component data :
+					foreach ( var type in ECSTypeManager.GetComponentTypes() )
+					{
+						var compBuffer  =   components[type];
+
+						writer.Write( compBuffer.Count );
+
+						foreach ( var compPair in compBuffer.Updating )
+						{
+							writer.Write( compPair.Key );
+							compPair.Value.Save( this, writer );
+						}
 					}
 				}
 			}
@@ -520,16 +523,36 @@ namespace IronStar.ECS
 				#warning TODO LOAD ...
 				foreach ( var type in ECSTypeManager.GetComponentTypes() )
 				{
-					var cBuffer	=	components[type];
+					var compBuffer		=	components[type];
+					var updting			=	compBuffer.Updating;
 
 					int componentCount	=	reader.ReadInt32();
 					var componentDict	=	new Dictionary<uint,IComponent>( componentCount );
 
 					for (int i=0; i<componentCount; i++)
 					{
-						/*uint id = reader.ReadUInt32();
-						wrirter.Write( compPair.Key );
-						compPair.Value.Save( this, writer );  */
+						uint id = reader.ReadUInt32();
+						IComponent component;
+
+						if (updting.TryGetValue(id, out component))
+						{
+							component.Load( this, reader );
+						}
+						else
+						{
+							component = (IComponent)Activator.CreateInstance(type);
+							component.Load( this, reader );
+							updting.Add( id, component );
+							Refresh( entities[id] );
+						}
+					}
+
+					var toRemove = updting.Keys.Except( componentDict.Keys );
+
+					foreach ( var id in toRemove )
+					{
+						updting.Remove( id );
+						Refresh( entities[id] );
 					}
 				}
 			}

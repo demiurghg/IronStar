@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using IronStar.ECS;
 using Fusion.Engine.Graphics;
-using RSSpotLight = Fusion.Engine.Graphics.SpotLight;
-using Fusion.Core.Shell;
+using Fusion.Core.Extensions;
 using Fusion.Widgets.Advanced;
+using System.IO;
 
 namespace IronStar.SFX2
 {
-	public class DecalComponent : Component
+	public class DecalComponent : IComponent
 	{
 		[AECategory("Decal Image")]
 		[AEAtlasImage(@"decals/decals")]
@@ -98,5 +98,53 @@ namespace IronStar.SFX2
 		[AECategory("Decal Material")]
 		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float FalloffFactor { get; set;} = 0.5f;
+
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( ImageName			);
+			writer.Write( Width				);
+			writer.Write( Height			);	
+			writer.Write( Depth				);
+			writer.Write( EmissionColor		);
+			writer.Write( EmissionIntensity	);
+			writer.Write( BaseColor			);
+			writer.Write( Roughness			);
+			writer.Write( Metallic			);
+			writer.Write( ColorFactor		);
+			writer.Write( SpecularFactor	);	
+			writer.Write( NormalMapFactor	);
+			writer.Write( FalloffFactor		);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			ImageName			=	reader.ReadString	();
+			Width				=	reader.ReadSingle	();
+			Height				=	reader.ReadSingle	();
+			Depth				=	reader.ReadSingle	();
+			EmissionColor		=	reader.Read<Color>	();
+			EmissionIntensity	=	reader.ReadSingle	();
+			BaseColor			=	reader.Read<Color>	();
+			Roughness			=	reader.ReadSingle	();
+			Metallic			=	reader.ReadSingle	();
+			ColorFactor			=	reader.ReadSingle	();
+			SpecularFactor		=	reader.ReadSingle	();
+			NormalMapFactor		=	reader.ReadSingle	();
+			FalloffFactor		=	reader.ReadSingle	();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
+		}
 	}
 }

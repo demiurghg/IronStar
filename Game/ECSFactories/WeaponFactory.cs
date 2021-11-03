@@ -40,7 +40,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("MACHINEGUN") );
 			e.AddComponent( new PowerupComponent( WeaponType.Machinegun, AmmoType.Bullets, 50 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\assault_rifle\\assault_rifle_view", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
@@ -55,7 +54,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("MACHINEGUN2") );
 			e.AddComponent( new PowerupComponent( WeaponType.Machinegun2, AmmoType.Bullets, 50 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\battle_rifle\\battle_rifle_view", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
@@ -70,7 +68,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("SHOTGUN") );
 			e.AddComponent( new PowerupComponent( WeaponType.Shotgun, AmmoType.Shells, 10 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\canister_rifle\\canister_rifle_view", 0.03f, ShotgunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
@@ -85,7 +82,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("PLASMAGUN") );
 			e.AddComponent( new PowerupComponent( WeaponType.Plasmagun, AmmoType.Cells, 50 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\plasma_rifle\\plasma_rifle_view", 0.03f, PlasmagunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.9f, 1.2f, 4.5f, 6.0f ) { Group = CollisionGroup.PickupGroup } );
@@ -100,7 +96,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("ROCKETLAUNCHER") );
 			e.AddComponent( new PowerupComponent( WeaponType.RocketLauncher, AmmoType.Rockets, 10 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\rocket_launcher\\rocket_launcher_view", 0.036f, RocketLauncherColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.9f, 1.0f, 6.0f, 7.0f ) { Group = CollisionGroup.PickupGroup } );
@@ -115,7 +110,6 @@ namespace IronStar.ECSFactories
 		{
 			base.Construct( e, gs );
 
-			e.AddComponent( new NameComponent("RAILGUN") );
 			e.AddComponent( new PowerupComponent( WeaponType.Railgun, AmmoType.Slugs, 10 ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\gauss_rifle\\gauss_rifle_view", 0.03f, RailgunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 1.8f, 0.9f, 5.1f, 7.0f ) { Group = CollisionGroup.PickupGroup } );

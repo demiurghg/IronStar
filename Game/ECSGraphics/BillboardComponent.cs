@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 
 namespace IronStar.ECSGraphics
 {
-	public class BillboardComponent : Component
+	public class BillboardComponent : IComponent
 	{
 		public ParticleFX	Effect;
 

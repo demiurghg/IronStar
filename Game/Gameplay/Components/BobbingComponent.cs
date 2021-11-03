@@ -9,7 +9,6 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	// #TODO #PLAYER -- separate bobbing ans user command component
 	public class BobbingComponent : IComponent
 	{
 		public BobbingComponent() : this(0,0,0,0)
@@ -29,14 +28,20 @@ namespace IronStar.Gameplay.Components
 		public float BobRoll	;
 		public float BobUp		;
 
-		public void Save( GameState gs, Stream stream )
+		public void Save( GameState gs, BinaryWriter writer )
 		{
-			throw new NotImplementedException();
+			writer.Write( BobYaw	);
+			writer.Write( BobPitch	);
+			writer.Write( BobRoll	);
+			writer.Write( BobUp		);
 		}
 
-		public void Load( GameState gs, Stream stream )
+		public void Load( GameState gs, BinaryReader reader )
 		{
-			throw new NotImplementedException();
+			BobYaw		=	reader.ReadSingle();
+			BobPitch	=	reader.ReadSingle();
+			BobRoll		=	reader.ReadSingle();
+			BobUp		=	reader.ReadSingle();
 		}
 
 		public IComponent Clone()

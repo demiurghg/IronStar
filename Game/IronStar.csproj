@@ -215,6 +215,7 @@
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
+    <Compile Include="Gameplay\Components\UserCommandQueue.cs" />
     <Compile Include="Gameplay\Components\WeaponStateComponent.cs" />
     <Compile Include="Gameplay\DataAssets\DataAsset.cs" />
     <Compile Include="Gameplay\GameUtil.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="SFX\FXComponent.cs" />
     <Compile Include="SFX\FXEntityFactory.cs" />
     <Compile Include="SFX\FXInstance.LightStage.cs" />
+    <Compile Include="SFX\FXTracker.cs" />
     <Compile Include="SFX\FXPlayback.SpawnFX.cs" />
     <Compile Include="SFX\GameFXSystem.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />

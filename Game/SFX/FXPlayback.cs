@@ -253,7 +253,7 @@ namespace IronStar.SFX
 
 				if ( fxInstance.IsExhausted )
 				{
-					entity.gs.Kill( entity );
+					//entity.gs.Kill( entity );
 				}
 			}
 			else

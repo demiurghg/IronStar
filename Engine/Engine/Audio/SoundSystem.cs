@@ -157,6 +157,23 @@ namespace Fusion.Engine.Audio
 		}
 
 
+		public float GetEventLength( string path )
+		{
+			EventDescription eventDesc;
+			string eventPath = Path.Combine(@"event:/", path);
+
+			var result = system.getEvent( eventPath, out eventDesc );
+
+			if (result!=FMOD.RESULT.OK) 
+			{
+				return 0;
+			}
+
+			int lengthMSec;
+			eventDesc.getLength( out lengthMSec );
+
+			return lengthMSec / 1000.0f;
+		}
 
 		/// <summary>
 		/// 

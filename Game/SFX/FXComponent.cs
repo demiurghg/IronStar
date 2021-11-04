@@ -17,11 +17,15 @@ namespace IronStar.SFX
 	{
 		public string	FXName;
 		public bool		Looped;
+		public float	Timeout;
+
+		public FXComponent() : this("", false) {}
 
 		public FXComponent( string fxName, bool looped )
 		{
-			FXName	=	fxName;
-			Looped	=	looped;
+			FXName		=	fxName;
+			Looped		=	looped;
+			Timeout		=	0;
 		}
 
 		public void Save( GameState gs, BinaryWriter writer )

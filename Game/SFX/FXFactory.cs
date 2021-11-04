@@ -20,6 +20,7 @@ using Fusion.Core.Content;
 using Fusion.Development;
 using Fusion.Widgets.Advanced;
 using Fusion.Core.Shell;
+using Fusion.Engine.Audio;
 
 namespace IronStar.SFX {
 
@@ -67,6 +68,22 @@ namespace IronStar.SFX {
 		public FXInstance CreateFXInstance( FXPlayback fxPlayback, FXEvent fxEvent, bool looped, bool attached )
 		{
 			return new FXInstance( fxPlayback, fxEvent, this, looped, attached );
+		}
+
+		public float GetEstimatedLifetime( SoundSystem soundSystem)
+		{
+			float lifetime = 0;
+			
+			if (LightStage.Enabled)		lifetime = Math.Max( lifetime, LightStage.Period );
+			if (DecalStage.Enabled)		lifetime = Math.Max( lifetime, Math.Max( DecalStage.SurfaceLifetime, DecalStage.EmissionLifetime ) );
+			if (ParticleStage1.Enabled)	lifetime = Math.Max( lifetime, ParticleStage1.Period );
+			if (ParticleStage2.Enabled)	lifetime = Math.Max( lifetime, ParticleStage2.Period );
+			if (ParticleStage3.Enabled)	lifetime = Math.Max( lifetime, ParticleStage3.Period );
+			if (ParticleStage4.Enabled)	lifetime = Math.Max( lifetime, ParticleStage4.Period );
+			if (ParticleStage5.Enabled)	lifetime = Math.Max( lifetime, ParticleStage5.Period );
+			if (SoundStage.Enabled)		lifetime = Math.Max( lifetime, soundSystem.GetEventLength( SoundStage.Sound ) );
+
+			return lifetime;
 		}
 	}
 

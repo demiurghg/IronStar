@@ -75,8 +75,8 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content);
-			var gs2			=	new GameState(game, content);
+			var gs			=	new GameState(game, content, false);
+			var gs2			=	new GameState(game, content, true );
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;
@@ -90,10 +90,13 @@ namespace IronStar
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
 
-			//	player system :
-			gs.AddSystem( new PlayerInputSystem() );
+			var commandQueue		=	new UserCommandQueue();
+			var playerInputMaster	=	new PlayerInputSystem( commandQueue, true );
+			var playerInputSlave	=	new PlayerInputSystem( commandQueue, false );
 
-			gs.AddSystem( new TrackSystem() );
+			//	player system :
+			gs.AddSystem( playerInputSlave );
+
 			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	weapon system :
@@ -122,25 +125,28 @@ namespace IronStar
 
 			//	animation systems :
 			gs.AddSystem( new Gameplay.BobbingSystem() );
-			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new StepSystem() );
-			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
+			gs.AddSystem( new SFX.FXTracker() );
 
-			gs.AddSystem( fxPlayback );
-			  
 			// rendering :
-			gs.AddSystem( new SFX2.RenderModelSystem(game) );
-			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
-			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
-			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem	) );
-			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem	) );
-			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem	) );
-			gs.AddSystem( new SFX2.LightingSystem() );
+			//gs2.AddSystem( new TrackSystem() );
+			gs2.AddSystem( playerInputMaster );
+			gs2.AddSystem( new Gameplay.CameraSystem(fxPlayback, playerInputMaster) );
+			gs2.AddSystem( new FPVWeaponSystem(game) );
+			gs2.AddSystem( fxPlayback );
+
+			gs2.AddSystem( new SFX2.RenderModelSystem(game) );
+			gs2.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
+			gs2.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
+			gs2.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem	) );
+			gs2.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem	) );
+			gs2.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem	) );
+			gs2.AddSystem( new SFX2.LightingSystem() );
 
 			//	ui
-			gs.AddSystem( new GameFXSystem(game) );
-			gs.AddSystem( new HudSystem(game) );
+			gs2.AddSystem( new GameFXSystem(game) );
+			gs2.AddSystem( new HudSystem(game) );
 			//*/
 
 			if (isEditor)

@@ -10,6 +10,7 @@ using Fusion.Core.Content;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
+using Fusion.Core.Extensions;
 
 namespace IronStar.ECS
 {
@@ -33,7 +34,18 @@ namespace IronStar.ECS
 		Thread		gameThread;
 		TimeSpan	timestep;
 
-		ConcurrentQueue<Action> commandQueue = new ConcurrentQueue<Action>();
+		object	snapshotLock	=	new object();
+		byte[]	snapshotWrite	=	new byte[ 512 * 1024 ];
+		byte[]	snapshotRead	=	new byte[ 512 * 1024 ];
+
+
+		void SwapSnapshots()
+		{
+			lock (snapshotLock)
+			{
+				Misc.Swap( ref snapshotRead, ref snapshotWrite );
+			}
+		}
 
 
 		public MTGameState( Game game, IGameState simulation, IGameState presentation, TimeSpan timestep )
@@ -47,7 +59,7 @@ namespace IronStar.ECS
 			gameThread.Name				=	"ECS Thread";
 			gameThread.IsBackground		=	true;
 
-			//gameThread.Start();
+			gameThread.Start();
 		}
 
 
@@ -88,7 +100,13 @@ namespace IronStar.ECS
 					accumulator -= dt;
 				}
 
-				Thread.Sleep(0);
+				using ( var ms = new MemoryStream(snapshotWrite) )
+				{
+					((GameState)simulation).Save( ms, newTime, dt );
+					SwapSnapshots();
+				}
+
+				Thread.Sleep( 0 );
 			}
 
 			KillAll();
@@ -100,21 +118,14 @@ namespace IronStar.ECS
 		 *	Update :
 		-----------------------------------------------------------------------------------------*/
 
-		byte[] data	=	new byte[ 512 * 1024 ];
-
 		public void Update( GameTime gameTime )
 		{
-			simulation.Update(gameTime);
-
-
-			using ( var ms = new MemoryStream(data) ) 
+			lock (snapshotLock)
 			{
-				((GameState)simulation).Save( ms, gameTime.Current, gameTime.Elapsed );
-			}
-
-			using ( var ms = new MemoryStream(data) ) 
-			{
-				((GameState)presentation).Load( ms );
+				using ( var ms = new MemoryStream(snapshotRead) ) 
+				{
+					((GameState)presentation).Load( ms );
+				}
 			}
 
 			presentation.Update(gameTime);

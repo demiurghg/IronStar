@@ -28,6 +28,12 @@ namespace Fusion.Core.Extensions
 			writer.Write( value.ToRgba() );
 		}
 
+		public static void Write( this BinaryWriter writer, Mathematics.Size2 value )
+		{
+			writer.Write( value.Width );
+			writer.Write( value.Height );
+		}
+
 		public static void Write( this BinaryWriter writer, Vector2 value )
 		{
 			writer.Write( value.X );

@@ -36,6 +36,11 @@ namespace Fusion.Core.Extensions {
 			return Color.FromRgba( reader.ReadInt32() );
 		}
 
+		public static Mathematics.Size2 ReadSize2( this BinaryReader reader )
+		{
+			return new Mathematics.Size2( reader.ReadInt32(), reader.ReadInt32() );
+		}
+
 		public static Vector2 ReadVector2( this BinaryReader reader )
 		{
 			return new Vector2( reader.ReadSingle(), reader.ReadSingle() );

@@ -59,6 +59,12 @@ namespace IronStar.ECSPhysics
 
 		public Vector3	PovOffset { get { return Vector3.Up * CalcPovHeight(); } }
 
+		
+		public CharacterController()
+		{
+		}
+
+
 		public CharacterController ( float heightStanding, float heightCrouching, float radius, float speedStanding, float speedCrouching, float speedJump, float mass, float stepHeight )
 		{
 			this.height				=	heightStanding	;

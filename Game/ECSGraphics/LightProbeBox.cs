@@ -15,7 +15,7 @@ namespace IronStar.SFX2
 {
 	public class LightProbeBox : IComponent
 	{
-		public readonly string name;
+		public string name;
 
 		[AECategory("Light probe")]
 		[AESlider(0,256,8,0.25f)]
@@ -44,6 +44,10 @@ namespace IronStar.SFX2
 		[AESlider(0.25f,32,1,0.25f)]
 		public float ShellDepth  { get; set; } = 8f;
 
+		public LightProbeBox () : this( Guid.NewGuid().ToString() )
+		{
+		}
+
 		public LightProbeBox ( string name )
 		{
 			this.name	=	name;
@@ -55,6 +59,7 @@ namespace IronStar.SFX2
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
+			writer.Write( name			);
 			writer.Write( Width			);
 			writer.Write( Height		);
 			writer.Write( Depth			);
@@ -65,6 +70,7 @@ namespace IronStar.SFX2
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
+			name		=	reader.ReadString();
 			Width		=	reader.ReadSingle();
 			Height		=	reader.ReadSingle();
 			Depth		=	reader.ReadSingle();

@@ -10,7 +10,9 @@ namespace IronStar.Gameplay.Components
 {
 	public class PickupComponent : IComponent
 	{
-		public string FXName { get; set; } = "";
+		public string FXName;
+
+		public PickupComponent() : this("") {}
 
 		public PickupComponent( string fxName )
 		{

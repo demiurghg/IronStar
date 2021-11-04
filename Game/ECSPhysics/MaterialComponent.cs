@@ -30,6 +30,8 @@ namespace IronStar.ECSPhysics
 	{
 		public MaterialType	Material;
 
+		public MaterialComponent() : this(MaterialType.Metal) {}
+
 		public MaterialComponent( MaterialType material )
 		{
 			Material	=	material;

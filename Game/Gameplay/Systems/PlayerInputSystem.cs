@@ -14,6 +14,14 @@ using System.Collections.Concurrent;
 
 namespace IronStar.Gameplay
 {
+	/// <summary>
+	/// In MASTER mode PlayerInputSystem scans input devices and form UserCommand. UserCommand is sent to shared UserCommandQueue.
+	/// Once player spawns, UserCommand is updated based on data from player transform to align view abgles.
+	/// 
+	/// In SLAVE mode PlayerInputSystem read shared	UserCommandQueue and applies command to all players.
+	/// #TODO UserCommand is applied to all players, its OK for single player, but for multiplayer command must be
+	/// applied only to current player.
+	/// </summary>
 	public class PlayerInputSystem : ISystem
 	{
 		Aspect			playerAspect	=	new Aspect().Include<Transform,PlayerComponent,UserCommandComponent>();
@@ -21,13 +29,33 @@ namespace IronStar.Gameplay
 
 		public Aspect GetAspect() { return playerAspect; }
 
-		public UserCommand LastCommand { get { return userCommand; } }
+		public UserCommand LastCommand 
+		{ 
+			get 
+			{ 
+				if (!master) throw new InvalidOperationException("LastCommand is available only for MASTER player input system");
+				return userCommand; 
+			} 
+		}
+
+		readonly bool master;
+		readonly UserCommandQueue queue;
+
+
+		public PlayerInputSystem(UserCommandQueue queue, bool master)
+		{
+			this.master	=	master;
+			this.queue	=	queue;
+		}
 
 
 		public void Add( IGameState gs, Entity e ) 
 		{
-			var transform	=	e.GetComponent<Transform>();
-			userCommand		=	UserCommand.FromTransform( transform );
+			if (master)
+			{
+				var transform	=	e.GetComponent<Transform>();
+				userCommand		=	UserCommand.FromTransform( transform );
+			}
 			//	#TODO #GAMEPLAY -- should I clear the command queue?
 		}
 		
@@ -39,17 +67,29 @@ namespace IronStar.Gameplay
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			var playerInput	=	gs.Game.GetService<PlayerInput>();
-			var players		=	gs.QueryEntities(playerAspect);
-			playerInput.UpdateUserInput( gameTime, ref userCommand );
-
-			foreach ( var player in players )
+			if (master)
 			{
-				var ucc		=	player.GetComponent<UserCommandComponent>();
-				var health	=	player.GetComponent<HealthComponent>();
-				var alive	=	health==null ? true : health.Health > 0;
+				var playerInput	=	gs.Game.GetService<PlayerInput>();
+				playerInput.UpdateUserInput( gameTime, ref userCommand );
 
-				ucc.UpdateFromUserCommand( userCommand.Yaw + userCommand.DeltaYaw, userCommand.Pitch + userCommand.DeltaPitch, userCommand.Move, userCommand.Strafe, userCommand.Action );
+				queue.Enqueue( userCommand );
+			}
+			else
+			{
+				var recvCommand	=	new UserCommand();
+				var players		=	gs.QueryEntities(playerAspect);
+				
+				while (queue.TryDequeue(out recvCommand))
+				{
+					foreach ( var player in players )
+					{
+						var ucc		=	player.GetComponent<UserCommandComponent>();
+						var health	=	player.GetComponent<HealthComponent>();
+						var alive	=	health==null ? true : health.Health > 0;
+
+						ucc.UpdateFromUserCommand( recvCommand.Yaw + recvCommand.DeltaYaw, recvCommand.Pitch + recvCommand.DeltaPitch, recvCommand.Move, recvCommand.Strafe, recvCommand.Action );
+					}
+				}
 			}
 		}
 	}

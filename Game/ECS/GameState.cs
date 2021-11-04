@@ -70,14 +70,16 @@ namespace IronStar.ECS
 
 		readonly Stopwatch stopwatch = new Stopwatch();
 		readonly Thread mainThread;
+		readonly bool debug;
 		bool terminate = false;
 
 		/// <summary>
 		/// Game state constructor
 		/// </summary>
 		/// <param name="game"></param>
-		public GameState( Game game, ContentManager content )
+		public GameState( Game game, ContentManager content, bool debug )
 		{
+			this.debug		=	debug;
 			mainThread		=	Thread.CurrentThread;
 
 			this.game		=	game;
@@ -250,7 +252,6 @@ namespace IronStar.ECS
 		void RefreshEntities()
 		{
 			Entity e;
-			Action a;
 			ComponentData cd;
 			SpawnData sd;
 
@@ -279,6 +280,7 @@ namespace IronStar.ECS
 
 			foreach (var re in refreshList)
 			{
+				if (debug) Log.Debug("Refreshed: {0}", re);
 				foreach ( var system in systems )
 				{
 					system.Changed(re);
@@ -506,6 +508,7 @@ namespace IronStar.ECS
 					if (!newIDs.Contains(e.Value.ID))
 					{
 						e.Value.Kill();
+						Log.Debug("Kill : {0}", e.Value);
 					}
 				}
 
@@ -516,6 +519,7 @@ namespace IronStar.ECS
 						var e = new Entity(this, id);
 						entities.Add( e );
 						Refresh( e );
+						Log.Debug("Spawn : {0}", e);
 					}
 				}
 
@@ -542,12 +546,13 @@ namespace IronStar.ECS
 						{
 							component = (IComponent)Activator.CreateInstance(type);
 							component.Load( this, reader );
-							updting.Add( id, component );
-							Refresh( entities[id] );
+							entities[id]?.AddComponent( component );
 						}
 					}
 
-					var toRemove = updting.Keys.Except( componentDict.Keys );
+					var toRemove = componentDict.Keys
+									.Except( updting.Keys )
+									.ToArray();
 
 					foreach ( var id in toRemove )
 					{

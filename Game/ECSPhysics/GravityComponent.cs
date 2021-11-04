@@ -10,7 +10,11 @@ namespace IronStar.ECSPhysics
 {
 	public class GravityComponent : IComponent
 	{
-		public float Magnitude = 48;
+		public float Magnitude;
+
+		public GravityComponent() : this(48)
+		{
+		}
 
 		public GravityComponent( float g )
 		{

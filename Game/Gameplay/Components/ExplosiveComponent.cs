@@ -10,13 +10,17 @@ namespace IronStar.Gameplay.Components
 {
 	public class ExplosiveComponent : IComponent
 	{
-		public bool		Initiated;
-		public float	Timeout;
-		public float	Radius;
-		public float	Impulse;
-		public int		Damage;
-		public string	BurningFX;
-		public string	ExplosionFX;
+		public bool		Initiated	=	false;
+		public float	Timeout		;
+		public float	Radius		;
+		public float	Impulse		;
+		public int		Damage		;
+		public string	BurningFX	;
+		public string	ExplosionFX	;
+
+		public ExplosiveComponent()
+		{
+		}
 
 		public ExplosiveComponent( float timeout, int damage, float radius, float impulse, string burningFX, string explosionFX )
 		{

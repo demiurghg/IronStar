@@ -67,7 +67,7 @@ namespace IronStar.SFX2
 			this.fpvCameraNode	=	fpvCameraNode;
 			fpvEnabled			=	!string.IsNullOrEmpty(fpvCameraNode);
 
-			var content		=	gs.GetService<ContentManager>();
+			var content		=	gs.Content;
 			rs				=	gs.Game.GetService<RenderSystem>();
 
 			scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );

@@ -15,7 +15,7 @@ namespace IronStar.SFX2
 {
 	public class LightProbeSphere : IComponent
 	{
-		public readonly string name;
+		public string name;
 
 		[AECategory("Light probe")]
 		[AESlider(0,256,8,0.25f)]
@@ -32,7 +32,7 @@ namespace IronStar.SFX2
 		}
 
 
-		private LightProbeSphere () : this( Guid.NewGuid().ToString() )
+		public LightProbeSphere () : this( Guid.NewGuid().ToString() )
 		{
 		}
 
@@ -42,12 +42,14 @@ namespace IronStar.SFX2
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
+			writer.Write( name );
 			writer.Write( Radius );
 			writer.Write( Transition );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
+			name		=	reader.ReadString();
 			Radius		=	reader.ReadSingle();
 			Transition	=	reader.ReadSingle();
 		}

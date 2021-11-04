@@ -29,7 +29,11 @@ namespace IronStar.Gameplay.Components
 		public InventoryFlags Flags { get { return flags; } }
 		InventoryFlags flags;
 
-		public InventoryComponent( InventoryFlags flags = InventoryFlags.None )
+		public InventoryComponent() : this(InventoryFlags.None)
+		{
+		}
+
+		public InventoryComponent( InventoryFlags flags )
 		{
 			MaxAmmoTypes	=	(int)Misc.MaxEnumValue<AmmoType>()	 + 1;
 			MaxWeaponTypes	=	(int)Misc.MaxEnumValue<WeaponType>() + 1;

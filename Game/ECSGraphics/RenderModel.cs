@@ -112,7 +112,7 @@ namespace IronStar.SFX2
 			intensity		=	reader.ReadSingle();
 			rmFlags			=	(RMFlags)reader.ReadInt32();
 
-			lightmapSize	=	reader.Read<Size2>();
+			lightmapSize	=	reader.ReadSize2();
 			lightmapName	=	reader.ReadString();
 
 			cmPrefix		=	reader.ReadString();

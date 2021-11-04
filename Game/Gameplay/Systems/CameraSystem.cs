@@ -37,6 +37,7 @@ namespace IronStar.Gameplay
 
 		readonly Random	rand = new Random();
 		readonly SFX.FXPlayback fxPlayback;
+		readonly PlayerInputSystem playerInput;
 
 		Scene cameraScene;
 		AnimationComposer	composer;
@@ -52,11 +53,12 @@ namespace IronStar.Gameplay
 		public bool Enabled { get; set; } = true;
 
 
-		public CameraSystem(SFX.FXPlayback fxPlayback)
+		public CameraSystem(SFX.FXPlayback fxPlayback, PlayerInputSystem playerInput)
 		{
-			this.fxPlayback	=	fxPlayback;
-			cameraScene		=	CreateCameraScene( 6, 4, 0 );
-			animData		=	new Matrix[2];
+			this.fxPlayback		=	fxPlayback;
+			this.playerInput	=	playerInput;
+			cameraScene			=	CreateCameraScene( 6, 4, 0 );
+			animData			=	new Matrix[2];
 
 			composer	=	new AnimationComposer( fxPlayback, cameraScene );
 			mainTrack	=	new Sequencer( cameraScene, null, AnimationBlendMode.Override );
@@ -126,8 +128,10 @@ namespace IronStar.Gameplay
 			var health	=	e.GetComponent<HealthComponent>();
 			var camera	=	e.GetComponent<CameraComponent>();
 
+			/*
 			var playerInput	=	gs.GetService<PlayerInputSystem>();
 			var lastCommand	=	playerInput.LastCommand;
+			*/
 
 			//	animate :
 			UpdateAnimationState(step, health);
@@ -154,7 +158,6 @@ namespace IronStar.Gameplay
 			var sw	=	gs.Game.SoundSystem;
 			var vp	=	gs.Game.RenderSystem.DisplayBounds;
 
-			var playerInput	=	gs.GetService<PlayerInputSystem>();
 			var lastCommand	=	playerInput.LastCommand;
 
 			var animMatrix	=	camera.AnimTransform;

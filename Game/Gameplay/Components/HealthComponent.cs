@@ -17,8 +17,8 @@ namespace IronStar.Gameplay.Components
 
 	public class HealthComponent : IComponent
 	{
-		public readonly int MaxHealth = 100;
-		public readonly int MaxArmor  = 100;
+		public int MaxHealth = 100;
+		public int MaxArmor  = 100;
 
 		public int Health { get; set; }
 		public int Armor { get; set; }
@@ -30,6 +30,10 @@ namespace IronStar.Gameplay.Components
 
 		Entity attacker;
 		int accumulatedDamage;
+
+		public HealthComponent()
+		{
+		}
 
 		public HealthComponent( int health, int armor )
 		{
@@ -44,6 +48,39 @@ namespace IronStar.Gameplay.Components
 			Action	=	action;
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	IComponent implementation :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Save( GameState gs, BinaryWriter writer )
+		{
+			writer.Write( MaxHealth	);
+			writer.Write( MaxArmor	);
+			writer.Write( Health	);
+			writer.Write( Armor		);
+		}
+
+		public void Load( GameState gs, BinaryReader reader )
+		{
+			 MaxHealth	=	reader.ReadInt32();
+			 MaxArmor	=	reader.ReadInt32();
+			 Health		=	reader.ReadInt32();
+			 Armor		=	reader.ReadInt32();
+		}
+
+		public IComponent Clone()
+		{
+			return (IComponent)MemberwiseClone();
+		}
+
+		public IComponent Interpolate( IComponent previous, float factor )
+		{
+			return Clone();
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Utils :
+		-----------------------------------------------------------------------------------------*/
 
 		public bool TryGiveHealth( int amount )
 		{
@@ -111,28 +148,6 @@ namespace IronStar.Gameplay.Components
 			}
 
 			return Health > 0 ? HealthStatus.Alive : HealthStatus.Dead;
-		}
-
-		/*-----------------------------------------------------------------------------------------
-		 *	IComponent implementation :
-		-----------------------------------------------------------------------------------------*/
-
-		public void Save( GameState gs, BinaryWriter writer )
-		{
-		}
-
-		public void Load( GameState gs, BinaryReader reader )
-		{
-		}
-
-		public IComponent Clone()
-		{
-			return (IComponent)MemberwiseClone();
-		}
-
-		public IComponent Interpolate( IComponent previous, float factor )
-		{
-			return Clone();
 		}
 	}
 }

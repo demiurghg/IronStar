@@ -100,18 +100,24 @@ namespace IronStar.ECS
 		 *	Update :
 		-----------------------------------------------------------------------------------------*/
 
+		byte[] data	=	new byte[ 512 * 1024 ];
+
 		public void Update( GameTime gameTime )
 		{
 			simulation.Update(gameTime);
 
-			using ( var ms = new MemoryStream() ) 
+
+			using ( var ms = new MemoryStream(data) ) 
 			{
 				((GameState)simulation).Save( ms, gameTime.Current, gameTime.Elapsed );
-		
-				//ms.Seek(0, SeekOrigin.Begin);
-
-				//((GameState)presentation).Load( ms );
 			}
+
+			using ( var ms = new MemoryStream(data) ) 
+			{
+				((GameState)presentation).Load( ms );
+			}
+
+			presentation.Update(gameTime);
 		}
 
 		/*-----------------------------------------------------------------------------------------

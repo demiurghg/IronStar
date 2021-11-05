@@ -53,7 +53,7 @@ namespace IronStar.Animation
 			return new BoneComponent( bones );
 		}
 
-		public IComponent Interpolate( IComponent previous, float factor )
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
 			return Clone();
 		}

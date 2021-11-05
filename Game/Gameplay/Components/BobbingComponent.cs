@@ -49,8 +49,10 @@ namespace IronStar.Gameplay.Components
 			return new BobbingComponent( BobYaw, BobPitch, BobRoll, BobUp );
 		}
 
-		public IComponent Interpolate( IComponent previous, float factor )
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
+			if (previous==null) return Clone();
+
 			var prev	=	(BobbingComponent)previous;
 			var yaw		=	MathUtil.Lerp( prev.BobYaw	, BobYaw	, factor );
 			var pitch	=	MathUtil.Lerp( prev.BobPitch, BobPitch	, factor );

@@ -34,8 +34,10 @@ namespace IronStar.Gameplay.Components
 			return new CameraComponent { AnimTransform = AnimTransform };
 		}
 
-		public IComponent Interpolate( IComponent previous, float factor )
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
+			if (previous==null) return Clone();
+
 			var prev	=	((CameraComponent)previous).AnimTransform;
 			var lerp	=	AnimationUtils.Lerp( prev, AnimTransform, factor );
 

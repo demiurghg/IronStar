@@ -36,6 +36,6 @@ namespace IronStar.ECS
 		/// One means that current state is returned. 
 		/// Zero means the old one.</param>
 		/// <returns>Interpolated component</returns>
-		IComponent Interpolate( IComponent previous, float factor );
+		IComponent Interpolate( IComponent previous, float dt, float factor );
 	}
 }

@@ -86,7 +86,7 @@ namespace IronStar.SFX2
 			return (IComponent)MemberwiseClone();
 		}
 
-		public IComponent Interpolate( IComponent previous, float factor )
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
 			return Clone();
 		}

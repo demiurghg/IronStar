@@ -64,6 +64,7 @@ namespace IronStar.Gameplay
 		{ 
 		}
 
+		UserCommand mergedCommand = new UserCommand();
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
@@ -78,18 +79,21 @@ namespace IronStar.Gameplay
 			{
 				var recvCommand	=	new UserCommand();
 				var players		=	gs.QueryEntities(playerAspect);
-				
+
 				while (queue.TryDequeue(out recvCommand))
 				{
+					mergedCommand = recvCommand;
+
 					foreach ( var player in players )
 					{
 						var ucc		=	player.GetComponent<UserCommandComponent>();
 						var health	=	player.GetComponent<HealthComponent>();
 						var alive	=	health==null ? true : health.Health > 0;
 
-						ucc.UpdateFromUserCommand( recvCommand.Yaw + recvCommand.DeltaYaw, recvCommand.Pitch + recvCommand.DeltaPitch, recvCommand.Move, recvCommand.Strafe, recvCommand.Action );
+						ucc.UpdateFromUserCommand( mergedCommand.Yaw + mergedCommand.DeltaYaw, mergedCommand.Pitch + mergedCommand.DeltaPitch, mergedCommand.Move, mergedCommand.Strafe, mergedCommand.Action );
 					}
 				}
+				
 			}
 		}
 	}

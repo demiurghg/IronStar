@@ -149,6 +149,11 @@ namespace IronStar.ECS
 		 *	Updates :
 		-----------------------------------------------------------------------------------------*/
 
+		public IEnumerable<ISystem> Systems
+		{
+			get { return systems.Select( s => s.System ); }
+		}
+
 		/// <summary>
 		/// Updates game state
 		/// </summary>
@@ -157,30 +162,17 @@ namespace IronStar.ECS
 		{
 			using ( new CVEvent( "ECS Update" ) )
 			{
-				var maxTime = TimeSpan.FromMilliseconds(20);
-
-				stopwatch.Reset();
-				stopwatch.Start();
-
 				RefreshEntities();
 
 				foreach ( var system in systems )
 				{
 					system.Update( this, gameTime );
-				}
 
-				stopwatch.Stop();
-				if (stopwatch.Elapsed > maxTime)
-				{
-					Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, maxTime);
-
-					/*foreach ( var system in systems )
+					if (forceRefresh)
 					{
-						if (system.ProfilingTime.Ticks > maxTime.Ticks / 10)
-						{
-							Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
-						}
-					}*/
+						RefreshEntities();
+						forceRefresh = false;
+					}
 				}
 			}
 		}
@@ -280,7 +272,6 @@ namespace IronStar.ECS
 
 			foreach (var re in refreshList)
 			{
-				if (debug) Log.Debug("Refreshed: {0}", re);
 				foreach ( var system in systems )
 				{
 					system.Changed(re);
@@ -332,6 +323,15 @@ namespace IronStar.ECS
 			return entity;
 		}
 
+
+		bool forceRefresh = false;
+
+		public void ForceRefresh()
+		{
+			forceRefresh = true;
+		}
+
+		
 		void Refresh ( Entity entity )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
@@ -492,8 +492,17 @@ namespace IronStar.ECS
 			using ( var reader = new BinaryReader( stream ) )
 			{
 				//	read timing :
-				snapshotTimestamp	=	reader.Read<TimeSpan>();
-				snapshotTimestep	=	reader.Read<TimeSpan>();
+				var timestamp	=	reader.Read<TimeSpan>();
+				var timestep	=	reader.Read<TimeSpan>();
+
+				//	compare old timestamp and do not load state twice
+				if (snapshotTimestamp==timestamp)
+				{
+					return;
+				}
+
+				snapshotTimestamp	=	timestamp;
+				snapshotTimestep	=	timestep;
 
 				//	read entity IDs :
 				int entityCount = reader.ReadInt32();
@@ -510,7 +519,6 @@ namespace IronStar.ECS
 					if (!newIDs.Contains(e.Value.ID))
 					{
 						e.Value.Kill();
-						Log.Debug("Kill : {0}", e.Value);
 					}
 				}
 
@@ -521,7 +529,6 @@ namespace IronStar.ECS
 						var e = new Entity(this, id);
 						entities.Add( e );
 						Refresh( e );
-						Log.Debug("Spawn : {0}", e);
 					}
 				}
 
@@ -568,7 +575,14 @@ namespace IronStar.ECS
 
 		public void InterpolateState ( TimeSpan time )
 		{
-			components.Interpolate( snapshotTimestamp, snapshotTimestep, time );
+			double	ftimestamp	=	snapshotTimestamp.TotalSeconds;
+			double	ftimestep	=	snapshotTimestep.TotalSeconds;
+			double	ftime		=	time.TotalSeconds;
+
+			float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), 0, 1 );
+			float	dt			=	(float)ftimestep;
+
+			components.Interpolate( dt, factor );
 		}
 
 

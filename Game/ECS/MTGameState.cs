@@ -11,12 +11,16 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.IO;
 using Fusion.Core.Extensions;
+using Fusion;
 
 namespace IronStar.ECS
 {
 	public class MTGameState : IGameState
 	{
-		public ContentManager Content { get { throw new NotImplementedException(); } }
+		public ContentManager Content 
+		{ 
+			get { return simulation.Content ?? presentation.Content; } 
+		}
 
 		public Game Game { get { return game; } }
 
@@ -34,18 +38,12 @@ namespace IronStar.ECS
 		Thread		gameThread;
 		TimeSpan	timestep;
 
-		object	snapshotLock	=	new object();
-		byte[]	snapshotWrite	=	new byte[ 512 * 1024 ];
-		byte[]	snapshotRead	=	new byte[ 512 * 1024 ];
+		const int SnapshotCount = 5;
+		const int SnapshotSize	= 512 * 1024;
 
+		ConcurrentQueue<byte[]>	recycleQueue	=	new ConcurrentQueue<byte[]>();
+		ConcurrentQueue<byte[]>	dispatchQueue	=	new ConcurrentQueue<byte[]>();
 
-		void SwapSnapshots()
-		{
-			lock (snapshotLock)
-			{
-				Misc.Swap( ref snapshotRead, ref snapshotWrite );
-			}
-		}
 
 
 		public MTGameState( Game game, IGameState simulation, IGameState presentation, TimeSpan timestep )
@@ -54,6 +52,11 @@ namespace IronStar.ECS
 			this.simulation		=	simulation;
 			this.presentation	=	presentation;
 			this.timestep		=	timestep;
+
+			for (int i=0; i<SnapshotCount; i++)
+			{
+				recycleQueue.Enqueue( new byte[SnapshotSize] );
+			}
 
 			gameThread					=	new Thread( new ThreadStart( GameLoop ) );
 			gameThread.Name				=	"ECS Thread";
@@ -76,11 +79,11 @@ namespace IronStar.ECS
 		
 		void GameLoop()
 		{
+			var		 stopwatch		=	new Stopwatch();
 			long	 frames			=	0;
 			TimeSpan dt				=	timestep;
 			TimeSpan currentTime	=	GameTime.CurrentTime;
 			TimeSpan accumulator	=	TimeSpan.Zero;
-			var		 stopwatch		=	new Stopwatch();
 
 			simulation.Update( new GameTime(dt, frames++) );
 			simulation.Update( new GameTime(dt, frames++) );
@@ -95,14 +98,32 @@ namespace IronStar.ECS
 
 				while (accumulator >= dt)
 				{
+					stopwatch.Restart();
+					
 					simulation.Update( new GameTime(dt, frames++) );
+					
+					stopwatch.Stop();
+
+					if (stopwatch.Elapsed > dt)
+					{
+						Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+					}
 
 					accumulator -= dt;
 
-					using ( var ms = new MemoryStream(snapshotWrite) )
+					byte[] snapshot;
+
+					if (recycleQueue.TryDequeue(out snapshot))
 					{
-						((GameState)simulation).Save( ms, newTime, dt );
-						SwapSnapshots();
+						using ( var ms = new MemoryStream(snapshot) )
+						{
+							((GameState)simulation).Save( ms, newTime, dt );
+							dispatchQueue.Enqueue( snapshot );
+						}
+					}
+					else
+					{
+						Log.Warning("SNAPSHOT STARVATION");
 					}
 				}
 
@@ -120,12 +141,15 @@ namespace IronStar.ECS
 
 		public void Update( GameTime gameTime )
 		{
-			lock (snapshotLock)
+			byte[] snapshot;
+
+			while (dispatchQueue.TryDequeue(out snapshot))
 			{
-				using ( var ms = new MemoryStream(snapshotRead) ) 
+				using ( var ms = new MemoryStream(snapshot) ) 
 				{
 					((GameState)presentation).Load( ms );
 				}
+				recycleQueue.Enqueue( snapshot );
 			}
 
 			((GameState)presentation).InterpolateState( gameTime.Current );
@@ -138,9 +162,15 @@ namespace IronStar.ECS
 		-----------------------------------------------------------------------------------------*/
 
 		public Entity GetEntity( uint id ) { throw new NotImplementedException(); }
-
-		public TService GetService<TService>() where TService : class {	throw new NotImplementedException(); }
+		public void ForceRefresh() { throw new NotImplementedException(); }
 		public IEnumerable<Entity> QueryEntities( Aspect aspect ) {	throw new NotImplementedException(); }
+		public IEnumerable<ISystem> Systems { get { throw new NotImplementedException(); } }
+
+
+		public TService GetService<TService>() where TService : class 
+		{	
+			return simulation.GetService<TService>() ?? presentation.GetService<TService>();
+		}
 
 		public void KillAll()
 		{

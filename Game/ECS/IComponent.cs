@@ -31,7 +31,11 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Creates interpolated state of the component.
 		/// </summary>
-		/// <param name="previous">Previous component data, might be null</param>
+		/// <param name="previous">Previous component data, might be null. 
+		/// If Interpolate get null parameter, it can simply return 
+		/// current state or estimate previous position e.g. velocity.
+		/// </param>
+		/// <param name="dt">Current fixed timestep. 
 		/// <param name="factor">Component interpolation factor. 
 		/// One means that current state is returned. 
 		/// Zero means the old one.</param>

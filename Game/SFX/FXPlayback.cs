@@ -246,6 +246,8 @@ namespace IronStar.SFX
 		{
 			if ( fxInstance!=null )
 			{
+				//Log.Debug("{0} {1}", fx.FXName, t.Position.Z );
+
 				fxInstance.fxEvent.Origin	=	t.Position;
 				fxInstance.fxEvent.Rotation	=	t.Rotation;
 				fxInstance.fxEvent.Scale	=	t.Scaling;
@@ -253,7 +255,6 @@ namespace IronStar.SFX
 
 				if ( fxInstance.IsExhausted )
 				{
-					//entity.gs.Kill( entity );
 				}
 			}
 			else

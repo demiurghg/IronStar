@@ -23,6 +23,11 @@ using BEPUphysics.EntityStateManagement;
 
 namespace IronStar.ECSPhysics
 {
+	public interface ITransformFeeder
+	{
+		void FeedTransform( IGameState gs, GameTime gameTime );
+	}
+
 	/// <summary>
 	/// https://github.com/bepu/bepuphysics1/blob/master/Documentation/Isolated%20Demos/AsynchronousUpdateDemo/AsynchronousUpdateGame.cs
 	/// </summary>
@@ -127,6 +132,8 @@ namespace IronStar.ECSPhysics
 				UpdateSimulation( gs, gameTime.ElapsedSec );
 
 				UpdateTouchEvents(gs);
+
+				UpdateTransforms( gs, gameTime );
 			}
 		}
 
@@ -222,7 +229,7 @@ namespace IronStar.ECSPhysics
 			ApplyDeferredImpulses();
 
 			//	run simulation :
-			Space.Update(elapsedTime);
+			Space.Update();
 		}
 
 
@@ -243,6 +250,16 @@ namespace IronStar.ECSPhysics
 				var e2	=	touch.Item2;
 
 				e1.GetComponent<TouchDetector>()?.AddTouch( e2 );
+			}
+		}
+
+
+		void UpdateTransforms( IGameState gs, GameTime gt )
+		{
+			foreach ( var system in gs.Systems )
+			{
+				var feeder = system as ITransformFeeder;
+				feeder?.FeedTransform( gs, gt );
 			}
 		}
 

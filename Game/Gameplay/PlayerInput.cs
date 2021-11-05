@@ -40,6 +40,10 @@ namespace IronStar.Gameplay
 		[Config] public Keys	MoveBackward	{ get; set; }	=	Keys.Z;	
 		[Config] public Keys	StrafeRight		{ get; set; }	=	Keys.X;	
 		[Config] public Keys	StrafeLeft		{ get; set; }	=	Keys.A;	
+		[Config] public Keys	TurnRight		{ get; set; }	=	Keys.Right;	
+		[Config] public Keys	TurnLeft		{ get; set; }	=	Keys.Left;	
+		[Config] public Keys	LookUp			{ get; set; }	=	Keys.Up;	
+		[Config] public Keys	LookDown		{ get; set; }	=	Keys.Down;	
 		[Config] public Keys	Jump			{ get; set; }	=	Keys.RightButton;	
 		[Config] public Keys	Crouch			{ get; set; }	=	Keys.LeftAlt;	
 		[Config] public Keys	Walk			{ get; set; }	=	Keys.LeftShift;	
@@ -120,6 +124,13 @@ namespace IronStar.Gameplay
 			var vp			=	Game.RenderSystem.DisplayBounds;
 			var deltaYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 			var deltaPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
+
+			//	Q3A: 360 turn around takes approx 2.5 seconds:
+			float dt = gameTime.ElapsedSec;
+			if (Game.Keyboard.IsKeyDown( TurnLeft	)) deltaYaw		+= MathUtil.TwoPi / 2.5f * dt;
+			if (Game.Keyboard.IsKeyDown( TurnRight	)) deltaYaw		-= MathUtil.TwoPi / 2.5f * dt;
+			if (Game.Keyboard.IsKeyDown( LookUp		)) deltaPitch	+= MathUtil.TwoPi / 2.5f * dt;
+			if (Game.Keyboard.IsKeyDown( LookDown	)) deltaPitch	-= MathUtil.TwoPi / 2.5f * dt;
 
 			userCommand.Yaw			+=	deltaYaw;
 			userCommand.Pitch		+=	deltaPitch;

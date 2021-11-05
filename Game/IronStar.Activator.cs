@@ -103,10 +103,10 @@ namespace IronStar
 			gs.AddSystem( new ProjectileSystem(gs, physicsCore ) );
 
 			//	physics simulation :
+			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore ) );
 			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore ) );
-			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore ) );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -165,7 +165,7 @@ namespace IronStar
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
 			//return gs;
-			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/115.0f) );
+			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/60.0f) );
 		}
 
 

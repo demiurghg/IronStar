@@ -72,6 +72,8 @@ namespace IronStar.Gameplay.Systems
 					UpdateArmedEntity( gs, entity, msec, transform, inventory, wpnState, userCmd, chctrl, isAlive, bob );
 				}
 			}
+
+			gs.ForceRefresh();
 		}
 
 

@@ -27,7 +27,7 @@ using BEPUutilities.Threading;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform>
+	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform>, ITransformFeeder
 	{
 		readonly PhysicsCore physics;
 
@@ -97,17 +97,6 @@ namespace IronStar.ECSPhysics
 			{
 				Move( controller, cc, uc );
 			}
-			
-			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
-			var traction	=	controller.SupportFinder.HasTraction;
-			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
-			var position	=	MathConverter.Convert( controller.Body.Position );
-			var velocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
-
-			t.Move( position - offset, t.Rotation, velocity, Vector3.Zero );
-
-			cc.IsCrouching		=	crouching;
-			cc.HasTraction		=	traction;
 		}
 
 
@@ -138,6 +127,27 @@ namespace IronStar.ECSPhysics
 			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 
 			controller.TryToJump = jump;
+		}
+
+
+		public void FeedTransform( IGameState gs, GameTime gameTime )
+		{
+			ForEach( gs, gameTime, FeedEntityTransform );
+		}
+
+
+		void FeedEntityTransform( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t )
+		{
+			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
+			var traction	=	controller.SupportFinder.HasTraction;
+			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
+			var position	=	MathConverter.Convert( controller.Body.Position );
+			var velocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
+
+			t.Move( position - offset, t.Rotation, velocity, Vector3.Zero );
+
+			cc.IsCrouching	=	crouching;
+			cc.HasTraction	=	traction;
 		}
 	}
 }

@@ -19,6 +19,8 @@ namespace IronStar.ECS
 
 		Entity Spawn(IFactory factory);
 
+		void ForceRefresh();
+
 		void KillAll();
 
 		void Update ( GameTime gameTime );
@@ -26,6 +28,8 @@ namespace IronStar.ECS
 		Entity GetEntity(uint id);
 
 		TService GetService<TService>() where TService : class;
+
+		IEnumerable<ISystem> Systems { get; }
 
 		IEnumerable<Entity> QueryEntities( Aspect aspect );
 	}

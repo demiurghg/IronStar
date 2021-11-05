@@ -149,7 +149,7 @@
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
-    <Compile Include="ECS\Collections\ComponentBuffer.cs" />
+    <Compile Include="ECS\Collections\ComponentDictionary.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />
     <Compile Include="ECS\Collections\StateInterpolator.cs" />

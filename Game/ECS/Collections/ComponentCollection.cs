@@ -9,7 +9,7 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.ECS
 {
-	class ComponentCollection : Dictionary<Type,ComponentBuffer>
+	class ComponentCollection : Dictionary<Type,ComponentDictionary>
 	{
 		class IDComparer : IEqualityComparer<uint>
 		{
@@ -22,7 +22,7 @@ namespace IronStar.ECS
 		{
 			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
 			{
-				Add( componentType, new ComponentBuffer() );
+				Add( componentType, new ComponentDictionary() );
 			}
 		}
 
@@ -36,12 +36,12 @@ namespace IronStar.ECS
 		}
 
 
-		public void RemoveComponent( uint entityId, IComponent component )
+		public void RemoveComponent( uint entityId, Type componentType )
 		{
-			if (component==null) throw new ArgumentNullException("component");
+			if (componentType==null) throw new ArgumentNullException("component");
 			if (entityId==0) throw new ArgumentNullException("entityId");
 
-			this[component.GetType()].Remove( entityId );
+			this[componentType].Remove( entityId );
 		}
 
 
@@ -71,6 +71,15 @@ namespace IronStar.ECS
 			else
 			{
 				return null;
+			}
+		}
+
+
+		public void Interpolate( TimeSpan timestamp, TimeSpan timestep, TimeSpan time )
+		{
+			foreach (var dict in this)
+			{
+				dict.Value.Interpolate( timestamp, timestep, time );
 			}
 		}
 	}

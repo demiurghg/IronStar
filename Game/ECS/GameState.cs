@@ -33,9 +33,9 @@ namespace IronStar.ECS
 
 		struct ComponentData
 		{
-			public ComponentData ( Entity e, IComponent c ) { Entity = e; Component = c; }
+			public ComponentData ( Entity e, Type type ) { Entity = e; ComponentType = type; }
 			public readonly Entity Entity;
-			public readonly IComponent Component;
+			public readonly Type ComponentType;
 		}
 
 		public bool Paused { get; set; } = false;
@@ -234,7 +234,7 @@ namespace IronStar.ECS
 
 			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
 			{
-				ComponentBuffer componentDict;
+				ComponentDictionary componentDict;
 				if (components.TryGetValue( componentType, out componentDict ))
 				{
 					con.DrawDebugText(Color.White, "  component : {0} : {1}", componentType.Name.Replace("Component", ""), componentDict.Count );
@@ -264,7 +264,7 @@ namespace IronStar.ECS
 
 			while (componentToRemove.TryDequeue(out cd))
 			{
-				RemoveEntityComponentImmediate( cd.Entity, cd.Component );
+				RemoveEntityComponentImmediate( cd.Entity, cd.ComponentType );
 			}
 
 			while (killQueue.TryDequeue(out e))
@@ -384,13 +384,12 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="entity">Entity to remove component from</param>
 		/// <param name="component">Component to remove</param>
-		public void RemoveEntityComponent( Entity entity, IComponent component )
+		public void RemoveEntityComponent( Entity entity, Type componentType )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
-			if (component==null) throw new ArgumentNullException("component");
 			//CheckUpdateThread(nameof(RemoveEntityComponent));
 
-			componentToRemove.Enqueue( new ComponentData( entity, component ) );
+			componentToRemove.Enqueue( new ComponentData( entity, componentType ) );
 		}
 
 
@@ -403,10 +402,10 @@ namespace IronStar.ECS
 		}
 
 
-		private void RemoveEntityComponentImmediate( Entity entity, IComponent component )
+		private void RemoveEntityComponentImmediate( Entity entity, Type componentType )
 		{
-			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
-			components.RemoveComponent( entity.ID, component );
+			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( componentType );
+			components.RemoveComponent( entity.ID, componentType );
 
 			Refresh( entity );
 		}
@@ -474,15 +473,18 @@ namespace IronStar.ECS
 
 						writer.Write( compBuffer.Count );
 
-						foreach ( var compPair in compBuffer.Updating )
+						foreach ( var compPair in compBuffer )
 						{
 							writer.Write( compPair.Key );
-							compPair.Value.Save( this, writer );
+							compPair.Value.Current.Save( this, writer );
 						}
 					}
 				}
 			}
 		}
+
+		TimeSpan snapshotTimestamp;
+		TimeSpan snapshotTimestep;
 
 
 		public void Load( Stream stream )
@@ -490,8 +492,8 @@ namespace IronStar.ECS
 			using ( var reader = new BinaryReader( stream ) )
 			{
 				//	read timing :
-				var time	=	reader.Read<TimeSpan>();
-				var dt		=	reader.Read<TimeSpan>();
+				snapshotTimestamp	=	reader.Read<TimeSpan>();
+				snapshotTimestep	=	reader.Read<TimeSpan>();
 
 				//	read entity IDs :
 				int entityCount = reader.ReadInt32();
@@ -524,44 +526,51 @@ namespace IronStar.ECS
 				}
 
 				//	read component data :
-				#warning TODO LOAD ...
 				foreach ( var type in ECSTypeManager.GetComponentTypes() )
 				{
-					var compBuffer		=	components[type];
-					var updting			=	compBuffer.Updating;
-
+					var componentDict	=	components[type];
 					int componentCount	=	reader.ReadInt32();
-					var componentDict	=	new Dictionary<uint,IComponent>( componentCount );
+					var idsSet			=	new HashSet<uint>(componentCount);
 
 					for (int i=0; i<componentCount; i++)
 					{
 						uint id = reader.ReadUInt32();
-						IComponent component;
+						idsSet.Add(id);
+						ComponentTuple tuple;
 
-						if (updting.TryGetValue(id, out component))
+						if ( componentDict.TryGetValue( id, out tuple ) )
 						{
-							component.Load( this, reader );
+							// #TODO #ECS -- interpolate only interpolatable components
+							tuple.Previous = tuple.Current.Clone();
+							tuple.Current.Load( this, reader );
 						}
 						else
 						{
-							component = (IComponent)Activator.CreateInstance(type);
-							component.Load( this, reader );
-							entities[id]?.AddComponent( component );
+							var newComponent = (IComponent)Activator.CreateInstance(type);
+							newComponent.Load( this, reader );
+							entities[id]?.AddComponent( newComponent );
 						}
 					}
 
 					var toRemove = componentDict.Keys
-									.Except( updting.Keys )
+									.Except( idsSet )
 									.ToArray();
 
 					foreach ( var id in toRemove )
 					{
-						updting.Remove( id );
-						Refresh( entities[id] );
+						//	#TODO #ECS -- check component removal
+						RemoveEntityComponent( entities[id], type );
 					}
 				}
 			}
 		}
+
+
+		public void InterpolateState ( TimeSpan time )
+		{
+			components.Interpolate( snapshotTimestamp, snapshotTimestep, time );
+		}
+
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Queries :

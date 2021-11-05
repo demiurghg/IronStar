@@ -166,7 +166,7 @@ namespace IronStar
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
 			//return gs;
-			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/20.0f) );
+			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/10.0f) );
 		}
 
 

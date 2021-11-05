@@ -69,10 +69,10 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Removes component from given entity
 		/// </summary>
-		public void RemoveComponent( IComponent component )
+		/*public void RemoveComponent( IComponent component )
 		{
 			gs.RemoveEntityComponent( this, component );
-		}
+		}*/
 
 
 		/// <summary>
@@ -80,15 +80,7 @@ namespace IronStar.ECS
 		/// </summary>
 		public void RemoveComponent<TComponent>() where TComponent: IComponent
 		{
-			var component = GetComponent<TComponent>();
-			if (component!=null)
-			{
-				RemoveComponent(component);
-			}
-			else
-			{
-				Log.Warning("RemoveComponent: entity {0} does not have component of type {1}", ID, typeof(TComponent) );
-			}
+			gs.RemoveEntityComponent( this, typeof(TComponent) );
 		}
 
 

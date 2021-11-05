@@ -98,12 +98,12 @@ namespace IronStar.ECS
 					simulation.Update( new GameTime(dt, frames++) );
 
 					accumulator -= dt;
-				}
 
-				using ( var ms = new MemoryStream(snapshotWrite) )
-				{
-					((GameState)simulation).Save( ms, newTime, dt );
-					SwapSnapshots();
+					using ( var ms = new MemoryStream(snapshotWrite) )
+					{
+						((GameState)simulation).Save( ms, newTime, dt );
+						SwapSnapshots();
+					}
 				}
 
 				Thread.Sleep( 0 );
@@ -127,6 +127,8 @@ namespace IronStar.ECS
 					((GameState)presentation).Load( ms );
 				}
 			}
+
+			((GameState)presentation).InterpolateState( gameTime.Current );
 
 			presentation.Update(gameTime);
 		}

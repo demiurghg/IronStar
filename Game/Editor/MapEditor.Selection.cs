@@ -61,9 +61,28 @@ namespace IronStar.Editor
 		}
 
 
+		MapNode GetNodeByEntity ( Entity entity )
+		{
+			if (entity==null) throw new ArgumentNullException("entity");
+			
+			foreach ( var node in Map.Nodes )
+			{
+				if (node.EcsEntity!=null)
+				{
+					if (node.EcsEntity.ID==entity.ID)
+					{
+						return node;
+					}
+				}
+			}
+
+			return null;
+		}
+
+
 		public bool GetRenderProperties( Entity entity, out Color color, out bool selected )
 		{
-			var node	=	entity.Tag as MapNode;
+			var node	=	GetNodeByEntity(entity);
 
 			if (node!=null)
 			{

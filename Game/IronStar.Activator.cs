@@ -96,7 +96,6 @@ namespace IronStar
 
 			//	player system :
 			gs.AddSystem( playerInputSlave );
-
 			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	weapon system :
@@ -130,10 +129,12 @@ namespace IronStar
 			gs.AddSystem( new SFX.FXTracker() );
 
 			// rendering :
-			//gs2.AddSystem( new TrackSystem() );
-			gs2.AddSystem( playerInputMaster );
-			gs2.AddSystem( new Gameplay.CameraSystem(fxPlayback, playerInputMaster) );
-			gs2.AddSystem( new FPVWeaponSystem(game) );
+			if (!isEditor)
+			{
+				gs2.AddSystem( playerInputMaster );
+				gs2.AddSystem( new CameraSystem( fxPlayback, playerInputMaster) );
+				gs2.AddSystem( new FPVWeaponSystem(game) );
+			}
 			gs2.AddSystem( fxPlayback );
 
 			gs2.AddSystem( new SFX2.RenderModelSystem(game) );
@@ -151,13 +152,11 @@ namespace IronStar
 
 			if (isEditor)
 			{
-				gs.GetService<CameraSystem>().Enabled = false;
-
-				gs.AddSystem( new EditorEntityRenderSystem( editor, rs.RenderWorld.Debug ) );
-				gs.AddSystem( new EditorLightRenderSystem( editor, rs.RenderWorld.Debug ) );
-				gs.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
-				gs.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
-				gs.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
+				gs2.AddSystem( new EditorEntityRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs2.AddSystem( new EditorLightRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs2.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs2.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs2.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
 			}
 
 			map.ActivateGameState(gs);
@@ -166,7 +165,7 @@ namespace IronStar
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
 			//return gs;
-			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/10.0f) );
+			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/115.0f) );
 		}
 
 

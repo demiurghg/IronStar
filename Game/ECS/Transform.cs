@@ -126,15 +126,29 @@ namespace IronStar.ECS
 			return (IComponent)MemberwiseClone();
 		}
 
-		public IComponent Interpolate( IComponent previous, float factor )
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
 			var prev	=	(Transform)previous;
 			
-			var p	= Vector3	.Lerp ( prev.Position,	Position,	factor );
-			var r	= Quaternion.Slerp( prev.Rotation,	Rotation,	factor );
-			var s	= MathUtil	.Lerp ( prev.Scaling,	Scaling,	factor );
 			var lv	= LinearVelocity;
 			var av	= AngularVelocity;
+
+			Vector3 p;
+			Quaternion r;
+			float s;
+
+			if (prev!=null)
+			{
+				p	= Vector3	.Lerp ( prev.Position,	Position,	factor );
+				r	= Quaternion.Slerp( prev.Rotation,	Rotation,	factor );
+				s	= MathUtil	.Lerp ( prev.Scaling,	Scaling,	factor );
+			}
+			else
+			{
+				p	=	Position - ((1 - factor)*dt) * LinearVelocity;
+				r	=	Rotation;
+				s	=	Scaling;
+			}
 
 			return new Transform()
 			{

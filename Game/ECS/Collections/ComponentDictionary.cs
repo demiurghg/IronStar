@@ -48,26 +48,22 @@ namespace IronStar.ECS
 		}
 
 
-		public void Interpolate( TimeSpan timestamp, TimeSpan timestep, TimeSpan time )
+		public void Interpolate( float dt, float factor )
 		{ 
-			double	ftimestamp	=	timestamp.TotalSeconds;
-			double	ftimestep	=	timestep.TotalSeconds;
-			double	ftime		=	time.TotalSeconds;
-
-			float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), 0, 1 );
-
 			foreach ( var keyValue in this )
 			{
 				var tuple = keyValue.Value;
+				
+				tuple.Lerped = tuple.Current.Interpolate( tuple.Previous, dt, factor );
 
-				if (tuple.Previous!=null)
+				/*if (tuple.Previous!=null)
 				{
-					tuple.Lerped = tuple.Current.Interpolate( tuple.Previous, factor );
+					tuple.Lerped = tuple.Current.Interpolate( tuple.Previous, dt, factor );
 				}
 				else
 				{
 					tuple.Lerped = tuple.Current;
-				}
+				}*/
 			}
 		}
 	}

@@ -75,11 +75,11 @@ namespace IronStar.ECS
 		}
 
 
-		public void Interpolate( TimeSpan timestamp, TimeSpan timestep, TimeSpan time )
+		public void Interpolate( float dt, float factor )
 		{
 			foreach (var dict in this)
 			{
-				dict.Value.Interpolate( timestamp, timestep, time );
+				dict.Value.Interpolate( dt, factor );
 			}
 		}
 	}

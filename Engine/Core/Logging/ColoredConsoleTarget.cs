@@ -40,10 +40,10 @@ namespace Fusion
 					break;
 			}
 
-			if (text.Length>=Console.WindowWidth-1)
+			/*if (text.Length>=Console.WindowWidth-1)
 			{
 				text = text.Substring(0, Console.WindowWidth-1);
-			}		
+			}*/		
 			
 			Console.WriteLine( text );
 		}

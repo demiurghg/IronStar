@@ -84,9 +84,10 @@ namespace IronStar.ECS
 			TimeSpan dt				=	timestep;
 			TimeSpan currentTime	=	GameTime.CurrentTime;
 			TimeSpan accumulator	=	TimeSpan.Zero;
+			TimeSpan simulationTime	=	currentTime;
 
-			simulation.Update( new GameTime(dt, frames++) );
-			simulation.Update( new GameTime(dt, frames++) );
+			StepSimulation( stopwatch, dt, frames++ );
+			StepSimulation( stopwatch, dt, frames++ );
 
 			while (!terminate)
 			{
@@ -98,33 +99,12 @@ namespace IronStar.ECS
 
 				while (accumulator >= dt)
 				{
-					stopwatch.Restart();
-					
-					simulation.Update( new GameTime(dt, frames++) );
-					
-					stopwatch.Stop();
-
-					if (stopwatch.Elapsed > dt)
-					{
-						Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
-					}
-
+					simulationTime += dt;
 					accumulator -= dt;
 
-					byte[] snapshot;
+					StepSimulation( stopwatch, dt, frames++ );
 
-					if (recycleQueue.TryDequeue(out snapshot))
-					{
-						using ( var ms = new MemoryStream(snapshot) )
-						{
-							((GameState)simulation).Save( ms, newTime, dt );
-							dispatchQueue.Enqueue( snapshot );
-						}
-					}
-					else
-					{
-						Log.Warning("SNAPSHOT STARVATION");
-					}
+					SendSnapshot( simulationTime, dt );
 				}
 
 				Thread.Sleep( 0 );
@@ -132,8 +112,43 @@ namespace IronStar.ECS
 
 			KillAll();
 			
-			simulation.Update( new GameTime(dt, frames++) );
+			StepSimulation( stopwatch, dt, frames++ );
 		}
+
+
+		void StepSimulation( Stopwatch stopwatch, TimeSpan dt, long frames)
+		{
+			stopwatch.Restart();
+
+			simulation.Update( new GameTime(dt, frames) );
+					
+			stopwatch.Stop();
+
+			if (stopwatch.Elapsed > dt)
+			{
+				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+			}
+		}
+
+
+		void SendSnapshot( TimeSpan simulationTime, TimeSpan dt )
+		{
+			byte[] snapshot;
+
+			if (recycleQueue.TryDequeue(out snapshot))
+			{
+				using ( var ms = new MemoryStream(snapshot) )
+				{
+					((GameState)simulation).Save( ms, simulationTime, dt );
+					dispatchQueue.Enqueue( snapshot );
+				}
+			}
+			else
+			{
+				Log.Warning("SNAPSHOT STARVATION");
+			}
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Update :
@@ -142,6 +157,8 @@ namespace IronStar.ECS
 		public void Update( GameTime gameTime )
 		{
 			byte[] snapshot;
+
+			var time = gameTime.Current;
 
 			while (dispatchQueue.TryDequeue(out snapshot))
 			{

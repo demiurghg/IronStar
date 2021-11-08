@@ -30,8 +30,8 @@ namespace IronStar.AI
 		public NavigationSystem()
 		{
 			worker	=	new BackgroundWorker();
-			worker.DoWork   +=	Worker_DoWork;
-			worker.RunWorkerCompleted   +=Worker_RunWorkerCompleted;
+			worker.DoWork				+=	Worker_DoWork;
+			worker.RunWorkerCompleted	+=	Worker_RunWorkerCompleted;
 		}
 
 		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
@@ -71,7 +71,7 @@ namespace IronStar.AI
 		public void Update( IGameState gs, GameTime gameTime )
 		{
 			if (navMeshDirty && !worker.IsBusy)
-			{										
+			{
 				Log.Message("Navigation system : build started");
 				worker.RunWorkerAsync( GetStaticGeometry(gs) );
 				navMeshDirty = false;
@@ -197,6 +197,12 @@ namespace IronStar.AI
 			//config.BBox				=	BoundingBox.FromPoints( verts );
 			config.BBox			=	new BoundingBox( Vector3.One * (-600), Vector3.One*600 );
 			config.MaxVertsPerPoly	=	6;
+
+			if (bd.verts.Length<3 || bd.inds.Length<3)
+			{
+				Log.Message("No geometry data. Skipped.");
+				return null;
+			}
 
 			try
 			{

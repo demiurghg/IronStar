@@ -77,12 +77,38 @@ namespace IronStar.Gameplay
 			}
 			else
 			{
-				var recvCommand	=	new UserCommand();
-				var players		=	gs.QueryEntities(playerAspect);
+				var players	=	gs.QueryEntities(playerAspect);
+				var uc		=	new UserCommand();
+				var	action	=	UserAction.None;
 
-				while (queue.TryDequeue(out recvCommand))
+				var	yaw		=	0f;
+				var	pitch	=	0f;
+				var	dYaw	=	0f;
+				var	dPitch	=	0f;
+				var	move	=	0f;
+				var	strafe	=	0f;
+				var count	=	0f;
+
+				while (queue.TryDequeue(out uc))
 				{
-					mergedCommand = recvCommand;
+					action	=	uc.Action | action;
+					dYaw	+=	uc.DeltaYaw;
+					dPitch	+=	uc.DeltaPitch;
+					yaw		+=	uc.Yaw;
+					pitch	+=	uc.Pitch;
+					move	+=	uc.Move;
+					strafe	+=	uc.Strafe;
+					count++;
+				}
+
+				if (count>0)
+				{
+					move	/=	count;
+					strafe	/=	count;
+					dYaw	/=	count;
+					dPitch	/=	count;
+					yaw		/=	count;
+					pitch	/=	count;
 
 					foreach ( var player in players )
 					{
@@ -90,10 +116,10 @@ namespace IronStar.Gameplay
 						var health	=	player.GetComponent<HealthComponent>();
 						var alive	=	health==null ? true : health.Health > 0;
 
-						ucc.UpdateFromUserCommand( mergedCommand.Yaw + mergedCommand.DeltaYaw, mergedCommand.Pitch + mergedCommand.DeltaPitch, mergedCommand.Move, mergedCommand.Strafe, mergedCommand.Action );
+						ucc.UpdateFromUserCommand( yaw + dYaw, pitch + dPitch, move, strafe, action );
 					}
 				}
-				
+				//if (count!=1) Log.Debug("UC Count : {0}", count );
 			}
 		}
 	}

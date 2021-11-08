@@ -579,8 +579,13 @@ namespace IronStar.ECS
 			double	ftimestep	=	snapshotTimestep.TotalSeconds;
 			double	ftime		=	time.TotalSeconds;
 
-			float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), 0, 1 );
+			float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), -0.5f, 2.0f );
 			float	dt			=	(float)ftimestep;
+
+			if (factor<-0.1f || factor>1.5f)
+			{
+				//Log.Warning("FACTOR OUT OF RANGE : {0}", factor);
+			}
 
 			components.Interpolate( dt, factor );
 		}

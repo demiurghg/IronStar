@@ -57,10 +57,9 @@ namespace IronStar.Gameplay.Systems
 		RenderModelInstance	model;
 
 		WeaponState oldWeaponState = WeaponState.Overheat;
-		int stepCounter = 0;
-		int stepTimer = 0;
-		bool stepFired = false;
 		float tiltFactor = 0;
+
+		StepComponent	prevStep = null;
 
 		/// <summary>
 		/// 
@@ -99,8 +98,11 @@ namespace IronStar.Gameplay.Systems
 		/// </summary>
 		public void Update ( GameTime gameTime, WeaponStateComponent weapon, StepComponent steps, UserCommandComponent uc )
 		{
-			UpdateWeaponStates(gameTime, weapon, steps);
-			UpdateMovements(gameTime, steps, uc);
+			var stepEvents	=	StepComponent.DetectEvents( steps, prevStep );
+			prevStep = (StepComponent)steps.Clone();
+
+			UpdateWeaponStates(gameTime, weapon, steps, stepEvents);
+			UpdateMovements(gameTime, steps, stepEvents, uc);
 
 			composer.Update( gameTime, model.ModelFeatureWorldMatrix, model.IsFPVModel, model.FlattenTransforms ); 
 			model.CommitJointTransform();
@@ -111,7 +113,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateWeaponStates ( GameTime gameTime, WeaponStateComponent state,  StepComponent steps )
+		void UpdateWeaponStates ( GameTime gameTime, WeaponStateComponent state, StepComponent steps, StepEvent stepEvents )
 		{
 			var weaponState	=	state.State;
 			var weapon		=	Arsenal.Get( state.ActiveWeapon );
@@ -173,7 +175,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateMovements ( GameTime gameTime, StepComponent steps, UserCommandComponent uc )
+		void UpdateMovements ( GameTime gameTime, StepComponent steps, StepEvent stepEvents, UserCommandComponent uc )
 		{
 			var dt			=	gameTime.ElapsedSec;
 
@@ -181,7 +183,7 @@ namespace IronStar.Gameplay.Systems
 			var groundVelocity	=	steps.GroundVelocity;
 
 			//	landing animation :
-			if (steps.Landed) 
+			if (stepEvents.HasFlag(StepEvent.Landed))
 			{
 				//Log.Message("{0}", oldVelocity);
 
@@ -193,7 +195,7 @@ namespace IronStar.Gameplay.Systems
 			oldVelocity = fallVelocity;
 
 			//	jump animation :
-			if (steps.Jumped) 
+			if (stepEvents.HasFlag(StepEvent.Jumped))
 			{
 				RunShakeAnimation( ANIM_JUMP, 1 );
 			}
@@ -214,12 +216,12 @@ namespace IronStar.Gameplay.Systems
 			var stepWeight	=	Math.Min( 1, groundVelocity.Length() / 10.0f ) * 0.5f;
 
 			//	step animation :
-			if (steps.LeftStep) 
+			if (stepEvents.HasFlag(StepEvent.LeftStep)) 
 			{
 				RunShakeAnimation( ANIM_WALKLEFT, stepWeight);
 			}
 
-			if (steps.RightStep)
+			if (stepEvents.HasFlag(StepEvent.RightStep)) 
 			{
 				RunShakeAnimation( ANIM_WALKRIGHT, stepWeight);
 			}

@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using IronStar.Gameplay.Components;
 using Fusion.Core.Extensions;
 using Fusion.Core.Configuration;
+using System.IO;
 
 namespace IronStar.Gameplay
 {
@@ -46,9 +47,12 @@ namespace IronStar.Gameplay
 		Sequencer		shake1;
 		Sequencer		shake2;
 		Sequencer		shake3;
-		Matrix[]			animData;
-		bool				dead = false;
+		Matrix[]		animData;
+		bool			dead = false;
+		bool			crouched = false;
+		bool			traction = false;
 
+		StepComponent	prevStep;
 
 		public bool Enabled { get; set; } = true;
 
@@ -103,7 +107,7 @@ namespace IronStar.Gameplay
 		{
 			if (Enabled)
 			{
-				var	players	=	gs.QueryEntities(playerCameraAspect);
+				var	players		=	gs.QueryEntities(playerCameraAspect);
 
 				foreach ( var player in players)
 				{
@@ -124,9 +128,12 @@ namespace IronStar.Gameplay
 			var v		=	t.LinearVelocity;
 			var uc		=	e.GetComponent<UserCommandComponent>();
 			var ch		=	e.GetComponent<CharacterController>();
-			var step	=	e.GetComponent<StepComponent>();
 			var health	=	e.GetComponent<HealthComponent>();
 			var camera	=	e.GetComponent<CameraComponent>();
+
+			var step		=	e.GetComponent<StepComponent>();
+			var stepEvents	=	StepComponent.DetectEvents( step, prevStep );
+			prevStep		=	(StepComponent)step.Clone();
 
 			/*
 			var playerInput	=	gs.GetService<PlayerInputSystem>();
@@ -134,7 +141,7 @@ namespace IronStar.Gameplay
 			*/
 
 			//	animate :
-			UpdateAnimationState(step, health);
+			UpdateAnimationState(stepEvents, health);
 			composer.Update( gameTime, Matrix.Identity, false, animData );
 
 			//	store animation matrix :
@@ -193,7 +200,7 @@ namespace IronStar.Gameplay
 		 *	Animation stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		void UpdateAnimationState( StepComponent steps, HealthComponent health )
+		void UpdateAnimationState( StepEvent steps, HealthComponent health )
 		{
 			if (health.Health<=0 && !dead)
 			{
@@ -201,18 +208,26 @@ namespace IronStar.Gameplay
 				mainTrack.Sequence("death", SequenceMode.Hold );
 			}
 
+			var stepsCrouched		=	steps.HasFlag( StepEvent.Crouched	 );
+			var stepsStanded		=	steps.HasFlag( StepEvent.Standed	 );
+			var stepsRecoilLight	=	steps.HasFlag( StepEvent.RecoilLight );
+			var stepsRecoilHeavy	=	steps.HasFlag( StepEvent.RecoilHeavy );
+			var stepsLeftStep		=	steps.HasFlag( StepEvent.LeftStep	 );
+			var stepsRightStep		=	steps.HasFlag( StepEvent.RightStep	 );
+			var stepsLanded			=	steps.HasFlag( StepEvent.Landed		 );
+
 			if (!dead)
 			{
-				if (steps.Crouched)	mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
-				if (steps.Standed)	mainTrack.Sequence( "stand" , SequenceMode.Hold|SequenceMode.DontPlayTwice );
+				if (stepsCrouched)		mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
+				if (stepsStanded)		mainTrack.Sequence( "stand" , SequenceMode.Hold|SequenceMode.DontPlayTwice );
 			
-				if (steps.RecoilLight) PlayShake((string)null, rand.NextFloat(0.2f,0.4f) );
-				if (steps.RecoilHeavy) PlayShake((string)null, rand.NextFloat(0.8f,1.2f) );
+				if (stepsRecoilLight)	PlayShake((string)null, rand.NextFloat(0.2f,0.4f) );
+				if (stepsRecoilHeavy)	PlayShake((string)null, rand.NextFloat(0.8f,1.2f) );
 
-				if (steps.LeftStep)  composer.SequenceSound( SOUND_STEP );
-				if (steps.RightStep) composer.SequenceSound( SOUND_STEP );
-				if (steps.Landed)	 composer.SequenceSound( SOUND_LANDING );
-				//if (steps.Jumped) composer.SequenceSound( SOUND_STEP );
+				if (stepsLeftStep)		composer.SequenceSound( SOUND_STEP );
+				if (stepsRightStep)		composer.SequenceSound( SOUND_STEP );
+				if (stepsLanded)		composer.SequenceSound( SOUND_LANDING );
+				//if (stepsJumped) composer.SequenceSound( SOUND_STEP );
 			}
 		}
 

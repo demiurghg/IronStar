@@ -148,6 +148,7 @@ namespace IronStar
 			//	ui
 			gs2.AddSystem( new GameFXSystem(game) );
 			gs2.AddSystem( new HudSystem(game) );
+			//gs2.AddSystem( new ECSPhysics.CharacterTrackingSystem() );
 			//*/
 
 			if (isEditor)

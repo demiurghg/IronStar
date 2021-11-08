@@ -135,6 +135,7 @@
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />
+    <Compile Include="ECSPhysics\CharacterTrackingSystem.cs" />
     <Compile Include="ECSPhysics\ISpaceQuery.cs" />
     <Compile Include="ECSPhysics\MaterialComponent.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />

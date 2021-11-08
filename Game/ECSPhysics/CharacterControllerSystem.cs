@@ -100,6 +100,10 @@ namespace IronStar.ECSPhysics
 		}
 
 
+		BEPUutilities.Vector2 moveVectorDebug = new BEPUutilities.Vector2(0,0);
+		float yawDebug = 0;
+		float dYawDebug = 0;
+
 		void Move ( BEPUCharacterController controller, CharacterController cc, UserCommandComponent uc )
 		{
 			var jump		=	uc.Action.HasFlag( UserAction.Jump );
@@ -113,6 +117,10 @@ namespace IronStar.ECSPhysics
 
 			var moveDir		=	new BEPUutilities.Vector2( moveVector.X, -moveVector.Z );
 			var velScale	=	moveDir.Length();
+
+			moveVectorDebug	=	moveDir;
+			yawDebug		=	uc.Yaw;
+			dYawDebug		=	uc.DYaw;
 
 			var standingSpeed	=	cc.standingSpeed * velScale;
 			var crouchingSpeed	=	cc.crouchingSpeed * velScale;

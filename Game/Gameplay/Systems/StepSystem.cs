@@ -40,6 +40,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				var step		=	e.GetComponent<StepComponent>();
 
+				var wpnState	=	e.GetComponent<WeaponStateComponent>();
 				var controller	=	e.GetComponent<CharacterController>();
 				var velocity3D	=	e.GetComponent<Transform>().LinearVelocity;
 				var transform	=	e.GetComponent<Transform>();
@@ -50,6 +51,8 @@ namespace IronStar.Gameplay.Systems
 				step.GroundVelocity	=	new Vector3( velocity3D.X, 0, velocity3D.Z );
 
 				var velocity		=	step.GroundVelocity.Length();
+
+				step.WeaponState	=	wpnState==null ? WeaponState.Inactive : wpnState.State;
 
 				//
 				//	update striding/stepping :

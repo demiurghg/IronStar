@@ -2,10 +2,11 @@
 
 using namespace Fusion::Core::Mathematics;
 
-namespace Native {
-	namespace NRecast {
-
-		public ref class NavigationMesh
+namespace Native 
+{
+	namespace NRecast 
+	{
+		public ref class NavMesh
 		{
 		private:
 			unsigned char* m_triareas;
@@ -26,9 +27,9 @@ namespace Native {
 			bool m_keepInterResults;
 
 		public:
-			NavigationMesh(BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
+			NavMesh(Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
 
-			~NavigationMesh();
+			~NavMesh();
 
 			array<Vector3>^ GetPolyMeshVertices();
 
@@ -49,7 +50,7 @@ namespace Native {
 			void GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices);
 
 			bool GetRandomReachablePoint(Vector3 originVector, float radius, Vector3 %resultVector);
-			NavigationRoute ^FindRoute(Vector3 startPoint, Vector3 endPoint);
+			ref class NavigationRoute ^FindRoute(Vector3 startPoint, Vector3 endPoint);
 
 		};
 	}

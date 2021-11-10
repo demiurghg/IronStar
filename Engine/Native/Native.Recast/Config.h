@@ -2,22 +2,24 @@
 
 using namespace Fusion::Core::Mathematics;
 
-namespace Native {
-	namespace NRecast {
-
-		public enum class PartitionMethod : int {
+namespace Native 
+{
+	namespace NRecast 
+	{
+		public enum class PartitionMethod : int 
+		{
 			Watershed,
 			Monotone,
 			Layers,
 		};
 
 	
-		public ref class BuildConfig
+		public ref class Config
 		{
 		public:
-			BuildConfig();
+			Config();
 
-			~BuildConfig();
+			~Config();
 
 		public:
 

@@ -204,8 +204,8 @@
     <ClInclude Include="Detour\Headers\DetourNode.h" />
     <ClInclude Include="Detour\Headers\DetourStatus.h" />
     <ClInclude Include="Local.h" />
-    <ClInclude Include="BuildConfig.h" />
-    <ClInclude Include="NavigationMesh.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavigationRoute.h" />
     <ClInclude Include="Recast\Headers\Recast.h" />
     <ClInclude Include="Recast\Headers\RecastAlloc.h" />
@@ -220,8 +220,8 @@
     <ClCompile Include="Detour\Source\DetourNavMeshBuilder.cpp" />
     <ClCompile Include="Detour\Source\DetourNavMeshQuery.cpp" />
     <ClCompile Include="Detour\Source\DetourNode.cpp" />
-    <ClCompile Include="BuildConfig.cpp" />
-    <ClCompile Include="NavigationMesh.cpp" />
+    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavigationRoute.cpp" />
     <ClCompile Include="Recast\Source\Recast.cpp" />
     <ClCompile Include="Recast\Source\RecastAlloc.cpp" />

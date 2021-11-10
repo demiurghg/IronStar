@@ -1,7 +1,7 @@
-#include "BuildConfig.h"
+#include "Config.h"
 
 
-Native::NRecast::BuildConfig::BuildConfig()
+Native::NRecast::Config::Config()
 {
 	TileSize				=	0;
 	BorderSize				=	0;
@@ -27,7 +27,7 @@ Native::NRecast::BuildConfig::BuildConfig()
 
 }
 
-Native::NRecast::BuildConfig::~BuildConfig()
+Native::NRecast::Config::~Config()
 {
 
 }

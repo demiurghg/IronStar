@@ -20,8 +20,8 @@ namespace IronStar.AI
 {
 	class NavigationSystem : ISystem
 	{
-		bool				navMeshDirty	=	false;
-		NavigationMesh		navMesh			=	null;
+		bool		navMeshDirty	=	false;
+		NavMesh		navMesh			=	null;
 		BackgroundWorker	worker;
 
 		readonly Aspect	navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
@@ -37,7 +37,7 @@ namespace IronStar.AI
 		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
 		{
 			Log.Message("Navigation system : build completed");
-			navMesh = (NavigationMesh)e.Result;
+			navMesh = (NavMesh)e.Result;
 		}
 
 		private void Worker_DoWork( object sender, DoWorkEventArgs e )
@@ -104,7 +104,7 @@ namespace IronStar.AI
 		 *	Navmesh rendering
 		-----------------------------------------------------------------------------------------*/
 
-		public void DrawNavMesh( IGameState gs, NavigationMesh mesh, DebugRender dr )
+		public void DrawNavMesh( IGameState gs, NavMesh mesh, DebugRender dr )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{
@@ -170,11 +170,11 @@ namespace IronStar.AI
 			public bool[] walks;
 		}
 
-		NavigationMesh BuildNavmesh( BuildData bd )
+		NavMesh BuildNavmesh( BuildData bd )
 		{
 			Log.Message("Building navigation mesh...");
 
-			var config = new BuildConfig();
+			var config = new Config();
 
 			config.TileSize					=	0;
 			config.BorderSize				=	0;
@@ -206,7 +206,7 @@ namespace IronStar.AI
 
 			try
 			{
-				return new NavigationMesh( config, bd.verts, bd.inds, bd.walks );
+				return new NavMesh( config, bd.verts, bd.inds, bd.walks );
 			} 
 			catch ( Exception e )
 			{

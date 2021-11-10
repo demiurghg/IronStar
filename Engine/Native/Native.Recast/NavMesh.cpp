@@ -5,7 +5,7 @@ using namespace Fusion;
 using namespace Fusion::Core::Mathematics;
 
 
-Native::NRecast::NavigationMesh::NavigationMesh( BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
+Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
 {
 	m_ctx			=	0;
 	m_triareas		=	0;
@@ -435,7 +435,7 @@ Native::NRecast::NavigationMesh::NavigationMesh( BuildConfig ^config, array<Vect
 }
 
 
-void Native::NRecast::NavigationMesh::Cleanup()
+void Native::NRecast::NavMesh::Cleanup()
 {
 	delete[] m_triareas;
 	m_triareas = 0;
@@ -466,13 +466,13 @@ void Native::NRecast::NavigationMesh::Cleanup()
 }
 
 
-Native::NRecast::NavigationMesh::~NavigationMesh()
+Native::NRecast::NavMesh::~NavMesh()
 {
 	Cleanup();
 }
 
 
-cli::array<Vector3>^ Native::NRecast::NavigationMesh::GetPolyMeshVertices()
+cli::array<Vector3>^ Native::NRecast::NavMesh::GetPolyMeshVertices()
 {
 	auto mesh	= m_pmesh;
 	auto orig	= mesh->bmin;
@@ -495,7 +495,7 @@ cli::array<Vector3>^ Native::NRecast::NavigationMesh::GetPolyMeshVertices()
 }
 
 
-int Native::NRecast::NavigationMesh::GetPolygonVertexIndices(int polyIndex, array<int> ^indices)
+int Native::NRecast::NavMesh::GetPolygonVertexIndices(int polyIndex, array<int> ^indices)
 {
 	auto npolys	= m_pmesh->npolys;
 	auto nvp = m_pmesh->nvp;
@@ -523,7 +523,7 @@ int Native::NRecast::NavigationMesh::GetPolygonVertexIndices(int polyIndex, arra
 }
 
 
-void Native::NRecast::NavigationMesh::GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices)
+void Native::NRecast::NavMesh::GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices)
 {
 	auto npolys = m_pmesh->npolys;
 	auto nvp = m_pmesh->nvp;
@@ -562,7 +562,7 @@ float frand()
 
 
 
-bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 centerPos, float radius, Vector3 %resultVector)
+bool Native::NRecast::NavMesh::GetRandomReachablePoint(Vector3 centerPos, float radius, Vector3 %resultVector)
 {
 	float extentsArray[]	= { 2, 4, 2 };
 	float centerPosArray[]	= { centerPos.X, centerPos.Y, centerPos.Z };
@@ -592,7 +592,7 @@ bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 centerPos,
 }
 
 
-Native::NRecast::NavigationRoute ^Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
+Native::NRecast::NavigationRoute ^Native::NRecast::NavMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
 {
 	dtPolyRef startRef;
 	dtPolyRef endRef;

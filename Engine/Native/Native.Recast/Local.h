@@ -15,7 +15,7 @@
 #include "DetourNavMeshQuery.h"
 
 #include "Utils.h"
-#include "BuildConfig.h"
+#include "Config.h"
+#include "NavMesh.h"
 #include "NavigationRoute.h"
-#include "NavigationMesh.h"
 

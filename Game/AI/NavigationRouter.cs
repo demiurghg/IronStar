@@ -13,12 +13,12 @@ namespace IronStar.AI
 {
 	public static class NavigationRouter
 	{
-		public static BTStatus FollowRoute( NavigationRoute route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target )
+		public static BTStatus FollowRoute( Vector3[] route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target )
 		{
 			float fraction = 0f;
 			float distance = 0f;
 
-			if (route.Count<2) 
+			if (route.Length<2) 
 			{
 				target		=	route[0];
 				distance	=	Vector3.Distance( target, origin );
@@ -45,13 +45,13 @@ namespace IronStar.AI
 		}
 
 
-		static int GetClosestSegment( NavigationRoute route, Vector3 origin, out float distance, out float fraction )
+		static int GetClosestSegment( Vector3[] route, Vector3 origin, out float distance, out float fraction )
 		{
 			var closestSegment = 0;
 			distance = float.MaxValue;
 			fraction = 0;
 
-			for (int i=route.Count-2; i>=0; i--)
+			for (int i=route.Length-2; i>=0; i--)
 			{
 				float d, t;
 				var a = route[i];

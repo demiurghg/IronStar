@@ -5,25 +5,21 @@ using namespace Fusion;
 using namespace Fusion::Core::Mathematics;
 
 
-Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
+array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
 {
-	m_ctx			=	0;
-	m_triareas		=	0;
-	m_solid			=	0;
-	m_chf			=	0;
-	m_cset			=	0;
-	m_pmesh			=	0;
-	m_dmesh			=	0;
-	m_navMesh		=	0;
-	m_queryFilter	=	0;
-
-	m_keepInterResults	=	false;
+	unsigned char		*m_triareas	=	nullptr;
+	rcContext			*m_ctx		=	nullptr;
+	rcHeightfield		*m_solid	=	nullptr;
+	rcCompactHeightfield*m_chf		=	nullptr;
+	rcContourSet		*m_cset		=	nullptr;
+	rcPolyMesh			*m_pmesh	=	nullptr;
+	rcConfig			*m_cfg		=	nullptr;
+	rcPolyMeshDetail	*m_dmesh	=	nullptr;
 
 	if (config	 == nullptr) throw gcnew System::ArgumentNullException("config");
 	if (vertices == nullptr) throw gcnew System::ArgumentNullException("vertices");
 	if (indices  == nullptr) throw gcnew System::ArgumentNullException("indices");
-
-	Cleanup();
+	if (walkables== nullptr) throw gcnew System::ArgumentNullException("indices");
 
 	m_ctx	=	new BuildContext();
 
@@ -45,6 +41,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 	//------------------------------------------------------------
 
 	#pragma region Step 1. Initialize build config.
+
+	m_ctx->log(RC_LOG_PROGRESS, "Initialize build config...");
 
 	// Init build configuration from GUI
 	m_cfg = new rcConfig();
@@ -86,6 +84,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 
 	#pragma region Rasterize input polygon soup.
 
+	m_ctx->log(RC_LOG_PROGRESS, "Rasterize input polygon soup...");
+
 	// Allocate voxel heightfield where we rasterize our input data to.
 	m_solid = rcAllocHeightfield();
 	if (!m_solid)
@@ -126,17 +126,13 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 		throw gcnew System::Exception();
 	}
 
-	if (!m_keepInterResults)
-	{
-		delete[] m_triareas;
-		m_triareas = 0;
-	}
-
 	#pragma endregion 
 
 	//------------------------------------------------------------
 
 	#pragma region Step 3. Filter walkables surfaces.
+
+	m_ctx->log(RC_LOG_PROGRESS, "Filter walkables surfaces...");
 
 	// Once all geoemtry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
@@ -157,6 +153,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 
 	#pragma region Step 4. Partition walkable surface to simple regions.
 
+	m_ctx->log(RC_LOG_PROGRESS, "Partition walkable surface to simple regions...");
+
 	// Compact the heightfield so that it is faster to handle from now on.
 	// This will result more cache coherent data as well as the neighbours
 	// between walkable cells will be calculated.
@@ -170,12 +168,6 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
 		throw gcnew System::Exception();
-	}
-
-	if (!m_keepInterResults)
-	{
-		rcFreeHeightField(m_solid);
-		m_solid = 0;
 	}
 
 	// Erode the walkable area by agent radius.
@@ -262,6 +254,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 
 	#pragma region Step 5. Trace and simplify region contours.
 
+	m_ctx->log(RC_LOG_PROGRESS, "Partition walkable surface to simple regions...");
+
 	// Create contours.
 	m_cset = rcAllocContourSet();
 	if (!m_cset)
@@ -280,6 +274,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 	//------------------------------------------------------------
 
 	#pragma region Step 6. Build polygons mesh from contours.
+
+	m_ctx->log(RC_LOG_PROGRESS, "Build polygons mesh from contours...");
 
 	// Build polygon navmesh from the contours.
 	m_pmesh = rcAllocPolyMesh();
@@ -300,6 +296,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 
 	#pragma region  Step 7. Create detail mesh which allows to access approximate height on each polygon.
 
+	m_ctx->log(RC_LOG_PROGRESS, "Create detail mesh which allows to access approximate height on each polygon...");
+
 	m_dmesh = rcAllocPolyMeshDetail();
 	if (!m_dmesh)
 	{
@@ -313,13 +311,7 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 		throw gcnew System::Exception();
 	}
 
-	if (!m_keepInterResults)
-	{
-		rcFreeCompactHeightfield(m_chf);
-		m_chf = 0;
-		rcFreeContourSet(m_cset);
-		m_cset = 0;
-	}
+	m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nverts, m_pmesh->npolys);
 
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
@@ -329,6 +321,8 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 	//------------------------------------------------------------
 
 	#pragma region  Step 8. Create Detour data from Recast poly mesh.
+
+	m_ctx->log(RC_LOG_PROGRESS, "Create Detour data from Recast poly mesh...");
 
 	unsigned char* navData = 0;
 	int navDataSize = 0;
@@ -394,26 +388,56 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 		throw gcnew System::Exception();
 	}
 
+	auto managedData = gcnew array<System::Byte>( navDataSize );
+
+	pin_ptr<System::Byte> pinnedData = &managedData[0];
+
+	memcpy( pinnedData, navData, navDataSize );
+
+	//------------------------------------------------------------
+	// Clean-up 
+
+	delete[] m_triareas;				m_triareas = 0;
+	rcFreeHeightField(m_solid);			m_solid = 0;
+	rcFreeCompactHeightfield(m_chf);	m_chf = 0;
+	rcFreeContourSet(m_cset);			m_cset = 0;
+	rcFreePolyMesh(m_pmesh);			m_pmesh = 0;
+	rcFreePolyMeshDetail(m_dmesh);		m_dmesh = 0;
+
+	m_ctx->log(RC_LOG_PROGRESS, "Done!");
+
+	return managedData;
+}
+
+
+Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData )
+{
+	rcContext *ctx	=	new BuildContext();
+
+	pin_ptr<System::Byte> navDataPtr = &navData[0];
+	auto navDataSize = navData->Length;
+
 	m_navMesh = dtAllocNavMesh();
-	if (!m_navMesh) {
-		dtFree(navData);
-		m_ctx->log(RC_LOG_ERROR, "Could not create Detour navmesh");
+	if (!m_navMesh) 
+	{
+		ctx->log(RC_LOG_ERROR, "Could not create Detour navmesh");
 		throw gcnew System::Exception();
 	}
 
 	dtStatus status;
 
-	status = m_navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
-	if (dtStatusFailed(status)) {
-		dtFree(navData);
-		m_ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh");
+	status = m_navMesh->init(navDataPtr, navDataSize, DT_TILE_FREE_DATA);
+	if (dtStatusFailed(status)) 
+	{
+		ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh");
 		throw gcnew System::Exception();
 	}
 
 	m_navQuery = dtAllocNavMeshQuery();
 	status = m_navQuery->init(m_navMesh, 2048);
-	if (dtStatusFailed(status))	{
-		m_ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh query");
+	if (dtStatusFailed(status))	
+	{
+		ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh query");
 		throw gcnew System::Exception();
 	}
 
@@ -425,36 +449,14 @@ Native::NRecast::NavMesh::NavMesh( Config ^config, array<Vector3>^ vertices, arr
 
 	//------------------------------------------------------------
 
-	m_ctx->stopTimer(RC_TIMER_TOTAL);
+	ctx->stopTimer(RC_TIMER_TOTAL);
 
-	// Show performance stats.
-	//duLogBuildTimes(*m_ctx, m_ctx->getAccumulatedTime(RC_TIMER_TOTAL));
-	m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nverts, m_pmesh->npolys);
-
-	//m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;*/
+	delete ctx;
 }
 
 
 void Native::NRecast::NavMesh::Cleanup()
 {
-	delete[] m_triareas;
-	m_triareas = 0;
-
-	rcFreeHeightField(m_solid);
-	m_solid = 0;
-
-	rcFreeCompactHeightfield(m_chf);
-	m_chf = 0;
-
-	rcFreeContourSet(m_cset);
-	m_cset = 0;
-
-	rcFreePolyMesh(m_pmesh);
-	m_pmesh = 0;
-
-	rcFreePolyMeshDetail(m_dmesh);
-	m_dmesh = 0;
-
 	dtFreeNavMesh(m_navMesh);
 	m_navMesh = 0;
 
@@ -592,7 +594,7 @@ bool Native::NRecast::NavMesh::GetRandomReachablePoint(Vector3 centerPos, float 
 }
 
 
-Native::NRecast::NavigationRoute ^Native::NRecast::NavMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
+array<Vector3>^ Native::NRecast::NavMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
 {
 	dtPolyRef startRef;
 	dtPolyRef endRef;
@@ -647,14 +649,15 @@ Native::NRecast::NavigationRoute ^Native::NRecast::NavMesh::FindRoute(Vector3 st
 
 	//------------------------------------------------------------
 
-	auto route = gcnew Native::NRecast::NavigationRoute( numStraightPath );
+	auto route = gcnew array<Vector3>( numStraightPath );
 
-	for ( int i=0; i<numStraightPath; i++ ) {
-		route->SetPoint( i,
+	for ( int i=0; i<numStraightPath; i++ ) 
+	{
+		route[i] = Vector3( 
 			straightPathPoints[i * 3 + 0],
 			straightPathPoints[i * 3 + 1],
 			straightPathPoints[i * 3 + 2]
-		);
+			);
 	}
 
 	return route;

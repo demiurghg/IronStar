@@ -9,14 +9,13 @@ namespace Native
 		public ref class NavMesh
 		{
 		private:
-			unsigned char* m_triareas;
-			rcContext *m_ctx;
-			rcHeightfield* m_solid;
-			rcCompactHeightfield* m_chf;
-			rcContourSet* m_cset;
+			//unsigned char* m_triareas;
+			//rcHeightfield* m_solid;
+			//rcCompactHeightfield* m_chf;
+			//rcContourSet* m_cset;
 			rcPolyMesh* m_pmesh;
-			rcConfig *m_cfg;
-			rcPolyMeshDetail* m_dmesh;
+			//rcConfig *m_cfg;
+			//rcPolyMeshDetail* m_dmesh;
 
 			dtNavMesh *m_navMesh;
 			dtNavMeshQuery* m_navQuery;
@@ -27,7 +26,9 @@ namespace Native
 			bool m_keepInterResults;
 
 		public:
-			NavMesh(Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
+			static array<System::Byte> ^Build(Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
+
+			NavMesh(array<System::Byte> ^navData);
 
 			~NavMesh();
 
@@ -50,7 +51,7 @@ namespace Native
 			void GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices);
 
 			bool GetRandomReachablePoint(Vector3 originVector, float radius, Vector3 %resultVector);
-			ref class NavigationRoute ^FindRoute(Vector3 startPoint, Vector3 endPoint);
+			array<Vector3>^ FindRoute(Vector3 startPoint, Vector3 endPoint);
 
 		};
 	}

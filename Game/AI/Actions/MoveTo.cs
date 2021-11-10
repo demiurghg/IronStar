@@ -19,7 +19,7 @@ namespace IronStar.AI.Actions
 		public static bool DebugRouteRender = false;
 
 		readonly string keyLocation;
-		NavigationRoute route;
+		Vector3[] route;
 
 
 		public MoveTo( string keyLocation )
@@ -70,7 +70,7 @@ namespace IronStar.AI.Actions
 
 			if (DebugRouteRender)
 			{
-				for (int i=0; i<route.Count-1; i++)
+				for (int i=0; i<route.Length-1; i++)
 				{
 					var p0 = route[i];
 					var p1 = route[i+1];

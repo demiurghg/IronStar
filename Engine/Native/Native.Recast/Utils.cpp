@@ -71,10 +71,10 @@ int BuildContext::doGetAccumulatedTime(const rcTimerLabel label) const
 }
 
 
-void WriteData( char **ptr, void *src, int size )
+void WriteData( void *base, int &offset, void *src, int size )
 {
-	memcpy( *ptr, src, size );
-	(*ptr) += size;
+	memcpy( ((char*)base + offset), src, size );
+	offset += size;
 }
 
 void ReadData( char **ptr, void *dst, int size )
@@ -102,10 +102,10 @@ array<System::Byte> ^Utils::SerializePolyMesh( rcPolyMesh *pmesh )
 	//	float maxEdgeError;		///< The max error of the polygon edges in the mesh.
 
 	int sizeVerts	=	pmesh->nverts * 3 * sizeof(short);
-	int sizePolys	=	pmesh->maxpolys * 2 * pmesh->nvp * sizeof(short);
-	int sizeRegs	=	pmesh->maxpolys * sizeof(short);
-	int sizeFlags	=	pmesh->maxpolys * sizeof(short);
-	int sizeAreas	=	pmesh->maxpolys * sizeof(char);
+	int sizePolys	=	pmesh->npolys * 2 * pmesh->nvp * sizeof(short);
+	int sizeRegs	=	pmesh->npolys * sizeof(short);
+	int sizeFlags	=	pmesh->npolys * sizeof(short);
+	int sizeAreas	=	pmesh->npolys * sizeof(char);
 
 	int size	=	4 * (4 + 3 + 3 + 2 + 2)
 		+ sizeVerts
@@ -116,29 +116,32 @@ array<System::Byte> ^Utils::SerializePolyMesh( rcPolyMesh *pmesh )
 		+ 20 + 4;
 
 	auto data	=	gcnew array<System::Byte>(size);
+
+	for (int i=0; i<data->Length; i++) data[i] = 0xEE;
+
 	pin_ptr<System::Byte> pin = &data[0];
-	char *ptr	=	(char*)(void*)(pin);
+	int offset = 0;
 
-	WriteData( &ptr, &pmesh->nverts		,	sizeof(int) );
-	WriteData( &ptr, &pmesh->npolys		,	sizeof(int) );
-	WriteData( &ptr, &pmesh->maxpolys	,	sizeof(int) );
-	WriteData( &ptr, &pmesh->nvp		,	sizeof(int) );
+	WriteData( pin, offset, &pmesh->nverts	,		sizeof(int) );
+	WriteData( pin, offset, &pmesh->npolys	,		sizeof(int) );
+	WriteData( pin, offset, &pmesh->maxpolys,		sizeof(int) );
+	WriteData( pin, offset, &pmesh->nvp		,		sizeof(int) );
 
-	WriteData( &ptr, &pmesh->bmin[0],		sizeof(float) * 3 );
-	WriteData( &ptr, &pmesh->bmax[0],		sizeof(float) * 3 );
-	WriteData( &ptr, &pmesh->cs,			sizeof(float) );
-	WriteData( &ptr, &pmesh->ch,			sizeof(float) );
+	WriteData( pin, offset, &pmesh->bmin[0],		sizeof(float) * 3 );
+	WriteData( pin, offset, &pmesh->bmax[0],		sizeof(float) * 3 );
+	WriteData( pin, offset, &pmesh->cs,				sizeof(float) );
+	WriteData( pin, offset, &pmesh->ch,				sizeof(float) );
 
-	WriteData( &ptr, &pmesh->borderSize,	sizeof(int) );
-	WriteData( &ptr, &pmesh->maxEdgeError,	sizeof(float) );
+	WriteData( pin, offset, &pmesh->borderSize,		sizeof(int) );
+	WriteData( pin, offset, &pmesh->maxEdgeError,	sizeof(float) );
 
 	int test = 0x002ECA57;
 
-	WriteData( &ptr, pmesh->verts,	sizeVerts	 ); WriteData( &ptr, &test, 4 );
-	WriteData( &ptr, pmesh->polys,	sizePolys	 ); WriteData( &ptr, &test, 4 );
-	WriteData( &ptr, pmesh->regs,	sizeRegs	 ); WriteData( &ptr, &test, 4 );
-	WriteData( &ptr, pmesh->flags,	sizeFlags	 ); WriteData( &ptr, &test, 4 );
-	WriteData( &ptr, pmesh->areas,	sizeAreas	 ); WriteData( &ptr, &test, 4 );
+	WriteData( pin, offset, pmesh->verts,	sizeVerts	 ); WriteData( pin, offset, &test, 4 );
+	WriteData( pin, offset, pmesh->polys,	sizePolys	 ); WriteData( pin, offset, &test, 4 );
+	WriteData( pin, offset, pmesh->regs,	sizeRegs	 ); WriteData( pin, offset, &test, 4 );
+	WriteData( pin, offset, pmesh->flags,	sizeFlags	 ); WriteData( pin, offset, &test, 4 );
+	WriteData( pin, offset, pmesh->areas,	sizeAreas	 ); WriteData( pin, offset, &test, 4 );
 
 	return data;
 }
@@ -165,10 +168,10 @@ rcPolyMesh *Utils::DeserializePolyMesh(array<System::Byte> ^data)
 	ReadData( &ptr, &pmesh->maxEdgeError,	sizeof(float) );
 
 	int sizeVerts	=	pmesh->nverts * 3 * sizeof(short);
-	int sizePolys	=	pmesh->maxpolys * 2 * pmesh->nvp * sizeof(short);
-	int sizeRegs	=	pmesh->maxpolys * sizeof(short);
-	int sizeFlags	=	pmesh->maxpolys * sizeof(short);
-	int sizeAreas	=	pmesh->maxpolys * sizeof(char);
+	int sizePolys	=	pmesh->npolys * 2 * pmesh->nvp * sizeof(short);
+	int sizeRegs	=	pmesh->npolys * sizeof(short);
+	int sizeFlags	=	pmesh->npolys * sizeof(short);
+	int sizeAreas	=	pmesh->npolys * sizeof(char);
 
 	pmesh->verts	=	(unsigned short*)rcAlloc( sizeVerts	, RC_ALLOC_PERM );
 	pmesh->polys	=	(unsigned short*)rcAlloc( sizePolys	, RC_ALLOC_PERM );

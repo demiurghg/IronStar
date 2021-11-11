@@ -5,6 +5,13 @@ typedef __int64 TimeVal;
 TimeVal getPerfTime();
 int getPerfTimeUsec(const TimeVal duration);
 
+ref class Utils 
+{
+public:
+	static array<System::Byte> ^SerializePolyMesh(rcPolyMesh *pmesh);
+	static rcPolyMesh *DeserializePolyMesh(array<System::Byte> ^data);
+};
+
 //-------------------------------------------------------------	
 
 enum SamplePolyAreas

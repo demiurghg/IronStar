@@ -206,8 +206,9 @@ namespace IronStar.AI
 
 			try
 			{
-				var navData = NavMesh.Build( config, bd.verts, bd.inds, bd.walks );
-				return new NavMesh( navData );
+				byte[] polyData = null;
+				var navData = NavMesh.Build( config, bd.verts, bd.inds, bd.walks, ref polyData );
+				return new NavMesh( navData, polyData );
 			} 
 			catch ( Exception e )
 			{

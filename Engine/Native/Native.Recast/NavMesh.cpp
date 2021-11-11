@@ -5,7 +5,7 @@ using namespace Fusion;
 using namespace Fusion::Core::Mathematics;
 
 
-array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
+array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables, array<System::Byte> ^%polyData )
 {
 	unsigned char		*m_triareas	=	nullptr;
 	rcContext			*m_ctx		=	nullptr;
@@ -316,6 +316,11 @@ array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vect
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
 
+	//------------------------------------------------------------
+	//	save poly mesh for visualization :
+
+	polyData = Utils::SerializePolyMesh( m_pmesh );
+
 	#pragma endregion
 
 	//------------------------------------------------------------
@@ -410,12 +415,16 @@ array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vect
 }
 
 
-Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData )
+
+Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData, array<System::Byte> ^polyData )
 {
 	rcContext *ctx	=	new BuildContext();
 
-	pin_ptr<System::Byte> navDataPtr = &navData[0];
+	pin_ptr<System::Byte> navDataPin = &navData[0];
 	auto navDataSize = navData->Length;
+
+	unsigned char *navDataPtr = (unsigned char*)dtAlloc( navDataSize, DT_ALLOC_PERM );
+	memcpy( navDataPtr, navDataPin, navDataSize );
 
 	m_navMesh = dtAllocNavMesh();
 	if (!m_navMesh) 
@@ -449,7 +458,13 @@ Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData )
 
 	//------------------------------------------------------------
 
+	m_pmesh	=	Utils::DeserializePolyMesh( polyData );
+
+	//------------------------------------------------------------
+
 	ctx->stopTimer(RC_TIMER_TOTAL);
+
+	
 
 	delete ctx;
 }
@@ -457,6 +472,9 @@ Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData )
 
 void Native::NRecast::NavMesh::Cleanup()
 {
+	rcFreePolyMesh( m_pmesh );
+	m_pmesh = 0;
+
 	dtFreeNavMesh(m_navMesh);
 	m_navMesh = 0;
 
@@ -566,7 +584,7 @@ float frand()
 
 bool Native::NRecast::NavMesh::GetRandomReachablePoint(Vector3 centerPos, float radius, Vector3 %resultVector)
 {
-	float extentsArray[]	= { 2, 4, 2 };
+	float extentsArray[]	= { 8, 8, 8 };
 	float centerPosArray[]	= { centerPos.X, centerPos.Y, centerPos.Z };
 	dtPolyRef startRef;
 	float randomPoint[] = {0,0,0};

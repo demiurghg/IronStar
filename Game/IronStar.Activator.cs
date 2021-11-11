@@ -73,6 +73,7 @@ namespace IronStar
 
 		public static IGameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
 		{
+			const bool	mt	=	false;
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
 			var gs			=	new GameState(game, content, false);
@@ -82,6 +83,11 @@ namespace IronStar
 			var rw			=	game.RenderSystem.RenderWorld;
 
 			gs.Paused		=	(editor!=null);
+
+			if (!mt)
+			{
+				gs2	= gs;
+			}
 			
 			//	physics and FX systems are used by many other systems :
 			var physicsCore = new ECSPhysics.PhysicsCore();
@@ -165,8 +171,15 @@ namespace IronStar
 			LoadContent(rw, content, mapName);
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
 
-			//return gs;
-			return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/60.0f) );
+			if (mt)
+			{
+				return new MTGameState( game, gs, gs2, TimeSpan.FromSeconds(1.0f/60.0f) );
+			}
+			else
+			{
+				return gs;
+			}
+			//return mt ? mtgs : gs;
 		}
 
 

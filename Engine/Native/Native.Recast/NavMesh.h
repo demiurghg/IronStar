@@ -26,9 +26,9 @@ namespace Native
 			bool m_keepInterResults;
 
 		public:
-			static array<System::Byte> ^Build(Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
+			static array<System::Byte> ^Build(Config ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables, array<System::Byte> ^%polyData);
 
-			NavMesh(array<System::Byte> ^navData);
+			NavMesh(array<System::Byte> ^navData, array<System::Byte> ^polyData);
 
 			~NavMesh();
 

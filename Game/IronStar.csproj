@@ -89,6 +89,7 @@
     <Compile Include="AI\Decorators\AcquireToken.cs" />
     <Compile Include="AI\Decorators\HasTarget.cs" />
     <Compile Include="AI\StateMachine.cs" />
+    <Compile Include="AI\Systems\NavBakingSystem.cs" />
     <Compile Include="AI\Systems\PerceptionSystem.cs" />
     <Compile Include="AI\NavigationRouter.cs" />
     <Compile Include="Animation\BoneComponent.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="BTCore\BTNode.cs" />
     <Compile Include="BTCore\BTStatus.cs" />
     <Compile Include="AI\Systems\BehaviorSystem.cs" />
-    <Compile Include="AI\Systems\NavigationSystem.cs" />
+    <Compile Include="AI\Systems\NavSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
     <Compile Include="Animation\Layers\BlendSpace.cs" />
     <Compile Include="Animation\Layers\BaseLayer.cs" />

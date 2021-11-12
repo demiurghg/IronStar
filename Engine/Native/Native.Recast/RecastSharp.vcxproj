@@ -206,6 +206,7 @@
     <ClInclude Include="Local.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="NavMesh.h" />
+    <ClInclude Include="PolyMesh.h" />
     <ClInclude Include="RecastException.h" />
     <ClInclude Include="Recast\Headers\Recast.h" />
     <ClInclude Include="Recast\Headers\RecastAlloc.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="Detour\Source\DetourNode.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="NavMesh.cpp" />
+    <ClCompile Include="PolyMesh.cpp" />
     <ClCompile Include="Recast\Source\Recast.cpp" />
     <ClCompile Include="Recast\Source\RecastAlloc.cpp" />
     <ClCompile Include="Recast\Source\RecastArea.cpp" />

@@ -15,35 +15,45 @@ using IronStar.SFX2;
 using Native.NRecast;
 using System.ComponentModel;
 using Fusion.Core.Extensions;
+using System.IO;
+using Fusion.Core.Shell;
+using Fusion.Build;
 
 namespace IronStar.AI
 {
-	class NavigationSystem : ISystem
+	class NavBakingSystem : ISystem
 	{
-		bool		navMeshDirty	=	false;
-		NavMesh		navMesh			=	null;
-		BackgroundWorker	worker;
+		readonly IGameState	gs;
+		readonly string		navMeshPath;
+		readonly Aspect		navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
 
-		readonly Aspect	navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
+		PolyMesh	polyMesh	=	null;
 
 
-		public NavigationSystem()
+		public NavBakingSystem(IGameState gs, string mapName)
 		{
-			worker	=	new BackgroundWorker();
-			worker.DoWork				+=	Worker_DoWork;
-			worker.RunWorkerCompleted	+=	Worker_RunWorkerCompleted;
+			this.gs				=	gs;
+			this.navMeshPath	=	Path.Combine("maps", "navmesh", mapName);
 		}
 
-		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
-		{
-			Log.Message("Navigation system : build completed");
-			navMesh = (NavMesh)e.Result;
-		}
 
-		private void Worker_DoWork( object sender, DoWorkEventArgs e )
+		public class BakeNavMeshCommand : ICommand
 		{
-			var buildData = (BuildData)e.Argument;
-			e.Result = BuildNavmesh( buildData );
+			readonly IGameState gs;
+
+			public BakeNavMeshCommand( IGameState gs )
+			{
+				this.gs = gs;
+			}
+
+			public object Execute()
+			{
+				var navBaking = gs.GetService<NavBakingSystem>();
+
+				navBaking.BuildNavmesh( navBaking.GetStaticGeometry() );
+
+				return null;
+			}
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -52,110 +62,26 @@ namespace IronStar.AI
 
 		public Aspect GetAspect()
 		{
-			return navGeometryAspect;
+			return Aspect.Empty;
 		}
 
 		
 		public void Add( IGameState gs, Entity e )
 		{
-			navMeshDirty = true;
 		}
 
 		
 		public void Remove( IGameState gs, Entity e )
 		{
-			navMeshDirty = true;
 		}
 
 		
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			if (navMeshDirty && !worker.IsBusy)
+			if (polyMesh!=null)
 			{
-				Log.Message("Navigation system : build started");
-				worker.RunWorkerAsync( GetStaticGeometry(gs) );
-				navMeshDirty = false;
+				DrawNavMesh( gs, polyMesh, gs.Game.RenderSystem.RenderWorld.Debug );
 			}
-
-			DrawNavMesh( gs, navMesh, gs.Game.GetService<RenderSystem>().RenderWorld.Debug );
-		}
-
-		/*-----------------------------------------------------------------------------------------
-		 *	Navmesh queries :
-		-----------------------------------------------------------------------------------------*/
-
-		public Vector3[] FindRoute( Vector3 startPoint, Vector3 endPoint )
-		{
-			return navMesh?.FindRoute( startPoint, endPoint );
-		}
-
-		public Vector3 GetReachablePointInRadius( Vector3 startPoint, float maxRadius )
-		{
-			if (navMesh==null) return startPoint;
-
-			Vector3 result = startPoint;
-
-			navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result );
-
-			return result;
-		}
-
-		/*-----------------------------------------------------------------------------------------
-		 *	Navmesh rendering
-		-----------------------------------------------------------------------------------------*/
-
-		public void DrawNavMesh( IGameState gs, NavMesh mesh, DebugRender dr )
-		{
-			if (gs.Game.RenderSystem.SkipDebugRendering) 
-			{
-				return;
-			}
-
-			if (mesh!=null && gs.Game.GetService<AICore>().ShowNavigationMesh) 
-			{
-				var polyInds = new int[6];
-				var polyAdjs = new int[6];
-
-				var verts = mesh.GetPolyMeshVertices();
-
-				foreach ( var p in verts ) 
-				{
-					dr.DrawWaypoint( p, 0.25f, Color.Black, 2 );
-				}
-
-				for ( int polyIndex = 0; polyIndex < mesh.GetNumPolys(); polyIndex++ ) 
-				{
-				
-					int nverts =	mesh.GetPolygonVertexIndices( polyIndex, polyInds );
-									mesh.GetPolygonAdjacencyIndices( polyIndex, polyAdjs );
-					
-					for ( int edgeInd = 0; edgeInd < nverts; edgeInd++ ) 
-					{	
-						var i0 = edgeInd;
-						var i1 = (edgeInd+1 == nverts) ? 0 : edgeInd+1;
-						var v0 = verts[ polyInds[ i0 ] ];	
-						var v1 = verts[ polyInds[ i1 ] ];	
-
-						int lineWidth = 1;
-						var lineColor = Color.Black;
-
-						if (polyAdjs[edgeInd]>=0) 
-						{
-							lineWidth = 4;
-						}
-
-						dr.DrawLine( v0, v1, lineColor, lineColor, lineWidth, lineWidth );
-					}
-				}
-			}
-
-			/*if (route!=null) {
-				for (int i=0; i<route.Length-1; i++) {
-					var v0 = route[i];
-					var v1 = route[i+1];
-					dr.DrawLine( v0, v1, Color.Red, Color.Red, 5, 5 );
-				}
-			} */
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -170,7 +96,7 @@ namespace IronStar.AI
 			public bool[] walks;
 		}
 
-		NavMesh BuildNavmesh( BuildData bd )
+		void BuildNavmesh( BuildData bd )
 		{
 			Log.Message("Building navigation mesh...");
 
@@ -200,25 +126,33 @@ namespace IronStar.AI
 
 			if (bd.verts.Length<3 || bd.inds.Length<3)
 			{
-				Log.Message("No geometry data. Skipped.");
-				return null;
+				Log.Warning("No geometry data. Skipped.");
+				return;
 			}
 
 			try
 			{
 				byte[] polyData = null;
 				var navData = NavMesh.Build( config, bd.verts, bd.inds, bd.walks, ref polyData );
-				return new NavMesh( navData, polyData );
+
+				//	#TODO #AI #NAVMESH -- store polymesh on disk too.
+				polyMesh	=	new PolyMesh( polyData );
+
+				var build = gs.Game.GetService<Builder>();
+
+				using ( var stream = build.CreateSourceFile( navMeshPath + ".bin" ) )
+				{
+					stream.Write( navData, 0, navData.Length );
+				}
 			} 
 			catch ( Exception e )
 			{
 				Log.Error(e.ToString());
-				return null;
 			}
 		}
 
 
-		BuildData GetStaticGeometry ( IGameState gs )
+		BuildData GetStaticGeometry ()
 		{
 			var indices		=	new List<int>();
 			var vertices	=	new List<Vector3>();
@@ -263,6 +197,57 @@ namespace IronStar.AI
 			bd.walks	=	walkables.ToArray();
 
 			return bd;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Navmesh rendering
+		-----------------------------------------------------------------------------------------*/
+
+		public void DrawNavMesh( IGameState gs, PolyMesh mesh, DebugRender dr )
+		{
+			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			{
+				return;
+			}
+
+			if (mesh!=null && gs.Game.GetService<AICore>().ShowNavigationMesh) 
+			{
+				var polyInds = new int[6];
+				var polyAdjs = new int[6];
+
+				var verts = mesh.GetPolyMeshVertices();
+
+				foreach ( var p in verts ) 
+				{
+					dr.DrawWaypoint( p, 0.25f, Color.Black, 2 );
+				}
+
+				for ( int polyIndex = 0; polyIndex < mesh.GetNumPolys(); polyIndex++ ) 
+				{
+				
+					int nverts =	mesh.GetPolygonVertexIndices( polyIndex, polyInds );
+									mesh.GetPolygonAdjacencyIndices( polyIndex, polyAdjs );
+					
+					for ( int edgeInd = 0; edgeInd < nverts; edgeInd++ ) 
+					{	
+						var i0 = edgeInd;
+						var i1 = (edgeInd+1 == nverts) ? 0 : edgeInd+1;
+						var v0 = verts[ polyInds[ i0 ] ];	
+						var v1 = verts[ polyInds[ i1 ] ];	
+
+						int lineWidth = 1;
+						var lineColor = Color.Black;
+
+						if (polyAdjs[edgeInd]>=0) 
+						{
+							lineWidth = 4;
+						}
+
+						dr.DrawLine( v0, v1, lineColor, lineColor, lineWidth, lineWidth );
+					}
+				}
+			}
 		}
 	}
 }

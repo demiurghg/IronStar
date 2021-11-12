@@ -119,6 +119,7 @@ namespace IronStar.Editor
 			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddFatLButton("Bake\nLightmap"		,	null,	BakeLightMap	 );
 			lowerShelf.AddFatLButton("Capture\nLight Probes",	null,	BakeLightProbes  );
+			lowerShelf.AddFatLButton("Build\nNavMesh"		,	null,	BakeNavMesh		);
 
 			//--------------------------------------------------------------------------
 
@@ -336,6 +337,14 @@ namespace IronStar.Editor
 		void BakeLightMap()
 		{
 			Game.Invoker.Execute( new Radiosity.BakeRadiosityCommand( Game, mapName, Map.RadiositySettings ) );
+			Game.Invoker.ExecuteString("contentBuild");
+			//Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
+		}
+
+
+		void BakeNavMesh()
+		{
+			Game.Invoker.Execute( new NavBakingSystem.BakeNavMeshCommand( gameState ) );
 			Game.Invoker.ExecuteString("contentBuild");
 			//Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
 		}

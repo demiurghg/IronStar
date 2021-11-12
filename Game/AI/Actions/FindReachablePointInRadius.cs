@@ -30,7 +30,7 @@ namespace IronStar.AI.Actions
 
 		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
-			var	navSystem		=	entity.gs.GetService<NavigationSystem>();
+			var	navSystem		=	entity.gs.GetService<NavSystem>();
 			var blackboard		=	entity.GetBlackboard();
 			var location		=	entity.GetLocation();
 

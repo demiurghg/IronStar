@@ -30,7 +30,7 @@ namespace IronStar.AI.Actions
 
 		public override bool Initialize(Entity entity)
 		{
-			var	navSystem	=	entity.gs.GetService<NavigationSystem>();
+			var	navSystem	=	entity.gs.GetService<NavSystem>();
 			var blackboard	=	entity.GetComponent<BehaviorComponent>().Blackboard;
 			var targetPoint	=	Vector3.Zero;
 			var originPoint	=	entity.Location;

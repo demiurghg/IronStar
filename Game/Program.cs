@@ -8,6 +8,7 @@ using Fusion.Build.Processors;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Engine.Graphics.GI;
+using Native.NRecast;
 
 namespace IronStar
 {
@@ -132,6 +133,7 @@ namespace IronStar
 
 				.Copy<LightMap>			("maps/lightmaps/*.bin")
 				.Copy<LightProbeHDRI>	("maps/lightprobes/*.bin")
+				.Copy<NavMesh>			("maps/navmesh/*.bin")
 				;
 
 			return builder;       

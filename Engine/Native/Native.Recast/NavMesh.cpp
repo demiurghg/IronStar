@@ -416,7 +416,7 @@ array<System::Byte> ^Native::NRecast::NavMesh::Build( Config ^config, array<Vect
 
 
 
-Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData, array<System::Byte> ^polyData )
+Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData )
 {
 	rcContext *ctx	=	new BuildContext();
 
@@ -450,31 +450,14 @@ Native::NRecast::NavMesh::NavMesh( array<System::Byte> ^navData, array<System::B
 		throw gcnew System::Exception();
 	}
 
-	#pragma endregion
-
-	//------------------------------------------------------------
-
 	m_queryFilter	=	new dtQueryFilter();
-
-	//------------------------------------------------------------
-
-	m_pmesh	=	Utils::DeserializePolyMesh( polyData );
-
-	//------------------------------------------------------------
-
-	ctx->stopTimer(RC_TIMER_TOTAL);
-
-	
 
 	delete ctx;
 }
 
 
-void Native::NRecast::NavMesh::Cleanup()
+Native::NRecast::NavMesh::~NavMesh()
 {
-	rcFreePolyMesh( m_pmesh );
-	m_pmesh = 0;
-
 	dtFreeNavMesh(m_navMesh);
 	m_navMesh = 0;
 
@@ -483,95 +466,6 @@ void Native::NRecast::NavMesh::Cleanup()
 
 	delete m_queryFilter;
 	m_queryFilter = 0;
-}
-
-
-Native::NRecast::NavMesh::~NavMesh()
-{
-	Cleanup();
-}
-
-
-cli::array<Vector3>^ Native::NRecast::NavMesh::GetPolyMeshVertices()
-{
-	auto mesh	= m_pmesh;
-	auto orig	= mesh->bmin;
-	auto ch		= mesh->ch;
-	auto cs		= mesh->cs;
-
-	array<Vector3> ^verts = gcnew array<Vector3>( mesh->nverts );
-
-	for (int i = 0; i < mesh->nverts; ++i) {
-
-		const unsigned short* v = &mesh->verts[i * 3];
-		const float x = orig[0] + v[0] * cs;
-		const float y = orig[1] + v[1] * ch;
-		const float z = orig[2] + v[2] * cs;
-
-		verts[i] = Vector3( x, y, z );
-	}
-
-	return verts;
-}
-
-
-int Native::NRecast::NavMesh::GetPolygonVertexIndices(int polyIndex, array<int> ^indices)
-{
-	auto npolys	= m_pmesh->npolys;
-	auto nvp = m_pmesh->nvp;
-
-	if (polyIndex<0 || polyIndex>=npolys) {
-		throw gcnew System::ArgumentOutOfRangeException("polyIndex");
-	}
-	if (indices==nullptr) {
-		throw gcnew System::ArgumentNullException("indices");
-	}
-	if (indices->Length<nvp) {
-		throw gcnew System::ArgumentOutOfRangeException("indices");
-	}
-	
-	auto poly	= &m_pmesh->polys[polyIndex*nvp * 2];
-	
-	for (int i=0; i<m_pmesh->nvp; i++) {
-		indices[i] = poly[i];
-		if (poly[i]==RC_MESH_NULL_IDX) {
-			return i;
-		}
-	}
-
-	return nvp;
-}
-
-
-void Native::NRecast::NavMesh::GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices)
-{
-	auto npolys = m_pmesh->npolys;
-	auto nvp = m_pmesh->nvp;
-
-	if (polyIndex<0 || polyIndex >= npolys) {
-		throw gcnew System::ArgumentOutOfRangeException("polyIndex");
-	}
-	if (indices == nullptr) {
-		throw gcnew System::ArgumentNullException("indices");
-	}
-	if (indices->Length<nvp) {
-		throw gcnew System::ArgumentOutOfRangeException("indices");
-	}
-
-	auto poly = &m_pmesh->polys[polyIndex*nvp * 2 + nvp];
-
-	for (int i = 0; i<indices->Length; i++) {
-		indices[i] = -1;
-	}
-
-	for (int i = 0; i<m_pmesh->nvp; i++) {
-		
-		if (poly[i] & 0x8000) {
-			indices[i] = poly[i];
-		} else {
-			indices[i] = -1;
-		}
-	}
 }
 
 

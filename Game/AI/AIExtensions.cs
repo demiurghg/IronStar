@@ -58,7 +58,8 @@ namespace IronStar.AI
 			
 			if (transform==null) 
 			{
-				throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
+				return Vector3.Zero;
+				//throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
 			}
 
 			if (controller!=null) 

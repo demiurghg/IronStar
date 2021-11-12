@@ -73,7 +73,7 @@ namespace IronStar
 
 		public static IGameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
 		{
-			const bool	mt	=	false;
+			const bool	mt	=	true;
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
 			var gs			=	new GameState(game, content, false);
@@ -125,7 +125,7 @@ namespace IronStar
 			//	AI :
 			gs.AddSystem( new PerceptionSystem(physicsCore) );
 			gs.AddSystem( new BehaviorSystem(physicsCore ) );
-			gs.AddSystem( new NavigationSystem() );
+			gs.AddSystem( new NavSystem(gs, mapName) );
 			gs.AddSystem( new MonsterKillSystem() );
 
 			//	animation systems :
@@ -164,6 +164,8 @@ namespace IronStar
 				gs2.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
+
+				gs2.AddSystem( new NavBakingSystem( gs2, mapName ) );
 			}
 
 			map.ActivateGameState(gs);

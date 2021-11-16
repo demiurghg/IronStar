@@ -55,6 +55,7 @@ namespace IronStar.Gameplay.Systems
 		Sequencer[]	shakeTracks;
 
 		RenderModelInstance	model;
+		public readonly Matrix[] Transforms = new Matrix[ RenderSystem.MaxBones ];
 
 		WeaponState oldWeaponState = WeaponState.Overheat;
 		float tiltFactor = 0;
@@ -96,7 +97,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Update ( GameTime gameTime, WeaponStateComponent weapon, StepComponent steps, UserCommandComponent uc )
+		public void Update ( GameTime gameTime, Matrix cameraMatrix, WeaponStateComponent weapon, StepComponent steps, UserCommandComponent uc )
 		{
 			var stepEvents	=	StepComponent.DetectEvents( steps, prevStep );
 			prevStep = (StepComponent)steps.Clone();
@@ -104,8 +105,7 @@ namespace IronStar.Gameplay.Systems
 			UpdateWeaponStates(gameTime, weapon, steps, stepEvents);
 			UpdateMovements(gameTime, steps, stepEvents, uc);
 
-			composer.Update( gameTime, model.ModelFeatureWorldMatrix, model.IsFPVModel, model.FlattenTransforms ); 
-			model.CommitJointTransform();
+			composer.Update( gameTime, model.PreTransform * cameraMatrix, model.IsFPVModel, Transforms ); 
 		}
 
 

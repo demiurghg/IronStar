@@ -416,7 +416,7 @@
         "Frozen": false,
         "Translation": "96, 8, -16",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
+        "Rotation": "0, -0.8660254, 0, -0.49999994",
         "TranslateX": 96.0,
         "TranslateY": 8.0,
         "TranslateZ": -16.0
@@ -1384,11 +1384,34 @@
         "TranslateX": 51.0,
         "TranslateY": 6.0,
         "TranslateZ": 28.0
+      },
+      {
+        "$id": "77",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "78",
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-58, 0, -37",
+          "Rotation": "0, 0, 0, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 1.0
+        },
+        "Name": "MapEntity11",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-58, 0, -37",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": -58.0,
+        "TranslateY": 0.0,
+        "TranslateZ": -37.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "77",
+    "$id": "79",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

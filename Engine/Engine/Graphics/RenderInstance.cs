@@ -24,12 +24,22 @@ namespace Fusion.Engine.Graphics
 		All			=	0xFFFFFFFF,
 	}
 
+	public interface ITransformable
+	{
+		Matrix World { get; set; }
+	}
+
+
+	public interface ISkinnable
+	{
+		Matrix[] Bones { get; }
+	}
 
 	
 	/// <summary>
 	/// Represnets mesh instance
 	/// </summary>
-	public sealed class RenderInstance
+	public sealed class RenderInstance : ITransformable, ISkinnable
 	{
 		private readonly RenderSystem rs;
 		private readonly RenderWorld rw;
@@ -148,7 +158,7 @@ namespace Fusion.Engine.Graphics
 		/// Gets array of bone transforms.
 		/// If skinning is not applied to mesh, this array is Null.
 		/// </summary>
-		public Matrix[] BoneTransforms {
+		public Matrix[] Bones {
 			get; private set;
 		}
 
@@ -224,7 +234,7 @@ namespace Fusion.Engine.Graphics
 			}
 
 			if (IsSkinned) {
-				BoneTransforms	=	Enumerable
+				Bones	=	Enumerable
 					.Range(0, RenderSystem.MaxBones)
 					.Select( i => Matrix.Identity )
 					.ToArray();

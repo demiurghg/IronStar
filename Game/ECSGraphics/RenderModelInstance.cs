@@ -43,20 +43,7 @@ namespace IronStar.SFX2
 		/// </summary>
 		public Scene Scene { get { return scene; } }
 
-
-		/// <summary>
-		/// Gets model's pretransform matrix 
-		/// </summary>
-		public Matrix PreTransform
-		{
-			get { return preTransform; }
-		}
-
-
-		public Matrix[] FlattenTransforms
-		{
-			get { return sceneView.transforms; }
-		}
+		public Matrix PreTransform { get { return preTransform; } }
 
 
 		/// <summary>
@@ -84,7 +71,7 @@ namespace IronStar.SFX2
 				SetFPVEnabled();
 			}
 
-			SetTransform( tm );
+			SetTransforms( tm, null, true );
 		}
 
 
@@ -169,36 +156,9 @@ namespace IronStar.SFX2
 		/// Sets model's world transform
 		/// </summary>
 		/// <param name="worldMatrix"></param>
-		public void SetTransform( Matrix worldMatrix )
+		public void SetTransforms( Matrix world, Matrix[] bones, bool flatten )
 		{
-			ModelFeatureWorldMatrix	= preTransform * worldMatrix;
-			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
+			sceneView.SetTransforms( preTransform * world, bones, flatten );
 		}
-
-
-		// #TODO #ANIMATION -- What this function do? Remove???
-		public void CommitJointTransform()
-		{
-			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
-		}
-
-
-
-		public void SetBoneTransforms( Matrix[] bones )
-		{
-			foreach ( var inst in sceneView.meshes )
-			{
-				if (inst!=null && inst.IsSkinned)
-				{
-					scene.ComputeBoneTransforms( bones, inst.BoneTransforms );
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Gets transform matrix from model space to world space
-		/// </summary>
-		public Matrix ModelFeatureWorldMatrix { get; private set; } = Matrix.Identity;
 	}
 }

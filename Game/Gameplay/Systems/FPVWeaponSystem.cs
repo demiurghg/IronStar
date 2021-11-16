@@ -86,8 +86,10 @@ namespace IronStar.Gameplay.Systems
 					ChangeWeaponModel( gs, activeWeapon );
 				}
 
-				renderModel?.SetTransform( rw.Camera.CameraMatrix );
-				animator?.Update( gameTime, weaponState, steps, uc );  
+				var cameraMatrix = rw.Camera.CameraMatrix;
+
+				animator?.Update( gameTime, rw.Camera.CameraMatrix, weaponState, steps, uc );  
+				renderModel?.SetTransforms( rw.Camera.CameraMatrix, animator?.Transforms, true );
 			}
 		}
 

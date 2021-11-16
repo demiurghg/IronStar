@@ -418,7 +418,7 @@ namespace Fusion.Engine.Graphics
 								{
 									var instance	=	group[ passId * batchSize + instanceId ];
 									dataInstanceSkinned[ instanceId ] = new INSTANCE(instance);
-									instance.BoneTransforms.CopyTo( dataBoneData, maxBones * instanceId );
+									instance.Bones.CopyTo( dataBoneData, maxBones * instanceId );
 								}
 								else
 								{

@@ -16,29 +16,35 @@ namespace IronStar
 	/// Represent particular scene representation, like physical, rendering etc.
 	/// </summary>
 	/// <typeparam name="TMesh"></typeparam>
-	public class SceneView<TMesh> where TMesh: class
+	public class SceneView<TMesh> where TMesh: ITransformable
 	{
 		public readonly Scene		scene;
 		public readonly Matrix[]	transforms;
+		public readonly Matrix[]	skinning;
 		public readonly TMesh[]		meshes;
-
 
 
 		public SceneView( Scene scene, Func<Node,Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )
 		{
 			this.scene	=	scene;
 			transforms	=	new Matrix[ scene.Nodes.Count ];
+			skinning	=	new Matrix[ scene.Nodes.Count ];
 			meshes		=	new TMesh[ scene.Nodes.Count ];
 
 			scene.ComputeAbsoluteTransforms( transforms );
+			scene.ComputeBoneTransforms( transforms, skinning );
 
 			for ( int i=0; i<scene.Nodes.Count; i++ ) 
 			{
-				if (nodeFilter(scene.Nodes[i]))
+				if (nodeFilter(scene.Nodes[i]) && scene.Nodes[i].MeshIndex>=0)
 				{
 					var node		=	scene.Nodes[i];
 					var meshIndex	=	node.MeshIndex;
-					meshes[i]		=	(meshIndex < 0) ? null : meshSelector( node, scene.Meshes[ meshIndex ] );
+					meshes[i]		=	meshSelector( node, scene.Meshes[ meshIndex ] );
+				}
+				else
+				{
+					meshes[i]		=	default(TMesh);
 				}
 			}
 		}
@@ -55,13 +61,49 @@ namespace IronStar
 		}
 
 
-		public void SetTransform( Action<TMesh,Matrix> transformAction, Matrix worldMatrix )
+		/*public void ApplyTransform( Action<TMesh,Matrix> transformAction, Matrix worldMatrix )
 		{
 			for ( int i=0; i<meshes.Length; i++ )
 			{
 				if (meshes[i]!=null)
 				{
 					transformAction( meshes[i], transforms[i] * worldMatrix );
+				}
+			}
+		}	 */
+
+
+		public void SetTransforms( Matrix world, Matrix[] bones, bool flatten = true )
+		{
+			if (bones!=null)
+			{
+				if (bones.Length<transforms.Length) throw new ArgumentOutOfRangeException(nameof(bones) + " has less element than requred");
+
+				if (flatten)
+				{
+					Array.Copy( bones, transforms, transforms.Length );
+				}
+				else
+				{
+					scene.ComputeAbsoluteTransforms( bones, transforms );
+				}
+
+				scene.ComputeBoneTransforms( transforms, skinning );
+			}
+
+			for ( int i=0; i<meshes.Length; i++ )
+			{
+				if (meshes[i]!=null)
+				{
+					meshes[i].World = transforms[i] * world;
+
+					var dstBones = (meshes[i] as ISkinnable)?.Bones;
+
+					if (dstBones!=null)
+					{
+						int count = Math.Min( dstBones.Length, skinning.Length );
+						Array.Copy( skinning, dstBones, count );
+					}
 				}
 			}
 		}

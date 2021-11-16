@@ -62,17 +62,14 @@ namespace IronStar.SFX2
 
 		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
-			model.SetTransform( t.TransformMatrix );
+			Matrix[] bones = null;
 
 			if (skinnedAspect.Accept(e))
 			{
-				var bones = e.GetComponent<BoneComponent>()?.Bones;
-
-				if (bones!=null)
-				{
-					model.SetBoneTransforms( e.GetComponent<BoneComponent>().Bones );
-				}
+				bones = e.GetComponent<BoneComponent>()?.Bones;
 			}
+
+			model.SetTransforms( t.TransformMatrix, bones, true );
 		}
 	}
 }

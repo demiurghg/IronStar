@@ -119,5 +119,18 @@ namespace IronStar
 				}
 			}
 		}
+
+		public void ForEachMesh( Action<int,TMesh> action )
+		{
+			for (int idx=0; idx<meshes.Length; idx++)
+			{
+				var mesh = meshes[idx];
+
+				if (mesh!=null)
+				{
+					action( idx, mesh );
+				}
+			}
+		}
 	}
 }

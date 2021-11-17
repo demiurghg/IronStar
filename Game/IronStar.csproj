@@ -138,6 +138,9 @@
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />
     <Compile Include="ECSPhysics\CharacterTrackingSystem.cs" />
     <Compile Include="ECSPhysics\ISpaceQuery.cs" />
+    <Compile Include="ECSPhysics\KinematicController.cs" />
+    <Compile Include="ECSPhysics\KinematicSystem.cs" />
+    <Compile Include="ECSPhysics\KinematicModel.cs" />
     <Compile Include="ECSPhysics\MaterialComponent.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\CollisionGroup.cs" />

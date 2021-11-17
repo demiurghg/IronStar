@@ -102,6 +102,9 @@ namespace IronStar.Mapping
 
 		[AECategory( "Custom Node" )]
 		public string CustomCollisionNode { get; set; } = "";
+
+		[AECategory( "Kinematics" )]
+		public bool Animated { get; set; } = false;
 		
 
 		public MapModel ()
@@ -112,7 +115,6 @@ namespace IronStar.Mapping
 		public void Construct( Entity entity, IGameState gs )
 		{
 			var t		=	new Transform( Translation, Rotation, Scale );
-			var scc		=	new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable };
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 
 			rm.NoShadow	=	SkipShadow;
@@ -122,8 +124,16 @@ namespace IronStar.Mapping
 			rm.SetupLightmap( lmSize, lmSize, Name );
 
 			entity.AddComponent( t );
-			entity.AddComponent( scc );
 			entity.AddComponent( rm );			
+
+			if (!Animated)
+			{
+				entity.AddComponent( new StaticCollisionComponent { Walkable = Walkable, Collidable = Collidable } );
+			}
+			else
+			{
+				entity.AddComponent( new KinematicModel() );
+			}
 		}
 
 

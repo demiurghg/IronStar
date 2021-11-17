@@ -3,182 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BEPUutilities;
-using BEPUphysics;
-using BEPUphysics.BroadPhaseEntries;
-using BEPUVector3 = BEPUutilities.Vector3;
-using BEPUTransform = BEPUutilities.AffineTransform;
-using BEPUMatrix = BEPUutilities.Matrix;
-using IronStar.Core;
-using Fusion.Engine.Common;
-using IronStar.SFX;
-using Fusion.Engine.Graphics;
-using Fusion.Core.Mathematics;
-using Matrix = Fusion.Core.Mathematics.Matrix;
-using Vector3 = Fusion.Core.Mathematics.Vector3;
-using BepuEntity = BEPUphysics.Entities.Entity;
-using BEPUphysics.BroadPhaseEntries.MobileCollidables;
-using BEPUphysics.Entities.Prefabs;
-using BEPUphysics.EntityStateManagement;
+using System.IO;
 using Fusion;
-using BEPUphysics.Paths.PathFollowing;
-using BEPUphysics.CollisionShapes.ConvexShapes;
+using Fusion.Core;
+using Fusion.Core.Content;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Common;
+using Fusion.Core.Input;
+using Fusion.Engine.Client;
+using Fusion.Engine.Server;
+using Fusion.Engine.Graphics;
+using BEPUphysics;
+using BEPUphysics.Character;
+using BEPUCharacterController = BEPUphysics.Character.CharacterController;
+using Fusion.Core.IniParser.Model;
+using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using BEPUphysics.BroadPhaseEntries;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
+using BEPUphysics.EntityStateManagement;
+using BEPUphysics.Entities.Prefabs;
+using BEPUphysics.PositionUpdating;
+using BEPUphysics.CollisionRuleManagement;
+using IronStar.ECS;
 using Fusion.Engine.Graphics.Scenes;
+using AffineTransform = BEPUutilities.AffineTransform;
 
-namespace IronStar.Physics2 {
-	public class KinematicModel {
+namespace IronStar.ECSPhysics
+{
+	public class KinematicModel : IComponent
+	{
+		public float Factor;
 
-		readonly Matrix preTransform;
-		readonly PhysicsEngineSystem physicsManager;
-		readonly BepuEntity[] convexHulls;
-		readonly Entity entity;
-		readonly Scene scene;
-		readonly int nodeCount;
-
-		Matrix[] animSnapshot;
-		EntityMover[] movers;
-		EntityRotator[] rotators;
-		Vector3[] offsets;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="modelManager"></param>
-		/// <param name="descriptor"></param>
-		/// <param name="scene"></param>
-		/// <param name="entity"></param>
-		public KinematicModel ( PhysicsEngineSystem physicsManager, ModelFactory descriptor, Scene scene, Entity entity )
+		public IComponent Clone()
 		{
-			this.entity			=	entity;
-			this.physicsManager	=	physicsManager;
-			this.scene			=	scene;
-			this.preTransform   =   descriptor.ComputePreTransformMatrix();
-			this.nodeCount		=	scene.Nodes.Count;
-			
-			convexHulls		=	new BepuEntity[ nodeCount ];
-			var transforms	=	new Matrix[ nodeCount ];
-			animSnapshot	=	new Matrix[ nodeCount ];
-			offsets			=	new Vector3[ nodeCount ];
-
-			movers			=	new EntityMover[ nodeCount ];
-			rotators		=	new EntityRotator[ nodeCount ];
-
-			scene.ComputeAbsoluteTransforms( transforms );
-
-
-			for ( int i=0; i<scene.Nodes.Count; i++ ) {
-
-				var node = scene.Nodes[i];
-
-				if (node.MeshIndex<0) {
-					continue;
-				}
-
-				var mesh		=	scene.Meshes[ node.MeshIndex ];
-				var indices     =   mesh.GetIndices();
-				var vertices    =   mesh.Vertices
-									.Select( v2 => MathConverter.Convert( v2.Position ) )
-									.ToList();
-
-				var ms			=	new MotionState();
-				var transform	=	transforms[i] * preTransform * entity.GetWorldMatrix(1);
-
-				var p			=	transform.TranslationVector;
-				var q			=   Fusion.Core.Mathematics.Quaternion.RotationMatrix( transform );
-
-				ms.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
-				ms.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
-				ms.Orientation		=	MathConverter.Convert( q );
-				ms.Position			=	MathConverter.Convert( p );
-
-				//	recenter shape :
-				//	https://bepuphysics.codeplex.com/wikipage?title=Shape%20Recentering
-				var offset			=	BEPUVector3.Zero;
-				var convexShape		=	new ConvexHullShape( vertices, out offset );
-				var convexHull		=	new BepuEntity( convexShape, 0 );
-
-				offsets[i]		=	MathConverter.Convert( offset );
-
-				convexHull.Tag	=	entity;
-
-				convexHulls[i] =	convexHull;
-
-				movers[i]		=	new EntityMover( convexHull );
-				rotators[i]		=	new EntityRotator( convexHull );
-	
-				physicsManager.Space.Add( convexHull );
-				physicsManager.Space.Add( movers[i] );
-				physicsManager.Space.Add( rotators[i] );
-			}
+			return (KinematicModel)this.MemberwiseClone();
 		}
 
-
-
-		public void Update ()
+		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
-			var dr = physicsManager.Game.RenderSystem.RenderWorld.Debug;
-
-			//
-			//	do animation stuff :
-			//
-			#warning ZERO ANIM FRAME!!!
-			var animFrame = 0;//entity.AnimFrame;
-
-			if (animFrame>scene.LastFrame) {
-				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
-			}
-			if (animFrame<scene.FirstFrame) {
-				Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
-			}
-			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
-
-			#warning USE DEFAULT TAKE!!!!
-			scene.CopyLocalTransformsTo( animSnapshot );
-			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
-
-
-			var worldMatrix = entity.GetWorldMatrix( 1 );
-
-			for ( int i = 0; i<nodeCount; i++ ) {
-				if (convexHulls[i]!=null) {
-
-					var offset		=	Matrix.Translation( offsets[i] );
-
-					var transform	=	offset * animSnapshot[i] * preTransform * worldMatrix;
-
-					var p			=	transform.TranslationVector;
-					var q			=   Fusion.Core.Mathematics.Quaternion.RotationMatrix( transform );
-
-					movers[i].TargetPosition		=	MathConverter.Convert( p );
-					rotators[i].TargetOrientation	=	MathConverter.Convert( q );
-				}
-			}
+			return Clone();
 		}
-		
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Destroy ()
+		public void Load( GameState gs, BinaryReader reader )
 		{
-			foreach ( var sm in convexHulls ) {
-				if (sm!=null) {
-					physicsManager.Space.Remove( sm );
-				}
-			}
+		}
 
-			foreach ( var m in movers ) {
-				if (m!=null) {
-					physicsManager.Space.Remove( m );
-				}
-			}
-
-			foreach ( var r in rotators ) {
-				if (r!=null) {
-					physicsManager.Space.Remove( r );
-				}
-			}
+		public void Save( GameState gs, BinaryWriter writer )
+		{
 		}
 	}
 }

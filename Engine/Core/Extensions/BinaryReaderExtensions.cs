@@ -63,11 +63,11 @@ namespace Fusion.Core.Extensions {
 
 		public static Matrix ReadMatrix( this BinaryReader reader )
 		{
-			var value		= new Matrix();
-			value.Column1	= ReadVector4( reader );
-			value.Column2	= ReadVector4( reader );
-			value.Column3	= ReadVector4( reader );
-			value.Column4	= ReadVector4( reader );
+			var value	= new Matrix();
+			value.Row1	= ReadVector4( reader );
+			value.Row2	= ReadVector4( reader );
+			value.Row3	= ReadVector4( reader );
+			value.Row4	= ReadVector4( reader );
 			return value;
 		}
 

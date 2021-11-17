@@ -65,10 +65,10 @@ namespace Fusion.Core.Extensions
 
 		public static void Write( this BinaryWriter writer, Matrix value )
 		{
-			writer.Write( value.Column1 );
-			writer.Write( value.Column2 );
-			writer.Write( value.Column3 );
-			writer.Write( value.Column4 );
+			writer.Write( value.Row1 );
+			writer.Write( value.Row2 );
+			writer.Write( value.Row3 );
+			writer.Write( value.Row4 );
 		}
 
 		/*-----------------------------------------------------------------------------------------

@@ -483,7 +483,7 @@ namespace IronStar.Gameplay.Systems
 					case MaterialType.Sand	: return "bulletHit_metal";
 					case MaterialType.Rock	: return "bulletHit_metal";
 					case MaterialType.Flesh	: return "bulletHit_flesh";
-					default: return fxName;
+					default: return "bulletHit_metal";
 				}
 			}
 			else if (fxName=="shotgunHit") 

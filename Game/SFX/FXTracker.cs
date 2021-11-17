@@ -31,9 +31,16 @@ namespace IronStar.SFX
 			if (fx.FXName!=null && !fx.FXName.StartsWith("*"))
 			{
 				var ss		=	gs.Game.GetService<SoundSystem>();
-				var fact	=	gs.Content.Load<FXFactory>( Path.Combine("fx", fx.FXName) );
+				FXFactory factory;
 
-				fx.Timeout	=	fact.GetEstimatedLifetime( ss );
+				if (gs.Content.TryLoad( Path.Combine("fx", fx.FXName), out factory ) )
+				{
+					fx.Timeout	=	factory.GetEstimatedLifetime( ss );
+				}
+				else
+				{
+					fx.Timeout	=	0;
+				}
 			}
 			else
 			{

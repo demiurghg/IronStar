@@ -33,6 +33,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUVector3 = BEPUutilities.Vector3;
 using BEPUTransform = BEPUutilities.AffineTransform;
 using BEPUMatrix = BEPUutilities.Matrix;
+using BEPUphysics.Constraints.SingleEntity;
 
 namespace IronStar.ECSPhysics
 {
@@ -40,55 +41,66 @@ namespace IronStar.ECSPhysics
 	{
 		class KinematicBody : ITransformable
 		{
-			public BepuEntity Hull;
+			public BepuEntity ConvexHull;
 			public EntityMover Mover;
 			public EntityRotator Rotator;
 			public readonly Matrix ReCenter;
+			public readonly Matrix OffCenter;
 
 			public Matrix World 
 			{
 				get 
 				{ 
-					return MathConverter.Convert( Hull.WorldTransform ); 
+					return OffCenter * MathConverter.Convert( ConvexHull.WorldTransform ); 
 				}
 				set 
 				{
 					float s;
 					Vector3 p;
 					Quaternion r;
-					value.DecomposeUniformScale( out s, out r, out p );
+					var transform = ReCenter * value;
+					transform.DecomposeUniformScale( out s, out r, out p );
 					Mover.TargetPosition = MathConverter.Convert( p );
 					Rotator.TargetOrientation = MathConverter.Convert( r );
 				}
 			}
 
-			public KinematicBody( Node node, Mesh mesh )
+			public KinematicBody( Entity entity, Node node, Mesh mesh )
 			{
 				var indices		=	mesh.GetIndices();
 				var vertices	=	mesh.Vertices
 									.Select( v2 => MathConverter.Convert( v2.Position ) )
 									.ToList();
 
-				var center			=	BEPUVector3.Zero;
-				var convexShape		=	new ConvexHullShape( vertices, out center );
-				var convexHull		=	new BepuEntity( convexShape, 0 );
-				
-				ReCenter			=	Matrix.Translation( MathConverter.Convert( center ) );
+				var center		=	BEPUVector3.Zero;
+				var convexShape	=	new ConvexHullShape( vertices, out center );
+				ConvexHull		=	new BepuEntity( convexShape, 0 );
+				ConvexHull.Tag	=	entity;
+				Mover			=	new EntityMover( ConvexHull );
+				Rotator			=	new EntityRotator( ConvexHull );
+
+				ReCenter		=	Matrix.Translation( MathConverter.Convert( center ) );
+				OffCenter		=	Matrix.Translation( MathConverter.Convert( -center ) );
 			}
 		}
 
-		int frame = 0;
-		SceneView<KinematicBody> sceneView;
+		readonly SceneView<KinematicBody> sceneView;
+		readonly AnimationKey[] frame0;
+		readonly AnimationKey[] frame1;
+
 
 		
-		public KinematicController( PhysicsCore physics, Scene scene, Matrix transform )
+		public KinematicController( PhysicsCore physics, Entity entity, Scene scene, Matrix transform )
 		{
-			sceneView = new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(n,m), n => true );
+			sceneView = new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,n,m), n => true );
+
+			frame0	=	new AnimationKey[ sceneView.transforms.Length ];
+			frame1	=	new AnimationKey[ sceneView.transforms.Length ];
 
 			sceneView.ForEachMesh( 
 				body => 
 				{
-					physics.Add( body.Hull );
+					physics.Add( body.ConvexHull );
 					physics.Add( body.Rotator );
 					physics.Add( body.Mover );
 				}
@@ -96,13 +108,38 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void Animate( Matrix world, float fraction )
+		public void Animate( Matrix world, KinematicModel kinematic, Matrix[] dstBones, bool skipSimulation )
 		{
 			var take = sceneView.scene.Takes.FirstOrDefault();
+			var time = kinematic.Time;
+			int prev, next;
+			float weight;
 
-			take.Evaluate( frame++, AnimationWrapMode.Repeat, sceneView.transforms );
+			Scene.TimeToFrames( time, sceneView.scene.TimeMode, out prev, out next, out weight );
 
-			sceneView.SetTransforms( world, sceneView.transforms, false );
+			prev = MathUtil.Wrap( prev + take.FirstFrame, take.FirstFrame, take.LastFrame );
+			next = MathUtil.Wrap( next + take.FirstFrame, take.FirstFrame, take.LastFrame );
+
+			take.GetPose( prev, AnimationBlendMode.Override, frame0 ); 
+			take.GetPose( next, AnimationBlendMode.Override, frame1 ); 
+
+			for (int idx=0; idx < frame0.Length; idx++)
+			{
+				frame0[idx] = AnimationKey.Lerp( frame0[idx], frame1[idx], weight );
+			}
+
+			//	We need bypass simulation in editor mode.
+			//	In this case we just copy animated transforms to bone component
+			if (!skipSimulation)
+			{
+				AnimationKey.CopyTransforms( frame0, sceneView.transforms );
+				sceneView.SetTransforms( world, sceneView.transforms, false );
+			}
+			else
+			{
+				AnimationKey.CopyTransforms( frame0, dstBones );
+				sceneView.scene.ComputeAbsoluteTransforms( dstBones );
+			}
 		}
 
 
@@ -122,7 +159,7 @@ namespace IronStar.ECSPhysics
 			sceneView.ForEachMesh( 
 				body => 
 				{
-					physics.Remove( body.Hull );
+					physics.Remove( body.ConvexHull );
 					physics.Remove( body.Rotator );
 					physics.Remove( body.Mover );
 				}

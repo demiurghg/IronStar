@@ -18,6 +18,7 @@ using Fusion.Engine.Graphics.Scenes;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
 using Fusion.Widgets.Advanced;
+using IronStar.Animation;
 
 namespace IronStar.Mapping 
 {
@@ -133,6 +134,7 @@ namespace IronStar.Mapping
 			else
 			{
 				entity.AddComponent( new KinematicModel() );
+				entity.AddComponent( new BoneComponent() );
 			}
 		}
 

@@ -32,7 +32,7 @@ namespace IronStar.ECSPhysics
 {
 	public class KinematicModel : IComponent
 	{
-		public float Factor;
+		public TimeSpan Time;
 
 		public IComponent Clone()
 		{

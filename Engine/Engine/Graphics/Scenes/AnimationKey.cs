@@ -74,6 +74,17 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
+		public static void CopyTransforms( AnimationKey[] source, Matrix[] destination )
+		{
+			int count = Math.Min( source.Length, destination.Length );
+			
+			for (int i=0; i<count; i++)
+			{
+				destination[i] = source[i].Transform;
+			}
+		}
+
+
 		public static AnimationKey Multiply( AnimationKey a, AnimationKey b )
 		{
 			var key = new AnimationKey();

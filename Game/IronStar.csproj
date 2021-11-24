@@ -138,6 +138,7 @@
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />
     <Compile Include="ECSPhysics\CharacterTrackingSystem.cs" />
     <Compile Include="ECSPhysics\ISpaceQuery.cs" />
+    <Compile Include="ECSPhysics\KinematicBody.cs" />
     <Compile Include="ECSPhysics\KinematicController.cs" />
     <Compile Include="ECSPhysics\KinematicSystem.cs" />
     <Compile Include="ECSPhysics\KinematicModel.cs" />
@@ -422,6 +423,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ECSPhysics\Kinematics\" />
     <Folder Include="Monsters\Components\" />
   </ItemGroup>
   <ItemGroup>

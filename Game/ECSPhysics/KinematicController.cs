@@ -1,89 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Fusion;
-using Fusion.Core;
-using Fusion.Core.Content;
-using Fusion.Core.Mathematics;
-using Fusion.Engine.Common;
-using Fusion.Core.Input;
-using Fusion.Engine.Client;
-using Fusion.Engine.Server;
-using Fusion.Engine.Graphics;
-using BEPUphysics;
-using BepuEntity = BEPUphysics.Entities.Entity;
-using BEPUphysics.Character;
-using BEPUCharacterController = BEPUphysics.Character.CharacterController;
-using Fusion.Core.IniParser.Model;
-using BEPUphysics.BroadPhaseEntries.MobileCollidables;
-using BEPUphysics.BroadPhaseEntries;
-using BEPUphysics.NarrowPhaseSystems.Pairs;
-using BEPUphysics.EntityStateManagement;
-using BEPUphysics.Entities.Prefabs;
-using BEPUphysics.PositionUpdating;
-using BEPUphysics.CollisionRuleManagement;
-using IronStar.ECS;
-using Fusion.Engine.Graphics.Scenes;
-using AffineTransform = BEPUutilities.AffineTransform;
-using BEPUphysics.Paths.PathFollowing;
 using BEPUphysics.CollisionShapes.ConvexShapes;
+using BEPUphysics.Paths.PathFollowing;
+using Fusion;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
+using IronStar.ECS;
+using BepuEntity = BEPUphysics.Entities.Entity;
 using BEPUVector3 = BEPUutilities.Vector3;
-using BEPUTransform = BEPUutilities.AffineTransform;
-using BEPUMatrix = BEPUutilities.Matrix;
-using BEPUphysics.Constraints.SingleEntity;
 
 namespace IronStar.ECSPhysics
 {
 	public class KinematicController
 	{
-		class KinematicBody : ITransformable
-		{
-			public BepuEntity ConvexHull;
-			public EntityMover Mover;
-			public EntityRotator Rotator;
-			public readonly Matrix ReCenter;
-			public readonly Matrix OffCenter;
-
-			public Matrix World 
-			{
-				get 
-				{ 
-					return OffCenter * MathConverter.Convert( ConvexHull.WorldTransform ); 
-				}
-				set 
-				{
-					float s;
-					Vector3 p;
-					Quaternion r;
-					var transform = ReCenter * value;
-					transform.DecomposeUniformScale( out s, out r, out p );
-					Mover.TargetPosition = MathConverter.Convert( p );
-					Rotator.TargetOrientation = MathConverter.Convert( r );
-				}
-			}
-
-			public KinematicBody( Entity entity, Node node, Mesh mesh )
-			{
-				var indices		=	mesh.GetIndices();
-				var vertices	=	mesh.Vertices
-									.Select( v2 => MathConverter.Convert( v2.Position ) )
-									.ToList();
-
-				var center		=	BEPUVector3.Zero;
-				var convexShape	=	new ConvexHullShape( vertices, out center );
-				ConvexHull		=	new BepuEntity( convexShape, 0 );
-				ConvexHull.Tag	=	entity;
-				Mover			=	new EntityMover( ConvexHull );
-				Rotator			=	new EntityRotator( ConvexHull );
-
-				ReCenter		=	Matrix.Translation( MathConverter.Convert( center ) );
-				OffCenter		=	Matrix.Translation( MathConverter.Convert( -center ) );
-			}
-		}
-
 		readonly SceneView<KinematicBody> sceneView;
 		readonly AnimationKey[] frame0;
 		readonly AnimationKey[] frame1;
@@ -92,7 +23,7 @@ namespace IronStar.ECSPhysics
 		
 		public KinematicController( PhysicsCore physics, Entity entity, Scene scene, Matrix transform )
 		{
-			sceneView = new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,n,m), n => true );
+			sceneView = new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,transform,n,m), n => true );
 
 			frame0	=	new AnimationKey[ sceneView.transforms.Length ];
 			frame1	=	new AnimationKey[ sceneView.transforms.Length ];
@@ -140,6 +71,8 @@ namespace IronStar.ECSPhysics
 				AnimationKey.CopyTransforms( frame0, dstBones );
 				sceneView.scene.ComputeAbsoluteTransforms( dstBones );
 			}
+
+			sceneView.ForEachMesh( body => body.Update() );
 		}
 
 
@@ -164,6 +97,99 @@ namespace IronStar.ECSPhysics
 					physics.Remove( body.Mover );
 				}
 			);
+		}
+
+
+		const float MinSquashDotProduct		=	-0.5f;
+		const float MaxAllowedPenetration	=	 0.5f;
+
+
+		public bool SquishTargets( Action<Entity> squishAction )
+		{
+			bool any = false;
+
+			var candidates = GetSquishCandidates();
+			Entity target = null;
+
+			foreach ( var candidate in candidates )
+			{
+				if (IsSquishing(candidate, out target))
+				{
+					any |= true;
+
+					if (target!=null)
+					{
+						squishAction(target);
+					}
+				}
+			}
+
+			return any;
+		}
+
+
+		HashSet<BepuEntity> GetSquishCandidates()
+		{
+			var candidates = new HashSet<BepuEntity>(10);
+
+			sceneView.ForEachMesh( 
+				body =>
+				{
+					foreach ( var pair in body.ConvexHull.CollisionInformation.Pairs )
+					{
+						if (pair.EntityA!=null && !body.ConvexHull.Equals(pair.EntityA)) candidates.Add( pair.EntityA );
+						if (pair.EntityB!=null && !body.ConvexHull.Equals(pair.EntityB)) candidates.Add( pair.EntityB );
+					}
+				}
+			);
+
+			return candidates;
+		}
+
+
+		bool IsSquishing( BepuEntity physEntity, out Entity entity )
+		{
+			var normals = new List<Vector4>(10);
+			
+			entity			=	physEntity.Tag as Entity;
+
+			var totalNormal	=	BEPUVector3.Zero;
+			var boxSize		=	physEntity.CollisionInformation.BoundingBox.Max - physEntity.CollisionInformation.BoundingBox.Min;
+			var minBoxSize	=	Math.Min( Math.Min( boxSize.X, boxSize.Y ), Math.Min(boxSize.Z, 0.01f) );
+
+			foreach ( var pair in physEntity.CollisionInformation.Pairs )
+			{
+				float sign = pair.EntityA==physEntity ? 1 : -1;
+
+				foreach ( var contact in pair.Contacts )
+				{
+					normals.Add( new Vector4( sign * MathConverter.Convert( contact.Contact.Normal ).Normalized(), contact.Contact.PenetrationDepth ) );
+				}
+			}
+
+			float maxPenetration = 0;
+
+			for (int i=0; i<normals.Count; i++)
+			{
+				for (int j=i+1; j<normals.Count; j++)
+				{
+					var dot = normals[i].X * normals[j].X + normals[i].Y * normals[j].Y + normals[i].Z * normals[j].Z;
+
+					if (dot<-MinSquashDotProduct)
+					{
+						maxPenetration = Math.Max( maxPenetration, Math.Abs(dot) * (normals[i].W + normals[j].W) );
+					}
+				}
+			}
+
+			if ( maxPenetration > MaxAllowedPenetration )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 }

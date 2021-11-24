@@ -33,6 +33,8 @@ namespace IronStar.ECSPhysics
 	public class KinematicModel : IComponent
 	{
 		public TimeSpan Time;
+		public int Damage = 0;
+		public bool Stuck = false;
 
 		public IComponent Clone()
 		{

@@ -59,7 +59,8 @@ namespace IronStar.ECSPhysics
 			bool skipSimulation = entity.gs.Paused;
 			controller.Animate( transform.TransformMatrix, kinematic, bones.Bones, skipSimulation );
 
-			kinematic.Time += gameTime.Elapsed;
+			kinematic.Time += TimeSpan.FromSeconds( gameTime.ElapsedSec * 0.1f );
+			//kinematic.Time += gameTime.Elapsed;
 		}
 
 		
@@ -67,6 +68,8 @@ namespace IronStar.ECSPhysics
 		{
 			#warning Possible numerical issues with inverted transform matrix
 			controller.GetTransform( Matrix.Invert( transform.TransformMatrix ), bones.Bones );
+			
+			controller.SquishTargets( e => Log.Debug("SQUISHING : {0}", e) );
 		}
 
 		

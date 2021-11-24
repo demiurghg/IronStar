@@ -435,7 +435,11 @@ namespace IronStar.ECS
 			{
 				if (system==null) throw new ArgumentNullException("system");
 
-				services.AddService( system.GetType(), system );
+				if (services.GetService(system.GetType())==null)
+				{
+					services.AddService( system.GetType(), system );
+				}
+
 				systems.Add( system );
 
 				if (system is IGameComponent)

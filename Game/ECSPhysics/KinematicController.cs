@@ -101,7 +101,7 @@ namespace IronStar.ECSPhysics
 
 
 		const float MinSquashDotProduct		=	-0.5f;
-		const float MaxAllowedPenetration	=	 0.5f;
+		const float MaxAllowedPenetration	=	 0.1f;
 
 
 		public bool SquishTargets( Action<Entity> squishAction )

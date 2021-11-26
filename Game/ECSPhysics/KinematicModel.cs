@@ -8,6 +8,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Core.Input;
 using Fusion.Engine.Client;
@@ -30,11 +31,32 @@ using AffineTransform = BEPUutilities.AffineTransform;
 
 namespace IronStar.ECSPhysics
 {
+	public enum StuckBehavior : byte
+	{
+		Pause,
+		Reverse,
+	}
+
+	public enum KinematicState : byte
+	{
+		Stopped,
+		PlayLooped,
+		PlayForward,
+		PlayBackward,
+	}
+
 	public class KinematicModel : IComponent
 	{
 		public TimeSpan Time;
-		public int Damage = 0;
+		public int Damage = 5;
 		public bool Stuck = false;
+		public StuckBehavior Behavior = StuckBehavior.Pause;
+		public KinematicState State   = KinematicState.Stopped;
+
+		public KinematicModel()
+		{
+		}
+
 
 		public IComponent Clone()
 		{
@@ -48,10 +70,20 @@ namespace IronStar.ECSPhysics
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
+			Time		=	reader.Read<TimeSpan>();
+			Damage		=	reader.ReadInt32();
+			Stuck		=	reader.ReadBoolean();
+			Behavior	=	(StuckBehavior)reader.ReadByte();
+			State		=	(KinematicState)reader.ReadByte();
 		}
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
+			writer.Write( Time );
+			writer.Write( Damage );
+			writer.Write( Stuck );
+			writer.Write( (byte)Behavior );
+			writer.Write( (byte)State );
 		}
 	}
 }

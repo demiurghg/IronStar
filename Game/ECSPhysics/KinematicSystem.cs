@@ -22,6 +22,7 @@ using Fusion.Engine.Graphics.Scenes;
 using AffineTransform = BEPUutilities.AffineTransform;
 using IronStar.SFX2;
 using IronStar.Animation;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.ECSPhysics
 {
@@ -59,7 +60,10 @@ namespace IronStar.ECSPhysics
 			bool skipSimulation = entity.gs.Paused;
 			controller.Animate( transform.TransformMatrix, kinematic, bones.Bones, skipSimulation );
 
-			kinematic.Time += TimeSpan.FromSeconds( gameTime.ElapsedSec * 0.1f );
+			if (!kinematic.Stuck)
+			{
+				kinematic.Time += TimeSpan.FromSeconds( gameTime.ElapsedSec );
+			}
 			//kinematic.Time += gameTime.Elapsed;
 		}
 
@@ -69,7 +73,14 @@ namespace IronStar.ECSPhysics
 			#warning Possible numerical issues with inverted transform matrix
 			controller.GetTransform( Matrix.Invert( transform.TransformMatrix ), bones.Bones );
 			
-			controller.SquishTargets( e => Log.Debug("SQUISHING : {0}", e) );
+			kinematic.Stuck = controller.SquishTargets( target => Squish(entity,kinematic,target) );
+		}
+
+
+		void Squish( Entity kinematicEntity, KinematicModel kinematic, Entity target )
+		{
+			var health = target.GetComponent<HealthComponent>();
+			health?.InflictDamage( kinematic.Damage, kinematicEntity );	
 		}
 
 		

@@ -389,11 +389,11 @@
         "Name": "MapLightVolume0",
         "Visible": true,
         "Frozen": false,
-        "Translation": "0, 20, 0",
+        "Translation": "0, 25, 0",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 0.0,
-        "TranslateY": 20.0,
+        "TranslateY": 25.0,
         "TranslateZ": 0.0
       },
       {
@@ -633,7 +633,7 @@
         "Factory": {
           "$id": "42",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
-          "Position": "29, 2, 9",
+          "Position": "10, 15, -9",
           "Rotation": "6.25067344E-07, -0.1304783, 2.494977E-07, 0.991451144",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -642,12 +642,12 @@
         "Name": "MapEntity8",
         "Visible": true,
         "Frozen": false,
-        "Translation": "29, 2, 9",
+        "Translation": "10, 15, -9",
         "Scaling": "1, 1, 1",
         "Rotation": "6.25067344E-07, -0.1304783, 2.494977E-07, 0.991451144",
-        "TranslateX": 29.0,
-        "TranslateY": 2.0,
-        "TranslateZ": 9.0
+        "TranslateX": 10.0,
+        "TranslateY": 15.0,
+        "TranslateZ": -9.0
       },
       {
         "$id": "43",
@@ -656,7 +656,7 @@
         "Factory": {
           "$id": "44",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
-          "Position": "34.0376968, 1.1125015, -69.9837646",
+          "Position": "34.0376968, 1.1125015, -72",
           "Rotation": "-1.69196574E-05, -0.115714408, 2.95616937E-05, 0.9932825",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -665,12 +665,12 @@
         "Name": "MapEntity9",
         "Visible": true,
         "Frozen": false,
-        "Translation": "34.0376968, 1.1125015, -69.9837646",
+        "Translation": "34.0376968, 1.1125015, -72",
         "Scaling": "1, 1, 1",
         "Rotation": "-1.69196574E-05, -0.115714408, 2.95616937E-05, 0.9932825",
         "TranslateX": 34.0376968,
         "TranslateY": 1.1125015,
-        "TranslateZ": -69.9837646
+        "TranslateZ": -72.0
       },
       {
         "$id": "45",
@@ -1408,11 +1408,11 @@
         "Name": "MapModel3",
         "Visible": true,
         "Frozen": false,
-        "Translation": "1, 24, 0",
+        "Translation": "1, 44, 0",
         "Scaling": "1, 1, 1",
         "Rotation": "-0.25, -0.0669873, -0.25, 0.933012664",
         "TranslateX": 1.0,
-        "TranslateY": 24.0,
+        "TranslateY": 44.0,
         "TranslateZ": 0.0
       },
       {
@@ -1435,12 +1435,12 @@
         "Name": "MapModel4",
         "Visible": true,
         "Frozen": false,
-        "Translation": "17, 3, 26",
+        "Translation": "-69, 3, 65",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
-        "TranslateX": 17.0,
+        "TranslateX": -69.0,
         "TranslateY": 3.0,
-        "TranslateZ": 26.0
+        "TranslateZ": 65.0
       },
       {
         "$id": "79",
@@ -1649,11 +1649,61 @@
         "TranslateX": 68.0,
         "TranslateY": 0.0,
         "TranslateZ": -73.0
+      },
+      {
+        "$id": "89",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "90",
+          "$type": "IronStar.ECSFactories.DetectorVoumeFactory, IronStar",
+          "Width": 32.0,
+          "Height": 8.0,
+          "Depth": 32.0,
+          "Position": "0, 4, 0",
+          "Rotation": "0, 0.382683456, 0, 0.9238795",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 1.0
+        },
+        "Name": "MapEntity13",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "0, 4, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0.382683456, 0, 0.9238795",
+        "TranslateX": 0.0,
+        "TranslateY": 4.0,
+        "TranslateZ": 0.0
+      },
+      {
+        "$id": "91",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "92",
+          "$type": "IronStar.Environment.DoorFactory, IronStar",
+          "Door": "largeSplit",
+          "Position": "0, 0, -47",
+          "Rotation": "0, 0, 0, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 1.0
+        },
+        "Name": "MapEntity14",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "0, 0, -47",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": -47.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "89",
+    "$id": "93",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

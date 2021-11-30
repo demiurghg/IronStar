@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="doorGenericOpen_1sec_data" version="1.3.0" audacityversion="2.4.2" sel0="1.5027853002" sel1="1.8300123770" vpos="0" h="0.0000000000" zoom="505.7275978916" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="Space_Ship_Door_1_Sci_Fi_01" isSelected="0" height="160" minimized="0" channel="2" linked="0" mute="0" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="59907">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808760.au" len="59907" min="-0.319839" max="0.356369" rms="0.058804"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="2">
+				<controlpoint t="0.864101547596" val="1.000000000000"/>
+				<controlpoint t="1.354484119229" val="0.026315808296"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="Audio Track" isSelected="1" height="150" minimized="0" channel="2" linked="0" mute="0" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.35985365" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="64834">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808772.au" len="64834" min="-0.416794" max="0.346756" rms="0.051566"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="4">
+				<controlpoint t="0.039555574168" val="0.056338012218"/>
+				<controlpoint t="0.355931426834" val="1.000000000000"/>
+				<controlpoint t="1.014403963136" val="0.985915482044"/>
+				<controlpoint t="1.146886351440" val="0.042253494263"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+</project>

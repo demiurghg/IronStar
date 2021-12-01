@@ -119,6 +119,7 @@ namespace IronStar
 
 			//	environment :
 			gs.AddSystem( new DoorSystem() );
+			gs.AddSystem( new ElevatorSystem() );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );

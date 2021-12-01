@@ -216,6 +216,9 @@
     <Compile Include="Environment\DoorSystem.cs" />
     <Compile Include="Environment\DoorComponent.cs" />
     <Compile Include="Environment\DoorFactory.cs" />
+    <Compile Include="Environment\ElevatorComponent.cs" />
+    <Compile Include="Environment\ElevatorFactory.cs" />
+    <Compile Include="Environment\ElevatorSystem.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />

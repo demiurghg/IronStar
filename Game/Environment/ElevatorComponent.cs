@@ -9,21 +9,18 @@ using IronStar.ECS;
 
 namespace IronStar.Environment
 {
-	public enum DoorControlMode	: byte
+	public enum ElevatorMode	: byte
 	{
-		Automatic,
-		//ExternalToggle,		//	toggle open/close on external signal
-		//ExternalLockUnlock,	//	toggle lock/unlock on external signal
-		//ExternalOpen,			//	open door on external signal
+		OneWay,
+		Toggle,
 	}
 
-	public class DoorComponent : IComponent
+	public class ElevatorComponent : IComponent
 	{
-		public string Message = "";
 		public int Wait = 3000;
-		public DoorControlMode Mode = DoorControlMode.Automatic;
-
+		public ElevatorMode Mode = ElevatorMode.OneWay;
 		public TimeSpan Timer = TimeSpan.Zero;
+		public bool Engaged = false;
 
 		
 		public IComponent Clone()
@@ -40,19 +37,18 @@ namespace IronStar.Environment
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
-			writer.Write( Message	 );
 			writer.Write( Wait		 );
 			writer.Write( (byte)Mode );
 			writer.Write( Timer		 );
+			writer.Write( Engaged	 );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
-			Message	=	reader.ReadString();
 			Wait	=	reader.ReadInt32();
-			Mode	=	(DoorControlMode)reader.ReadByte();
+			Mode	=	(ElevatorMode)reader.ReadByte();
 			Timer	=	reader.Read<TimeSpan>();
+			Engaged	=	reader.ReadBoolean();
 		}
-
 	}
 }

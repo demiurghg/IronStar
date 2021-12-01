@@ -889,11 +889,35 @@
         "TranslateX": 0.0,
         "TranslateY": 4.0,
         "TranslateZ": 32.0
+      },
+      {
+        "$id": "62",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "63",
+          "$type": "IronStar.Environment.ElevatorFactory, IronStar",
+          "Elevator": "side",
+          "Position": "24, 0, 28",
+          "Rotation": "0, 0, 0, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 1.0
+        },
+        "Name": "MapEntity9",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "24, 0, 28",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 24.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 28.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "62",
+    "$id": "64",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

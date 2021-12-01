@@ -46,8 +46,9 @@ namespace IronStar.Environment
 
 			//	Assume, door may be stuck on the way back...
 			//	otherwice it can stuck in infinite loop on trying to get forward and backward...
-			//	Quake 2 uses such approach
-			//	Doom 2016 closes doors too fast, dynamic objects get stuck in doors
+			//	- Quake 2 uses such approach
+			//	- Doom 2016 closes doors too fast, dynamic objects get stuck in doors
+			//	- Void Bastards just pushes everything out
 			if ((kinematic.Stuck || activatorDetected) && kinematic.State==KinematicState.PlayBackward)
 			{
 				kinematic.State = KinematicState.PlayForward;

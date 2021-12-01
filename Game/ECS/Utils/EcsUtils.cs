@@ -11,12 +11,28 @@ namespace IronStar.ECS
 	{
 		public static void WriteEntity( this BinaryWriter writer, IGameState gs, Entity entity )
 		{
-			writer.Write( entity.ID );
+			if (entity!=null)
+			{
+				writer.Write( entity.ID );
+			}
+			else
+			{
+				writer.Write( 0 );
+			}
 		}
 
 		public static Entity ReadEntity( this BinaryReader reader, IGameState gs )
 		{
-			return gs.GetEntity( reader.ReadUInt32() );
+			uint id = reader.ReadUInt32();
+
+			if (id==0)
+			{
+				return null;
+			}
+			else
+			{
+				return gs.GetEntity( id );
+			}
 		}
 	}
 }

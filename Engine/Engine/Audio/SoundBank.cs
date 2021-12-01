@@ -78,13 +78,13 @@ namespace Fusion.Engine.Audio
 
 			LOADING_STATE loadState;
 			FmodExt.ERRCHECK( bank.getLoadingState( out loadState ) );
-			Log.Trace("...{0}", loadState);
+			Log.Debug("{0}", loadState);
 
 			FmodExt.ERRCHECK( bank.getEventList( out eventDescs ) );
 
 			for ( int i=0; i<eventDescs.Length; i++ ) 
 			{
-				Log.Trace("... {0}", eventDescs[i].GetPath() );
+				Log.Debug("{0}", eventDescs[i].GetPath() );
 			}
 		}
 

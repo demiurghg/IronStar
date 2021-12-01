@@ -117,6 +117,11 @@ namespace IronStar.ECSPhysics
 
 				var convexMesh	=	rcr.HitObject as ConvexCollidable;
 				var staticMesh	=	rcr.HitObject as StaticMesh;
+				var detector	=	rcr.HitObject as DetectorVolume;
+
+				if (detector!=null) {
+					return detector.Tag as Entity;
+				}
 
 				if (convexMesh!=null) {
 					return convexMesh.Entity.Tag as Entity;

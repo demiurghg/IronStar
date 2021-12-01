@@ -282,6 +282,19 @@ namespace Fusion.Core.Mathematics
         }
 
 
+        /// <summary>
+        /// Clamps the specified value. Inclusivly.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="min">The min.</param>
+        /// <param name="max">The max.</param>
+        /// <returns>The result of clamping a value between min and max</returns>
+        public static long Clamp(long value, long min, long max)
+        {
+            return value < min ? min : value > max ? max : value;
+        }
+
+
 		///// <summary>
 		///// Wraps value between min and max.
 		///// </summary>
@@ -427,6 +440,28 @@ namespace Fusion.Core.Mathematics
 
             // Code from http://stackoverflow.com/a/707426/1356325
             int range_size = max - min + 1;
+
+            if (value < min)
+                value += range_size * ((min - value) / range_size + 1);
+
+            return min + (value - min) % range_size;
+        }
+
+        /// <summary>
+        /// Wraps the specified value into a range [min, max]
+        /// </summary>
+        /// <param name="value">The value to wrap.</param>
+        /// <param name="min">The min.</param>
+        /// <param name="max">The max.</param>
+        /// <returns>Result of the wrapping.</returns>
+        /// <exception cref="ArgumentException">Is thrown when <paramref name="min"/> is greater than <paramref name="max"/>.</exception>
+        public static long Wrap(long value, long min, long max)
+        {
+            if (min > max)
+                throw new ArgumentException(string.Format("min {0} should be less than or equal to max {1}", min, max), "min");
+
+            // Code from http://stackoverflow.com/a/707426/1356325
+            long range_size = max - min + 1;
 
             if (value < min)
                 value += range_size * ((min - value) / range_size + 1);

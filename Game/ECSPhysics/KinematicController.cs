@@ -18,12 +18,18 @@ namespace IronStar.ECSPhysics
 		readonly SceneView<KinematicBody> sceneView;
 		readonly AnimationKey[] frame0;
 		readonly AnimationKey[] frame1;
+		readonly AnimationTake take;
 
 
-		
+		public readonly TimeSpan	AnimLength;
+
+
 		public KinematicController( PhysicsCore physics, Entity entity, Scene scene, Matrix transform )
 		{
-			sceneView = new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,transform,n,m), n => true );
+			sceneView	=	new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,transform,n,m), n => true );
+			take		=	scene.Takes.FirstOrDefault();
+
+			AnimLength	=	Scene.ComputeFrameLength( take.LastFrame - take.FirstFrame, scene.TimeMode );
 
 			frame0	=	new AnimationKey[ sceneView.transforms.Length ];
 			frame1	=	new AnimationKey[ sceneView.transforms.Length ];
@@ -39,10 +45,8 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void Animate( Matrix world, KinematicModel kinematic, Matrix[] dstBones, bool skipSimulation )
+		public void Animate( Matrix world, TimeSpan time, Matrix[] dstBones, bool skipSimulation )
 		{
-			var take = sceneView.scene.Takes.FirstOrDefault();
-			var time = kinematic.Time;
 			int prev, next;
 			float weight;
 

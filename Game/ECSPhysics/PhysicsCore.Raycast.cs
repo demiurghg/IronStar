@@ -84,6 +84,9 @@ namespace IronStar.ECSPhysics
 				for ( int idx = 0; idx < results.Count; idx++ )
 				{											
 					var result		=	results[idx];
+
+					if (result.HitObject is DetectorVolume) continue;
+
 					var entity1		=	(result.HitObject as ConvexCollidable)?.Entity?.Tag as Entity;
 					var entity2		=	(result.HitObject as StaticCollidable)?.Tag as Entity;
 					var isStatic	=	(result.HitObject is StaticCollidable);

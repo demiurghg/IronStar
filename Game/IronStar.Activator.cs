@@ -24,6 +24,7 @@ using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
 using IronStar.Gameplay;
 using IronStar.Editor.Systems;
+using IronStar.Environment;
 
 namespace IronStar 
 {
@@ -112,8 +113,12 @@ namespace IronStar
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore ) );
 			gs.AddSystem( new ECSPhysics.KinematicSystem(physicsCore) );
 			gs.AddSystem( physicsCore );
+			gs.AddSystem( new ECSPhysics.DetectorSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore ) );
+
+			//	environment :
+			gs.AddSystem( new DoorSystem() );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -134,6 +139,7 @@ namespace IronStar
 			gs.AddSystem( new StepSystem() );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 			gs.AddSystem( new SFX.FXTracker() );
+			gs.AddSystem( new SFX.SoundTracker() );
 
 			// rendering :
 			if (!isEditor)
@@ -142,7 +148,9 @@ namespace IronStar
 				gs2.AddSystem( new CameraSystem( fxPlayback, playerInputMaster) );
 				gs2.AddSystem( new FPVWeaponSystem(game) );
 			}
+
 			gs2.AddSystem( fxPlayback );
+			gs2.AddSystem( new SFX.SoundPlayback(fxPlayback) );
 
 			gs2.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs2.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
@@ -157,10 +165,12 @@ namespace IronStar
 			gs2.AddSystem( new HudSystem(game) );
 			//gs2.AddSystem( new ECSPhysics.CharacterTrackingSystem() );
 			//*/
+			gs.AddSystem( new TriggerSystem() );
 
 			if (isEditor)
 			{
 				gs2.AddSystem( new EditorEntityRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs2.AddSystem( new EditorDetectorRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorLightRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );

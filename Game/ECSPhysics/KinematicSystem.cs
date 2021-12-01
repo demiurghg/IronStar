@@ -26,7 +26,7 @@ using IronStar.Gameplay.Components;
 
 namespace IronStar.ECSPhysics
 {
-	public class KinematicSystem : ProcessingSystem<KinematicController, Transform, KinematicModel, RenderModel, BoneComponent>, ITransformFeeder
+	public class KinematicSystem : ProcessingSystem<KinematicController, Transform, KinematicComponent, RenderModel, BoneComponent>, ITransformFeeder
 	{
 		PhysicsCore physics;
 
@@ -36,7 +36,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		protected override KinematicController Create( Entity entity, Transform transform, KinematicModel kinematic, RenderModel renderModel, BoneComponent bones )
+		protected override KinematicController Create( Entity entity, Transform transform, KinematicComponent kinematic, RenderModel renderModel, BoneComponent bones )
 		{
 			Scene scene;
 
@@ -55,20 +55,65 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		protected override void Process( Entity entity, GameTime gameTime, KinematicController controller, Transform transform, KinematicModel kinematic, RenderModel renderModel, BoneComponent bones )
+		protected override void Process( Entity entity, GameTime gameTime, KinematicController controller, Transform transform, KinematicComponent kinematic, RenderModel renderModel, BoneComponent bones )
 		{
 			bool skipSimulation = entity.gs.Paused;
-			controller.Animate( transform.TransformMatrix, kinematic, bones.Bones, skipSimulation );
 
-			if (!kinematic.Stuck)
+			var dt = TimeSpan.FromSeconds( gameTime.ElapsedSec );
+			var length = controller.AnimLength;
+			var time = kinematic.Time;
+			var state = kinematic.State;
+			var stuck = kinematic.Stuck;
+
+			//Log.Debug("STATE: {0} STUCK: {1}", state.ToString(), stuck ? "YES" : "NO");
+
+			switch (state)
 			{
-				kinematic.Time += TimeSpan.FromSeconds( gameTime.ElapsedSec );
+				case KinematicState.StoppedInitial:
+					time = TimeSpan.Zero;
+					break;
+
+				case KinematicState.StoppedTerminal:
+					time = length;
+					break;
+
+				case KinematicState.PlayLooped:
+					time = WrapTime( time + dt, length );
+					break;
+
+				case KinematicState.PlayForward:
+					time += dt;
+
+					if (time>=length) 
+					{
+						time = length;
+						state = KinematicState.StoppedTerminal;
+					}
+					break;
+
+				case KinematicState.PlayBackward:
+					time -= dt;
+
+					if (time<=TimeSpan.Zero) 
+					{
+						time = TimeSpan.Zero;
+						state = KinematicState.StoppedInitial;
+					}
+					break;
+
+				default:
+					break;
+
 			}
-			//kinematic.Time += gameTime.Elapsed;
+
+			kinematic.Time	=	time;
+			kinematic.State	=	state;
+
+			controller.Animate( transform.TransformMatrix, kinematic.Time, bones.Bones, skipSimulation );
 		}
 
 		
-		void FeedTransform( Entity entity, GameTime gameTime, KinematicController controller, Transform transform, KinematicModel kinematic, RenderModel renderModel, BoneComponent bones )
+		void FeedTransform( Entity entity, GameTime gameTime, KinematicController controller, Transform transform, KinematicComponent kinematic, RenderModel renderModel, BoneComponent bones )
 		{
 			#warning Possible numerical issues with inverted transform matrix
 			controller.GetTransform( Matrix.Invert( transform.TransformMatrix ), bones.Bones );
@@ -77,7 +122,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		void Squish( Entity kinematicEntity, KinematicModel kinematic, Entity target )
+		void Squish( Entity kinematicEntity, KinematicComponent kinematic, Entity target )
 		{
 			var health = target.GetComponent<HealthComponent>();
 			health?.InflictDamage( kinematic.Damage, kinematicEntity );	
@@ -87,6 +132,12 @@ namespace IronStar.ECSPhysics
 		public void FeedTransform( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, FeedTransform );
+		}
+
+
+		TimeSpan WrapTime( TimeSpan time, TimeSpan length )
+		{
+			return new TimeSpan( MathUtil.Wrap( time.Ticks, 0, length.Ticks ) );
 		}
 	}
 }

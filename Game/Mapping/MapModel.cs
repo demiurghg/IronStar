@@ -133,7 +133,7 @@ namespace IronStar.Mapping
 			}
 			else
 			{
-				entity.AddComponent( new KinematicModel() );
+				entity.AddComponent( new KinematicComponent() );
 				entity.AddComponent( new BoneComponent() );
 			}
 		}

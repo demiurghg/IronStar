@@ -31,36 +31,36 @@ using AffineTransform = BEPUutilities.AffineTransform;
 
 namespace IronStar.ECSPhysics
 {
-	public enum StuckBehavior : byte
-	{
-		Pause,
-		Reverse,
-	}
-
 	public enum KinematicState : byte
 	{
-		Stopped,
+		StoppedTerminal,
+		StoppedInitial,
 		PlayLooped,
 		PlayForward,
 		PlayBackward,
 	}
 
-	public class KinematicModel : IComponent
+	public class KinematicComponent : IComponent
 	{
 		public TimeSpan Time;
 		public int Damage = 5;
 		public bool Stuck = false;
-		public StuckBehavior Behavior = StuckBehavior.Pause;
-		public KinematicState State   = KinematicState.Stopped;
+		public KinematicState State   = KinematicState.StoppedInitial;
 
-		public KinematicModel()
+		public KinematicComponent()
 		{
+		}
+
+
+		public KinematicComponent( KinematicState state )
+		{
+			State		=	state;
 		}
 
 
 		public IComponent Clone()
 		{
-			return (KinematicModel)this.MemberwiseClone();
+			return (KinematicComponent)this.MemberwiseClone();
 		}
 
 		public IComponent Interpolate( IComponent previous, float dt, float factor )
@@ -73,7 +73,6 @@ namespace IronStar.ECSPhysics
 			Time		=	reader.Read<TimeSpan>();
 			Damage		=	reader.ReadInt32();
 			Stuck		=	reader.ReadBoolean();
-			Behavior	=	(StuckBehavior)reader.ReadByte();
 			State		=	(KinematicState)reader.ReadByte();
 		}
 
@@ -82,7 +81,6 @@ namespace IronStar.ECSPhysics
 			writer.Write( Time );
 			writer.Write( Damage );
 			writer.Write( Stuck );
-			writer.Write( (byte)Behavior );
 			writer.Write( (byte)State );
 		}
 	}

@@ -126,6 +126,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <summary>
 		/// Gets first inclusive entire scene animation frame
 		/// </summary>
+		[Obsolete("Use takes")]
 		public int FirstFrame {
 			get {
 				return firstFrame;
@@ -136,6 +137,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <summary>
 		/// Gets last inclusive entire scene animation frame
 		/// </summary>
+		[Obsolete("Use takes")]
 		public int LastFrame {
 			get {
 				return firstFrame;

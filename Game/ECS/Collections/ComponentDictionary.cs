@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
 using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
 
@@ -29,7 +30,14 @@ namespace IronStar.ECS
 
 		public void Add( uint id, IComponent c )
 		{
-			Add( id, new ComponentTuple(c) );
+			if (!ContainsKey(id))
+			{
+				Add( id, new ComponentTuple(c) );
+			}
+			else
+			{
+				Log.Warning("Entity #{0} already has component {1}", id, c.GetType().Name );
+			}
 		}
 
 		

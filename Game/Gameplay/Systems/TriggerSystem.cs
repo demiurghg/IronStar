@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,21 @@ namespace IronStar.Gameplay.Systems
 {
 	public class TriggerSystem : ISystem
 	{
+		struct TriggerEvent
+		{
+			public TriggerEvent( string target, Entity source, Entity activator )
+			{
+				this.Target	=	target;
+				SourceId	=	source==null ? 0 : source.ID;
+				ActivatorId	=	activator==null ? 0 : activator.ID;
+			}
+			public readonly string Target;
+			public readonly uint SourceId;
+			public readonly uint ActivatorId;
+		}
+
 		Aspect triggerAspect = new Aspect().Include<TriggerComponent>();
-		readonly Queue<Tuple<string,Entity,Entity>> triggerQueue = new Queue<Tuple<string,Entity,Entity>>(16);
+		readonly ConcurrentQueue<TriggerEvent> triggerQueue = new ConcurrentQueue<TriggerEvent>();
 
 		
 		public Aspect GetAspect()
@@ -34,7 +48,7 @@ namespace IronStar.Gameplay.Systems
 		
 		public void Trigger( string target, Entity source, Entity activator )
 		{
-			triggerQueue.Enqueue( Tuple.Create( target, source, activator ) );
+			triggerQueue.Enqueue( new TriggerEvent(target,source,activator) );
 		}
 
 		
@@ -53,13 +67,13 @@ namespace IronStar.Gameplay.Systems
 			}
 
 			//	set new triggers :
-			while ( triggerQueue.Any() )
-			{
-				var tuple = triggerQueue.Dequeue();
+			TriggerEvent triggerEvent;
 
-				var target		=	tuple.Item1;
-				var source		=	tuple.Item2;
-				var activator	=	tuple.Item3;
+			while ( triggerQueue.TryDequeue(out triggerEvent) )
+			{
+				var target		=	triggerEvent.Target;
+				var source		=	gs.GetEntity( triggerEvent.SourceId );
+				var activator	=	gs.GetEntity( triggerEvent.ActivatorId );
 
 				if (!string.IsNullOrWhiteSpace(target))
 				{

@@ -17,7 +17,7 @@ namespace IronStar.Environment
 
 	public class ElevatorComponent : IComponent
 	{
-		public int Wait = 3000;
+		public int Wait = 1000;
 		public ElevatorMode Mode = ElevatorMode.OneWay;
 		public TimeSpan Timer = TimeSpan.Zero;
 		public bool Engaged = false;

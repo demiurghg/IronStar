@@ -285,6 +285,11 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public void UpdateFrames( GameTime gameTime, Frame rootFrame )
+		{
+			rootFrame?.UpdateInternalNonRecursive( gameTime );
+		}
+
 
 		/// <summary>
 		/// Draws entire interface

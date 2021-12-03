@@ -16,6 +16,7 @@ using Fusion.Engine.Imaging;
 using BEPUphysics.Paths;
 using System.IO;
 using Fusion.Engine.Graphics.GI;
+using Fusion.Engine.Graphics.GUI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -48,7 +49,8 @@ namespace Fusion.Engine.Graphics {
 		public RayTracer				RayTracer			{ get { return Game.GetService< RayTracer			>(); } }
 		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
 		public LightProbeBaker			LightProbeBaker		{ get { return Game.GetService< LightProbeBaker		>(); } }
-		internal ShadowSystem				ShadowSystem		{ get { return Game.GetService< ShadowSystem		>(); } }
+		internal ShadowSystem			ShadowSystem		{ get { return Game.GetService< ShadowSystem		>(); } }
+		public UIRenderer				UIRenderer			{ get { return Game.GetService< UIRenderer			>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -138,6 +140,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new Radiosity			( this ) );
 			Game.AddServiceAndComponent( new RayTracer			( this ) );
 			Game.AddServiceAndComponent( new LightProbeBaker	( this ) );
+			Game.AddServiceAndComponent( new UIRenderer			( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

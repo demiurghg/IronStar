@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Fusion.Core;
+using Fusion.Core.Extensions;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Frames;
+using Fusion.Engine.Graphics.GUI;
+using IronStar.ECS;
+using IronStar.Gameplay.Systems;
+using Fusion.Widgets;
+using Fusion;
+
+namespace IronStar.Environment
+{
+	public class UISystem : ProcessingSystem<UIScreen, UIComponent, Transform>
+	{
+		readonly TriggerSystem triggerSystem;
+
+		public UISystem( TriggerSystem triggerSystem )
+		{
+			this.triggerSystem	=	triggerSystem;
+		}
+
+
+		protected override UIScreen Create( Entity entity, UIComponent uic, Transform transform )
+		{
+			var game	=	entity.gs.Game;
+			var gui		=	new UIScreen();
+			var ui		=	game.GetService<FrameProcessor>();
+
+			gui.Root	=	new Frame( ui, 0,0, 640,480, "", Color.Black );
+			gui.Root.Add( new Button( ui, "PUSH ME!", 10,10, 100,50, () => Log.Message("BUTTON PUSHED") ) );
+			gui.Root.Add( new Button( ui, "DONT PUSH ME!", 10,70, 100,50, () => Log.Message("") ) );
+			gui.Transform	=	transform.TransformMatrix;
+
+			entity.gs.Game.RenderSystem.UIRenderer.UIScreens.Add( gui );
+
+			return gui;
+		}
+
+
+		protected override void Destroy( Entity entity, UIScreen resource )
+		{
+			entity.gs.Game.RenderSystem.UIRenderer.UIScreens.Remove( resource );
+		}
+
+
+		protected override void Process( Entity entity, GameTime gameTime, UIScreen resource, UIComponent uic, Transform transform )
+		{
+			var game	=	entity.gs.Game;
+			var ui		=	game.GetService<FrameProcessor>();
+
+			ui.UpdateFrames( gameTime, resource.Root );
+
+			resource.Transform = transform.TransformMatrix;
+		}
+	}
+}

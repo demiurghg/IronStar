@@ -913,11 +913,80 @@
         "TranslateX": 24.0,
         "TranslateY": 0.0,
         "TranslateZ": 28.0
+      },
+      {
+        "$id": "64",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "65",
+          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "Position": "28, 4, -8",
+          "Rotation": "0, 0.7071067, 0, -0.7071068",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 1.0
+        },
+        "Name": "MapEntity12",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "28, 4, -8",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0.7071067, 0, -0.7071068",
+        "TranslateX": 28.0,
+        "TranslateY": 4.0,
+        "TranslateZ": -8.0
+      },
+      {
+        "$id": "66",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "67",
+          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "Position": "28, 4, 0",
+          "Rotation": "0, 0.707106769, 0, -0.707106769",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 0.99999994
+        },
+        "Name": "MapEntity13",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "28, 4, 0",
+        "Scaling": "0.99999994, 1, 0.99999994",
+        "Rotation": "0, 0.707106769, 0, -0.707106769",
+        "TranslateX": 28.0,
+        "TranslateY": 4.0,
+        "TranslateZ": 0.0
+      },
+      {
+        "$id": "68",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "69",
+          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "Position": "28, 4, 8",
+          "Rotation": "0, 0.7071068, 0, -0.7071067",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 0.9999999
+        },
+        "Name": "MapEntity18",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "28, 4, 8",
+        "Scaling": "0.9999999, 1, 0.9999999",
+        "Rotation": "0, 0.7071068, 0, -0.7071067",
+        "TranslateX": 28.0,
+        "TranslateY": 4.0,
+        "TranslateZ": 8.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "64",
+    "$id": "70",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

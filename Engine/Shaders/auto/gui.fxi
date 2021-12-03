@@ -1,0 +1,87 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int MaxBones = 128;
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 7;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+#endif
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 416
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4x4   ReprojectionMatrix;            // offset:  256
+	float4     CameraForward;                 // offset:  320
+	float4     CameraRight;                   // offset:  336
+	float4     CameraUp;                      // offset:  352
+	float4     CameraPosition;                // offset:  368
+	float      LinearizeDepthScale;           // offset:  384
+	float      LinearizeDepthBias;            // offset:  388
+	float      FarDistance;                   // offset:  392
+	float      Pad0;                          // offset:  396
+	float      CameraTangentX;                // offset:  400
+	float      CameraTangentY;                // offset:  404
+	float      Pad1;                          // offset:  408
+	float      Pad2;                          // offset:  412
+};
+#endif
+
+// Fusion.Engine.Graphics.GUI.UIRenderer+GUI_DATA
+// Marshal.SizeOf = 128
+#ifndef __STRUCT_GUI_DATA
+#define __STRUCT_GUI_DATA 1
+struct GUI_DATA {
+	float4x4   WorldTransform;                // offset:    0
+	float4     Size;                          // offset:   64
+	float      Intensity;                     // offset:   80
+};
+#endif
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	GUI_DATA GUIData : packoffset(c0);
+};
+SamplerState                   LinearSampler                  : register(s0);
+Texture2D<float4>              Texture                        : register(t0);

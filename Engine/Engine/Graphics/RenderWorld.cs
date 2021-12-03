@@ -17,6 +17,7 @@ using Fusion.Build;
 using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Graphics.Collections;
 using Fusion.Engine.Graphics.GI2;
+using Fusion.Engine.Graphics.GUI;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -523,6 +524,8 @@ namespace Fusion.Engine.Graphics
 
 					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.All );
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
+
+					rs.UIRenderer.DrawGUIs( gameTime, Camera, viewHdrFrame );
 
 					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
 				}

@@ -100,6 +100,7 @@ namespace IronStar
 			var commandQueue		=	new UserCommandQueue();
 			var playerInputMaster	=	new PlayerInputSystem( commandQueue, true );
 			var playerInputSlave	=	new PlayerInputSystem( commandQueue, false );
+			var triggerSystem		=	new TriggerSystem();
 
 			//	player system :
 			gs.AddSystem( playerInputSlave );
@@ -154,6 +155,7 @@ namespace IronStar
 			gs2.AddSystem( new SFX.SoundPlayback(fxPlayback) );
 
 			gs2.AddSystem( new SFX2.RenderModelSystem(game) );
+			gs2.AddSystem( new UISystem( triggerSystem ) );
 			gs2.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
 			gs2.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
 			gs2.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem	) );
@@ -166,7 +168,7 @@ namespace IronStar
 			gs2.AddSystem( new HudSystem(game) );
 			//gs2.AddSystem( new ECSPhysics.CharacterTrackingSystem() );
 			//*/
-			gs.AddSystem( new TriggerSystem() );
+			gs.AddSystem( triggerSystem );
 
 			if (isEditor)
 			{

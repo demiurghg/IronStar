@@ -187,7 +187,7 @@ namespace Fusion.Engine.Graphics {
 						case SpriteBlendMode.AlphaOnly			: ps = factory[(int)Flags.ALPHA_ONLY		]; break;
 					}
 
-					device.PipelineState			=	ps;
+					device.PipelineState	=	ps;
 					device.GfxSamplers[0]	=	ss;
 
 					layer.Draw( gameTime, stereoEye );
@@ -195,6 +195,54 @@ namespace Fusion.Engine.Graphics {
 					DrawSpritesRecursive( gameTime, stereoEye, surface, layer.Layers, absTransform, absColor );
 				}
 			}
+		}
+
+
+		public void DrawSpriteLayer( SpriteLayer layer, Matrix viewProjection, RenderTargetSurface surface, Rectangle dstRectangle )
+		{
+			device.ResetStates();
+
+			device.SetTargets( null, surface );
+			device.SetViewport( surface.Bounds );
+			device.SetScissorRect( surface.Bounds );
+
+			Color4 absColor			=	new Color4(1,1,1,1);
+
+			constData.Transform		=	viewProjection;
+			constData.ClipRectangle	=	new Vector4(0,0,0,0);
+			constData.MasterColor	=	absColor;
+
+			constBuffer.SetData( ref constData );
+
+			device.GfxConstants[0]	=	constBuffer;
+				
+			PipelineState ps = null;
+			SamplerState ss = null;
+
+			switch ( layer.FilterMode ) {
+				case SpriteFilterMode.PointClamp		: ss = SamplerState.PointClamp;			break;
+				case SpriteFilterMode.PointWrap			: ss = SamplerState.PointWrap;			break;
+				case SpriteFilterMode.LinearClamp		: ss = SamplerState.LinearClamp;		break;
+				case SpriteFilterMode.LinearWrap		: ss = SamplerState.LinearWrap;			break;
+				case SpriteFilterMode.AnisotropicClamp	: ss = SamplerState.AnisotropicClamp;	break;
+				case SpriteFilterMode.AnisotropicWrap	: ss = SamplerState.AnisotropicWrap;	break;
+			}
+
+			switch ( layer.BlendMode ) {
+				case SpriteBlendMode.Opaque				: ps = factory[(int)Flags.OPAQUE			]; break;
+				case SpriteBlendMode.AlphaBlend			: ps = factory[(int)Flags.ALPHA_BLEND		]; break;
+				case SpriteBlendMode.AlphaBlendPremul	: ps = factory[(int)Flags.ALPHA_BLEND_PREMUL]; break;
+				case SpriteBlendMode.Additive			: ps = factory[(int)Flags.ADDITIVE			]; break;
+				case SpriteBlendMode.Screen				: ps = factory[(int)Flags.SCREEN			]; break;
+				case SpriteBlendMode.Multiply			: ps = factory[(int)Flags.MULTIPLY			]; break;
+				case SpriteBlendMode.NegMultiply		: ps = factory[(int)Flags.NEG_MULTIPLY		]; break;
+				case SpriteBlendMode.AlphaOnly			: ps = factory[(int)Flags.ALPHA_ONLY		]; break;
+			}
+
+			device.PipelineState	=	ps;
+			device.GfxSamplers[0]	=	ss;
+
+			layer.Draw( GameTime.Zero, StereoEye.Mono );
 		}
 	}
 }

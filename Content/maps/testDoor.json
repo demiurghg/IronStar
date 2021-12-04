@@ -922,7 +922,7 @@
           "$id": "65",
           "$type": "IronStar.Environment.UIFactory, IronStar",
           "Position": "28, 4, -8",
-          "Rotation": "0, 0.7071067, 0, -0.7071068",
+          "Rotation": "0.113039009, 0.495722383, 0.06526309, -0.858616531",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
@@ -932,7 +932,7 @@
         "Frozen": false,
         "Translation": "28, 4, -8",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, 0.7071067, 0, -0.7071068",
+        "Rotation": "0.113039009, 0.495722383, 0.06526309, -0.858616531",
         "TranslateX": 28.0,
         "TranslateY": 4.0,
         "TranslateZ": -8.0
@@ -944,8 +944,8 @@
         "Factory": {
           "$id": "67",
           "$type": "IronStar.Environment.UIFactory, IronStar",
-          "Position": "28, 4, 0",
-          "Rotation": "0, 0.707106769, 0, -0.707106769",
+          "Position": "32, 4, 4",
+          "Rotation": "0.183012709, 0.683012664, 0.183012664, -0.6830126",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
@@ -953,12 +953,12 @@
         "Name": "MapEntity13",
         "Visible": true,
         "Frozen": false,
-        "Translation": "28, 4, 0",
+        "Translation": "32, 4, 4",
         "Scaling": "0.99999994, 1, 0.99999994",
-        "Rotation": "0, 0.707106769, 0, -0.707106769",
-        "TranslateX": 28.0,
+        "Rotation": "0.183012709, 0.683012664, 0.183012664, -0.6830126",
+        "TranslateX": 32.0,
         "TranslateY": 4.0,
-        "TranslateZ": 0.0
+        "TranslateZ": 4.0
       },
       {
         "$id": "68",
@@ -967,8 +967,8 @@
         "Factory": {
           "$id": "69",
           "$type": "IronStar.Environment.UIFactory, IronStar",
-          "Position": "28, 4, 8",
-          "Rotation": "0, 0.7071068, 0, -0.7071067",
+          "Position": "28, 8, 16",
+          "Rotation": "0.07003596, 0.9016196, -0.169081718, -0.391903758",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
           "Scaling": 0.9999999
@@ -976,17 +976,40 @@
         "Name": "MapEntity18",
         "Visible": true,
         "Frozen": false,
-        "Translation": "28, 4, 8",
+        "Translation": "28, 8, 16",
         "Scaling": "0.9999999, 1, 0.9999999",
-        "Rotation": "0, 0.7071068, 0, -0.7071067",
+        "Rotation": "0.07003596, 0.9016196, -0.169081718, -0.391903758",
         "TranslateX": 28.0,
-        "TranslateY": 4.0,
-        "TranslateZ": 8.0
+        "TranslateY": 8.0,
+        "TranslateZ": 16.0
+      },
+      {
+        "$id": "70",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "71",
+          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "Position": "32, 8, 4",
+          "Rotation": "0.183012739, -0.683012664, 0.183012739, 0.6830127",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
+          "Scaling": 0.999999762
+        },
+        "Name": "MapEntity19",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "32, 8, 4",
+        "Scaling": "0.999999762, 1, 0.999999762",
+        "Rotation": "0.183012739, -0.683012664, 0.183012739, 0.6830127",
+        "TranslateX": 32.0,
+        "TranslateY": 8.0,
+        "TranslateZ": 4.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "70",
+    "$id": "72",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

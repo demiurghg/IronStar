@@ -203,8 +203,8 @@ namespace Fusion.Engine.Graphics {
 			device.ResetStates();
 
 			device.SetTargets( null, surface );
-			device.SetViewport( surface.Bounds );
-			device.SetScissorRect( surface.Bounds );
+			device.SetViewport( dstRectangle );
+			device.SetScissorRect( dstRectangle );
 
 			Color4 absColor			=	new Color4(1,1,1,1);
 

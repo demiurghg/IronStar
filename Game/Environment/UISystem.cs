@@ -15,7 +15,7 @@ using Fusion;
 
 namespace IronStar.Environment
 {
-	public class UISystem : ProcessingSystem<UIScreen, UIComponent, Transform>
+	public class UISystem : ProcessingSystem<Gui, UIComponent, Transform>
 	{
 		readonly TriggerSystem triggerSystem;
 
@@ -25,30 +25,30 @@ namespace IronStar.Environment
 		}
 
 
-		protected override UIScreen Create( Entity entity, UIComponent uic, Transform transform )
+		protected override Gui Create( Entity entity, UIComponent uic, Transform transform )
 		{
 			var game	=	entity.gs.Game;
-			var gui		=	new UIScreen();
+			var gui		=	new Gui();
 			var ui		=	game.GetService<FrameProcessor>();
 
 			gui.Root	=	new Frame( ui, 0,0, 640,480, "", Color.Black );
-			gui.Root.Add( new Button( ui, "PUSH ME!", 10,10, 100,50, () => Log.Message("BUTTON PUSHED") ) );
-			gui.Root.Add( new Button( ui, "DONT PUSH ME!", 10,70, 100,50, () => Log.Message("") ) );
+			gui.Root.Add( new Button( ui, "PUSH ME!", 10,10, 200,100, () => Log.Message("BUTTON PUSHED") ) );
+			gui.Root.Add( new Button( ui, "DONT PUSH ME!", 10,120, 200,100, () => Log.Message("") ) );
 			gui.Transform	=	transform.TransformMatrix;
 
-			entity.gs.Game.RenderSystem.UIRenderer.UIScreens.Add( gui );
+			entity.gs.Game.RenderSystem.GuiRenderer.Guis.Add( gui );
 
 			return gui;
 		}
 
 
-		protected override void Destroy( Entity entity, UIScreen resource )
+		protected override void Destroy( Entity entity, Gui resource )
 		{
-			entity.gs.Game.RenderSystem.UIRenderer.UIScreens.Remove( resource );
+			entity.gs.Game.RenderSystem.GuiRenderer.Guis.Remove( resource );
 		}
 
 
-		protected override void Process( Entity entity, GameTime gameTime, UIScreen resource, UIComponent uic, Transform transform )
+		protected override void Process( Entity entity, GameTime gameTime, Gui resource, UIComponent uic, Transform transform )
 		{
 			var game	=	entity.gs.Game;
 			var ui		=	game.GetService<FrameProcessor>();

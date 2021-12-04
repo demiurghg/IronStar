@@ -50,7 +50,7 @@ namespace Fusion.Engine.Graphics {
 		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
 		public LightProbeBaker			LightProbeBaker		{ get { return Game.GetService< LightProbeBaker		>(); } }
 		internal ShadowSystem			ShadowSystem		{ get { return Game.GetService< ShadowSystem		>(); } }
-		public UIRenderer				UIRenderer			{ get { return Game.GetService< UIRenderer			>(); } }
+		public GuiRenderer				GuiRenderer			{ get { return Game.GetService< GuiRenderer			>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -140,7 +140,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new Radiosity			( this ) );
 			Game.AddServiceAndComponent( new RayTracer			( this ) );
 			Game.AddServiceAndComponent( new LightProbeBaker	( this ) );
-			Game.AddServiceAndComponent( new UIRenderer			( this ) );
+			Game.AddServiceAndComponent( new GuiRenderer			( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

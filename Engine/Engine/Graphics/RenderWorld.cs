@@ -525,7 +525,7 @@ namespace Fusion.Engine.Graphics
 					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.All );
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
 
-					rs.UIRenderer.DrawGUIs( gameTime, Camera, viewHdrFrame );
+					rs.GuiRenderer.DrawGUIs( gameTime, Camera, viewHdrFrame );
 
 					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
 				}

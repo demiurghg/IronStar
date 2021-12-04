@@ -36,6 +36,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int MaxGuiWidth = 1280;
+static const int MaxGuiHeight = 720;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -64,14 +66,17 @@ struct CAMERA {
 };
 #endif
 
-// Fusion.Engine.Graphics.GUI.UIRenderer+GUI_DATA
+// Fusion.Engine.Graphics.GUI.GuiRenderer+GUI_DATA
 // Marshal.SizeOf = 128
 #ifndef __STRUCT_GUI_DATA
 #define __STRUCT_GUI_DATA 1
 struct GUI_DATA {
 	float4x4   WorldTransform;                // offset:    0
 	float4     Size;                          // offset:   64
-	float      Intensity;                     // offset:   80
+	float      DotsPerUnit;                   // offset:   80
+	float      Intensity;                     // offset:   84
+	uint       FrameCounter;                  // offset:   88
+	uint       GlitchSeed;                    // offset:   92
 };
 #endif
 
@@ -84,4 +89,10 @@ cbuffer __buffer1 : register(b1) {
 	GUI_DATA GUIData : packoffset(c0);
 };
 SamplerState                   LinearSampler                  : register(s0);
-Texture2D<float4>              Texture                        : register(t0);
+SamplerState                   PointSampler                   : register(s1);
+Texture2D<float4>              GuiTexture                     : register(t0);
+Texture2D<float4>              NoiseTexture                   : register(t1);
+Texture2D<float4>              RgbTexture                     : register(t2);
+Texture2D<float4>              Interference                   : register(t3);
+Texture2D<float4>              Interlace                      : register(t4);
+Texture2D<float4>              GlitchTexture                  : register(t5);

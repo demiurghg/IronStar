@@ -143,11 +143,13 @@ namespace IronStar
 			gs.AddSystem( new SFX.FXTracker() );
 			gs.AddSystem( new SFX.SoundTracker() );
 
+			var cameraSystem	=	new CameraSystem( fxPlayback, playerInputMaster );
+
 			// rendering :
 			if (!isEditor)
 			{
 				gs2.AddSystem( playerInputMaster );
-				gs2.AddSystem( new CameraSystem( fxPlayback, playerInputMaster) );
+				gs2.AddSystem( cameraSystem );
 				gs2.AddSystem( new FPVWeaponSystem(game) );
 			}
 
@@ -155,7 +157,7 @@ namespace IronStar
 			gs2.AddSystem( new SFX.SoundPlayback(fxPlayback) );
 
 			gs2.AddSystem( new SFX2.RenderModelSystem(game) );
-			gs2.AddSystem( new UISystem( triggerSystem ) );
+			gs2.AddSystem( new GUISystem( triggerSystem, playerInputMaster, cameraSystem ) );
 			gs2.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
 			gs2.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
 			gs2.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem	) );

@@ -184,7 +184,7 @@ namespace Fusion.Engine.Graphics.GUI
 					device.GfxConstants[ regCamera ]		=	camera.CameraData;
 					device.GfxConstants[ regGUIData ]		=	cbGUIData;
 					device.GfxSamplers[ regSamplerLinear ]	=	SamplerState.LinearWrap;
-					device.GfxSamplers[ regSamplerPoint ]	=	SamplerState.MinLinearMagPointMipLinear;
+					device.GfxSamplers[ regSamplerPoint ]	=	SamplerState.PointWrap;
 
 					device.GfxResources[ regGuiTexture ]	=	guiTarget;
 					device.GfxResources[ regRgbTexture ]	=	rgbTexture.Srv;

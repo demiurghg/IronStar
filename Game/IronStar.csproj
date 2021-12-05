@@ -219,9 +219,9 @@
     <Compile Include="Environment\ElevatorComponent.cs" />
     <Compile Include="Environment\ElevatorFactory.cs" />
     <Compile Include="Environment\ElevatorSystem.cs" />
-    <Compile Include="Environment\UIFactory.cs" />
-    <Compile Include="Environment\UIComponent.cs" />
-    <Compile Include="Environment\UISystem.cs" />
+    <Compile Include="Environment\GUIFactory.cs" />
+    <Compile Include="Environment\GUIComponent.cs" />
+    <Compile Include="Environment\GUISystem.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />

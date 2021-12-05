@@ -66,6 +66,50 @@ namespace Fusion.Engine.Graphics.GUI
 			}
 		}
 
+
+		public float ComputeDiagonal()
+		{
+			float w		=	Root.Width / DotsPerUnit;
+			float h		=	Root.Height / DotsPerUnit;
+
+			return new Vector2(w,h).Length();
+		}
+
+
+		public bool IsUserEngaged( Ray viewRay, out int x, out int y )
+		{
+			x = Root.Width / 2;
+			y = Root.Height / 2;
+
+			var engageDistance	=	ComputeDiagonal() * 2.0f;
+			var distance		=	Vector3.Distance( viewRay.Position, Transform.TranslationVector );
+
+			if (distance < engageDistance)
+			{
+				var screenPlane		=	new Plane( Transform.TranslationVector, Transform.Forward );
+				var invTransform	=	Matrix.Invert( Transform );
+						
+				Vector3 hitPoint;
+						
+				if (viewRay.Intersects(ref screenPlane, out hitPoint))
+				{
+					var projection	=	Vector3.TransformCoordinate( hitPoint, invTransform );
+
+					int w = Root.Width;
+					int h = Root.Height;
+					x = (int)( projection.X * DotsPerUnit) + w / 2;
+					y = (int)(-projection.Y * DotsPerUnit) + h / 2;
+
+					if (x>=0 && x<Root.Width && y>=0 && y<Root.Height)
+					{
+						Root.Game.RenderSystem.RenderWorld.Debug.DrawPoint( hitPoint, 0.3f, Color.Red );
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
 		/*
 		public Size2 ComputeLodSize()
 		{

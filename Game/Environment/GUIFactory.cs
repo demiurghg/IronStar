@@ -13,12 +13,12 @@ using IronStar.Gameplay.Components;
 
 namespace IronStar.Environment
 {
-	class UIFactory : EntityFactory
+	class GUIFactory : EntityFactory
 	{
 		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
-			e.AddComponent( new UIComponent() );
+			e.AddComponent( new GUIComponent(true) );
 		}
 	}
 

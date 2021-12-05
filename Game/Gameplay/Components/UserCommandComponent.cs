@@ -30,6 +30,9 @@ namespace IronStar.Gameplay
 		public bool IsRunning { get { return MovementVector.Length() > 0.5f; } }
 		public bool IsForward { get { return Move>=0; } }
 
+		//	indicates, that player is currently use GUI :
+		public bool GuiEngaged = false;
+
 		public void UpdateFromUserCommand ( float yaw, float pitch, float move, float strafe, UserAction action )
 		{
 			ResetControl();

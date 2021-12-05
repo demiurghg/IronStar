@@ -15,8 +15,20 @@ namespace IronStar.Environment
 		Glitches,
 	}
 
-	public class UIComponent : IComponent
+	public class GUIComponent : IComponent
 	{
+		public bool Interactive = false;
+
+		public GUIComponent()
+		{
+		}
+
+		public GUIComponent(bool interacrtive)
+		{
+			this.Interactive	=	interacrtive;
+		}
+
+
 		public IComponent Clone()
 		{
 			return (IComponent)MemberwiseClone();
@@ -29,12 +41,12 @@ namespace IronStar.Environment
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
-			//throw new NotImplementedException();
+			writer.Write( Interactive );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
-			//throw new NotImplementedException();
+			Interactive = reader.ReadBoolean();
 		}
 	}
 }

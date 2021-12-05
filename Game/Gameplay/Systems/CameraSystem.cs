@@ -56,6 +56,7 @@ namespace IronStar.Gameplay
 
 		public bool Enabled { get; set; } = true;
 
+		public Ray ViewRay;
 
 		public CameraSystem(SFX.FXPlayback fxPlayback, PlayerInputSystem playerInput)
 		{
@@ -63,6 +64,7 @@ namespace IronStar.Gameplay
 			this.playerInput	=	playerInput;
 			cameraScene			=	CreateCameraScene( 6, 4, 0 );
 			animData			=	new Matrix[2];
+			ViewRay				=	new Ray( Vector3.Zero, Vector3.Zero );
 
 			composer	=	new AnimationComposer( fxPlayback, cameraScene );
 			mainTrack	=	new Sequencer( cameraScene, null, AnimationBlendMode.Override );
@@ -193,6 +195,8 @@ namespace IronStar.Gameplay
 			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
 
 			sw.SetListener( cameraPos, cameraFwd, cameraUp, t.LinearVelocity );
+
+			ViewRay	=	new Ray( cameraPos, cameraFwd );
 		}
 
 

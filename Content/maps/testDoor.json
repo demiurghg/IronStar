@@ -920,7 +920,7 @@
         "TargetName": null,
         "Factory": {
           "$id": "65",
-          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Position": "28, 4, -8",
           "Rotation": "0.113039009, 0.495722383, 0.06526309, -0.858616531",
           "LinearVelocity": "0, 0, 0",
@@ -943,7 +943,7 @@
         "TargetName": null,
         "Factory": {
           "$id": "67",
-          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Position": "32, 4, 4",
           "Rotation": "0.183012709, 0.683012664, 0.183012664, -0.6830126",
           "LinearVelocity": "0, 0, 0",
@@ -966,7 +966,7 @@
         "TargetName": null,
         "Factory": {
           "$id": "69",
-          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Position": "28, 8, 16",
           "Rotation": "0.07003596, 0.9016196, -0.169081718, -0.391903758",
           "LinearVelocity": "0, 0, 0",
@@ -989,7 +989,7 @@
         "TargetName": null,
         "Factory": {
           "$id": "71",
-          "$type": "IronStar.Environment.UIFactory, IronStar",
+          "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Position": "32, 8, 4",
           "Rotation": "0.183012739, -0.683012664, 0.183012739, 0.6830127",
           "LinearVelocity": "0, 0, 0",

@@ -192,6 +192,7 @@
     <Compile Include="Drivers\Graphics\RenderDoc\OverlayBits.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\RenderDoc.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\RenderDocApi.cs" />
+    <Compile Include="Engine\Frames\UIState.cs" />
     <Compile Include="Engine\Graphics\GUI\GuiRenderer.cs" />
     <Compile Include="Engine\Graphics\GUI\Gui.cs" />
     <Compile Include="Engine\Graphics\Collections\RenderInstanceCollection.cs" />
@@ -546,7 +547,6 @@
     <Compile Include="Engine\Common\NetUtils.cs" />
     <Compile Include="Engine\Common\Network.cs" />
     <Compile Include="Engine\Common\UserInterface.cs" />
-    <Compile Include="Engine\Frames\Context.cs" />
     <Compile Include="Engine\Frames\Enums.cs" />
     <Compile Include="Engine\Frames\Frame.Utils.cs" />
     <Compile Include="Engine\Frames\Frame.cs" />

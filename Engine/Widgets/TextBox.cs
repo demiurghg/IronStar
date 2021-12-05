@@ -32,7 +32,7 @@ namespace Fusion.Widgets
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public TextBox ( FrameProcessor fp, IValueBinding binding = null ) : base(fp)
+		public TextBox ( UIState ui, IValueBinding binding = null ) : base(ui)
 		{ 
 			this.binding		=	new StringBindingWrapper( binding, "" );
 
@@ -217,11 +217,11 @@ namespace Fusion.Widgets
 				CommitEdits();
 				if (e.Shift) 
 				{
-					Frames.TargetFrame = PrevTabStop();
+					ui.TargetFrame = PrevTabStop();
 				} 
 				else 
 				{
-					Frames.TargetFrame = NextTabStop();
+					ui.TargetFrame = NextTabStop();
 				}
 			}
 
@@ -311,8 +311,8 @@ namespace Fusion.Widgets
 		void SetCursorFromMouse ()
 		{
 			var r = ComputeGlobalAlignedTextRectangle();
-			var x = Frames.MousePosition.X;
-			var y = Frames.MousePosition.Y;
+			var x = ui.MousePosition.X;
+			var y = ui.MousePosition.Y;
 			
 			var i = Font.FindIndexUnderCursor( Text, x - r.X );
 

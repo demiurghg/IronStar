@@ -75,7 +75,7 @@ namespace IronStar.Editor.Controls
 		/// 
 		/// </summary>
 		/// <param name="parent"></param>
-		public Workspace ( FrameProcessor frames, MapEditor editor ) : base( frames )
+		public Workspace ( UIState ui, MapEditor editor ) : base( ui )
 		{	
 			this.editor			=	editor;
 
@@ -86,8 +86,8 @@ namespace IronStar.Editor.Controls
 
 			this.X				=	0;
 			this.Y				=	0;
-			this.Width			=	frames.RootFrame.Width;
-			this.Height			=	frames.RootFrame.Height;
+			this.Width			=	ui.RootFrame.Width;
+			this.Height			=	ui.RootFrame.Height;
 
 			this.Anchor			=	FrameAnchor.All;
 
@@ -246,7 +246,7 @@ namespace IronStar.Editor.Controls
 		{
 			if (grid==null) 
 			{
-				gridPanel			=	new Panel( Frames, Width - 320, 40, 320, Height - 40 - 40 );
+				gridPanel			=	new Panel( ui, Width - 320, 40, 320, Height - 40 - 40 );
 				gridPanel.Anchor	=	FrameAnchor.Top | FrameAnchor.Bottom | FrameAnchor.Right;
 				gridPanel.Margin	=	3;
 
@@ -256,11 +256,11 @@ namespace IronStar.Editor.Controls
 									.AddRow( 22, 0.5f, 0.5f )
 									;
 
-				gridLabel	=	new Label( Frames, 0,0,0,0, "Property Grid");
+				gridLabel	=	new Label( ui, 0,0,0,0, "Property Grid");
 				gridLabel.TextAlignment = Alignment.MiddleLeft;
 				gridLabel.Padding	= 3;
 
-				var scrollBox = new ScrollBox( Frames, 0,0,0,0 ) 
+				var scrollBox = new ScrollBox( ui, 0,0,0,0 ) 
 				{
 					BorderColor = ColorTheme.BorderColor,
 					Border		= 1,
@@ -268,13 +268,13 @@ namespace IronStar.Editor.Controls
 
 				scrollBox.ScrollMarkerSize = 5;
 
-				grid = new AEPropertyGrid(Frames);
+				grid = new AEPropertyGrid(ui);
 
 				grid.Width	=	300;
 				grid.Height	=	500;
 
-				var btnCollapse = new Button(Frames, "Collapse", 0,0,0,0, grid.CollapseAll );
-				var btnExpand   = new Button(Frames, "Expand", 0,0,0,0, grid.ExpandAll );
+				var btnCollapse = new Button(ui, "Collapse", 0,0,0,0, grid.CollapseAll );
+				var btnExpand   = new Button(ui, "Expand", 0,0,0,0, grid.ExpandAll );
 
 				scrollBox.Add( grid );
 
@@ -283,15 +283,15 @@ namespace IronStar.Editor.Controls
 				gridPanel.Add( btnExpand );
 				gridPanel.Add( scrollBox );
 
-				gridPanel.Add( new Button(Frames, "<", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width + 20; gridPanel.X = gridPanel.X - 20; } ) );
-				gridPanel.Add( new Button(Frames, ">", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width - 20; gridPanel.X = gridPanel.X + 20; } ) );
+				gridPanel.Add( new Button(ui, "<", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width + 20; gridPanel.X = gridPanel.X - 20; } ) );
+				gridPanel.Add( new Button(ui, ">", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width - 20; gridPanel.X = gridPanel.X + 20; } ) );
 
 				Add( gridPanel );
 			}
 
 			gridPanel.Visible = (target!=null);
 
-			grid.Frames.TargetFrame = grid;
+			grid.ui.TargetFrame = grid;
 
 			grid.TargetObject = target;
 

@@ -41,7 +41,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep )  {
+				slider				=	new Slider( ui, getFunc, setFunc, min, max, step, pstep )  {
 					Font			=	MenuTheme.NormalFont,
 					PaddingLeft		=	0, // yes, for slider they should be the same
 					PaddingRight	=	0,

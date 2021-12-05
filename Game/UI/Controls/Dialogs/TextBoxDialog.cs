@@ -11,8 +11,8 @@ namespace IronStar.UI.Controls.Dialogs
 {
 	public class TextBoxDialog : Panel
 	{
-		public TextBoxDialog ( FrameProcessor frames, string headerText, string messageText, string defaultText, Func<string,bool> accept )
-		 : base(frames, 0, 0, 400, 240) 
+		public TextBoxDialog ( UIState ui, string headerText, string messageText, string defaultText, Func<string,bool> accept )
+		 : base(ui, 0, 0, 400, 240) 
 		{
 			AllowDrag			=	true;
 
@@ -27,7 +27,7 @@ namespace IronStar.UI.Controls.Dialogs
 
 			//	Header :
 
-			var header	=	new Frame( frames );
+			var header	=	new Frame( ui );
 
 			header.Font			=	MenuTheme.HeaderFont;
 			header.Text			=	headerText;
@@ -40,7 +40,7 @@ namespace IronStar.UI.Controls.Dialogs
 
 			//	Message text :
 
-			var label	=	new Frame( frames );
+			var label	=	new Frame( ui );
 
 			label.Font			=	MenuTheme.NormalFont;
 			label.Text			=	messageText;
@@ -55,7 +55,7 @@ namespace IronStar.UI.Controls.Dialogs
 
 			//	Text editor :
 
-			var textBox	=	new TextBox( frames );
+			var textBox	=	new TextBox( ui );
 
 			textBox.Font			=	MenuTheme.NormalFont;
 			textBox.Text			=	defaultText;
@@ -67,12 +67,12 @@ namespace IronStar.UI.Controls.Dialogs
 			textBox.BorderColor		=	MenuTheme.AccentColor;
 
 			Add( textBox );
-			Add( Frame.CreateEmptyFrame(Frames) );
+			Add( Frame.CreateEmptyFrame(ui) );
 
 
 			//	Buttons :
 
-			var acceptBtn		=	new Button(frames, "OK", 0,0,0,0, 
+			var acceptBtn		=	new Button(ui, "OK", 0,0,0,0, 
 				() => {
 					if (accept.Invoke(textBox.Text)) {
 						Close();
@@ -80,7 +80,7 @@ namespace IronStar.UI.Controls.Dialogs
 				}
 			);
 
-			var rejectBtn	=	new Button(frames, "Cancel", 0,0,0,0, 
+			var rejectBtn	=	new Button(ui, "Cancel", 0,0,0,0, 
 				() => {
 					Close();
 				}

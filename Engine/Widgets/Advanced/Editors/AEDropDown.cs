@@ -36,7 +36,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged +=AEDropDown_StatusChanged;
 
-			dropDown		=	new DropDown( Frames, values, binding ) 
+			dropDown		=	new DropDown( ui, values, binding ) 
 			{
 				PaddingLeft		=	AEPropertyGrid.HorizontalPadding,
 				PaddingRight	=	AEPropertyGrid.HorizontalPadding,

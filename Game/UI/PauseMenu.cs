@@ -24,7 +24,7 @@ namespace IronStar.UI {
 
 	public class PauseMenu : Panel {
 
-		public PauseMenu( FrameProcessor frames ) : base(frames, 0,0,400,600)
+		public PauseMenu( UIState ui ) : base(ui, 0,0,400,600)
 		{
 			BackColor	=	MenuTheme.BackColor;
 
@@ -44,12 +44,12 @@ namespace IronStar.UI {
 
 			Add( CreateHeader("GAME PAUSED" ) );
 
-			Add( new Button( frames, "Resume", 0,0,0,0, Resume ) );
-			Add( new Button( frames, "Options", 0,0,0,0, OptionsDialog ) );
-			Add( new Button( frames, "Restart Checkpoint", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
-			Add( new Button( frames, "Restart Level", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
-			Add( new Button( frames, "Exit To Menu", 0,0,0,0, ExitMenuDialog ) );
-			Add( new Button( frames, "Exit To System", 0,0,0,0, ExitGameDialog ) );
+			Add( new Button( ui, "Resume", 0,0,0,0, Resume ) );
+			Add( new Button( ui, "Options", 0,0,0,0, OptionsDialog ) );
+			Add( new Button( ui, "Restart Checkpoint", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
+			Add( new Button( ui, "Restart Level", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
+			Add( new Button( ui, "Exit To Menu", 0,0,0,0, ExitMenuDialog ) );
+			Add( new Button( ui, "Exit To System", 0,0,0,0, ExitGameDialog ) );
 		}
 
 

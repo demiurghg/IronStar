@@ -642,6 +642,6 @@ namespace Fusion.Core {
 		public RenderSystem RenderSystem { get { return Services.GetService<RenderSystem>(); } }
 		public GameConsole Console { get { return Services.GetService<GameConsole>(); } }
 		public Network Network { get { return Services.GetService<Network>(); } }
-		public FrameProcessor Frames { get { return Services.GetService<FrameProcessor>(); } }
+		public FrameProcessor OldFramesAccessor { get { return Services.GetService<FrameProcessor>(); } }
 	}
 }

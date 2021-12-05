@@ -115,12 +115,9 @@ namespace Fusion.Engine.Tools {
 			Game.GraphicsDevice.DisplayBoundsChanged += GraphicsDevice_DisplayBoundsChanged;
 			Log.MessageLogged += TraceRecorder_TraceRecorded;
 
-			Game.GetService<FrameProcessor>().Keyboard.KeyboardHook = this;
-
 			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
 				consoleFont		=   UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
 			}
-
 
 			RefreshConsole();
 			RefreshEdit();
@@ -221,6 +218,8 @@ namespace Fusion.Engine.Tools {
 		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime )
 		{
+			Game.GetService<FrameProcessor>().Default.Keyboard.KeyboardHook = this;
+
 			var vp		=	Game.GraphicsDevice.DisplayBounds;
 
 			DrawDebugText();

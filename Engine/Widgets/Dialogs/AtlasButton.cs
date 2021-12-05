@@ -40,7 +40,7 @@ namespace Fusion.Widgets.Dialogs
 		}
 
 		
-		public AtlasButton ( FrameProcessor frames, TextureAtlas atlas, string clipName, int size ) : base(frames)
+		public AtlasButton ( UIState ui, TextureAtlas atlas, string clipName, int size ) : base(ui)
 		{
 			this.atlas		=	atlas;
 			this.ClipName	=	clipName;
@@ -98,7 +98,7 @@ namespace Fusion.Widgets.Dialogs
 				if (mouseIn) 
 				{
 					var gpr			=	this.GetPaddedRectangle(true);
-					int frame		=	(Frames.MousePosition.X - gpr.X) * clip.Length / gpr.Width;
+					int frame		=	(ui.MousePosition.X - gpr.X) * clip.Length / gpr.Width;
 						frame		=	MathUtil.Clamp( frame, 0, clip.Length-1 );
 					ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
 					ImageMode		=	FrameImageMode.Manual;
@@ -114,7 +114,7 @@ namespace Fusion.Widgets.Dialogs
 			}
 			else
 			{
-				Image			=	Frames.Game.Content.Load<DiscTexture>("null");
+				Image			=	ui.Game.Content.Load<DiscTexture>("null");
 				ImageMode		=	FrameImageMode.Stretched;
 			}
 		}

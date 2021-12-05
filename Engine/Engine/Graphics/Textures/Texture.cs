@@ -11,8 +11,8 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Base class for all texture types.
 	/// </summary>
-	public class Texture : DisposableBase {
-
+	public class Texture : DisposableBase 
+	{
 		/// <summary>
 		/// Gets width of the texture
 		/// </summary>

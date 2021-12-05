@@ -11,13 +11,13 @@ using Fusion.Core.Input;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 
-
-namespace Fusion.Engine.Frames {
-
-	class MouseProcessor {
-
+namespace Fusion.Engine.Frames 
+{
+	public class MouseProcessor 
+	{
 		public readonly Game Game;
-		public FrameProcessor ui;
+		public readonly bool customMouseInput;
+		public UIState ui;
 
 		Point	oldMousePoint;
 
@@ -29,23 +29,20 @@ namespace Fusion.Engine.Frames {
 		Point	heldPoint;
 
 
-		static int SysInfoDoubleClickTime {
-			get {
-				return System.Windows.Forms.SystemInformation.DoubleClickTime;
-			}
+		static int SysInfoDoubleClickTime 
+		{
+			get { return System.Windows.Forms.SystemInformation.DoubleClickTime; }
 		}
 
 
-		static int SysInfoDoubleClickWidth {
-			get {
-				return System.Windows.Forms.SystemInformation.DoubleClickSize.Width;
-			}
+		static int SysInfoDoubleClickWidth 
+		{
+			get { return System.Windows.Forms.SystemInformation.DoubleClickSize.Width; }
 		}
 
-		static int SysInfoDoubleClickHeight {
-			get {
-				return System.Windows.Forms.SystemInformation.DoubleClickSize.Height;
-			}
+		static int SysInfoDoubleClickHeight 
+		{
+			get { return System.Windows.Forms.SystemInformation.DoubleClickSize.Height; }
 		}
 
 
@@ -53,32 +50,22 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public MouseProcessor ( Game game, FrameProcessor ui )
+		public MouseProcessor ( Game game, UIState ui, bool customMouseInput )
 		{
 			this.Game	=	game;
 			this.ui		=	ui;
+
+			if (!customMouseInput)
+			{
+				Game.Keyboard.KeyDown += InputDevice_KeyDown;
+				Game.Keyboard.KeyUp += InputDevice_KeyUp;
+				Game.Mouse.Scroll += InputDevice_MouseScroll;
+				Game.Mouse.Move += Mouse_Move;
+
+				oldMousePoint	=	Game.InputDevice.MousePosition;
+			}
 		}
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Initialize ()
-		{
-			Game.Keyboard.KeyDown += InputDevice_KeyDown;
-			Game.Keyboard.KeyUp += InputDevice_KeyUp;
-			Game.Mouse.Scroll += InputDevice_MouseScroll;
-			Game.Mouse.Move += Mouse_Move;
-
-
-			//Game.Touch.PointerDown += Touch_PointerDown;
-			//Game.Touch.PointerUp += Touch_PointerUp;
-			//Game.Touch.PointerUpdate += Touch_PointerUpdate;
-
-
-			oldMousePoint	=	Game.InputDevice.MousePosition;
-		}
 
 
 		void Mouse_Move ( object sender, MouseMoveEventArgs e )
@@ -89,7 +76,8 @@ namespace Fusion.Engine.Frames {
 
 		void InputDevice_KeyDown ( object sender, KeyEventArgs e )
 		{
-			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) {
+			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) 
+			{
 				PushFrame( ui.GetHoveredFrame(Game.Mouse.Position), e.Key, Game.Mouse.Position );
 			}
 		}
@@ -97,7 +85,8 @@ namespace Fusion.Engine.Frames {
 
 		void InputDevice_KeyUp ( object sender, KeyEventArgs e )
 		{
-			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) {
+			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) 
+			{
 				ReleaseFrame( ui.GetHoveredFrame(Game.Mouse.Position), e.Key, Game.Mouse.Position);
 			}
 		}
@@ -107,7 +96,8 @@ namespace Fusion.Engine.Frames {
 		void InputDevice_MouseScroll ( object sender, MouseScrollEventArgs e )
 		{
 			var hovered = ui.GetHoveredFrame(Game.Mouse.Position);
-			if ( hovered!=null ) {
+			if ( hovered!=null ) 
+			{
 				hovered.OnMouseWheel( e.WheelDelta );
 			}
 		}
@@ -128,14 +118,18 @@ namespace Fusion.Engine.Frames {
 			//
 			//	update mouse move :
 			//	
-			if ( mousePoint!=oldMousePoint ) {
+			if ( mousePoint!=oldMousePoint ) 
+			{
 				
 				int dx =	mousePoint.X - oldMousePoint.X;
 				int dy =	mousePoint.Y - oldMousePoint.Y;
 
-				if (heldFrame!=null) {
+				if (heldFrame!=null) 
+				{
 					heldFrame.OnMouseMove( mousePoint, dx, dy );
-				} else if ( hovered!=null ) {
+				} 
+				else if ( hovered!=null ) 
+				{
 					hovered.OnMouseMove( mousePoint, dx, dy );
 				}
 
@@ -145,14 +139,15 @@ namespace Fusion.Engine.Frames {
 			//
 			//	Mouse down/up events :
 			//
-			if (heldFrame==null) {
+			if (heldFrame==null) 
+			{
 				var oldHoveredFrame	=	hoveredFrame;
 				var newHoveredFrame	=	ui.GetHoveredFrame(mousePoint);
 
 				hoveredFrame		=	newHoveredFrame;
 
-				if (oldHoveredFrame!=newHoveredFrame) {
-
+				if (oldHoveredFrame!=newHoveredFrame) 
+				{
 					CallMouseOut		( mousePoint, oldHoveredFrame );
 					CallStatusChanged	( mousePoint, oldHoveredFrame, FrameStatus.None );
 
@@ -183,13 +178,14 @@ namespace Fusion.Engine.Frames {
 		/// <param name="key"></param>
 		void PushFrame ( Frame currentHovered, Keys key, Point location )
 		{
-			if (currentHovered==null) {
+			if (currentHovered==null) 
+			{
 				ui.ContextRootFrame?.OnMissclick();
 			}
 
 			//	frame pushed:
-			if (currentHovered!=null) {
-
+			if (currentHovered!=null) 
+			{
 				if (heldFrame!=currentHovered) {
 					heldPoint = location;
 				}
@@ -262,17 +258,17 @@ namespace Fusion.Engine.Frames {
 			//	do stuff :
 			hoveredFrame	=	currentHovered;
 
-			if ( currentHovered!=heldFrame ) {
-				
+			if ( currentHovered!=heldFrame ) 
+			{
 				CallMouseOut		( mousePosition, heldFrame );
 				CallStatusChanged	( mousePosition, heldFrame, FrameStatus.None );
 				CallMouseIn			( mousePosition, currentHovered );
 				CallStatusChanged	( mousePosition, currentHovered, FrameStatus.Hovered );
 
 				CallMouseUp( mousePosition, heldFrame, key );
-
-			} else {
-
+			} 
+			else 
+			{
 				//	track activation/deactivation on click :
 				ui.TargetFrame = currentHovered;
 

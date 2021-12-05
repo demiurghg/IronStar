@@ -25,7 +25,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEBaseEditor ( PropertyGrid grid, string name ) : base(grid.Frames)
+			public AEBaseEditor ( PropertyGrid grid, string name ) : base(grid.ui)
 			{ 
 				this.Font			=	MenuTheme.NormalFont;
 

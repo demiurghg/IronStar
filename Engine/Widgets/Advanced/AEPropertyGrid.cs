@@ -32,7 +32,7 @@ namespace Fusion.Widgets.Advanced
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public AEPropertyGrid( FrameProcessor fp ) : base(fp)
+		public AEPropertyGrid( UIState ui ) : base(ui)
 		{
 			this.BackColor		=	ColorTheme.BackgroundColor;
 			this.BorderColor	=	ColorTheme.BorderColor;
@@ -285,7 +285,7 @@ namespace Fusion.Widgets.Advanced
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
 			var textBox = new AETextBox( this, name, new DelegateBinding<string>(getFunc, setFunc), null );
-			var button	= new Button( Frames, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
+			var button	= new Button( ui, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
 				MarginRight = 0,
 				MarginLeft = 150,
 				MarginBottom = 3,
@@ -304,7 +304,7 @@ namespace Fusion.Widgets.Advanced
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 23, action ) { MarginRight = 100 } );
+			AddToCollapseRegion( category, new Button( ui, name, 0,0, 200, 23, action ) { MarginRight = 100 } );
 		}
 	}
 }

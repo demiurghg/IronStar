@@ -31,7 +31,7 @@ namespace Fusion.Widgets.Advanced
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel, object obj ) : base(grid.Frames)
+		public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel, object obj ) : base(grid.ui)
 		{ 
 			enclosingObject		=	obj;
 
@@ -54,7 +54,7 @@ namespace Fusion.Widgets.Advanced
 			Collapsed		=	true;
 			Collapsed		=	nestingLevel > 0;
 
-			buttonCollapse		=	new Frame( grid.Frames ) {
+			buttonCollapse		=	new Frame( grid.ui ) {
 				Font			=	ColorTheme.NormalFont,
 				Width			=	0, // does not matter due to layout engine
 				Height			=	ColorTheme.NormalFont.LineHeight+6,

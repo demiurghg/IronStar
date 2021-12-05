@@ -17,7 +17,7 @@ namespace IronStar.UI.Controls {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public Button ( FrameProcessor frames, string name, int x, int y, int w, int h, Action action ) : base(frames)
+		public Button ( UIState ui, string name, int x, int y, int w, int h, Action action ) : base(ui)
 		{ 
 			this.Font		=	MenuTheme.NormalFont;
 

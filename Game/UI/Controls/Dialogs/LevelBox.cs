@@ -30,7 +30,7 @@ namespace IronStar.UI.Controls.Dialogs {
 		public event EventHandler<MapAcceptEventArgs> Accept;
 
 
-		public LevelBox ( FrameProcessor frames ) : base(frames, 0,0,900-68,600-4)
+		public LevelBox ( UIState ui ) : base(ui, 0,0,900-68,600-4)
 		{
 			Layout		=	new PageLayout()
 				.Margin( MenuTheme.Margin )
@@ -41,7 +41,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Header :
 
-			var header	=	new Frame( frames );
+			var header	=	new Frame( ui );
 
 			header.Font			=	MenuTheme.HeaderFont;
 			header.Text			=	"START NEW GAME";
@@ -52,7 +52,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Property grid :
 		
-			gallery				=	new Frame( frames );
+			gallery				=	new Frame( ui );
 			gallery.BackColor	=	MenuTheme.Transparent;
 
 			gallery.Layout		=	new GaleryLayout( 256, 144, MenuTheme.Margin );
@@ -61,7 +61,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Scrollbox for property grid :
 
-			var scrollBox				=	new ScrollBox( frames, 0,0,0,0 );
+			var scrollBox				=	new ScrollBox( ui, 0,0,0,0 );
 			scrollBox.ScrollMarkerSize	=	MenuTheme.ScrollSize;
 			scrollBox.ScrollMarkerColor	=	MenuTheme.ScrollMarkerColor;
 			scrollBox.MarginTop			=	MenuTheme.Margin;
@@ -69,11 +69,11 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	OK/Cancel buttons :
 
-				buttonStart			=	new Button( frames, "Start",		0,0,0,0, ()=>Accept?.Invoke( this, new MapAcceptEventArgs(selectedMap)) );
+				buttonStart			=	new Button( ui, "Start",		0,0,0,0, ()=>Accept?.Invoke( this, new MapAcceptEventArgs(selectedMap)) );
 				buttonStart.Enabled	=	false;
 				buttonStart.OverallColor = new Color(255,255,255,128);
 
-			var buttonCancel		=	new Button( frames, "Cancel", 0,0,0,0, ()=>Reject?.Invoke( this, EventArgs.Empty ) );
+			var buttonCancel		=	new Button( ui, "Cancel", 0,0,0,0, ()=>Reject?.Invoke( this, EventArgs.Empty ) );
 
 			//	Construct all :
 
@@ -83,26 +83,26 @@ namespace IronStar.UI.Controls.Dialogs {
 				scrollBox.Add( gallery );
 
 			this.Add( buttonCancel );
-			this.Add( CreateEmptyFrame( frames ) );
-			this.Add( CreateEmptyFrame( frames ) );
+			this.Add( CreateEmptyFrame( ui ) );
+			this.Add( CreateEmptyFrame( ui ) );
 			this.Add( buttonStart );
 		}
 
 
-		static public void Show ( FrameProcessor fp )
+		static public void Show ( UIState ui )
 		{
-			var box		=	new LevelBox(fp);
-			var ctxt	=	fp.ShowDialogCentered( box );
+			var box		=	new LevelBox(ui);
+			var ctxt	=	ui.ShowDialogCentered( box );
 			
 			box.Accept += (s,e) => 
 			{
-				fp.Stack.PopUIContext( ref ctxt );
-				fp.Game.Invoker.ExecuteString("map " + e.MapName);
+				ui.Stack.PopUIContext( ref ctxt );
+				ui.Game.Invoker.ExecuteString("map " + e.MapName);
 			};
 			
 			box.Reject += (s,e) => 
 			{
-				fp.Stack.PopUIContext( ref ctxt );
+				ui.Stack.PopUIContext( ref ctxt );
 			};
 		}
 
@@ -119,14 +119,14 @@ namespace IronStar.UI.Controls.Dialogs {
 		{
 			Random rand =	new Random();
 
-			var content			=	Frames.Game.Content;
+			var content			=	ui.Game.Content;
 			var defaultPreveiw	=	content.Load<DiscTexture>( @"maps\thumbnails\default" );
 
 
 			foreach ( var fileName in content.EnumerateAssets("maps") ) {
 
 				var mapName				=	Path.GetFileNameWithoutExtension(fileName);
-				var levelImage			=	new Frame( Frames, 0,0,0,0, mapName.ToUpperInvariant(), Color.Black );
+				var levelImage			=	new Frame( ui, 0,0,0,0, mapName.ToUpperInvariant(), Color.Black );
 
 				DiscTexture	mapPreview;
 				

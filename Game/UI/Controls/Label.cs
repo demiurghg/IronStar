@@ -10,7 +10,7 @@ namespace IronStar.UI.Controls {
 	
 	public class Label : Frame {
 
-		public Label ( FrameProcessor fp, int x, int y, int w, int h, string text ) : base( fp )
+		public Label ( UIState ui, int x, int y, int w, int h, string text ) : base( ui )
 		{	
 			this.Font			=	MenuTheme.NormalFont;
 

@@ -35,7 +35,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged  +=AEColorPicker_StatusChanged;
 
-			colorButton				=	new Frame( Frames );
+			colorButton				=	new Frame( ui );
 			colorButton.Border		=	1;
 			colorButton.BorderColor	=	ColorTheme.BorderColor;
 			colorButton.BackColor	=	Color.Black;
@@ -53,7 +53,7 @@ namespace Fusion.Widgets.Advanced
 			var button	=	(Frame)sender;
 			var rect	=	button.GlobalRectangle;
 
-			ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, binding );
+			ColorPicker.ShowDialog( ui, rect.X, rect.Y + rect.Height, binding );
 		}
 
 

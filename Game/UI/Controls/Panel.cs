@@ -20,7 +20,7 @@ namespace IronStar.UI.Controls {
 
 
 
-		public Panel ( FrameProcessor fp, int x, int y, int w, int h ) : base( fp )
+		public Panel ( UIState ui, int x, int y, int w, int h ) : base( ui )
 		{	
 			this.BackColor		=	MenuTheme.BackColor;
 			this.BorderTop		=	MenuTheme.CaptionHeight;
@@ -63,8 +63,8 @@ namespace IronStar.UI.Controls {
 		{
 			if (AllowDrag || AllowResize) {
 
-				dragX		=	Frames.MousePosition.X;
-				dragY		=	Frames.MousePosition.Y;
+				dragX		=	ui.MousePosition.X;
+				dragY		=	ui.MousePosition.Y;
 				posX		=	X;
 				posY		=	Y;
 				width		=	Width;
@@ -91,8 +91,8 @@ namespace IronStar.UI.Controls {
 
 		private void Panel_MouseMove( object sender, MouseEventArgs e )
 		{
-			var mouseX = Frames.MousePosition.X;
-			var mouseY = Frames.MousePosition.Y;
+			var mouseX = ui.MousePosition.X;
+			var mouseY = ui.MousePosition.Y;
 
 			if (dragging) {
 				X	=	posX + (mouseX - dragX);
@@ -137,7 +137,7 @@ namespace IronStar.UI.Controls {
 
 		public Frame CreateHeader ( string text )
 		{
-			Frame header = new Frame( Frames );
+			Frame header = new Frame( ui );
 
 			header.Font			=	MenuTheme.HeaderFont;
 			header.Text			=	text;

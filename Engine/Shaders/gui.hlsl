@@ -72,10 +72,10 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0, float2 uv2 :
 	float4 interlace	=	Interlace		.Sample( LinearSampler, uv2 * GUIData.Size.xy / 64.0f );
 	
 	
-	if ((GUIData.FrameCounter&1)==0) 
+	/*if ((GUIData.FrameCounter&1)==0) 
 	{
 		interlace = 1 - interlace;
-	}
+	}*/
 	
 	//color.rgb *= glitch.a;
 	color.rgb += noiseTex.rgb * 0.01f;

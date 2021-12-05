@@ -34,8 +34,8 @@ namespace Fusion.Widgets.Dialogs
 		TextBox		fileTextBox;
 
 
-		public FileDialog ( FrameProcessor fp, string defaultDir, string searchPattern ) 
-		: base ( fp, 0,0, DialogWidth, DialogHeight )
+		public FileDialog ( UIState ui, string defaultDir, string searchPattern ) 
+		: base ( ui, 0,0, DialogWidth, DialogHeight )
 		{
 			AllowDrag			=	true;
 			AllowResize			=	true;
@@ -49,20 +49,20 @@ namespace Fusion.Widgets.Dialogs
 					.Margin(2)
 					;
 
-			labelDir				=	new Label( fp, 2, 3, DialogWidth - 4, 15, "" );
+			labelDir				=	new Label( ui, 2, 3, DialogWidth - 4, 15, "" );
 			labelDir.Padding		=	2;
 			labelDir.TextAlignment	=	Alignment.MiddleLeft;
 
-			fileTextBox			=	new TextBox( fp );
+			fileTextBox			=	new TextBox( ui );
 			fileTextBox.CommitEditsOnDeactivation = true;
 			fileTextBox.TextAlignment = Alignment.MiddleLeft;
 
-			buttonAccept		=	new Button( fp, ButtonName,	0,0,0,0, ()=>AcceptInternal() );
-			buttonHome			=	new Button( fp, "Home",		0,0,0,0, ()=>Home() );
-			buttonExplore		=	new Button( fp, "Explore",	0,0,0,0, ()=>Explore() );
-			buttonClose			=	new Button( fp, "Cancel",	0,0,0,0, ()=>Close() );
+			buttonAccept		=	new Button( ui, ButtonName,	0,0,0,0, ()=>AcceptInternal() );
+			buttonHome			=	new Button( ui, "Home",		0,0,0,0, ()=>Home() );
+			buttonExplore		=	new Button( ui, "Explore",	0,0,0,0, ()=>Explore() );
+			buttonClose			=	new Button( ui, "Cancel",	0,0,0,0, ()=>Close() );
 
-			fileListBox			=	new FileListBox( fp, defaultDir, searchPattern );
+			fileListBox			=	new FileListBox( ui, defaultDir, searchPattern );
 
 			fileListBox.IsDoubleClickEnabled = true;
 			fileListBox.DoubleClick += FileListBox_DoubleClick;
@@ -77,7 +77,7 @@ namespace Fusion.Widgets.Dialogs
 
 			Add( buttonHome );
 			Add( buttonExplore );
-			Add( CreateEmptyFrame(fp) );
+			Add( CreateEmptyFrame(ui) );
 			Add( buttonAccept );
 			Add( buttonClose );
 
@@ -88,7 +88,7 @@ namespace Fusion.Widgets.Dialogs
 
 		protected void ShowInternal()
 		{ 
-			Frames.ShowDialogCentered(this);
+			ui.ShowDialogCentered(this);
 		}
 
 
@@ -166,7 +166,7 @@ namespace Fusion.Widgets.Dialogs
 
 			if (string.IsNullOrWhiteSpace(fileName))
 			{
-				MessageBox.ShowError(Frames, "Empty file name", null);
+				MessageBox.ShowError(ui, "Empty file name", null);
 				return;
 			}
 

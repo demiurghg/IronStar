@@ -21,7 +21,7 @@ namespace Fusion.Widgets.Dialogs
 	{
 		Action<string> saveAction;
 
-		public SaveFileDialog( FrameProcessor fp, string defaultDir, string searchPattern ) : base(fp, defaultDir, searchPattern)
+		public SaveFileDialog( UIState ui, string defaultDir, string searchPattern ) : base(ui, defaultDir, searchPattern)
 		{
 		}
 
@@ -43,7 +43,7 @@ namespace Fusion.Widgets.Dialogs
 		{
 			if (fileExists)
 			{
-				MessageBox.ShowQuestion(Frames, 
+				MessageBox.ShowQuestion(ui, 
 					string.Format("File {0} already exists. Overwrite?", relativePath), 
 					() => { 
 						saveAction(relativePath); 

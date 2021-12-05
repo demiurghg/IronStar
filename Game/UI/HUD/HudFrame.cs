@@ -47,7 +47,7 @@ namespace IronStar.UI.HUD
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public HudFrame ( FrameProcessor ui ) : base( ui )
+		public HudFrame ( UIState ui ) : base( ui )
 		{
 			this.BackColor		=	Color.Zero;
 			this.BorderColor	=	Color.Zero;
@@ -107,7 +107,7 @@ namespace IronStar.UI.HUD
 
 		Frame CreatePlaceholder( int x, int y, int w, int h, string name )
 		{
-			var panel = new Frame( Frames, x, y, w, h, name, Color.Zero ) {
+			var panel = new Frame( ui, x, y, w, h, name, Color.Zero ) {
 				Border		=	1,
 				ForeColor	=	new Color(255,255,255, 0*64),
 				BorderColor	=	new Color(255,255,255, 0*64),

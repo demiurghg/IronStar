@@ -29,10 +29,10 @@ namespace IronStar.Editor.Controls
 		Button	btnClose;
 		MapEditor editor;
 		
-		public MapOutliner( Frame parent, MapEditor editor, int x, int y, int w, int h ) : base(parent.Frames, x,y,w,h)
+		public MapOutliner( Frame parent, MapEditor editor, int x, int y, int w, int h ) : base(parent.ui, x,y,w,h)
 		{
 			this.editor		=	editor;
-			var fp			=	parent.Frames;
+			var fp			=	parent.ui;
 			AllowDrag		=	true;
 			AllowResize		=	true;
 

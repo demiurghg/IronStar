@@ -55,7 +55,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged +=AESlider_StatusChanged;
 
-			slider				=	new Slider( Frames, binding, min, max, step, pstep )
+			slider				=	new Slider( ui, binding, min, max, step, pstep )
 			{
 				Font			=	ColorTheme.NormalFont,
 				PaddingLeft		=	AEPropertyGrid.VerticalPadding, // yes, for slider they should be the same

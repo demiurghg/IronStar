@@ -38,7 +38,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged +=CheckBox_StatusChanged;
 
-			yesNoButton			= new Frame(this.Frames) {
+			yesNoButton			= new Frame(this.ui) {
 				Font			= ColorTheme.NormalFont,
 				Height			= ComputeItemHeight(), 
 				BackColor		= ColorTheme.BackgroundColorDark,

@@ -32,7 +32,7 @@ namespace IronStar.UI.Controls.Advanced
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public PropertyGrid( FrameProcessor fp ) : base(fp)
+		public PropertyGrid( UIState ui ) : base(ui)
 		{
 			this.BackColor		=	MenuTheme.Transparent;
 			this.Border			=	0;
@@ -238,7 +238,7 @@ namespace IronStar.UI.Controls.Advanced
 		public void AddTextBox ( string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
 			var textBox = new AETextBox( this, name, getFunc, setFunc, null );
-			var button	= new Button( Frames, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
+			var button	= new Button( ui, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
 				MarginRight = 0,
 				MarginLeft = 150,
 				MarginBottom = 3,
@@ -257,7 +257,7 @@ namespace IronStar.UI.Controls.Advanced
 
 		public void AddButton ( string name, Action action )
 		{
-			Add( new Button( Frames, name, 0,0, 200, MenuTheme.ElementHeight, action ) );
+			Add( new Button( ui, name, 0,0, 200, MenuTheme.ElementHeight, action ) );
 		}
 
 		public void AddDropDown ( string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )

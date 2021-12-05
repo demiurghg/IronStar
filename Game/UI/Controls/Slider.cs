@@ -31,7 +31,7 @@ namespace IronStar.UI.Controls {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public Slider ( FrameProcessor fp, Func<float> getFunc, Action<float> setFunc, float min, float max, float snap, float psnap ) : base(fp)
+		public Slider ( UIState ui, Func<float> getFunc, Action<float> setFunc, float min, float max, float snap, float psnap ) : base(ui)
 		{ 
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
@@ -71,7 +71,7 @@ namespace IronStar.UI.Controls {
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
 
-			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) {
+			if (ui.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) {
 				dragPrecise = true;
 			}
 		}

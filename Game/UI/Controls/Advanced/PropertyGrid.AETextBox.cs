@@ -40,7 +40,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				textBox	=	new TextBox( Frames, new DelegateBinding<string>( getFunc, setFunc ) ) { 
+				textBox	=	new TextBox( ui, new DelegateBinding<string>( getFunc, setFunc ) ) { 
 					TextAlignment = Alignment.MiddleLeft, 
 					PaddingTop		= VerticalPadding,
 					PaddingBottom	= VerticalPadding,
@@ -52,7 +52,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Add( textBox );
 
 				if (selectFunc!=null) {
-					buttonSelect =	new Button( Frames, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
+					buttonSelect =	new Button( ui, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
 					buttonSelect.BorderColor = Color.Zero;
 					Add( buttonSelect );
 				}

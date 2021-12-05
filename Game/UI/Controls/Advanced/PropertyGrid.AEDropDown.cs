@@ -35,7 +35,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc ) {
+				dropDown		=	new DropDown( ui, value, values, getFunc, setFunc ) {
 					PaddingLeft		=	HorizontalPadding,
 					PaddingRight	=	HorizontalPadding,
 					PaddingTop		=	VerticalPadding,

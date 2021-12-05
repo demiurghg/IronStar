@@ -23,7 +23,7 @@ namespace Fusion.Widgets.Advanced
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.Frames)
+		public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.ui)
 		{ 
 			this.Font		=	ColorTheme.NormalFont;
 

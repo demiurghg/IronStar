@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
 
-namespace Fusion.Widgets {
-	
-	public class Label : Frame {
-
-		public Label ( FrameProcessor fp, int x, int y, int w, int h, string text ) : base( fp )
+namespace Fusion.Widgets 
+{
+	public class Label : Frame 
+	{
+		public Label ( UIState ui, int x, int y, int w, int h, string text ) : base( ui )
 		{	
 			this.Font			=	ColorTheme.NormalFont;
 
@@ -33,6 +33,5 @@ namespace Fusion.Widgets {
 
 			this.Ghost			=	true;
 		}
-
 	}
 }

@@ -34,7 +34,7 @@ namespace IronStar.UI.Controls {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public DropDown ( FrameProcessor fp, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(fp)
+		public DropDown ( UIState ui, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(ui)
 		{ 
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
@@ -100,7 +100,7 @@ namespace IronStar.UI.Controls {
 			var scrollBoxWidth	=	MinWidth;
 
 
-			var scrollBox			=	new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
+			var scrollBox			=	new ScrollBox( ui, 0,0, scrollBoxWidth, scrollBoxHeight ) {
 				BackColor			=	MenuTheme.DropdownColor,
 				PaddingLeft			=	4,
 				PaddingRight		=	1,
@@ -109,7 +109,7 @@ namespace IronStar.UI.Controls {
 				ScrollMarkerColor	=	MenuTheme.ElementColor,
 			};
 
-			var dropDownList	= new Frame( Frames ) {
+			var dropDownList	= new Frame( ui ) {
 				BackColor		= MenuTheme.Transparent,
 			};
 			//var dropDownList	= new Frame( Frames ) {
@@ -127,7 +127,7 @@ namespace IronStar.UI.Controls {
 				var textSize		=	MeasureSingleLineString( Font, value );
 				var textWidth		=	textSize.Width;
 
-				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, MenuTheme.DropdownButtonNormal );
+				var dropDownElement = new Frame( ui, 0, 0, textWidth+8, textHeight+4, value, MenuTheme.DropdownButtonNormal );
 					dropDownElement.Font = MenuTheme.NormalFont;
 
 
@@ -174,7 +174,7 @@ namespace IronStar.UI.Controls {
 
 			BackColor	=	MenuTheme.ButtonColorPushed;
 
-			context		=	Frames.ShowDialog( dropDownList );
+			context		=	ui.ShowDialog( dropDownList );
 
 			dropDownList.ConstrainFrame(0);
 		}
@@ -183,7 +183,7 @@ namespace IronStar.UI.Controls {
 
 		void CloseDropDownList()
 		{
-			Frames.Stack.PopUIContext( ref context );
+			ui.Stack.PopUIContext( ref context );
 		}
 
 
@@ -210,7 +210,7 @@ namespace IronStar.UI.Controls {
 		{
 			var frame = (Frame)sender;
 
-			if (Frames.ContextRootFrame!=dropDownList) {
+			if (ui.ContextRootFrame!=dropDownList) {
 				switch ( e.Status ) {
 					case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
 					case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;

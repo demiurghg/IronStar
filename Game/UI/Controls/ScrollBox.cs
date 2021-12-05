@@ -35,7 +35,7 @@ namespace IronStar.UI.Controls {
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public ScrollBox ( FrameProcessor fp, int x, int y, int w, int h ) : base(fp,x,y,w,h)
+		public ScrollBox ( UIState ui, int x, int y, int w, int h ) : base(ui,x,y,w,h)
 		{
 			BackColor	=	MenuTheme.Transparent;
 			Border		=	0;

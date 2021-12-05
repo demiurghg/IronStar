@@ -396,7 +396,7 @@ namespace IronStar.Editor
 		/// </summary>
 		public void MakePrefab ()
 		{
-			var saveFileDialog = new SaveFileDialog( workspace.Frames, "prefabs", "*.json" );
+			var saveFileDialog = new SaveFileDialog( workspace.ui, "prefabs", "*.json" );
 			saveFileDialog.Show( (name) => Game.Invoker.Execute( new EditorPrefabCommand(this, name) ) );
 		}
 

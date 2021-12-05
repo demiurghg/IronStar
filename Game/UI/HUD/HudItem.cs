@@ -29,7 +29,7 @@ namespace IronStar.UI.HUD
 				if (iconName!=value)
 				{
 					iconName = value; 
-					icon.Image = Frames.Game.Content.Load<DiscTexture>(iconName);
+					icon.Image = ui.Game.Content.Load<DiscTexture>(iconName);
 				}
 			}
 		}
@@ -46,7 +46,7 @@ namespace IronStar.UI.HUD
 		Frame	label1;
 		Frame	label2;
 
-		public HudItem ( FrameProcessor ui, HudAlignment alignment, int x, int y, string text1, string text2, string iconName, Color color ) : base( ui )
+		public HudItem ( UIState ui, HudAlignment alignment, int x, int y, string text1, string text2, string iconName, Color color ) : base( ui )
 		{
 			this.alignment	=	alignment;
 			this.X			=	x;

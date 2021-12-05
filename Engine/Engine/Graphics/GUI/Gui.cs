@@ -12,7 +12,7 @@ namespace Fusion.Engine.Graphics.GUI
 {
 	public class Gui
 	{
-		public Frame	Root;
+		public readonly UIState	UI;
 		public Matrix	Transform;
 
 		public float	DotsPerUnit = 128;
@@ -31,9 +31,12 @@ namespace Fusion.Engine.Graphics.GUI
 		public float	Abberation;
 		public float	Scanline;
 
+		public Frame Root { get { return UI.RootFrame; } }
 
-		public Gui()
+
+		public Gui( UIState ui )
 		{
+			this.UI = ui;
 			UpdateGlitch(GameTime.Zero);
 		}
 

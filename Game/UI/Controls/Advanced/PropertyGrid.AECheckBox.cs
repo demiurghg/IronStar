@@ -39,7 +39,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	1;
 				Height			=	ComputeItemHeight();
 
-				yesNoButton			= new Frame(this.Frames) {
+				yesNoButton			= new Frame(this.ui) {
 					Font			= MenuTheme.NormalFont,
 					Height			= ComputeItemHeight(), 
 					BackColor		= MenuTheme.Transparent,

@@ -56,12 +56,12 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged  +=AEAtlasSelector_StatusChanged;
 
-			if (!Frames.Game.Content.TryLoad( atlasName, out textureAtlas ))
+			if (!ui.Game.Content.TryLoad( atlasName, out textureAtlas ))
 			{
 				Log.Warning("Failed to load atlas : {0}", atlasName);
 			}
 
-			atlasButton				=	new AtlasButton( Frames, textureAtlas, this.binding.GetValue(), imageSize );
+			atlasButton				=	new AtlasButton( ui, textureAtlas, this.binding.GetValue(), imageSize );
 			atlasButton.Border		=	1;
 
 			atlasButton.Click +=AtlasButton_Click;
@@ -77,7 +77,7 @@ namespace Fusion.Widgets.Advanced
 			var button	=	(Frame)sender;
 			var rect	=	button.GlobalRectangle;
 
-			ShowDialog( Frames, atlasName, binding.GetValue(), (s) => binding.SetValue(s, ValueSetMode.Default) );
+			ShowDialog( ui, atlasName, binding.GetValue(), (s) => binding.SetValue(s, ValueSetMode.Default) );
 		}
 
 

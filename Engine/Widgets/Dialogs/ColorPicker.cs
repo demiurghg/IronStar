@@ -19,14 +19,14 @@ namespace Fusion.Widgets.Dialogs
 	{
 		static ColorPicker colorPicker;
 
-		static public void ShowDialog ( FrameProcessor fp, int x, int y, IValueBinding binding )
+		static public void ShowDialog ( UIState ui, int x, int y, IValueBinding binding )
 		{
-			colorPicker = new ColorPicker( fp, binding );
+			colorPicker = new ColorPicker( ui, binding );
 
 			colorPicker.X	=	x;
 			colorPicker.Y	=	y;
 
-			fp.ShowDialog( colorPicker );
+			ui.ShowDialog( colorPicker );
 			colorPicker.ConstrainFrame(10);
 		}
 
@@ -57,7 +57,7 @@ namespace Fusion.Widgets.Dialogs
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		private ColorPicker ( FrameProcessor fp, IValueBinding binding ) : base(fp)
+		private ColorPicker ( UIState ui, IValueBinding binding ) : base(ui)
 		{
 			if (binding.ValueType!=typeof(Color))
 			{
@@ -81,7 +81,7 @@ namespace Fusion.Widgets.Dialogs
 
 			this.Missclick +=ColorPicker_Missclick;
 
-			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, this.binding );
+			colorField	=	new ColorField( ui, 80+3, 2, 180+2, 100+2, this.binding );
 			
 			Add( colorField );
 
@@ -95,7 +95,7 @@ namespace Fusion.Widgets.Dialogs
 			AddLabel( 2, 107 + height * 4-1, "Temp, (K)" );
 
 			sliderRed	=	new Slider( 
-				Frames, 
+				ui, 
 				this.binding.Red,
 				0, 255, 16, 1 ) {
 					X = 83,
@@ -109,7 +109,7 @@ namespace Fusion.Widgets.Dialogs
 				};
 
 			sliderGreen	=	new Slider( 
-				Frames, 
+				ui, 
 				this.binding.Green,
 				0, 255, 16, 1 ) {
 					X = 83,
@@ -123,7 +123,7 @@ namespace Fusion.Widgets.Dialogs
 				};
 
 			sliderBlue	=	new Slider( 
-				Frames, 
+				ui, 
 				this.binding.Blue,
 				0, 255, 16, 1 ) {
 					X = 83,
@@ -137,7 +137,7 @@ namespace Fusion.Widgets.Dialogs
 				};
 
 			sliderAlpha	=	new Slider( 
-				Frames, 
+				ui, 
 				this.binding.Alpha,
 				0, 255, 16, 1 ) {
 					X = 83,
@@ -175,7 +175,7 @@ namespace Fusion.Widgets.Dialogs
 				}; */
 
 			sliderSat = new Slider(
-				Frames,
+				ui,
 				this.binding.Sat,
 				0, 1, 1f/8f, 1f/128f ) {
 					X = 267,
@@ -219,7 +219,7 @@ namespace Fusion.Widgets.Dialogs
 
 		Frame AddColorButton ( int x, int y, int w, int h, string text, Color color, Action action )
 		{
-			var frame = new Frame( Frames, x,y,w,h, text, color );
+			var frame = new Frame( ui, x,y,w,h, text, color );
 			
 			frame.Border		=	1;
 			frame.BorderColor	=	Color.Black;
@@ -239,7 +239,7 @@ namespace Fusion.Widgets.Dialogs
 		{
 			var rect	= ColorTheme.NormalFont.MeasureString( text );
 
-			var frame = new Frame( Frames, x,y, rect.Width, rect.Height, text, Color.Zero );
+			var frame = new Frame( ui, x,y, rect.Width, rect.Height, text, Color.Zero );
 			
 			frame.Font			=	ColorTheme.NormalFont;
 			frame.ForeColor		=	ColorTheme.TextColorNormal;

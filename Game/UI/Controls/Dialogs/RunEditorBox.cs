@@ -21,7 +21,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		string selectedMap = null;
 
-		public RunEditorBox ( FrameProcessor frames ) : base(frames, 0,0,900-64,600-4)
+		public RunEditorBox ( UIState ui ) : base(ui, 0,0,900-64,600-4)
 		{
 			Layout	=	new PageLayout()
 					.Margin( MenuTheme.Margin )
@@ -32,7 +32,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Header :
 
-			var header	=	new Frame( frames );
+			var header	=	new Frame( ui );
 
 			header.Font			=	MenuTheme.HeaderFont;
 			header.Text			=	"MAP EDITOR";
@@ -43,7 +43,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Property grid :
 		
-			gallery				=	new Frame( frames );
+			gallery				=	new Frame( ui );
 			gallery.BackColor	=	MenuTheme.Transparent;
 
 			gallery.Layout		=	new GaleryLayout( 192, 108, MenuTheme.Margin );
@@ -52,7 +52,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Scrollbox for property grid :
 
-			var scrollBox				=	new ScrollBox( frames, 0,0,0,0 );
+			var scrollBox				=	new ScrollBox( ui, 0,0,0,0 );
 			scrollBox.ScrollMarkerSize	=	MenuTheme.ScrollSize;
 			scrollBox.ScrollMarkerColor	=	MenuTheme.ScrollMarkerColor;
 			scrollBox.MarginTop			=	MenuTheme.Margin;
@@ -60,12 +60,12 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	OK/Cancel buttons :
 
-				buttonStart			=	new Button( frames, "(Select Level)",		0,0,0,0, StartEditor );
+				buttonStart			=	new Button( ui, "(Select Level)",		0,0,0,0, StartEditor );
 				buttonStart.Enabled	=	false;
 				buttonStart.OverallColor = new Color(255,255,255,128);
-			var buttonCreate	=	new Button( frames, "Create",		0,0,0,0, CreateNew );
-			var buttonEmpty		=	Frame.CreateEmptyFrame( frames );
-			var buttonCancel	=	new Button( frames, "Cancel", 0,0,0,0, ()=> { Close(); } );
+			var buttonCreate	=	new Button( ui, "Create",		0,0,0,0, CreateNew );
+			var buttonEmpty		=	Frame.CreateEmptyFrame( ui );
+			var buttonCancel	=	new Button( ui, "Cancel", 0,0,0,0, ()=> { Close(); } );
 
 			//	Construct all :
 
@@ -91,7 +91,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		void CreateNew ()
 		{
-			Frames.ShowDialogCentered( new TextBoxDialog( Frames, "New Map", "Enter new map name:", "untitled", AcceptMapName ) );
+			ui.ShowDialogCentered( new TextBoxDialog( ui, "New Map", "Enter new map name:", "untitled", AcceptMapName ) );
 			//MessageBox.ShowError(this, "Not implemented", "Use console command: map <name> /edit", () => {} );
 			//Frames.ShowDialogCentered( new MessageBox(
 
@@ -125,7 +125,7 @@ namespace IronStar.UI.Controls.Dialogs {
 		{
 			Random rand =	new Random();
 
-			var content			=	Frames.Game.Content;
+			var content			=	ui.Game.Content;
 			var builder			=	Game.Services.GetService<Builder>();
 			var mapDir			=	Path.Combine( builder.GetBaseInputDirectory(), "maps" );
 			var defaultPreveiw	=	content.Load<DiscTexture>( @"maps\thumbnails\default" );
@@ -135,7 +135,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 				var mapName				=	Path.GetFileNameWithoutExtension(fileName);
 				
-				var levelImage			=	new Frame( Frames, 0,0,0,0, mapName.ToUpperInvariant(), Color.Black );
+				var levelImage			=	new Frame( ui, 0,0,0,0, mapName.ToUpperInvariant(), Color.Black );
 
 				DiscTexture	mapPreview;
 				

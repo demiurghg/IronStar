@@ -76,7 +76,7 @@ namespace IronStar.UI.HUD
 				if (iconName!=value)
 				{
 					iconName = value; 
-					icon.Image = Frames.Game.Content.Load<DiscTexture>(iconName);
+					icon.Image = ui.Game.Content.Load<DiscTexture>(iconName);
 				}
 			}
 		}
@@ -93,7 +93,7 @@ namespace IronStar.UI.HUD
 		Frame		small;
 		BarFrame	bar;
 
-		public HudIndicator ( FrameProcessor ui, HudAlignment alignment, int x, int y, int value, int maxValue, string iconName, Color color ) : base( ui )
+		public HudIndicator ( UIState ui, HudAlignment alignment, int x, int y, int value, int maxValue, string iconName, Color color ) : base( ui )
 		{
 			this.alignment	=	alignment;
 			this.X			=	x;
@@ -167,7 +167,7 @@ namespace IronStar.UI.HUD
 			Color color;
 			HudIndicator indicator;
 
-			public BarFrame( FrameProcessor ui, HudIndicator indicator, int x, int y, int w, int h, Color color ) : base(ui, x, y, w, h, "", Color.Zero)
+			public BarFrame( UIState ui, HudIndicator indicator, int x, int y, int w, int h, Color color ) : base(ui, x, y, w, h, "", Color.Zero)
 			{
 				this.indicator	=	indicator;
 				this.color		=	color;

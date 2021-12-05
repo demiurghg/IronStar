@@ -17,14 +17,7 @@ namespace Fusion.Engine.Frames {
 	public partial class Frame {
 
 		public readonly	Game	Game;
-		readonly FrameProcessor	ui;
-
-		/// <summary>
-		/// Gets frame processor instance
-		/// </summary>
-		public  FrameProcessor Frames {
-			get { return ui; }
-		}
+		public readonly UIState	ui;
 
 		/// <summary>
 		/// Is frame visible. Default true.
@@ -230,7 +223,7 @@ namespace Fusion.Engine.Frames {
 		/// Constructor
 		/// </summary>
 		/// <param name="id"></param>
-		public Frame ( FrameProcessor ui )
+		public Frame ( UIState ui )
 		{
 			Game	=	ui.Game;
 			this.ui	=	ui;
@@ -249,7 +242,7 @@ namespace Fusion.Engine.Frames {
 		/// <param name="h"></param>
 		/// <param name="text"></param>
 		/// <param name="backColor"></param>
-		public Frame ( FrameProcessor ui, int x, int y, int w, int h, string text, SpriteFont font, Color backColor )
+		public Frame ( UIState ui, int x, int y, int w, int h, string text, SpriteFont font, Color backColor )
 		{
 			Game	=	ui.Game;
 			this.ui	=	ui;
@@ -277,7 +270,7 @@ namespace Fusion.Engine.Frames {
 		/// <param name="h"></param>
 		/// <param name="text"></param>
 		/// <param name="backColor"></param>
-		public Frame ( FrameProcessor ui, int x, int y, int w, int h, string text, Color backColor )
+		public Frame ( UIState ui, int x, int y, int w, int h, string text, Color backColor )
 		{
 			Game	=	ui.Game;
 			this.ui	=	ui;
@@ -295,15 +288,15 @@ namespace Fusion.Engine.Frames {
 		}
 
 
-		public static Frame CreateEmptyFrame ( FrameProcessor frames )
+		public static Frame CreateEmptyFrame ( UIState ui )
 		{
-			return new Frame(frames, 0,0,0,0,"",Color.Zero) { Ghost=true };
+			return new Frame(ui, 0,0,0,0,"",Color.Zero) { Ghost=true };
 		}
 
 		
-		public static Frame CreateBlackFrame ( FrameProcessor frames )
+		public static Frame CreateBlackFrame ( UIState ui )
 		{
-			return new Frame(frames, 0,0,0,0,"",Color.Black) { Ghost=true };
+			return new Frame(ui, 0,0,0,0,"",Color.Black) { Ghost=true };
 		}
 
 		
@@ -399,13 +392,14 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public virtual void Remove ( Frame frame )
 		{
-			if ( Frames.IsModalFrame(frame) ) {
+			if ( ui.IsModalFrame(frame) ) 
+			{
 				Log.Warning("Frames : can not close/remove modal frame");
 				return;
 			}
 
-			if ( children.Contains(frame) ) {
-
+			if ( children.Contains(frame) ) 
+			{
 				children.Remove( frame );
 				frame.parent	=	null;
 				layoutDirty = true;
@@ -421,7 +415,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public virtual void Close ()
 		{
-			if (!Frames.Stack.UnwindAllUIContextsUpToModalFrameInclusive(this))
+			if (!ui.Stack.UnwindAllUIContextsUpToModalFrameInclusive(this))
 			{
 				Parent?.Remove(this);
 			}
@@ -433,7 +427,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public void FocusTarget ()
 		{
-			Frames.Stack.SetTargetFrame( this );
+			ui.Stack.SetTargetFrame( this );
 		}
 
 
@@ -514,7 +508,7 @@ namespace Fusion.Engine.Frames {
 		/// <returns></returns>
 		Frame SearchForTabStop ( int dir )
 		{
-			var list	=	DFSList( Frames.RootFrame, f1 => f1.CanAcceptControl, f => f.TabStop );
+			var list	=	DFSList( ui.RootFrame, f1 => f1.CanAcceptControl, f => f.TabStop );
 			dir			=	MathUtil.Clamp( dir, -1, 1);
 
 			var index	=	list.IndexOf(this);
@@ -547,7 +541,7 @@ namespace Fusion.Engine.Frames {
 					return false;
 				}
 
-				if (frame.Parent==Frames.RootFrame) {
+				if (frame.Parent==ui.RootFrame) {
 					return true;
 				}
 

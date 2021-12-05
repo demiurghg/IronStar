@@ -51,8 +51,8 @@ namespace IronStar.Editor
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 
-			workspace		=	new Workspace( Game.Frames, this );
-			Game.Frames.ShowFullscreenFrame( workspace );
+			workspace		=	new Workspace( Game.OldFramesAccessor.Default, this );
+			Game.OldFramesAccessor.Default.ShowFullscreenFrame( workspace );
 
 			var upperShelf	=	workspace.UpperShelf;
 			var lowerShelf	=	workspace.LowerShelf;
@@ -358,7 +358,7 @@ namespace IronStar.Editor
 
 		Palette CreateEntityPalette ( Workspace workspace )
 		{
-			var palette = new Palette( workspace.Frames, "Create Node", 0,0, 150,450 );
+			var palette = new Palette( workspace.ui, "Create Node", 0,0, 150,450 );
 
 			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
 
@@ -397,7 +397,7 @@ namespace IronStar.Editor
 
 		Palette CreateComponentPalette( Workspace workspace )
 		{
-			var palette = new Palette( workspace.Frames, "Components", 0,0, 150,450 );
+			var palette = new Palette( workspace.ui, "Components", 0,0, 150,450 );
 
 			var componentList = Game.Components.OrderBy( c1 => c1.GetType().Name ).ToArray();
 

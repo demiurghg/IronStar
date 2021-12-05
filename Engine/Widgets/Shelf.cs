@@ -11,14 +11,15 @@ using Fusion.Engine.Graphics;
 
 namespace Fusion.Widgets {
 
-	public enum ShelfMode {
+	public enum ShelfMode 
+	{
 		Top,
 		Bottom,
 	}
 
 
-	public class Shelf : Panel {
-
+	public class Shelf : Panel 
+	{
 		readonly ShelfMode ShelfMode;
 		readonly List<Frame> itemsRight = new List<Frame>();
 		readonly List<Frame> itemsLeft  = new List<Frame>();
@@ -27,7 +28,7 @@ namespace Fusion.Widgets {
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public Shelf ( Frame parent, ShelfMode shelfMode ) : base(parent.Frames, 0,0,600,40)
+		public Shelf ( Frame parent, ShelfMode shelfMode ) : base(parent.ui, 0,0,600,40)
 		{
 			this.ShelfMode	=	shelfMode;
 			
@@ -95,9 +96,9 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddLButton ( string text, string image, Action action )
 		{
-			var button = new Button( Frames, text, 0,0,34,34, action);
+			var button = new Button( ui, text, 0,0,34,34, action);
 			if (image!=null) {
-				button.Image = Frames.Game.Content.Load<DiscTexture>(image);
+				button.Image = ui.Game.Content.Load<DiscTexture>(image);
 				button.Text  = "";
 				button.ImageColor = Color.Gray;
 			}
@@ -116,7 +117,7 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddLSplitter ( int width = 17 )
 		{
-			var splitter = new Frame( Frames, 0,0,width,34, "", Color.Zero);
+			var splitter = new Frame( ui, 0,0,width,34, "", Color.Zero);
 			itemsLeft.Add( splitter );
 			Add( splitter );
 		}
@@ -130,7 +131,7 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddRSplitter ( int width = 17 )
 		{
-			var splitter = new Frame( Frames, 0,0,width,34, "", Color.Zero);
+			var splitter = new Frame( ui, 0,0,width,34, "", Color.Zero);
 			itemsRight.Add( splitter );
 			Add( splitter );
 		}
@@ -144,7 +145,7 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddFatLButton ( string text, string image, Action action )
 		{
-			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
+			var button = new Button( ui, text, 0,0,34+34+1,34, action);
 			button.ShadowColor = ColorTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			button.Padding = 1;
@@ -162,7 +163,7 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddFatRButton ( string text, string image, Action action )
 		{
-			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
+			var button = new Button( ui, text, 0,0,34+34+1,34, action);
 			button.ShadowColor = ColorTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsRight.Add( button );
@@ -178,9 +179,9 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddRButton ( string text, string image, Action action )
 		{
-			var button = new Button( Frames, text, 0,0,34,34, action);
+			var button = new Button( ui, text, 0,0,34,34, action);
 			if (image!=null) {
-				button.Image = Frames.Game.Content.Load<DiscTexture>(image);
+				button.Image = ui.Game.Content.Load<DiscTexture>(image);
 				button.Text  = "";
 				button.ImageColor = Color.Gray;
 			}
@@ -199,7 +200,7 @@ namespace Fusion.Widgets {
 		/// <returns></returns>
 		public Frame AddRIndicator ( string text, int width )
 		{
-			var label = new Frame( Frames, 0, 0, width, 34, text, ColorTheme.BackgroundColorDark );
+			var label = new Frame( ui, 0, 0, width, 34, text, ColorTheme.BackgroundColorDark );
 			
 			label.ForeColor		= ColorTheme.TextColorNormal;
 			label.ShadowColor	= ColorTheme.ShadowColor;

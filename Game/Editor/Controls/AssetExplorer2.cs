@@ -30,7 +30,7 @@ namespace IronStar.Editor.Controls
 		string targetFileName;
 		object targetObject;
 		
-		public AssetExplorer2( Frame parent, string initialDir, Type[] types, int x, int y, int w, int h ) : base(parent.Frames, x,y,600,500)
+		public AssetExplorer2( Frame parent, string initialDir, Type[] types, int x, int y, int w, int h ) : base(parent.ui, x,y,600,500)
 		{
 			AllowDrag		=	true;
 			AllowResize		=	true;
@@ -52,33 +52,33 @@ namespace IronStar.Editor.Controls
 
 			this.types		=	types.Where( t => !t.IsAbstract ).ToArray();
 
-			fileList		=	new FileListBox( Frames, initialDir, "*.json" );
+			fileList		=	new FileListBox( ui, initialDir, "*.json" );
 			fileList.X		=	2;
 			fileList.Y		=	14;
 			fileList.Width	=	600/2 - 2;
 			fileList.Height	=	500-14-2-22;
 			fileList.DisplayMode	=	FileListBox.FileDisplayMode.ShortNoExt;
 
-			scrollBox			=	new ScrollBox( Frames, 0,0,0,0 );
+			scrollBox			=	new ScrollBox( ui, 0,0,0,0 );
 			scrollBox.X			=	600/2+1;
 			scrollBox.Y			=	14;
 			scrollBox.Width		=	600/2-3;
 			scrollBox.Height	=	500-14-2-22;
 
-			grid			=	new AEPropertyGrid( Frames );
+			grid			=	new AEPropertyGrid( ui );
 			grid.X			=	600/2+1;
 			grid.Y			=	14;
 			grid.Width		=	600/2-3;
 			grid.Height		=	500-14-2-22;
 
 
-			toolPanel = new Panel( Frames, 2,2,600-4,25 );
+			toolPanel = new Panel( ui, 2,2,600-4,25 );
 			toolPanel.Layout = new StackLayout() { StackingDirection = StackLayout.Direction.HorizontalStack, Interval = 1, EqualWidth=true };
 
-			labelName = new Label( Frames, 2,2,600-4,10, "..." );
+			labelName = new Label( ui, 2,2,600-4,10, "..." );
 			labelName.TextAlignment = Alignment.MiddleLeft;
 
-			labelStatus	= new Label( Frames, 0,0,0,0, "...");
+			labelStatus	= new Label( ui, 0,0,0,0, "...");
 			labelStatus.BackColor = ColorTheme.BackgroundColor;
 			labelStatus.TextAlignment = Alignment.MiddleLeft;
 
@@ -92,12 +92,12 @@ namespace IronStar.Editor.Controls
 			this.Add( scrollBox );
 			scrollBox.Add( grid );
 	
-			this.Add( new Button(Frames, "New Asset", 0,0,10,10, () => ShowNameDialog(parent, fileList) ) );
-			this.Add( new Button(Frames, "Delete"	, 0,0,10,10, () => DeleteSelected() ) );
-			this.Add( new Button(Frames, "Explore"	, 0,0,10,10, () => Misc.ShellExecute(fileList.CurrentDirectory) ) );
-			this.Add( new Button(Frames, "Refresh"	, 0,0,10,10, () => fileList.RefreshFileList() ) );
-			this.Add( new Button(Frames, "Build"	, 0,0,10,10, () => SaveTargetObjectAndBuild() ) );
-			this.Add( new Button(Frames, "Close"	, 0,0,10,10, () => this.Visible = false ) { RedButton = true } );
+			this.Add( new Button(ui, "New Asset", 0,0,10,10, () => ShowNameDialog(parent, fileList) ) );
+			this.Add( new Button(ui, "Delete"	, 0,0,10,10, () => DeleteSelected() ) );
+			this.Add( new Button(ui, "Explore"	, 0,0,10,10, () => Misc.ShellExecute(fileList.CurrentDirectory) ) );
+			this.Add( new Button(ui, "Refresh"	, 0,0,10,10, () => fileList.RefreshFileList() ) );
+			this.Add( new Button(ui, "Build"	, 0,0,10,10, () => SaveTargetObjectAndBuild() ) );
+			this.Add( new Button(ui, "Close"	, 0,0,10,10, () => this.Visible = false ) { RedButton = true } );
 
 			this.Add( labelStatus );
 
@@ -126,7 +126,7 @@ namespace IronStar.Editor.Controls
 		public void AddToolButton ( string name, Action action )
 		{
 			var w = name.Length * 8 + 16+2;
-			toolPanel.Add( new Button(Frames, name, 0,0, w,23, action ) );
+			toolPanel.Add( new Button(ui, name, 0,0, w,23, action ) );
 		}
 
 
@@ -257,11 +257,11 @@ namespace IronStar.Editor.Controls
 
 			if (item.IsDirectory) 
 			{
-				MessageBox.ShowError(Frames, "Could not delete directory", null);
+				MessageBox.ShowError(ui, "Could not delete directory", null);
 				return;
 			}
 
-			MessageBox.ShowQuestion(Frames, 
+			MessageBox.ShowQuestion(ui, 
 				string.Format("Delete file {0}?", item.RelativePath), 
 				()=> 
 				{
@@ -284,7 +284,7 @@ namespace IronStar.Editor.Controls
 
 			if (item.IsDirectory) 
 			{
-				MessageBox.ShowError(Frames, "Could not rename directory", null);
+				MessageBox.ShowError(ui, "Could not rename directory", null);
 				return;
 			}
 
@@ -300,7 +300,7 @@ namespace IronStar.Editor.Controls
 		/// <param name="fileListBox"></param>
 		void ShowNameDialog ( Frame owner, FileListBox fileListBox )
 		{
-			var frames	=	owner.Frames;
+			var frames	=	owner.ui;
 
 			var panel	=	new Panel( frames, 0,0, 300, 200 );
 			var layout	=	new PageLayout();
@@ -316,7 +316,7 @@ namespace IronStar.Editor.Controls
 			panel.Add( listBox );
 			panel.Add( textBox );
 
-			panel.Add( Frame.CreateEmptyFrame(owner.Frames) );
+			panel.Add( Frame.CreateEmptyFrame(owner.ui) );
 			panel.Add( new Button(frames, "OK",     0,0,0,0, 
 				() => 
 				{
@@ -324,13 +324,13 @@ namespace IronStar.Editor.Controls
 
 					if (type==null) 
 					{
-						MessageBox.ShowError(Frames, "Select asset type", null);
+						MessageBox.ShowError(ui, "Select asset type", null);
 						return;
 					}
 					
 					if (string.IsNullOrWhiteSpace(textBox.Text)) 
 					{
-						MessageBox.ShowError(Frames, "Provide asset name", null);
+						MessageBox.ShowError(ui, "Provide asset name", null);
 						return;
 					}
 					

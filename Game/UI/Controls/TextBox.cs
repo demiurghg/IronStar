@@ -29,7 +29,7 @@ namespace IronStar.UI.Controls {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public TextBox ( FrameProcessor fp, IValueBinding binding = null ) : base(fp)
+		public TextBox ( UIState ui, IValueBinding binding = null ) : base(ui)
 		{ 
 			this.binding		=	binding;
 
@@ -136,7 +136,7 @@ namespace IronStar.UI.Controls {
 
 		void UpdateTextValueFromBinding()
 		{
-			if (Frames.TargetFrame!=this) 
+			if (ui.TargetFrame!=this) 
 			{
 				Text = GetValue ();
 			}
@@ -151,7 +151,7 @@ namespace IronStar.UI.Controls {
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 
-			if (Frames.TargetFrame==this) 
+			if (ui.TargetFrame==this) 
 			{
 				var r		=	ComputeGlobalAlignedTextRectangle();
 
@@ -190,9 +190,9 @@ namespace IronStar.UI.Controls {
 
 			if (e.Key==Keys.Tab) {
 				if (e.Shift) {
-					Frames.TargetFrame = PrevTabStop();
+					ui.TargetFrame = PrevTabStop();
 				} else {
-					Frames.TargetFrame = NextTabStop();
+					ui.TargetFrame = NextTabStop();
 				}
 			}
 
@@ -298,8 +298,8 @@ namespace IronStar.UI.Controls {
 		void SetCursorFromMouse ()
 		{
 			var r = ComputeGlobalAlignedTextRectangle();
-			var x = Frames.MousePosition.X;
-			var y = Frames.MousePosition.Y;
+			var x = ui.MousePosition.X;
+			var y = ui.MousePosition.Y;
 			
 			var i = Font.FindIndexUnderCursor( Text, x - r.X );
 

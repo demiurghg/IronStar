@@ -11,15 +11,16 @@ using Fusion.Core.Input;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 
-
-namespace Fusion.Engine.Frames {
-
-	public class KeyboardProcessor {
+namespace Fusion.Engine.Frames
+{
+	public class KeyboardProcessor 
+	{
 
 		public readonly Game Game;
-		public FrameProcessor ui;
+		public UIState ui;
 
-		public IKeyboardHook KeyboardHook {
+		public IKeyboardHook KeyboardHook 
+		{
 			get; set;
 		}
 
@@ -58,23 +59,14 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		internal KeyboardProcessor ( Game game, FrameProcessor ui )
+		internal KeyboardProcessor ( Game game, UIState ui )
 		{
 			this.Game	=	game;
 			this.ui		=	ui;
-		}
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Initialize ()
-		{
 			Game.Keyboard.KeyDown+=Keyboard_KeyDown; ;
 			Game.Keyboard.KeyUp+=Keyboard_KeyUp; ;
 		}
-
 
 
 		/// <summary>

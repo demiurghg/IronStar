@@ -11,16 +11,16 @@ using Fusion.Core.Input;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 
-
-namespace Fusion.Engine.Frames {
-
-	class TouchProcessor {
-
+namespace Fusion.Engine.Frames 
+{
+	public class TouchProcessor 
+	{
 		public readonly Game Game;
-		public FrameProcessor ui;
+		public UIState ui;
 
 
-		class TouchRecord {
+		class TouchRecord 
+		{
 			public TouchRecord( int id, Point location, Frame frame ) 
 			{
 				Current		=	location;
@@ -42,19 +42,11 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public TouchProcessor ( Game game, FrameProcessor ui )
+		public TouchProcessor ( Game game, UIState ui )
 		{
 			this.Game	=	game;
 			this.ui		=	ui;
-		}
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Initialize ()
-		{
 			Game.Touch.PointerDown += Touch_PointerDown;
 			Game.Touch.PointerUp += Touch_PointerUp;
 			Game.Touch.PointerUpdate += Touch_PointerUpdate;

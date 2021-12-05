@@ -33,13 +33,13 @@ namespace IronStar.UI {
 		const string textFooterCenter	=	"vk.com/ironstar_game";
 		const string textFooterRight	=	"Demo Version\r\n" + textConfig;
 
-		public MainMenu( FrameProcessor frames ) : base(frames)
+		public MainMenu( UIState ui ) : base(ui)
 		{
 			Anchor	=	FrameAnchor.All;
 
 			BackColor	=	Color.Black;
 
-			Image		=	frames.Game.Content.Load<DiscTexture>(@"ui\background");
+			Image		=	ui.Game.Content.Load<DiscTexture>(@"ui\background");
 			ImageColor	=	new Color( 64,64,64,255 );
 			ImageMode	=	FrameImageMode.Stretched;
 
@@ -58,7 +58,7 @@ namespace IronStar.UI {
 			Add( CreateLogo() );
 
 			Add( CreateMenu() );
-			Add( CreateEmptyFrame(frames) );
+			Add( CreateEmptyFrame(ui) );
 
 			Add( CreateFooter( textFooterLeft,		Alignment.MiddleLeft ) );
 			Add( CreateFooter( textFooterCenter,	Alignment.MiddleCenter ) );
@@ -69,7 +69,7 @@ namespace IronStar.UI {
 
 		Frame CreateLogo ()
 		{
-			var frame = new Frame(Frames);
+			var frame = new Frame(ui);
 
 			frame.BackColor		=	MenuTheme.Transparent;
 			frame.Font			=	MenuTheme.BigFont;
@@ -87,7 +87,7 @@ namespace IronStar.UI {
 
 		Frame CreateMenu ()
 		{
-			var frame = new Frame(Frames);
+			var frame = new Frame(ui);
 
 			frame.BackColor		=	MenuTheme.Transparent;
 
@@ -100,11 +100,11 @@ namespace IronStar.UI {
 			int height			=	MenuTheme.ElementHeight;
 			int width			=	0;
 
-			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, SelectLevel ) );
-			frame.Add( new BigButton(Frames, "Map Editor"	, 0,0, width, height, EditLevel ) );
-			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, OptionsDialog ) );
-			frame.Add( new BigButton(Frames, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
-			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ExitDialog ) );
+			frame.Add( new BigButton(ui, "Game"			, 0,0, width, height, SelectLevel ) );
+			frame.Add( new BigButton(ui, "Map Editor"	, 0,0, width, height, EditLevel ) );
+			frame.Add( new BigButton(ui, "Options"		, 0,0, width, height, OptionsDialog ) );
+			frame.Add( new BigButton(ui, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
+			frame.Add( new BigButton(ui, "Exit"			, 0,0, width, height, ExitDialog ) );
 
 			return frame;
 		}
@@ -112,13 +112,13 @@ namespace IronStar.UI {
 
 		void SelectLevel ()
 		{
-			LevelBox.Show(Frames);
+			LevelBox.Show(ui);
 		}
 
 
 		void EditLevel ()
 		{
-			Frames.ShowDialogCentered( new RunEditorBox(Frames) );
+			ui.ShowDialogCentered( new RunEditorBox(ui) );
 		}
 
 
@@ -143,7 +143,7 @@ namespace IronStar.UI {
 
 		Frame CreateFooter (string text, Alignment alignment)
 		{
-			var frame = new Frame(Frames);
+			var frame = new Frame(ui);
 
 			frame.BackColor		=	MenuTheme.BackColor;
 			frame.BorderTop		=	1;

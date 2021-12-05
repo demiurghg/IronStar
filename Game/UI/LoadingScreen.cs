@@ -56,19 +56,19 @@ namespace IronStar.UI {
 		/// 
 		/// </summary>
 		/// <param name="frames"></param>
-		public LoadingScreen( FrameProcessor frames ) : base(frames)
+		public LoadingScreen( UIState ui ) : base(ui)
 		{
 			Anchor	=	FrameAnchor.All;
 
 			BackColor	=	Color.Black;
 
-			Image		=	frames.Game.Content.Load<DiscTexture>(@"ui\loading");
+			Image		=	ui.Game.Content.Load<DiscTexture>(@"ui\loading");
 			ImageColor	=	new Color( 64,64,64,255 );
 
 			X		=	0;
 			Y		=	0;
-			Width	=	frames.RootFrame.Width;
-			Height	=	frames.RootFrame.Height;
+			Width	=	ui.RootFrame.Width;
+			Height	=	ui.RootFrame.Height;
 			
 			Layout	=	new PageLayout()
 					.Margin( 0 )
@@ -81,7 +81,7 @@ namespace IronStar.UI {
 
 			//	header & footer
 
-			header1				=	new Frame( Frames, 0,0,0,0, "Loading", MenuTheme.BackColor ) {
+			header1				=	new Frame( ui, 0,0,0,0, "Loading", MenuTheme.BackColor ) {
 				ForeColor		=	MenuTheme.AccentColor,
 				Font			=	MenuTheme.HeaderFont,
 				TextAlignment	=	Alignment.BottomLeft,
@@ -91,7 +91,7 @@ namespace IronStar.UI {
 				PaddingRight	=	0,
 			};
 
-			header2				=	new Frame( Frames, 0,0,0,0, "147/5129", MenuTheme.BackColor ) {
+			header2				=	new Frame( ui, 0,0,0,0, "147/5129", MenuTheme.BackColor ) {
 				ForeColor		=	MenuTheme.AccentColor,
 				Font			=	MenuTheme.HeaderFont,
 				TextAlignment	=	Alignment.BottomRight,
@@ -101,7 +101,7 @@ namespace IronStar.UI {
 				PaddingRight	=	120,
 			};
 
-			footer				=	new Frame( Frames, 0,0,0,0, "Some cool quote", MenuTheme.BackColor ) {
+			footer				=	new Frame( ui, 0,0,0,0, "Some cool quote", MenuTheme.BackColor ) {
 				ForeColor		=	MenuTheme.TextColorNormal,
 				Font			=	MenuTheme.NormalFont,
 				TextAlignment	=	Alignment.TopRight,
@@ -115,7 +115,7 @@ namespace IronStar.UI {
 
 			Add( header1 );
 			Add( header2 );
-			Add( CreateEmptyFrame(frames) );
+			Add( CreateEmptyFrame(ui) );
 			Add( footer );
 
 			//	set quote :

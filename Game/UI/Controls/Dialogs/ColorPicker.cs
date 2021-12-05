@@ -16,14 +16,14 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		static ColorPicker colorPicker;
 
-		static public void ShowDialog ( FrameProcessor fp, int x, int y, Color initialColor, Action<Color> setColor )
+		static public void ShowDialog ( UIState ui, int x, int y, Color initialColor, Action<Color> setColor )
 		{
-			colorPicker = new ColorPicker( fp, initialColor, setColor );
+			colorPicker = new ColorPicker( ui, initialColor, setColor );
 
 			colorPicker.X	=	x;
 			colorPicker.Y	=	y;
 
-			fp.ShowDialog( colorPicker );
+			ui.ShowDialog( colorPicker );
 
 			colorPicker.ConstrainFrame(10);
 		}
@@ -101,7 +101,7 @@ namespace IronStar.UI.Controls.Dialogs {
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		private ColorPicker ( FrameProcessor fp, Color initColor, Action<Color> setColor ) : base(fp)
+		private ColorPicker ( UIState ui, Color initColor, Action<Color> setColor ) : base(ui)
 		{
 			this.initColor		=	initColor;
 			this.targetColor	=	initColor;
@@ -119,7 +119,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			this.Missclick +=ColorPicker_Missclick;
 
 
-			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, 
+			colorField	=	new ColorField( ui, 80+3, 2, 180+2, 100+2, 
 				() => colorHSV, 
 				(hsv) => { colorHSV = hsv; UpdateFromHSV(); }
 			);
@@ -138,7 +138,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 
 			sliderRed	=	new Slider( 
-				Frames, 
+				ui, 
 				()=>colorRGBA.Red * 255, 
 				(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
@@ -153,7 +153,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				};
 
 			sliderGreen	=	new Slider( 
-				Frames, 
+				ui, 
 				()=>colorRGBA.Green*255, 
 				(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
@@ -168,7 +168,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				};
 
 			sliderBlue	=	new Slider( 
-				Frames, 
+				ui, 
 				()=>colorRGBA.Blue*255, 
 				(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
@@ -183,7 +183,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				};
 
 			sliderAlpha	=	new Slider( 
-				Frames, 
+				ui, 
 				()=>colorRGBA.Alpha*255, 
 				(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
@@ -199,7 +199,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 
 			sliderTemp = new Slider(
-				Frames,
+				ui,
 				()=> temperature,
 				(t)=> { temperature = t; 
 						targetColor = Temperature.GetColor((int)t);  
@@ -220,7 +220,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				};
 
 			sliderSat = new Slider(
-				Frames,
+				ui,
 				()=> colorHSV.S * 100f,
 				(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); },
 				0, 100, 1, 1 ) {
@@ -258,7 +258,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		Frame AddColorButton ( int x, int y, int w, int h, string text, Color color, Action action )
 		{
-			var frame = new Frame( Frames, x,y,w,h, text, color );
+			var frame = new Frame( ui, x,y,w,h, text, color );
 			
 			frame.Border		=	1;
 			frame.BorderColor	=	Color.Black;
@@ -278,7 +278,7 @@ namespace IronStar.UI.Controls.Dialogs {
 		{
 			var rect	= MenuTheme.NormalFont.MeasureString( text );
 
-			var frame = new Frame( Frames, x,y, rect.Width, rect.Height, text, Color.Zero );
+			var frame = new Frame( ui, x,y, rect.Width, rect.Height, text, Color.Zero );
 			
 			frame.Font			=	MenuTheme.NormalFont;
 			frame.ForeColor		=	MenuTheme.TextColorNormal;

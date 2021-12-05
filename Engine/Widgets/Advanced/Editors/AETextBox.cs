@@ -38,7 +38,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.StatusChanged +=AESlider_StatusChanged;
 
-			textBox	=	new TextBox( Frames, binding ) 
+			textBox	=	new TextBox( ui, binding ) 
 			{ 
 				TextAlignment = Alignment.MiddleLeft, 
 			};
@@ -47,7 +47,7 @@ namespace Fusion.Widgets.Advanced
 
 			if (selectFunc!=null) 
 			{
-				buttonSelect =	new Button( Frames, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
+				buttonSelect =	new Button( ui, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
 				buttonSelect.BorderColor = Color.Zero;
 				Add( buttonSelect );
 			}

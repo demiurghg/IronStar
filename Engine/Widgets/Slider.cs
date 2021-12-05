@@ -51,7 +51,7 @@ namespace Fusion.Widgets
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public Slider ( FrameProcessor fp, IValueBinding binding, float min, float max, float snap, float psnap ) : base(fp)
+		public Slider ( UIState ui, IValueBinding binding, float min, float max, float snap, float psnap ) : base(ui)
 		{ 
 			this.binding		=	new NumericBindingWrapper( binding );
 
@@ -100,7 +100,7 @@ namespace Fusion.Widgets
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
 
-			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) 
+			if (ui.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) 
 			{
 				dragPrecise = true;
 			}

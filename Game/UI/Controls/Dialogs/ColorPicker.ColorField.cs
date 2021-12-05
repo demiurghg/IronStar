@@ -20,7 +20,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			Func<HSVColor> getFunc;
 			Action<HSVColor> setFunc;
 
-			public ColorField ( FrameProcessor fp, int x, int y, int w, int h, Func<HSVColor> getFunc, Action<HSVColor> setFunc ) : base(fp,x,y,w,h,"",Color.Gray)
+			public ColorField ( UIState ui, int x, int y, int w, int h, Func<HSVColor> getFunc, Action<HSVColor> setFunc ) : base(ui,x,y,w,h,"",Color.Gray)
 			{
 				Border			=	1;
 				BorderColor		=	Color.Black;
@@ -29,7 +29,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
 
-				this.Image		=	fp.Game.Content.Load<DiscTexture>(@"editor\hsvMap2");
+				this.Image		=	ui.Game.Content.Load<DiscTexture>(@"editor\hsvMap2");
 				this.ImageColor	=	new Color(255,255,255,255);
 				this.ImageMode	=	FrameImageMode.Stretched;
 

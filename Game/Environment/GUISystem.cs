@@ -37,10 +37,9 @@ namespace IronStar.Environment
 		protected override Gui Create( Entity entity, GUIComponent uic, Transform transform )
 		{
 			var game	=	entity.gs.Game;
-			var gui		=	new Gui();
-			var ui		=	game.GetService<FrameProcessor>();
+			var ui		=	new UIState( game.GetService<FrameProcessor>(), true, 640,480, new Color(40,40,40) );
+			var gui		=	new Gui( ui );
 
-			gui.Root	=	new Frame( ui, 0,0, 640,480, "", Color.Black );
 			gui.Root.Add( new Button( ui, "PUSH ME!", 10,10, 200,100, () => Log.Message("BUTTON PUSHED") ) );
 			gui.Root.Add( new Button( ui, "DONT PUSH ME!", 10,120, 200,100, () => Log.Message("") ) );
 			gui.Transform	=	transform.TransformMatrix;
@@ -60,7 +59,6 @@ namespace IronStar.Environment
 		protected override void Process( Entity entity, GameTime gameTime, Gui resource, GUIComponent uic, Transform transform )
 		{
 			var game	=	entity.gs.Game;
-			var ui		=	game.GetService<FrameProcessor>();
 
 			resource.Transform = transform.TransformMatrix;
 
@@ -109,7 +107,7 @@ namespace IronStar.Environment
 				}
 			}
 
-			ui.UpdateFrames( gameTime, resource.Root );
+			resource.UI.Update( gameTime );
 		}
 	}
 }

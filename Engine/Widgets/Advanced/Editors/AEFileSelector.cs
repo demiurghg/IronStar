@@ -69,11 +69,11 @@ namespace Fusion.Widgets.Advanced
 			Width			=	grid.Width;
 			Height			=	ComputeItemHeight() + 23;
 
-			fileSelector	=	new OpenFileDialog( Frames, dir, ext );
+			fileSelector	=	new OpenFileDialog( ui, dir, ext );
 
 			StatusChanged	+=	AEFileSelector_StatusChanged;
 
-			textBox	=	new TextBox( Frames, binding ) 
+			textBox	=	new TextBox( ui, binding ) 
 			{ 
 				TextAlignment = Alignment.MiddleLeft, 
 				Height = 23,
@@ -81,7 +81,7 @@ namespace Fusion.Widgets.Advanced
 
 			Add( textBox );
 
-			fileButton					=	new Button( Frames, this.binding.GetValue(), 0,0,0,0, OpenDialog); 
+			fileButton					=	new Button( ui, this.binding.GetValue(), 0,0,0,0, OpenDialog); 
 			fileButton.Text				=	"Select File"; 
 			fileButton.Border			=	1;
 			fileButton.TextAlignment	=	Alignment.MiddleCenter;
@@ -108,7 +108,7 @@ namespace Fusion.Widgets.Advanced
 				//}*/
 			}
 
-			fileSelector	=	new OpenFileDialog( Frames, dirName, ext );
+			fileSelector	=	new OpenFileDialog( ui, dirName, ext );
 			fileSelector.Show( (openFile) => binding.SetValue( openFile, ValueSetMode.Default ) );
 			//FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm, ValueSetMode.Default) );
 		}

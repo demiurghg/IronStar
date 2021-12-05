@@ -157,7 +157,7 @@ namespace Fusion.Widgets
 		/// Creates new instance of FileListBox
 		/// </summary>
 		/// <param name="fp"></param>
-		public FileListBox ( FrameProcessor fp, string initialDirectory, string searchPattern ) : base(fp, new object[0])
+		public FileListBox ( UIState ui, string initialDirectory, string searchPattern ) : base(ui, new object[0])
 		{
 			this.searchPatterns	=	searchPattern.Split(' ',',',';','|').OrderBy(n=>n).ToArray();
 			this.currentDir		=	Path.Combine( ContentDirectory, initialDirectory );

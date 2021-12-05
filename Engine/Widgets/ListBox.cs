@@ -79,7 +79,7 @@ namespace Fusion.Widgets
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public ListBox ( FrameProcessor fp, IEnumerable<object> items, Func<object,string> nameConverter = null ) : base(fp)
+		public ListBox ( UIState ui, IEnumerable<object> items, Func<object,string> nameConverter = null ) : base(ui)
 		{
 			Binding			=	new ListBinding( items );
 			NameProvider	=	new NameProvider( nameConverter );

@@ -21,7 +21,7 @@ namespace Fusion.Widgets.Dialogs
 	{
 		Action<string> openAction;
 
-		public OpenFileDialog( FrameProcessor fp, string defaultDir, string searchPattern ) : base(fp, defaultDir, searchPattern)
+		public OpenFileDialog( UIState ui, string defaultDir, string searchPattern ) : base(ui, defaultDir, searchPattern)
 		{
 		}
 
@@ -43,7 +43,7 @@ namespace Fusion.Widgets.Dialogs
 		{
 			if (!fileExists)
 			{
-				MessageBox.ShowError(Frames, string.Format("File {0} does not exists", relativePath), null );
+				MessageBox.ShowError(ui, string.Format("File {0} does not exists", relativePath), null );
 				return false;
 			}
 			else

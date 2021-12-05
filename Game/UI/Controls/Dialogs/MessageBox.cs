@@ -14,8 +14,8 @@ namespace IronStar.UI.Controls.Dialogs {
 		public event EventHandler Reject;
 
 
-		public MessageBox ( FrameProcessor frames, string headerText, string message, Color textColor, int numButtons, string acceptText="Accept", string rejectText="Reject" )
-		 : base(frames, 0, 0, 400, 240) 
+		public MessageBox ( UIState ui, string headerText, string message, Color textColor, int numButtons, string acceptText="Accept", string rejectText="Reject" )
+		 : base(ui, 0, 0, 400, 240) 
 		{
 			AllowDrag			=	true;
 
@@ -28,7 +28,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Header :
 
-			var header	=	new Frame( frames );
+			var header	=	new Frame( ui );
 
 			header.Font			=	MenuTheme.HeaderFont;
 			header.Text			=	headerText;
@@ -41,7 +41,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Message text :
 
-			var label	=	new Frame( frames );
+			var label	=	new Frame( ui );
 
 			label.Font			=	MenuTheme.NormalFont;
 			label.Text			=	message;
@@ -56,11 +56,11 @@ namespace IronStar.UI.Controls.Dialogs {
 			//	Buttons :
 
 			if (numButtons==2) {
-				var acceptBtn	=	new Button(frames, acceptText, 0,0,0,0, 
+				var acceptBtn	=	new Button(ui, acceptText, 0,0,0,0, 
 					() => Accept?.Invoke(this, EventArgs.Empty)
 				);
 
-				var rejectBtn	=	new Button(frames, rejectText, 0,0,0,0, 
+				var rejectBtn	=	new Button(ui, rejectText, 0,0,0,0, 
 					() => Reject?.Invoke(this, EventArgs.Empty)
 				);
 
@@ -68,7 +68,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				Add( rejectBtn );
 			}
 			if (numButtons==1) {
-				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
+				var acceptBtn		=	new Button(ui, acceptText, 0,0,0,0, 
 					() => Accept?.Invoke(this, EventArgs.Empty)
 				);
 				Add( acceptBtn );
@@ -78,28 +78,28 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		public static void ShowError ( Frame owner, string header, string message, Action accept )
 		{
-			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.ColorNegative, 1 );
-			var ctxt	=	owner.Frames.ShowDialogCentered( box );
-			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
-			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); };
+			var box		=	new MessageBox( owner.ui, header, message, MenuTheme.ColorNegative, 1 );
+			var ctxt	=	owner.ui.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); };
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject )
 		{
-			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2 );
-			var ctxt	=	owner.Frames.ShowDialogCentered( box );
-			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
-			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
+			var box		=	new MessageBox( owner.ui, header, message, MenuTheme.TextColorNormal, 2 );
+			var ctxt	=	owner.ui.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject, string acceptText, string rejectText )
 		{
-			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, acceptText, rejectText );
-			var ctxt	=	owner.Frames.ShowDialogCentered( box );
-			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
-			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
+			var box		=	new MessageBox( owner.ui, header, message, MenuTheme.TextColorNormal, 2, acceptText, rejectText );
+			var ctxt	=	owner.ui.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.ui.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
 		}
 	}
 }

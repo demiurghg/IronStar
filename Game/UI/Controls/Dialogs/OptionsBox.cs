@@ -17,12 +17,12 @@ namespace IronStar.UI.Controls.Dialogs
 		[Obsolete("Use FrameProcessor.ShowDialog")]
 		static public void ShowDialog ( Frame owner, object video, object audio, object gameplay, object controls )
 		{
-			var frames	=	owner.Frames;
-			var panel	=	new Panel( frames, 0, 0, 640, 560 );
-			var header	=	new Frame( frames );
+			var ui	=	owner.ui;
+			var panel	=	new Panel( ui, 0, 0, 640, 560 );
+			var header	=	new Frame( ui );
 
 			panel.AllowDrag			=	true;
-			panel.Image				=	frames.Game.Content.Load<DiscTexture>(@"ui\options");
+			panel.Image				=	ui.Game.Content.Load<DiscTexture>(@"ui\options");
 			panel.ImageColor		=	MenuTheme.ImageColor;
 			panel.ImageMode			=	FrameImageMode.Stretched;
 
@@ -40,19 +40,19 @@ namespace IronStar.UI.Controls.Dialogs
 			
 			//	Property grid :
 		
-			var grid			=	new PropertyGrid( owner.Frames );
+			var grid			=	new PropertyGrid( owner.ui );
 			grid.TargetObject	=	video;
 
 			//	Selector buttons :
 
-			var buttonVideo		=	new Button( owner.Frames, "VIDEO"	, 0,0,0,0, ()=> grid.TargetObject = video );
-			var buttonAudio		=	new Button( owner.Frames, "AUDIO"	, 0,0,0,0, ()=> grid.TargetObject = audio );
-			var buttonGameplay	=	new Button( owner.Frames, "GAMEPLAY", 0,0,0,0, ()=> grid.TargetObject = gameplay );
-			var buttonControls	=	new Button( owner.Frames, "CONTROLS", 0,0,0,0, ()=> grid.TargetObject = controls );
+			var buttonVideo		=	new Button( owner.ui, "VIDEO"	, 0,0,0,0, ()=> grid.TargetObject = video );
+			var buttonAudio		=	new Button( owner.ui, "AUDIO"	, 0,0,0,0, ()=> grid.TargetObject = audio );
+			var buttonGameplay	=	new Button( owner.ui, "GAMEPLAY", 0,0,0,0, ()=> grid.TargetObject = gameplay );
+			var buttonControls	=	new Button( owner.ui, "CONTROLS", 0,0,0,0, ()=> grid.TargetObject = controls );
 
 			//	Scrollbox for property grid :
 
-			var scrollBox				=	new ScrollBox( owner.Frames, 0,0,0,0 );
+			var scrollBox				=	new ScrollBox( owner.ui, 0,0,0,0 );
 			scrollBox.ScrollMarkerSize	=	MenuTheme.ScrollSize;
 			scrollBox.ScrollMarkerColor	=	MenuTheme.ScrollMarkerColor;
 			scrollBox.MarginTop			=	MenuTheme.Margin;
@@ -60,8 +60,8 @@ namespace IronStar.UI.Controls.Dialogs
 
 			//	OK/Cancel buttons :
 
-			var buttonOK		=	new Button( owner.Frames, "OK",		0,0,0,0, null );
-			var buttonCancel	=	new Button( owner.Frames, "Cancel", 0,0,0,0, null );
+			var buttonOK		=	new Button( owner.ui, "OK",		0,0,0,0, null );
+			var buttonCancel	=	new Button( owner.ui, "Cancel", 0,0,0,0, null );
 
 			//	Construct all :
 
@@ -80,10 +80,10 @@ namespace IronStar.UI.Controls.Dialogs
 
 			//	Settle option's box :
 
-			var ctxt = frames.ShowDialogCentered( panel );
+			var ctxt = ui.ShowDialogCentered( panel );
 
-			buttonOK.Click		+= (s,e) => { frames.Stack.PopUIContext( ref ctxt ); grid.CommitChanges(); };
-			buttonCancel.Click	+= (s,e) => { frames.Stack.PopUIContext( ref ctxt ); };
+			buttonOK.Click		+= (s,e) => { ui.Stack.PopUIContext( ref ctxt ); grid.CommitChanges(); };
+			buttonCancel.Click	+= (s,e) => { ui.Stack.PopUIContext( ref ctxt ); };
 		}
 	}
 }

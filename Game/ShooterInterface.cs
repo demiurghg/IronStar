@@ -24,10 +24,10 @@ using IronStar.UI.Controls;
 
 namespace IronStar {
 
-	class ShooterInterface : IUserInterface {
-
+	class ShooterInterface : IUserInterface 
+	{
 		readonly Game	Game;
-		FrameProcessor	frames;
+		UIState			ui;
 		MainMenu		mainMenu;
 		LoadingScreen	loadingScreen;
 		HudFrame		hudFrame;
@@ -40,15 +40,14 @@ namespace IronStar {
 			get { return hudFrame; }
 		}
 
-        /// <summary>
-        /// Creates instance of ShooterDemoUserInterface
-        /// </summary>
-        /// <param name="engine"></param>
-        public ShooterInterface ( Game game )
+		/// <summary>
+		/// Creates instance of ShooterDemoUserInterface
+		/// </summary>
+		/// <param name="engine"></param>
+		public ShooterInterface ( Game game )
 		{
 			this.Game	=	game;
-        }
-
+		}
 
 
 		/// <summary>
@@ -62,19 +61,18 @@ namespace IronStar {
 			Game.GetService<GameClient>().ClientStateChanged += GameClient_ClientStateChanged;
 			Game.GetService<Mission>().MissionStateChanged +=ShooterInterface_MissionStateChanged;
 
-			frames	=	Game.GetService<FrameProcessor>();
+			ui	=	Game.GetService<FrameProcessor>().Default;
 
-			MenuTheme.LoadContent( frames.Game.Content );
-			HudColors.LoadContent( frames.Game.Content );
+			MenuTheme.LoadContent( ui.Game.Content );
+			HudColors.LoadContent( ui.Game.Content );
 
-
-			mainMenu				=	new MainMenu( frames );
-			loadingScreen			=	new LoadingScreen( frames );
-			hudFrame				=	new HudFrame( frames );
-			pauseMenu				=	new PauseMenu( frames );
+			mainMenu		=	new MainMenu( ui );
+			loadingScreen	=	new LoadingScreen( ui );
+			hudFrame		=	new HudFrame( ui );
+			pauseMenu		=	new PauseMenu( ui );
 
 			//	push empty frame :
-			uiContext = frames.ShowFullscreenFrame( Frame.CreateBlackFrame(frames) );
+			uiContext = ui.ShowFullscreenFrame( Frame.CreateBlackFrame(ui) );
 		}
 
 
@@ -158,19 +156,19 @@ namespace IronStar {
 			switch (e.State) {
 				
 				case MissionState.StandBy:
-					frames.Stack.PopUIContext( ref uiContext );
-					uiContext = frames.ShowFullscreenFrame( mainMenu );
+					ui.Stack.PopUIContext( ref uiContext );
+					uiContext = ui.ShowFullscreenFrame( mainMenu );
 				break;
 
 				case MissionState.Loading:
-					frames.Stack.PopUIContext( ref uiContext );
-					uiContext = frames.ShowFullscreenFrame( loadingScreen );
+					ui.Stack.PopUIContext( ref uiContext );
+					uiContext = ui.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"LOADING";
 				break;
 
 				case MissionState.Waiting:
-					frames.Stack.PopUIContext( ref uiContext );
-					uiContext = frames.ShowFullscreenFrame( loadingScreen );
+					ui.Stack.PopUIContext( ref uiContext );
+					uiContext = ui.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"Press [ENTER] to continue... ";
 				break;
 
@@ -179,13 +177,13 @@ namespace IronStar {
 				break;
 
 				case MissionState.Active:
-					frames.Stack.PopUIContext( ref uiContext );
-					uiContext = frames.ShowFullscreenFrame( hudFrame );
+					ui.Stack.PopUIContext( ref uiContext );
+					uiContext = ui.ShowFullscreenFrame( hudFrame );
 				break;
 
 				case MissionState.Paused:
-					frames.Stack.PopUIContext( ref uiContext );
-					uiContext = frames.ShowDialogCentered( pauseMenu );
+					ui.Stack.PopUIContext( ref uiContext );
+					uiContext = ui.ShowDialogCentered( pauseMenu );
 				break;
 
 				case MissionState.Debriefing:

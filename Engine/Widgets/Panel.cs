@@ -21,7 +21,7 @@ namespace Fusion.Widgets {
 		}
 
 
-		public Panel ( FrameProcessor fp, int x, int y, int w, int h ) : base( fp )
+		public Panel ( UIState ui, int x, int y, int w, int h ) : base( ui )
 		{	
 			this.BackColor		=	ColorTheme.BackgroundColor;
 			this.BorderColor	=	ColorTheme.BorderColor;
@@ -65,8 +65,8 @@ namespace Fusion.Widgets {
 		{
 			if (AllowDrag || AllowResize) 
 			{
-				dragX		=	Frames.MousePosition.X;
-				dragY		=	Frames.MousePosition.Y;
+				dragX		=	ui.MousePosition.X;
+				dragY		=	ui.MousePosition.Y;
 				posX		=	X;
 				posY		=	Y;
 				width		=	Width;
@@ -95,8 +95,8 @@ namespace Fusion.Widgets {
 
 		private void Panel_MouseMove( object sender, MouseEventArgs e )
 		{
-			var mouseX = Frames.MousePosition.X;
-			var mouseY = Frames.MousePosition.Y;
+			var mouseX = ui.MousePosition.X;
+			var mouseY = ui.MousePosition.Y;
 
 			if (dragging) 
 			{

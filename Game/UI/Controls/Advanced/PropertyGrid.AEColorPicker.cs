@@ -36,7 +36,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				colorButton				=	new Frame( Frames );
+				colorButton				=	new Frame( ui );
 				colorButton.BackColor	=	Color.Black;
 
 				colorButton.Click +=ColorButton_Click;
@@ -52,7 +52,7 @@ namespace IronStar.UI.Controls.Advanced {
 				var button	=	(Frame)sender;
 				var rect	=	button.GlobalRectangle;
 
-				ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, getFunc(), setFunc );
+				ColorPicker.ShowDialog( ui, rect.X, rect.Y + rect.Height, getFunc(), setFunc );
 			}
 
 

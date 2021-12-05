@@ -59,17 +59,19 @@ namespace Fusion.Engine.Graphics {
 		public Texture	WhiteTexture { get { return whiteTexture; } }
 		public Texture	BlackTexture { get { return blackTexture; } }
 		public Texture	FlatNormalMap { get { return flatNormalMap; } }
+		public Texture	Conchars { get { return conchars; } }
 
 		public RenderTarget2D	PreviewTarget { get { return previewTarget; } }
 
 		public LightMapResources LightMapResources { get { return lightMapResources; } }
 		LightMapResources lightMapResources;
 
-		DynamicTexture grayTexture;
-		DynamicTexture whiteTexture;
-		DynamicTexture blackTexture;
-		DynamicTexture flatNormalMap;
-		RenderTarget2D previewTarget;
+		DynamicTexture	grayTexture;
+		DynamicTexture	whiteTexture;
+		DynamicTexture	blackTexture;
+		DynamicTexture	flatNormalMap;
+		UserTexture		conchars;
+		RenderTarget2D	previewTarget;
 
 		internal SpriteLayer	extentTest;
 
@@ -174,6 +176,10 @@ namespace Fusion.Engine.Graphics {
 			RegisterCommands();
 
 			//	create default textures :
+			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
+				conchars = UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
+			}
+
 			whiteTexture	=	new DynamicTexture( this, 4,4, typeof(Color), false, false );
 			whiteTexture.SetData( Enumerable.Range(0,16).Select( i => Color.White ).ToArray() );
 			
@@ -231,6 +237,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref whiteTexture );
 				SafeDispose( ref blackTexture );
 				SafeDispose( ref flatNormalMap );
+				SafeDispose( ref conchars );
 			}
 			base.Dispose( disposing );
 		}

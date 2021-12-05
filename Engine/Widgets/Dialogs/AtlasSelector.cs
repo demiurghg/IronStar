@@ -24,11 +24,11 @@ namespace Fusion.Widgets.Dialogs {
 		const int DialogWidth	= 640;
 		const int DialogHeight	= 480;
 
-		static public void ShowDialog ( FrameProcessor fp, string atlasName, string oldImageName, Action<string> setImageName )
+		static public void ShowDialog ( UIState ui, string atlasName, string oldImageName, Action<string> setImageName )
 		{
-			var atlasSelector	=	new AtlasSelectorFrame( fp, atlasName, oldImageName, setImageName );
+			var atlasSelector	=	new AtlasSelectorFrame( ui, atlasName, oldImageName, setImageName );
 
-			fp.ShowDialogCentered( atlasSelector );
+			ui.ShowDialogCentered( atlasSelector );
 		}
 
 
@@ -50,8 +50,8 @@ namespace Fusion.Widgets.Dialogs {
 			Frame		imageList;
 
 
-			public AtlasSelectorFrame ( FrameProcessor fp, string atlasName, string oldImageName, Action<string> setImageName ) 
-			: base ( fp, 0,0, DialogWidth, DialogHeight )
+			public AtlasSelectorFrame ( UIState ui, string atlasName, string oldImageName, Action<string> setImageName ) 
+			: base ( ui, 0,0, DialogWidth, DialogHeight )
 			{
 				this.oldImageName	=	oldImageName;
 				this.setImageName	=	setImageName;
@@ -69,21 +69,21 @@ namespace Fusion.Widgets.Dialogs {
 
 				Layout			=	pageLayout;
 
-				labelDir		=	new Label( fp, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
-				labelStatus		=	new Label( fp, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };
+				labelDir		=	new Label( ui, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
+				labelStatus		=	new Label( ui, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };
 
-				filterBox		=	new TextBox( fp, null ) { TextAlignment = Alignment.MiddleLeft };
+				filterBox		=	new TextBox( ui, null ) { TextAlignment = Alignment.MiddleLeft };
 				filterBox.Text	=	"";
 				filterBox.TypeWrite += FilterBox_TypeWrite;
 
-				scrollBox				=	new ScrollBox( fp, 2, 14, 640+4+4, 480+4 );
+				scrollBox				=	new ScrollBox( ui, 2, 14, 640+4+4, 480+4 );
 				scrollBox.Border		=	1;
 				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
 
-				buttonAccept	=	new Button( fp, "Accept",  0,0,0,0, ()=>Accept(null) );
-				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
-				buttonZoomIn	=	new Button( fp, "ZoomIn",  0,0,0,0, ()=>Zoom++ );
-				buttonZoomOut	=	new Button( fp, "ZoomOut", 0,0,0,0, ()=>Zoom-- );
+				buttonAccept	=	new Button( ui, "Accept",  0,0,0,0, ()=>Accept(null) );
+				buttonClose		=	new Button( ui, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
+				buttonZoomIn	=	new Button( ui, "ZoomIn",  0,0,0,0, ()=>Zoom++ );
+				buttonZoomOut	=	new Button( ui, "ZoomOut", 0,0,0,0, ()=>Zoom-- );
 
 				imageList		=	CreateImageList( atlasName );
 
@@ -157,9 +157,9 @@ namespace Fusion.Widgets.Dialogs {
 
 			Frame CreateImageList ( string atlasName )
 			{
-				var atlas	= Frames.Game.Content.Load<TextureAtlas>(atlasName);
+				var atlas	= ui.Game.Content.Load<TextureAtlas>(atlasName);
 
-				var panel		=	new Frame( Frames, 0,0, 0, 0, "", Color.Zero );
+				var panel		=	new Frame( ui, 0,0, 0, 0, "", Color.Zero );
 				galery			=	new GaleryLayout(128,128,0);
 				panel.Layout	=	galery;
 				panel.Tag		=	atlas;
@@ -169,7 +169,7 @@ namespace Fusion.Widgets.Dialogs {
 				for ( int i=0; i<names.Length; i++ ) 
 				{
 					var name	=	names[i];
-					var button	=	new AtlasButton( Frames, atlas, name, 32 );
+					var button	=	new AtlasButton( ui, atlas, name, 32 );
 					button.Text	=	name;
 
 					button.Click+= (s,e) => Accept(name);

@@ -53,20 +53,19 @@ namespace Fusion.Widgets.Advanced
 							.AddRow(17, 40, -1)
 							;
 
-
 			this.StatusChanged  +=	AEAtlasSelector_StatusChanged;
 
-			labelYaw			=	new Label( Frames, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
-			labelPitch			=	new Label( Frames, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
-			labelRoll			=	new Label( Frames, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
+			labelYaw			=	new Label( ui, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
+			labelPitch			=	new Label( ui, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
+			labelRoll			=	new Label( ui, 0,0,0,0, "") { TextAlignment = Alignment.MiddleRight, PaddingRight = 3 };
 
-			Add( new Button( Frames,   "0", 0,0,0,0, () => MakeAngle(  0) ) );
-			Add( new Button( Frames,  "90", 0,0,0,0, () => MakeAngle( 90) ) );
-			Add( new Button( Frames, "180", 0,0,0,0, () => MakeAngle(180) ) );
-			Add( new Button( Frames, "270", 0,0,0,0, () => MakeAngle(270) ) );
-			Add( new Label( Frames, 0,0,0,0, "Yaw") );		Add( labelYaw	 );
-			Add( new Label( Frames, 0,0,0,0, "Pitch") );	Add( labelPitch	 );
-			Add( new Label( Frames, 0,0,0,0, "Roll") );		Add( labelRoll	 );
+			Add( new Button( ui,   "0", 0,0,0,0, () => MakeAngle(  0) ) );
+			Add( new Button( ui,  "90", 0,0,0,0, () => MakeAngle( 90) ) );
+			Add( new Button( ui, "180", 0,0,0,0, () => MakeAngle(180) ) );
+			Add( new Button( ui, "270", 0,0,0,0, () => MakeAngle(270) ) );
+			Add( new Label( ui, 0,0,0,0, "Yaw") );		Add( labelYaw	 );
+			Add( new Label( ui, 0,0,0,0, "Pitch") );	Add( labelPitch	 );
+			Add( new Label( ui, 0,0,0,0, "Roll") );		Add( labelRoll	 );
 
 			Update(GameTime.Zero);
 		}

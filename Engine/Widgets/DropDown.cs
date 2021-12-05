@@ -33,7 +33,7 @@ namespace Fusion.Widgets {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public DropDown ( FrameProcessor fp, IEnumerable<string> values, IValueBinding binding ) : base(fp)
+		public DropDown ( UIState ui, IEnumerable<string> values, IValueBinding binding ) : base(ui)
 		{ 
 			this.binding		=	new StringBindingWrapper( binding );
 
@@ -96,7 +96,7 @@ namespace Fusion.Widgets {
 			var scrollBoxWidth	=	MinWidth;
 
 
-			var scrollBox		= new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
+			var scrollBox		= new ScrollBox( ui, 0,0, scrollBoxWidth, scrollBoxHeight ) {
 				BackColor		= ColorTheme.DropdownColor,
 				PaddingLeft		= 4,
 				PaddingRight	= 1,
@@ -107,7 +107,7 @@ namespace Fusion.Widgets {
 				ScrollMarkerColor	=	ColorTheme.AccentBorder
 			};
 
-			var dropDownList	= new Frame( Frames ) {
+			var dropDownList	= new Frame( ui ) {
 				BackColor		= ColorTheme.Transparent,
 			};
 			//var dropDownList	= new Frame( Frames ) {
@@ -125,7 +125,7 @@ namespace Fusion.Widgets {
 				var textSize		=	MeasureSingleLineString( Font, value );
 				var textWidth		=	textSize.Width;
 
-				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
+				var dropDownElement = new Frame( ui, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
 					dropDownElement.Font = ColorTheme.NormalFont;
 
 				dropDownElement.TextAlignment	= Alignment.MiddleLeft;
@@ -169,7 +169,7 @@ namespace Fusion.Widgets {
 
 			dropDownList.Width	=	Math.Max( this.Width, minDropDownWidth );
 
-			context = Frames.ShowDialog( dropDownList );
+			context = ui.ShowDialog( dropDownList );
 
 			dropDownList.ConstrainFrame(0);
 		}
@@ -178,7 +178,7 @@ namespace Fusion.Widgets {
 
 		void CloseDropDownList()
 		{
-			Frames.Stack.PopUIContext( ref context );
+			ui.Stack.PopUIContext( ref context );
 		}
 
 

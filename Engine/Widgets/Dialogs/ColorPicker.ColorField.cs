@@ -21,7 +21,7 @@ namespace Fusion.Widgets.Dialogs
 		{
 			ColorBindingWrapper binding;
 
-			public ColorField ( FrameProcessor fp, int x, int y, int w, int h, ColorBindingWrapper binding ) : base(fp,x,y,w,h,"",Color.Gray)
+			public ColorField ( UIState ui, int x, int y, int w, int h, ColorBindingWrapper binding ) : base(ui,x,y,w,h,"",Color.Gray)
 			{
 				this.binding	=	binding;
 
@@ -29,7 +29,7 @@ namespace Fusion.Widgets.Dialogs
 				BorderColor		=	Color.Black;
 				BackColor		=	Color.Black;
 
-				this.Image		=	fp.Game.Content.Load<DiscTexture>("hsvMap");
+				this.Image		=	ui.Game.Content.Load<DiscTexture>("hsvMap");
 				this.ImageColor	=	new Color(255,255,255,255);
 				this.ImageMode	=	FrameImageMode.Stretched;
 

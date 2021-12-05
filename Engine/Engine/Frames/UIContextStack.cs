@@ -16,22 +16,22 @@ using Fusion.Engine.Graphics;
 using System.IO;
 using Fusion.Core.Extensions;
 
-namespace Fusion.Engine.Frames {
-
-	public class UIContextStack {
-
-		readonly FrameProcessor frames;
+namespace Fusion.Engine.Frames 
+{
+	public class UIContextStack 
+	{
+		readonly UIState ui;
 		Stack<UIContext> modalFrames = new Stack<UIContext>();
 
 
 		/// <summary>
 		/// Creates instance of frame stack
 		/// </summary>
-		public UIContextStack( FrameProcessor frames )
+		public UIContextStack( UIState ui, Frame rootFrame )
 		{
-			this.frames	=	frames;
+			this.ui	=	ui;
 
-			modalFrames.Push( new UIContext( frames.RootFrame, frames.RootFrame ) );
+			modalFrames.Push( new UIContext( rootFrame, rootFrame ) );
 		}
 
 
@@ -79,7 +79,7 @@ namespace Fusion.Engine.Frames {
 				throw new InvalidOperationException("PushModalFrame : frame must not be added to another frame");
 			}
 
-			(ownerFrame ?? frames.RootFrame).Add( modalFrame );
+			(ownerFrame ?? ui.RootFrame).Add( modalFrame );
 
 			//	deactivate top context's frames :
 			CallContextDeactivation( modalFrames.Peek().Root );

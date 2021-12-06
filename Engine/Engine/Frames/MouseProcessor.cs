@@ -103,12 +103,11 @@ namespace Fusion.Engine.Frames
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="root"></param>
-		public void Update ( Point mousePoint, bool releaseTouch = false )
+		public void Update ( Point mousePoint )
 		{
 			ui.MousePosition	=	mousePoint;
 
@@ -120,7 +119,6 @@ namespace Fusion.Engine.Frames
 			//	
 			if ( mousePoint!=oldMousePoint ) 
 			{
-				
 				int dx =	mousePoint.X - oldMousePoint.X;
 				int dy =	mousePoint.Y - oldMousePoint.Y;
 
@@ -158,11 +156,48 @@ namespace Fusion.Engine.Frames
 		}
 
 
+		/*-----------------------------------------------------------------------------------------------
+		 *	Diegetic stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		bool prevEngaged = false;
+		int prevX = 0;
+		int prevY = 0;
+		bool prevButton = false;
+
+		public void FeedInGameMouseState( bool engaged, int x, int y, bool button )
+		{
+			bool disengaged = prevEngaged && !engaged;
+			var mousePoint  = new Point(x,y);
+
+			if (prevX!=x || prevY!=y)
+			{
+				Update( mousePoint );
+			}
+
+			if (!prevButton && button)
+			{
+				PushFrame( ui.GetHoveredFrame(mousePoint), Keys.LeftButton, mousePoint );
+			}
+
+			if ((prevButton && !button) || disengaged)
+			{
+				ReleaseFrame( ui.GetHoveredFrame(mousePoint), Keys.LeftButton, mousePoint );
+			}
+
+			prevEngaged	=	engaged;
+			prevButton	=	button;
+
+			if (engaged)
+			{
+				prevX	=	x;
+				prevY	=	y;
+			}
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Stuff :
-		 * 
 		-----------------------------------------------------------------------------------------*/
 
 		Stopwatch	doubleClickStopwatch	=	new Stopwatch();

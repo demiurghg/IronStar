@@ -11,6 +11,7 @@ using Fusion;
 using IronStar.Gameplay.Components;
 using IronStar.ECSPhysics;
 using System.Collections.Concurrent;
+using IronStar.Environment;
 
 namespace IronStar.Gameplay
 {
@@ -64,14 +65,30 @@ namespace IronStar.Gameplay
 		{ 
 		}
 
-		UserCommand mergedCommand = new UserCommand();
+
+		private bool IsPlayerEngagedWithInGameGUI(IGameState gs)
+		{
+			var guiSystem   =	gs.GetService<GUISystem>();
+
+			if (guiSystem!=null)
+			{
+				return guiSystem.Engaged;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
 			if (master)
 			{
 				var playerInput	=	gs.Game.GetService<PlayerInput>();
-				playerInput.UpdateUserInput( gameTime, ref userCommand );
+				var engaged		=	IsPlayerEngagedWithInGameGUI(gs);
+
+				playerInput.UpdateUserInput( gameTime, ref userCommand, engaged );
 
 				queue.Enqueue( userCommand );
 			}

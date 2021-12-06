@@ -62,6 +62,7 @@ namespace Fusion.Engine.Graphics.GUI
 		DiscTexture[]	noiseTexture;
 		DiscTexture		interlaceTexture;
 		DiscTexture		glitchTexture;
+		DiscTexture		cursorTexture;
 
 		uint frameCounter = 0;
 
@@ -96,6 +97,7 @@ namespace Fusion.Engine.Graphics.GUI
 			Game.Content.TryLoad(@"misc\rgb", out rgbTexture);
 			Game.Content.TryLoad(@"misc\interlace", out interlaceTexture);
 			Game.Content.TryLoad(@"misc\glitch", out glitchTexture );
+			Game.Content.TryLoad(@"misc\cursor", out cursorTexture );
 
 
 			noiseTexture	=	new DiscTexture[8];
@@ -166,6 +168,8 @@ namespace Fusion.Engine.Graphics.GUI
 
 						Frame.DrawNonRecursive( gui.Root, gameTime, spriteLayer );
 
+						DrawCursor( spriteLayer, gui.UI );
+
 						rs.SpriteEngine.DrawSpriteLayer( spriteLayer, spriteLayer.Projection, guiTarget.Surface, dstRect );
 					}
 
@@ -201,6 +205,14 @@ namespace Fusion.Engine.Graphics.GUI
 			}
 		}
 	
+
+		void DrawCursor( SpriteLayer spriteLayer, UIState ui )
+		{
+			if (ui.ShowCursor)
+			{
+				spriteLayer.Draw( cursorTexture, ui.MousePosition.X, ui.MousePosition.Y, cursorTexture.Width, cursorTexture.Height, Color.White );
+			}
+		}
 
 		
 		void UpdateGuiLodAndVisibility( Camera camera )

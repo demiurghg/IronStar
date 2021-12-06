@@ -20,10 +20,12 @@ namespace IronStar.Gameplay
 		ReloadWeapon	=	0x00000010,
 		ThrowGrenade	=	0x00000020,
 		MeleeAtack		=	0x00000040,
+		PushGUI			=	0x00000080,
 
 		Jump			=	0x00001000,
 		Crouch			=	0x00002000,
 					
+		HideWeapon		=	0x00100000,
 		Weapon1			=	0x00200000,
 		Weapon2			=	0x00400000,
 		Weapon3			=	0x00800000,

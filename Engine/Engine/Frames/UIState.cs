@@ -34,6 +34,8 @@ namespace Fusion.Engine.Frames
 
 		public Point MousePosition { get; internal set; }
 
+		public bool ShowCursor = false;
+
 		
 		public UIState( FrameProcessor frames, bool inGame, int w, int h, Color color )
 		{

@@ -83,6 +83,9 @@ namespace IronStar.Gameplay.Systems
 
 			SwitchWeapon( gs, userCmd, inventory, wpnState );
 
+			//	#TODO #WAEPON #GUI -- drop weapon a little while using In-Game GUIs.
+			//	#TODO #WAEPON #GUI -- drop weapon when close to wall, but immediatly aim on fire.
+			var hide	= userCmd.Action.HasFlag( UserAction.HideWeapon );
 			var attack	= userCmd.Action.HasFlag( UserAction.Attack ) && isAlive;
 			var weapon	= Arsenal.Get( wpnState.ActiveWeapon );
 

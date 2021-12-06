@@ -12,6 +12,7 @@ using IronStar.SFX2;
 using IronStar.Animation;
 using Fusion.Core.Extensions;
 using IronStar.Gameplay.Weaponry;
+using IronStar.Environment;
 
 namespace IronStar.Gameplay.Systems
 {

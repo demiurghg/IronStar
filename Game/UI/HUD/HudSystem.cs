@@ -11,6 +11,8 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using IronStar.ECS;
 using IronStar.ECSFactories;
+using IronStar.Environment;
+using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.Gameplay.Weaponry;
 
@@ -37,10 +39,21 @@ namespace IronStar.UI.HUD
 		{
 			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).LastOrDefault();
 
+			UpdateCrosshair( gs, gameTime, player );
 			UpdateHealthStatus( gs, gameTime, player );
 			UpdateWeaponStatus( gs, gameTime, player );
 		}
 
+
+		void UpdateCrosshair( IGameState gs, GameTime gameTime, Entity player )
+		{
+			var guiSystem	=	gs.GetService<GUISystem>();
+
+			if (guiSystem!=null)
+			{
+				hudFrame.CrossHair.Visible	=	!guiSystem.Engaged;
+			}
+		}
 
 
 		void UpdateWeaponStatus( IGameState gs, GameTime gameTime, Entity player )

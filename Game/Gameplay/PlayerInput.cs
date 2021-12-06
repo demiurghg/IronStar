@@ -73,7 +73,7 @@ namespace IronStar.Gameplay
 
 
 
-		public void UpdateUserInput ( GameTime gameTime, ref UserCommand userCommand )
+		public void UpdateUserInput ( GameTime gameTime, ref UserCommand userCommand, bool guiEnaged )
 		{
 			var console	=	Game.GetService<GameConsole>();
 			var frames	=	Game.GetService<FrameProcessor>();
@@ -101,7 +101,7 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.Action |= UserAction.Jump		;
 			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.Action |= UserAction.Crouch		;
 
-			if (Game.Keyboard.IsKeyDown( Attack			)) userCommand.Action |= UserAction.Attack;
+			if (Game.Keyboard.IsKeyDown( Attack			)) userCommand.Action |= guiEnaged ? UserAction.PushGUI : UserAction.Attack;
 			if (Game.Keyboard.IsKeyDown( Zoom			)) userCommand.Action |= UserAction.Zoom;
 			if (Game.Keyboard.IsKeyDown( Use			)) userCommand.Action |= UserAction.Use;
 
@@ -110,6 +110,7 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) userCommand.Action |= UserAction.MeleeAtack;
 			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) userCommand.Action |= UserAction.ReloadWeapon;
 
+			if (guiEnaged							 ) userCommand.Action |= UserAction.HideWeapon;
 			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Action |= UserAction.Weapon1;
 			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Action |= UserAction.Weapon2;
 			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Action |= UserAction.Weapon3;

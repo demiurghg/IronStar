@@ -61,7 +61,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0, float2 uv2 :
 	float2	glitchUV	=	float2( glitchX, glitchY ) * GUIData.Size.zw * 8;
 	float4 	glitch		=	GlitchTexture	.Sample( PointSampler, uv2 + glitchUV * 2 - 1 );
 	
-	float glitchLevel	=	0.f;
+	float glitchLevel	=	0.0f;
 
 	float4 color		=	float4(0,0,0,0);
 		   color.r 		=	GuiTexture  	.Sample( LinearSampler, uv + float2(glitch.x - glitch.y * 0.1, -glitch.z) * glitchLevel ).r;
@@ -69,23 +69,18 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0, float2 uv2 :
 		   color.b 		=	GuiTexture  	.Sample( LinearSampler, uv + float2(glitch.x - glitch.y * 0.3, -glitch.z) * glitchLevel ).b;
 	float4 noiseTex		=	NoiseTexture	.Sample( LinearSampler, uv2 * GUIData.Size.xy / 256.0f ) * 2 - 1;
 	float4 rgbTex		=	RgbTexture  	.Sample( LinearSampler, uv2 * GUIData.Size.xy / 1.0f );
-	float4 interlace	=	Interlace		.Sample( LinearSampler, uv2 * GUIData.Size.xy / 64.0f );
 	
-	
-	/*if ((GUIData.FrameCounter&1)==0) 
-	{
-		interlace = 1 - interlace;
-	}*/
+	color = pow(abs(color), 2.2f);
 	
 	//color.rgb *= glitch.a;
-	color.rgb += noiseTex.rgb * 0.01f;
-	color.rgb *= rgbTex.rgb * 2 * interlace * 2;
+	/*color.rgb += noiseTex.rgb * 0.01f;*/
+	
+	color.rgb *= rgbTex.rgb * 2;
 	
 	//color = glitch;
 	
-	color = pow(abs(color), 2.2f);
-	color.a = lerp(0.3f, 1.0f, color.a);
-	return float4(5*color.rgb,1);
+	//color.a = lerp(0.3f, 1.0f, color.a);
+	return float4(2*color.rgb,1);
 }
 
 

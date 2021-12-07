@@ -12,9 +12,8 @@ namespace IronStar.Environment
 	public enum DoorControlMode	: byte
 	{
 		Automatic,
-		//ExternalToggle,		//	toggle open/close on external signal
-		//ExternalLockUnlock,	//	toggle lock/unlock on external signal
-		//ExternalOpen,			//	open door on external signal
+		ExternalToggle,
+		//ExternalOpen,
 	}
 
 	public class DoorComponent : IComponent

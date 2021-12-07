@@ -12,6 +12,8 @@ namespace Fusion.Engine.Graphics.GUI
 {
 	public class Gui
 	{
+		const float ENGAGEMENT_DISTANCE = 10.0f;
+
 		public readonly UIState	UI;
 		public Matrix	Transform;
 
@@ -84,7 +86,7 @@ namespace Fusion.Engine.Graphics.GUI
 			x = Root.Width / 2;
 			y = Root.Height / 2;
 
-			var engageDistance	=	ComputeDiagonal() * 2.0f;
+			var engageDistance	=	ENGAGEMENT_DISTANCE;
 			var distance		=	Vector3.Distance( viewRay.Position, Transform.TranslationVector );
 
 			if (distance < engageDistance)

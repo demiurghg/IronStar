@@ -79,7 +79,7 @@ namespace Fusion.Engine.Graphics.GUI
 
 		public override void Initialize()
 		{
-			guiTarget	=	new RenderTarget2D(rs.Device, ColorFormat.Rgba8_sRGB, MaxGuiWidth, MaxGuiHeight );
+			guiTarget	=	new RenderTarget2D(rs.Device, ColorFormat.Rgba8_sRGB, MaxGuiWidth, MaxGuiHeight, true, false );
 			spriteLayer	=	new SpriteLayer( rs, SpriteCapasity );
 			cbGUIData	=	new ConstantBuffer( rs.Device, typeof(GUI_DATA) );
 
@@ -174,6 +174,8 @@ namespace Fusion.Engine.Graphics.GUI
 					}
 
 					device.ResetStates();
+
+					guiTarget.BuildMipmaps();
 
 					guiData.WorldTransform	=	gui.Transform;
 					guiData.Intensity		=	1.0f;

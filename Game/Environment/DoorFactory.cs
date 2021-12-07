@@ -26,6 +26,8 @@ namespace IronStar.Environment
 	class DoorFactory : EntityFactory
 	{
 		public Door Door { get; set; } = Door.LargeVertical;
+		public string TargetName { get; set; } = "";
+		public bool Toggle { get; set; }
 
 
 		public override void Construct( Entity e, IGameState gs )
@@ -36,11 +38,20 @@ namespace IronStar.Environment
 
 			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
 			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, 10, RMFlags.None ) );
-			e.AddComponent( new DoorComponent() );
 			e.AddComponent( new KinematicComponent( KinematicState.StoppedInitial) );
 			e.AddComponent( new BoneComponent() );
-			e.AddComponent( new DetectorComponent( bbox ) );
-			e.AddComponent( new TriggerComponent() );
+
+			if (string.IsNullOrWhiteSpace(TargetName))
+			{
+				e.AddComponent( new DoorComponent() { Mode = DoorControlMode.Automatic } );
+				e.AddComponent( new TriggerComponent() );
+				e.AddComponent( new DetectorComponent( bbox ) );
+			}
+			else
+			{
+				e.AddComponent( new DoorComponent() { Mode = DoorControlMode.ExternalToggle } );
+				e.AddComponent( new TriggerComponent() { Name = TargetName } );
+			}
 		}
 
 

@@ -15,12 +15,14 @@ namespace IronStar.Environment
 {
 	class GUIFactory : EntityFactory
 	{
+		public string Target { get; set; } = "";
+		public string Text { get; set; } = "";
+		public UIClass UIClass { get; set; } = UIClass.SimpleButton;
+
 		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
-			e.AddComponent( new GUIComponent(true) );
+			e.AddComponent( new GUIComponent(true,Text,Target) { UIClass = UIClass } );
 		}
 	}
-
-
 }

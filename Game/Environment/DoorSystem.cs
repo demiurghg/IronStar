@@ -21,7 +21,8 @@ namespace IronStar.Environment
 		{
 			switch (door.Mode)
 			{
-				case DoorControlMode.Automatic:	ProcessAutomaticDoor( entity, gameTime, door, trigger, kinematic );	break;
+				case DoorControlMode.Automatic:			ProcessAutomaticDoor( entity, gameTime, door, trigger, kinematic );	break;
+				case DoorControlMode.ExternalToggle:	ProcessToggleDoor( entity, gameTime, door, trigger, kinematic );	break;
 				default: throw new NotImplementedException("Door mode " + door.Mode.ToString() + " is not implemented.");
 			}
 		}
@@ -81,13 +82,27 @@ namespace IronStar.Environment
 					if (kinematic.State==KinematicState.StoppedInitial)
 					{
 						kinematic.State = KinematicState.PlayForward;
+						SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
 					}
 					if (kinematic.State==KinematicState.StoppedTerminal)
 					{
 						kinematic.State = KinematicState.PlayBackward;
+						SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
 					}
 				}
 			}
+
+			//	Assume, door may be stuck on the way back...
+			//	otherwice it can stuck in infinite loop on trying to get forward and backward...
+			//	- Quake 2 uses such approach
+			//	- Doom 2016 closes doors too fast, dynamic objects get stuck in doors
+			//	- Void Bastards just pushes everything out
+			if ((kinematic.Stuck) && kinematic.State==KinematicState.PlayBackward)
+			{
+				kinematic.State = KinematicState.PlayForward;
+				SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+			}
+
 		}
 	}
 }

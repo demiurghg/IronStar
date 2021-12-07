@@ -10,14 +10,13 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics.GUI;
 using IronStar.ECS;
 using IronStar.Gameplay.Systems;
-using Fusion.Widgets;
 using Fusion;
 using IronStar.Gameplay;
 using IronStar.AI;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
-using Fusion.Widgets.Dialogs;
-using Fusion.Widgets.Binding;
+using IronStar.UI.Controls;
+using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.Environment
 {
@@ -44,14 +43,17 @@ namespace IronStar.Environment
 		protected override Gui Create( Entity entity, GUIComponent uic, Transform transform )
 		{
 			var game	=	entity.gs.Game;
-			var ui		=	new UIState( game.GetService<FrameProcessor>(), true, 640,480, Color.Black );
-			var gui		=	new Gui( ui );
+			var fp		=	game.GetService<FrameProcessor>();
+			UIState ui;
 
-			gui.Root.Add( new Button( ui, "PUSH ME!", 10,10, 200,100, () => Log.Message("BUTTON PUSHED") ) );
-			gui.Root.Add( new Button( ui, "DONT PUSH ME!", 10,120, 200,100, () => Log.Message("----") ) );
+			switch (uic.UIClass)
+			{
+				case UIClass.SimpleButton:	ui	=	CreateSimpleButton( fp, uic.Text, entity, uic.Target );	break;
+				case UIClass.DoorButton:	ui	=	CreateDoorButton  ( fp, uic.Text, entity, uic.Target );	break;
+				default: throw new ArgumentException();
+			}
 
-			ColorPicker.ShowDialog( ui, 100, 100, new PropertyBinding( gui.Root, typeof(Frame).GetProperty("BackColor") ) );
-
+			var gui			=	new Gui( ui );
 			gui.Transform	=	transform.TransformMatrix;
 
 			entity.gs.Game.RenderSystem.GuiRenderer.Guis.Add( gui );
@@ -120,6 +122,106 @@ namespace IronStar.Environment
 			resource.Transform = transform.TransformMatrix;
 
 			resource.UI.Update( gameTime );
+		}
+
+
+		Entity GetTargetEntity(GameState gs, string targetName)
+		{
+			if (string.IsNullOrWhiteSpace(targetName))
+			{
+				return null;
+			}
+
+			foreach ( var e in gs.QueryEntities(new Aspect().Include<TriggerComponent>()) )
+			{
+				var trigger = e.GetComponent<TriggerComponent>();
+
+				if (!string.IsNullOrWhiteSpace(trigger.Name))
+				{
+					if (trigger.Name==targetName)
+					{
+						return e;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Presets :
+		-----------------------------------------------------------------------------------------*/
+
+		UIState CreateSimpleButton( FrameProcessor fp, string text, Entity entity, string target )
+		{
+			var ui = new UIState( fp, true, 128,128, Color.Black );
+
+			ui.RootFrame.Add( new Button( ui, text, 8,8,112,112, ()=> triggerSystem.Trigger(target,entity,entity) ) );
+
+			return ui;
+		}
+
+
+		UIState CreateDoorButton( FrameProcessor fp, string text, Entity entity, string target )
+		{
+			var ui = new UIState( fp, true, 128,128, Color.Black );
+			var targetEntity = GetTargetEntity( entity.gs, target );
+			
+			ui.RootFrame.Padding = 4;
+			ui.RootFrame.Layout	=	new PageLayout()
+						.Margin(4)
+						.AddRow(-1,-1)
+						.AddRow(70,-1)
+						.AddRow(-1,-1)
+						;
+
+			var label1	=	new Label(ui,0,0,0,0,text) { TextAlignment = Alignment.MiddleCenter };
+			var button	=	new Button(ui,"OPEN",0,0,0,0, ()=> triggerSystem.Trigger(target,entity,entity) );
+			var status	=	new Label(ui,0,0,0,0,"STATUS")  { TextAlignment = Alignment.MiddleCenter };
+
+			button.Font =	MenuTheme.HeaderFont;
+			status.Font =	MenuTheme.SmallFont;
+
+			ui.RootFrame.Add( label1 );
+			ui.RootFrame.Add( button );
+			ui.RootFrame.Add( status );
+
+			ui.RootFrame.Tick += (s,e) =>
+			{
+				var door		= targetEntity?.GetComponent<DoorComponent>();
+				var kinematic	= targetEntity?.GetComponent<KinematicComponent>();
+
+				if (kinematic!=null && door!=null)
+				{
+					switch (kinematic.State)
+					{
+						case KinematicState.StoppedInitial: 
+							status.Text = "CLOSED"; 
+							button.Text = "OPEN";
+							break;
+						case KinematicState.StoppedTerminal: 
+							status.Text = "OPEN"; 
+							button.Text = "CLOSE";
+							break;
+						case KinematicState.PlayForward: 
+							status.Text = "OPENING"; 
+							button.Text = "WAIT";
+							break;
+						case KinematicState.PlayBackward: 
+							status.Text = "CLOSING"; 
+							button.Text = "WAIT";
+							break;
+					}
+				}
+				else
+				{
+					status.Text = "UNKNOWN"; 
+					button.Text = "DOOR\r\nOFFLINE";
+					button.BackColor = Color.DarkRed;
+				}
+			};
+
+			return ui;
 		}
 	}
 }

@@ -62,11 +62,15 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0, float2 uv2 :
 	float4 	glitch		=	GlitchTexture	.Sample( PointSampler, uv2 + glitchUV * 2 - 1 );
 	
 	float glitchLevel	=	0.0f;
+	
+	float w,h;
+	GuiTexture.GetDimensions(w,h);
+	float2 offset = float2(0.5f/w, 0.5f/h);
 
 	float4 color		=	float4(0,0,0,0);
-		   color.r 		=	GuiTexture  	.Sample( LinearSampler, uv + float2(glitch.x - glitch.y * 0.1, -glitch.z) * glitchLevel ).r;
-		   color.g 		=	GuiTexture  	.Sample( LinearSampler, uv + float2(glitch.x - glitch.y * 0.2, -glitch.z) * glitchLevel ).g;
-		   color.b 		=	GuiTexture  	.Sample( LinearSampler, uv + float2(glitch.x - glitch.y * 0.3, -glitch.z) * glitchLevel ).b;
+		   color.r 		=	GuiTexture  	.Sample( LinearSampler, uv + offset + float2(glitch.x - glitch.y * 0.1, -glitch.z) * glitchLevel ).r;
+		   color.g 		=	GuiTexture  	.Sample( LinearSampler, uv + offset + float2(glitch.x - glitch.y * 0.2, -glitch.z) * glitchLevel ).g;
+		   color.b 		=	GuiTexture  	.Sample( LinearSampler, uv + offset + float2(glitch.x - glitch.y * 0.3, -glitch.z) * glitchLevel ).b;
 	float4 noiseTex		=	NoiseTexture	.Sample( LinearSampler, uv2 * GUIData.Size.xy / 256.0f ) * 2 - 1;
 	float4 rgbTex		=	RgbTexture  	.Sample( LinearSampler, uv2 * GUIData.Size.xy / 1.0f );
 	

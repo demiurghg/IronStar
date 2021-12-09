@@ -126,6 +126,25 @@ namespace IronStar.ECS
 			return (IComponent)MemberwiseClone();
 		}
 
+
+		Vector3 Vector3SafeLerp( Vector3 a, Vector3 b, float factor )
+		{
+			return Vector3.Lerp( a, b, factor );
+
+			const float eps = 1 / 512.0f;
+			if (   MathUtil.WithinEpsilon( a.X, b.X, eps )
+				&& MathUtil.WithinEpsilon( a.Y, b.Y, eps )
+				&& MathUtil.WithinEpsilon( a.Z, b.Z, eps ) )
+			{
+				return b;
+			}
+			else
+			{
+				return Vector3.Lerp( a, b, factor );
+			}
+		}
+
+
 		public IComponent Interpolate( IComponent previous, float dt, float factor )
 		{
 			var prev	=	(Transform)previous;
@@ -139,7 +158,7 @@ namespace IronStar.ECS
 
 			if (prev!=null)
 			{
-				p	= Vector3	.Lerp ( prev.Position,	Position,	factor );
+				p	= Vector3SafeLerp ( prev.Position,	Position,	factor );
 				r	= Quaternion.Slerp( prev.Rotation,	Rotation,	factor );
 				s	= MathUtil	.Lerp ( prev.Scaling,	Scaling,	factor );
 			}

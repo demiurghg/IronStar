@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
@@ -77,35 +78,49 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		
 		public void SortLightProbes ()
 		{
-			envLights.Sort( delegate( LightProbe a, LightProbe b ) {
+			//	sort by image index to make lightprobe order persistent between frame :
+			envLights.InsertionSort( (a,b) => a.ImageIndex - b.ImageIndex );
 
-				var sizeA	=	a.BoundingBox.Size();
-				var sizeB	=	b.BoundingBox.Size();
-				var volA	=	a.BoundingBox.Size().X * a.BoundingBox.Size().Y * a.BoundingBox.Size().Z;
-				var volB	=	b.BoundingBox.Size().X * b.BoundingBox.Size().Y * b.BoundingBox.Size().Z;
-				
-				if ( sizeA.X > sizeB.X && sizeA.Y > sizeB.Y && sizeA.Z > sizeB.Z ) 
-				{
-					return -1;
-				} 
-				else if ( sizeA.X < sizeB.X && sizeA.Y < sizeB.Y && sizeA.Z < sizeB.Z ) 
-				{
-					return  1;
-				} 
-				else if ( volA > volB ) 
-				{
-					return -1;
-				}
-				else if ( volA < volB ) 
-				{
-					return 1;
-				}
-				else {
-					return a.ImageIndex-b.ImageIndex;
-				}
-			});
+			//	sort by size/volume/index criteria :
+			envLights.InsertionSort( LightProbeComparison );
+		}
+
+
+		int LightProbeComparison( LightProbe a, LightProbe b )
+		{ 
+			var sizeA	=	a.BoundingBox.Size();
+			var sizeB	=	b.BoundingBox.Size();
+			var volA	=	a.BoundingBox.Size().X * a.BoundingBox.Size().Y * a.BoundingBox.Size().Z;
+			var volB	=	b.BoundingBox.Size().X * b.BoundingBox.Size().Y * b.BoundingBox.Size().Z;
+
+			//	epsilon required to handle subtle motion 
+			//	when bounding box size varies due to rounding error
+			var eps		=	1 / 512.0f;
+			var eps3	=	1 / 8.0f;
+
+			if ( (sizeA.X > sizeB.X + eps) && (sizeA.Y > sizeB.Y + eps) && (sizeA.Z > sizeB.Z + eps) ) 
+			{
+				return -1;
+			} 
+			else if ( ( sizeA.X < sizeB.X - eps ) && ( sizeA.Y < sizeB.Y - eps ) && ( sizeA.Z < sizeB.Z - eps ) ) 
+			{
+				return 1;
+			} 
+			else if ( volA > volB + eps3 ) 
+			{
+				return -1;
+			}
+			else if ( volA < volB - eps3 ) 
+			{
+				return 1;
+			}
+			else {
+				return a.ImageIndex - b.ImageIndex;
+			}
 		}
 	}
 }

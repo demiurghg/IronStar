@@ -177,6 +177,7 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Core\Extensions\SortingExtensions.cs" />
     <Compile Include="Core\Logging\ColoredConsoleTarget.cs" />
     <Compile Include="Core\Logging\ILogOutput.cs" />
     <Compile Include="Core\Logging\LogSeverity.cs" />

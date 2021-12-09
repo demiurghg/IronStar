@@ -10,9 +10,10 @@ using Fusion.Engine.Common;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;
 
-
-namespace Fusion.Engine.Graphics {
-	public class DebugModel : DisposableBase {
+namespace Fusion.Engine.Graphics 
+{
+	public class DebugModel : DisposableBase 
+	{
 
 		IndexBuffer ib;
 		VertexBuffer vb;
@@ -62,11 +63,10 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
-			if (disposing) {
-
+			if (disposing) 
+			{
 				SafeDispose( ref ib );
 				SafeDispose( ref vb );
-
 			}
 
 			base.Dispose( disposing );

@@ -75,6 +75,7 @@ namespace IronStar.Editor.Systems
 			foreach (var m in models)
 			{
 				dr.DebugModels.Remove( m );
+				m?.Dispose();
 			}
 		}
 

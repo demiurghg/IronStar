@@ -71,11 +71,18 @@ namespace Fusion.Engine.Audio
         }
 
 
+		public override string ToString()
+		{
+			string path;
+			desc.getPath( out path );
+			return string.Format("[{0}]", path);
+		}
+
 
 		/// <summary>
 		/// 
 		/// </summary>
-        public void Release()
+		public void Release()
         {
 			FmodExt.ERRCHECK( inst.release() );
 		}

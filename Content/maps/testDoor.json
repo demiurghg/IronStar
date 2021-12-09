@@ -229,7 +229,7 @@
         "$id": "17",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 32.0,
-        "Transition": 16.0,
+        "Transition": 15.0,
         "Name": "MapLightProbeSphere12",
         "Visible": true,
         "Frozen": false,
@@ -416,30 +416,15 @@
         "Name": "MapModel1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "96, 8, -16",
+        "Translation": "96, 8, -63.5",
         "Scaling": "1, 1, 1",
         "Rotation": "0, -0.8660254, 0, -0.49999994",
         "TranslateX": 96.0,
         "TranslateY": 8.0,
-        "TranslateZ": -16.0
+        "TranslateZ": -63.5
       },
       {
         "$id": "31",
-        "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "Radius": 30.0,
-        "Transition": 16.0,
-        "Name": "MapLightProbeSphere16",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "96, 8, -16",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": 96.0,
-        "TranslateY": 8.0,
-        "TranslateZ": -16.0
-      },
-      {
-        "$id": "32",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 8.0,
         "Transition": 4.0,
@@ -454,7 +439,7 @@
         "TranslateZ": -15.0
       },
       {
-        "$id": "33",
+        "$id": "32",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
@@ -481,26 +466,7 @@
         "TranslateZ": 30.0
       },
       {
-        "$id": "34",
-        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "Width": 16.0,
-        "Height": 16.0,
-        "Depth": 56.0,
-        "ShellWidth": 8.0,
-        "ShellHeight": 8.0,
-        "ShellDepth": 8.0,
-        "Name": "MapLightProbeBox0",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "96, 8, 30",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": 96.0,
-        "TranslateY": 8.0,
-        "TranslateZ": 30.0
-      },
-      {
-        "$id": "35",
+        "$id": "33",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 255, 255, 255",
         "LightIntensity": 6.0,
@@ -526,7 +492,7 @@
         "TranslateZ": -3.651081
       },
       {
-        "$id": "36",
+        "$id": "34",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 255, 255, 255",
         "LightIntensity": 8.0,
@@ -552,7 +518,7 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "37",
+        "$id": "35",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 255, 255, 255",
         "LightIntensity": 6.0,
@@ -578,7 +544,7 @@
         "TranslateZ": -3.651081
       },
       {
-        "$id": "38",
+        "$id": "36",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 255, 255, 255",
         "LightIntensity": 5.0,
@@ -604,11 +570,11 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "39",
+        "$id": "37",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "40",
+          "$id": "38",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "Position": "80, 10, -2.06005049",
           "Rotation": "-0.4622278, 0.3302915, -0.190694213, 0.8005551",
@@ -627,11 +593,11 @@
         "TranslateZ": -2.06005049
       },
       {
-        "$id": "41",
+        "$id": "39",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "42",
+          "$id": "40",
           "$type": "IronStar.ECSFactories.WeaponMachinegunFactory, IronStar",
           "Position": "-3, 0.257247955, -14.6850014",
           "Rotation": "0.04790786, -0.0481217653, -0.705325544, 0.7056239",
@@ -650,11 +616,11 @@
         "TranslateZ": -14.6850014
       },
       {
-        "$id": "43",
+        "$id": "41",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "44",
+          "$id": "42",
           "$type": "IronStar.ECSFactories.WeaponMachinegun2Factory, IronStar",
           "Position": "0, 1, -14",
           "Rotation": "0, 0, 0, 1",
@@ -673,11 +639,11 @@
         "TranslateZ": -14.0
       },
       {
-        "$id": "45",
+        "$id": "43",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "46",
+          "$id": "44",
           "$type": "IronStar.ECSFactories.WeaponPlasmagunFactory, IronStar",
           "Position": "-8, 1, -15",
           "Rotation": "0, 0, 0, 1",
@@ -696,11 +662,11 @@
         "TranslateZ": -15.0
       },
       {
-        "$id": "47",
+        "$id": "45",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "48",
+          "$id": "46",
           "$type": "IronStar.ECSFactories.WeaponRocketLauncherFactory, IronStar",
           "Position": "-12, 6, -13",
           "Rotation": "0, 0, 0.6087614, 0.7933533",
@@ -719,7 +685,7 @@
         "TranslateZ": -13.0
       },
       {
-        "$id": "49",
+        "$id": "47",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\test\\testCube.fbx",
         "Scale": 1.0,
@@ -746,11 +712,11 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "50",
+        "$id": "48",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "51",
+          "$id": "49",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "Position": "34, 2.50102329, -51",
           "Rotation": "1.79645525E-07, -0.130476967, 1.45293555E-07, 0.9914513",
@@ -769,11 +735,11 @@
         "TranslateZ": -51.0
       },
       {
-        "$id": "52",
+        "$id": "50",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "53",
+          "$id": "51",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeSplit",
           "TargetName": "",
@@ -795,11 +761,11 @@
         "TranslateZ": -47.0
       },
       {
-        "$id": "54",
+        "$id": "52",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "55",
+          "$id": "53",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeVertical",
           "TargetName": "",
@@ -821,11 +787,11 @@
         "TranslateZ": -32.0
       },
       {
-        "$id": "56",
+        "$id": "54",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "57",
+          "$id": "55",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeVerticalSplit",
           "TargetName": "DOOR1",
@@ -847,11 +813,11 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "58",
+        "$id": "56",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "59",
+          "$id": "57",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeFourway",
           "TargetName": "",
@@ -873,11 +839,11 @@
         "TranslateZ": 1.0
       },
       {
-        "$id": "60",
+        "$id": "58",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "61",
+          "$id": "59",
           "$type": "IronStar.ECSFactories.DetectorVoumeFactory, IronStar",
           "Width": 8.0,
           "Height": 8.0,
@@ -899,11 +865,11 @@
         "TranslateZ": 32.0
       },
       {
-        "$id": "62",
+        "$id": "60",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "63",
+          "$id": "61",
           "$type": "IronStar.Environment.ElevatorFactory, IronStar",
           "Elevator": "side",
           "Position": "24, 0, 28",
@@ -923,11 +889,11 @@
         "TranslateZ": 28.0
       },
       {
-        "$id": "64",
+        "$id": "62",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "65",
+          "$id": "63",
           "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Target": "",
           "Text": "",
@@ -949,11 +915,11 @@
         "TranslateZ": -8.0
       },
       {
-        "$id": "66",
+        "$id": "64",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "67",
+          "$id": "65",
           "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Target": "",
           "Text": "",
@@ -975,11 +941,11 @@
         "TranslateZ": 4.0
       },
       {
-        "$id": "68",
+        "$id": "66",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "69",
+          "$id": "67",
           "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Target": "DOOR1",
           "Text": "SECURITY",
@@ -1001,11 +967,11 @@
         "TranslateZ": -12.0
       },
       {
-        "$id": "70",
+        "$id": "68",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "71",
+          "$id": "69",
           "$type": "IronStar.Environment.GUIFactory, IronStar",
           "Target": "",
           "Text": "",
@@ -1029,7 +995,7 @@
     ]
   },
   "RadiositySettings": {
-    "$id": "72",
+    "$id": "70",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

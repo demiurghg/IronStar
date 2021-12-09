@@ -33,7 +33,7 @@ namespace IronStar.SFX
 			{
 				var ss		=	gs.Game.GetService<SoundSystem>();
 
-				sound.Timeout	=	ss.GetEventLength(sound.SoundName);
+				sound.Timeout	=	ss.GetEventLength(sound.SoundName) + 0.5f;
 			}
 			else
 			{

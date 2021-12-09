@@ -52,7 +52,7 @@ namespace IronStar.Environment
 				if (elevator.Timer<TimeSpan.Zero)
 				{
 					kinematic.State = KinematicState.PlayForward;
-					SoundPlayback.PlaySound( entity.gs, entity, ELEVATOR_SOUND );
+					SoundPlayback.PlaySound( entity, ELEVATOR_SOUND );
 					elevator.Engaged = false;
 				}
 			}
@@ -65,7 +65,7 @@ namespace IronStar.Environment
 				{
 					elevator.Timer = TimeSpan.Zero;
 					kinematic.State = KinematicState.PlayBackward;
-					SoundPlayback.PlaySound( entity.gs, entity, ELEVATOR_SOUND );
+					SoundPlayback.PlaySound( entity, ELEVATOR_SOUND );
 				}
 			}
 		}

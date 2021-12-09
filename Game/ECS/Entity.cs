@@ -9,6 +9,14 @@ using IronStar.Gameplay.Components;
 
 namespace IronStar.ECS
 {
+	public enum Domain : byte
+	{
+		Simulation, 
+		Presentation,
+		Server,
+		Client,
+	}
+
 	public sealed class Entity
 	{
 		public readonly GameState gs;
@@ -22,6 +30,10 @@ namespace IronStar.ECS
 		internal long SystemMapping;
 
 		public object Tag;
+
+		public Domain Domain { get { return (Domain)(ID >> 28); } }
+
+		public bool IsLocalDomain { get { return gs.Domain==Domain; } }
 
 		/// <summary>
 		/// Entity constructor

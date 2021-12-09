@@ -72,13 +72,15 @@ namespace IronStar.ECS
 		readonly Thread mainThread;
 		readonly bool debug;
 		bool terminate = false;
+		public readonly Domain Domain;
 
 		/// <summary>
 		/// Game state constructor
 		/// </summary>
 		/// <param name="game"></param>
-		public GameState( Game game, ContentManager content, bool debug )
+		public GameState( Domain domain, Game game, ContentManager content, bool debug )
 		{
+			this.Domain		=	domain;
 			this.debug		=	debug;
 			mainThread		=	Thread.CurrentThread;
 
@@ -210,6 +212,11 @@ namespace IronStar.ECS
 			}
 		}
 
+		bool IsLocalID( uint id )
+		{
+			return (id>>28)==(uint)Domain;
+		}
+
 		/*-----------------------------------------------------------------------------------------------
 		 *	Debug stuff :
 		-----------------------------------------------------------------------------------------------*/
@@ -316,7 +323,7 @@ namespace IronStar.ECS
 
 		public Entity Spawn(IFactory factory)
 		{
-			var entity = new Entity( this, IdGenerator.Next() );
+			var entity = new Entity( this, IdGenerator.Next(Domain) );
 
 			spawnQueue3.Enqueue( new SpawnData(entity, factory) );
 
@@ -355,7 +362,7 @@ namespace IronStar.ECS
 		/// </summary>
 		public void KillAll()
 		{
-			killAllBarrierId = IdGenerator.Next();
+			killAllBarrierId = IdGenerator.Next(Domain);
 		}
 
 
@@ -517,15 +524,17 @@ namespace IronStar.ECS
 					newIDs.Add( reader.ReadUInt32() );
 				}
 
-				//	add new / remove old entities :
+				//	remove old entities from other domains,
+				//	keep local entities alive:
 				foreach ( var e in entities )
 				{
-					if (!newIDs.Contains(e.Value.ID))
+					if (!e.Value.IsLocalDomain && !newIDs.Contains(e.Value.ID))
 					{
 						e.Value.Kill();
 					}
 				}
 
+				//	add new entities :
 				foreach ( var id in newIDs )
 				{
 					if (!entities.Contains(id))
@@ -569,8 +578,11 @@ namespace IronStar.ECS
 
 					foreach ( var id in toRemove )
 					{
-						//	#TODO #ECS -- check component removal
-						RemoveEntityComponent( entities[id], type );
+						if (!IsLocalID(id))
+						{
+							//	#TODO #ECS -- check component removal
+							RemoveEntityComponent( entities[id], type );
+						}
 					}
 				}
 			}

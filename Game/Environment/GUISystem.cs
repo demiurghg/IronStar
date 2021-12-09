@@ -17,15 +17,21 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.UI.Controls;
 using Fusion.Engine.Frames.Layouts;
+using IronStar.SFX;
 
 namespace IronStar.Environment
 {
 	public class GUISystem : ProcessingSystem<Gui, GUIComponent, Transform>
 	{
+		const string SOUND_IN		=	@"gui/ingame/gui_in";
+		const string SOUND_OUT		=	@"gui/ingame/gui_out";
+		const string SOUND_CLICK	=	@"gui/ingame/gui_click";
+
 		readonly TriggerSystem triggerSystem;
 		readonly Aspect playerAspect = new Aspect().Include<PlayerComponent,UserCommandComponent,Transform>();
 		readonly PlayerInputSystem 	playerInput;
 		readonly CameraSystem cameraSystem;
+		readonly HashSet<Gui> activeGuis = new HashSet<Gui>(10);
 
 		/// <summary>
 		/// Indicates that player is interacting with in-game GUI
@@ -96,11 +102,21 @@ namespace IronStar.Environment
 								Engaged |= true;
 								resource.UI.Mouse.FeedInGameMouseState( true, x,y, button );
 								resource.UI.ShowCursor = true;
+
+								if (activeGuis.Add(resource)) 
+								{
+									SoundPlayback.PlaySound( entity, SOUND_IN );
+								}
 							}
 							else
 							{
 								resource.UI.Mouse.FeedInGameMouseState( false, 0,0, false );
 								resource.UI.ShowCursor = false;
+
+								if (activeGuis.Remove(resource)) 
+								{
+									SoundPlayback.PlaySound( entity, SOUND_OUT );
+								}
 							}
 						}
 					}
@@ -176,8 +192,13 @@ namespace IronStar.Environment
 						;
 
 			var label1	=	new Label(ui,0,0,0,0,text) { TextAlignment = Alignment.MiddleCenter };
-			var button	=	new Button(ui,"OPEN",0,0,0,0, ()=> triggerSystem.Trigger(target,entity,entity) );
 			var status	=	new Label(ui,0,0,0,0,"STATUS")  { TextAlignment = Alignment.MiddleCenter };
+			
+			var button	=	new Button(ui,"OPEN",0,0,0,0, ()=> 
+			{ 
+				SoundPlayback.PlaySound( entity, SOUND_CLICK ); 
+				triggerSystem.Trigger(target,entity,entity);
+			});
 
 			button.Font =	MenuTheme.HeaderFont;
 			status.Font =	MenuTheme.SmallFont;

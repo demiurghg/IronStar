@@ -77,8 +77,8 @@ namespace IronStar
 			const bool	mt	=	true;
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, false);
-			var gs2			=	new GameState(game, content, true );
+			var gs			=	new GameState(Domain.Simulation,	game, content, false);
+			var gs2			=	new GameState(Domain.Presentation,	game, content, true );
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;

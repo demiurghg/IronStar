@@ -225,15 +225,18 @@ namespace IronStar.SFX
 
 			var attached	=	entity.ContainsComponent<AttachmentComponent>();
 
-			Log.Debug("Create FX: {0}, {1}", fx.FXName, entity);
+			//Log.Debug("Create FX: {0}, {1}", fx.FXName, entity);
 
 			return RunFX( fxEvent, fx.Looped, attached ); 
 		}
 
+
 		protected override void Destroy( ECS.Entity entity, FXInstance fxInstance )
 		{
+			//Log.Debug("Destroy FX: {0}", entity);
 			fxInstance?.Kill();
 		}
+
 
 		public override void Update( IGameState gs, GameTime gameTime )
 		{
@@ -242,31 +245,21 @@ namespace IronStar.SFX
 			UpdateInternal( gameTime );
 		}
 
+
 		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
 			if ( fxInstance!=null )
 			{
-				//Log.Debug("{0} {1}", fx.FXName, t.Position.Z );
-
 				fxInstance.fxEvent.Origin	=	t.Position;
 				fxInstance.fxEvent.Rotation	=	t.Rotation;
 				fxInstance.fxEvent.Scale	=	t.Scaling;
 				fxInstance.fxEvent.Velocity	=	t.LinearVelocity;
 
-				if ( fxInstance.IsExhausted )
+				if ( fxInstance.IsExhausted && entity.IsLocalDomain )
 				{
+					entity.Kill();
 				}
 			}
-			else
-			{
-				//	trails creates null FX-instances, 
-				//	so just delete entity:
-				entity.gs.Kill( entity );
-			}
-		
-
-			//	#TODO #FX -- kill exhausted FXs
-			//fxInstance.Update( gameTime.ElapsedSec ); 
 		}
 	}
 }

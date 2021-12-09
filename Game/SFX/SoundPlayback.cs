@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
 using Fusion.Core;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
@@ -20,6 +21,7 @@ namespace IronStar.SFX
 
 		protected override SoundEventInstance Create( Entity entity, SoundComponent sound, Transform transform )
 		{
+			Log.Debug("Play Sound : {0} {1}", sound.SoundName, sound.Looped ? "Looped" : "Once" );
 			var soundEventInstance = fxplayback.CreateSoundEventInstance( sound.SoundName );
 
 			if (soundEventInstance!=null)
@@ -33,19 +35,31 @@ namespace IronStar.SFX
 
 		protected override void Destroy( Entity entity, SoundEventInstance resource )
 		{
+			Log.Debug("Stop Sound : {0}", resource.ToString() );
 			resource?.Stop(false);
 		}
 
 		protected override void Process( Entity entity, GameTime gameTime, SoundEventInstance resource, SoundComponent sound, Transform transform )
 		{
 			resource?.Set3DParameters( transform.Position, transform.LinearVelocity );
+
+			if (entity.IsLocalDomain && !sound.Looped && resource.IsStopped)
+			{
+				entity.Kill();
+			}
 		}
 
 
-		public static void PlaySound( GameState gs, Entity entity, string soundPath )
+		public static void PlaySound( Entity entity, string soundPath )
 		{
-			var t = entity.GetComponent<Transform>();
-			gs.Spawn( new SoundEntityFactory( soundPath, t.Position, t.LinearVelocity, entity ) );
+			if (entity!=null)
+			{
+				var transform = entity.GetComponent<Transform>();
+				if (transform!=null)
+				{
+					entity.gs.Spawn( new SoundEntityFactory( soundPath, transform.Position, transform.LinearVelocity, entity ) );
+				}
+			}
 		}
 	}
 }

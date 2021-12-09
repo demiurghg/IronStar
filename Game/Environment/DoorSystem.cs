@@ -41,7 +41,7 @@ namespace IronStar.Environment
 				if (!external && kinematic.State==KinematicState.StoppedInitial)
 				{
 					kinematic.State =	KinematicState.PlayForward;
-					SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+					SoundPlayback.PlaySound( entity, DOOR_SOUND );
 				}
 			}
 
@@ -53,7 +53,7 @@ namespace IronStar.Environment
 			if ((kinematic.Stuck || activatorDetected) && kinematic.State==KinematicState.PlayBackward)
 			{
 				kinematic.State = KinematicState.PlayForward;
-				SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+				SoundPlayback.PlaySound( entity, DOOR_SOUND );
 			}
 
 			if (kinematic.State==KinematicState.StoppedTerminal && !activatorDetected)
@@ -64,7 +64,7 @@ namespace IronStar.Environment
 				{
 					door.Timer = TimeSpan.Zero;
 					kinematic.State = KinematicState.PlayBackward;
-					SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+					SoundPlayback.PlaySound( entity, DOOR_SOUND );
 				}
 			}
 		}
@@ -82,12 +82,12 @@ namespace IronStar.Environment
 					if (kinematic.State==KinematicState.StoppedInitial)
 					{
 						kinematic.State = KinematicState.PlayForward;
-						SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+						SoundPlayback.PlaySound( entity, DOOR_SOUND );
 					}
 					if (kinematic.State==KinematicState.StoppedTerminal)
 					{
 						kinematic.State = KinematicState.PlayBackward;
-						SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+						SoundPlayback.PlaySound( entity, DOOR_SOUND );
 					}
 				}
 			}
@@ -100,7 +100,7 @@ namespace IronStar.Environment
 			if ((kinematic.Stuck) && kinematic.State==KinematicState.PlayBackward)
 			{
 				kinematic.State = KinematicState.PlayForward;
-				SoundPlayback.PlaySound( entity.gs, entity, DOOR_SOUND );
+				SoundPlayback.PlaySound( entity, DOOR_SOUND );
 			}
 
 		}

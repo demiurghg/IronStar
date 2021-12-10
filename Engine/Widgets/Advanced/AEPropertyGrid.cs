@@ -51,17 +51,22 @@ namespace Fusion.Widgets.Advanced
 		}
 
 
+		/// <summary>
+		/// PropertyChangedEventArgs supports two level nesting level without information loss about parent object.
+		/// </summary>
 		public class PropertyChangedEventArgs : EventArgs 
 		{
-			public PropertyChangedEventArgs(object target, PropertyInfo property, ValueSetMode setMode, object value)
+			public PropertyChangedEventArgs(object target, PropertyInfo property, PropertyInfo parentProperty, ValueSetMode setMode, object value)
 			{
 				TargetObject = target;
 				Property = property;
+				ParentProperty = parentProperty;
 				SetMode = setMode;
 				Value = value;
 			}
 			public readonly object TargetObject;
 			public readonly PropertyInfo Property;
+			public readonly PropertyInfo ParentProperty;
 			public readonly ValueSetMode SetMode;
 			public readonly object Value;
 		}
@@ -98,7 +103,7 @@ namespace Fusion.Widgets.Advanced
 				{
 					targetObject = value;
 					Clear();
-					FeedObject(targetObject, 0, null);
+					FeedObject(targetObject, 0, null, null);
 				}
 			}
 		}
@@ -141,7 +146,7 @@ namespace Fusion.Widgets.Advanced
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedObject ( object obj, int nestingLevel, string subcat )
+		void FeedObject ( object obj, int nestingLevel, PropertyInfo parentProperty, string subcat )
 		{
 			if (obj==null) 
 			{
@@ -152,11 +157,13 @@ namespace Fusion.Widgets.Advanced
 
 			foreach ( var pi in obj.GetType().GetProperties() ) 
 			{
-				if (!pi.CanWrite || !pi.CanRead) {
+				if (!pi.CanWrite || !pi.CanRead) 
+				{
 					continue;
 				}
 
-				if (pi.HasAttribute<AEIgnoreAttribute>()) {
+				if (pi.HasAttribute<AEIgnoreAttribute>()) 
+				{
 					continue;
 				}
 
@@ -170,9 +177,10 @@ namespace Fusion.Widgets.Advanced
 
 				EditorCreator creator;
 				var useDefaultEditor = true;
+				var pp = parentProperty;
 				var binding = new PropertyBinding( obj, pi, 
-					(o,p,m,v)=>this.PropertyValueChanging?.Invoke(this, new PropertyChangedEventArgs(o,p,m,v)),
-					(o,p,m,v)=>this.PropertyValueChanged?.Invoke(this, new PropertyChangedEventArgs(o,p,m,v))
+					(o,p,m,v)=>this.PropertyValueChanging?.Invoke(this, new PropertyChangedEventArgs(o,p,pp,m,v)),
+					(o,p,m,v)=>this.PropertyValueChanged?.Invoke(this, new PropertyChangedEventArgs(o,p,pp,m,v))
 				);
 
 				//	try custom editor first :
@@ -204,12 +212,13 @@ namespace Fusion.Widgets.Advanced
 					}
 				}
 
-				if (pi.PropertyType.IsClass) {
-					
-					if (pi.HasAttribute<AEExpandableAttribute>()) {
+				if (pi.PropertyType.IsClass) 
+				{
+					if (pi.HasAttribute<AEExpandableAttribute>()) 
+					{
 						var type	=	pi.PropertyType;
 						var value	=	pi.GetValue(obj);
-						FeedObject( value, nestingLevel+1, category + "/" + pi.Name );
+						FeedObject( value, nestingLevel+1, pi, category + "/" + pi.Name );
 					}
 				}
 			}

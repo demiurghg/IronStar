@@ -455,11 +455,11 @@ namespace IronStar.Editor
 			switch ( e.SetMode )
 			{
 				case ValueSetMode.Default:
-					Game.Invoker.Execute( new SetCommand(this, e.Property, e.Value) );
+					Game.Invoker.Execute( new SetCommand(this, e.ParentProperty, e.Property, e.Value) );
 					break;
 
 				case ValueSetMode.InteractiveInitiate:
-					setPropertyCommand = new SetCommand(this, e.Property, e.Value);
+					setPropertyCommand = new SetCommand(this, e.ParentProperty, e.Property, e.Value);
 					break;
 
 				case ValueSetMode.InteractiveUpdate:

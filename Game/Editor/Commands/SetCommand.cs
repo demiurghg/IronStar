@@ -10,6 +10,10 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.Editor.Commands
 {
+	/// <summary>
+	/// Sets and rollback value for multiple selected map nodes.
+	/// Support one nesting level: i.e. map node and first level nesting objects
+	/// </summary>
 	public class SetCommand : BaseCommand, IUndoable
 	{
 		class RollbackInfo
@@ -19,19 +23,33 @@ namespace IronStar.Editor.Commands
 		}
 		
 		readonly PropertyInfo property;
+		readonly PropertyInfo parentProperty;
 		readonly RollbackInfo[] rollbackInfo;
 		public object Value;
 		
-		public SetCommand( MapEditor editor, PropertyInfo property, object value ) : base(editor)
+		public SetCommand( MapEditor editor, PropertyInfo parentProperty, PropertyInfo property, object value ) : base(editor)
 		{
 			this.property		=	property;
+			this.parentProperty	=	parentProperty;
 			this.Value			=	value;
 			this.rollbackInfo	=	editor
 								.Selection
 								.Where(	obj0 => obj0 is MapNode )
-								.Where( obj1 => property.DeclaringType.IsAssignableFrom( obj1.GetType() ) )
-								.Select( obj2 => new RollbackInfo { Node = obj2, Value = property.GetValue(obj2) } )
+								.Where( obj1 => (parentProperty??property).DeclaringType.IsAssignableFrom( obj1.GetType() ) )
+								.Select( obj2 => new RollbackInfo { Node = obj2, Value = GetValue(obj2) } )
 								.ToArray();
+		}
+
+
+		object GetValue(object node)
+		{
+			return property.GetValue( parentProperty?.GetValue(node) ?? node );
+		}
+
+
+		void SetValue(object node, object value)
+		{
+			property.SetValue( parentProperty?.GetValue(node) ?? node, value );
 		}
 
 
@@ -39,7 +57,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				property.SetValue( ri.Node, Value );
+				SetValue(ri.Node, Value);
 				ri.Node.ResetNodeECS(gs);
 			}
 			return null;
@@ -50,7 +68,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				property.SetValue( ri.Node, ri.Value );
+				SetValue(ri.Node, ri.Value);
 				ri.Node.ResetNodeECS(gs);
 			}
 			RestoreSelection();

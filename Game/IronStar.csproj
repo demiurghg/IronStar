@@ -155,6 +155,9 @@
     <Compile Include="ECSPhysics\PhysicsCore.Queries.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\ProjectileController.cs" />
+    <Compile Include="ECSPhysics\RagdollComponent.cs" />
+    <Compile Include="ECSPhysics\RagdollController.cs" />
+    <Compile Include="ECSPhysics\RagdollSystem.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
@@ -443,7 +446,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ECSPhysics\Kinematics\" />
     <Folder Include="Monsters\Components\" />
   </ItemGroup>
   <ItemGroup>

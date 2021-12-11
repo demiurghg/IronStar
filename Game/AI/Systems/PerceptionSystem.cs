@@ -31,7 +31,6 @@ namespace IronStar.AI
 
 		Entity player = null;
 		bool playerAlive = false;
-		DebugRender dr;
 
 		public Entity Player
 		{
@@ -59,6 +58,8 @@ namespace IronStar.AI
 			Vector3 pov;
 			BoundingFrustum frustum;
 			BoundingSphere sphere;
+
+			var dr = entity.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 
 			if (Enabled && !IronStar.IsNoTarget)
 			{
@@ -96,11 +97,10 @@ namespace IronStar.AI
 						}
 					}
 
-					/*
+					
 					var color	=	visibility ? Color.Red : Color.Lime;
 					dr.DrawFrustum( frustum, color, 0.02f, 2 );
 					dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, Color.Green, 32, 2, 1 );
-					*/
 				}
 			}
 		}

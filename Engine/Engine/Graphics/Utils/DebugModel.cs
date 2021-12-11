@@ -14,7 +14,6 @@ namespace Fusion.Engine.Graphics
 {
 	public class DebugModel : DisposableBase 
 	{
-
 		IndexBuffer ib;
 		VertexBuffer vb;
 
@@ -36,10 +35,10 @@ namespace Fusion.Engine.Graphics
 		/// <param name="dr"></param>
 		/// <param name="vertices"></param>
 		/// <param name="indices"></param>
-		public DebugModel ( DebugRender dr, Vector3[] vertices, int[] indices )
+		public DebugModel ( Game game, Vector3[] vertices, int[] indices )
 		{
-			ib	=	new IndexBuffer( dr.Game.GraphicsDevice, indices.Length );
-			vb	=	new VertexBuffer( dr.Game.GraphicsDevice, typeof(DebugVertex), vertices.Length, VertexBufferOptions.Dynamic );
+			ib	=	new IndexBuffer( game.GraphicsDevice, indices.Length );
+			vb	=	new VertexBuffer( game.GraphicsDevice, typeof(DebugVertex), vertices.Length, VertexBufferOptions.Dynamic );
 
 			ib.SetData( indices );
 			vb.SetData( vertices.Select( v => new DebugVertex(v) ).ToArray() );

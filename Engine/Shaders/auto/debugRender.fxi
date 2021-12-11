@@ -39,7 +39,7 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
-// Fusion.Engine.Graphics.DebugRender+ConstData
+// Fusion.Engine.Graphics.DebugRenderImpl+ConstData
 // Marshal.SizeOf = 256
 #ifndef __STRUCT_ConstData
 #define __STRUCT_ConstData 1

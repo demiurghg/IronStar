@@ -121,6 +121,10 @@ namespace IronStar.ECS
 			stopwatch.Restart();
 
 			simulation.Update( new GameTime(dt, frames) );
+
+			//	#TODO #DEBT -- this place it not good for this.
+			//	Submit debug rendering to main thread
+			game.RenderSystem.RenderWorld.Debug.Async.Submit();
 					
 			stopwatch.Stop();
 

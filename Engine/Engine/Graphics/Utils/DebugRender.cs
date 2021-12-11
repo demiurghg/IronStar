@@ -5,362 +5,42 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
-using Fusion.Drivers.Graphics;
-using Fusion.Engine.Common;
-using System.Runtime.InteropServices;
-using Fusion.Engine.Graphics.Ubershaders;
 
-namespace Fusion.Engine.Graphics {
-
-	[RequireShader("debugRender", true)]
-	public class DebugRender : DisposableBase 
+namespace Fusion.Engine.Graphics
+{
+	public abstract class DebugRender : DisposableBase
 	{
-		static FXConstantBuffer<ConstData> regParams = new CRegister( 0, "Batch" );
-
-		public readonly Game Game;
-
-		[Flags]
-		public enum RenderFlags : int {
-			SOLID = 0x0001,
-			GHOST = 0x0002,
-			MODEL = 0x0004,
-		}
-
-		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Size = 256)]
-		struct ConstData {
-			public Matrix  View;
-			public Matrix  Projection;
-			public Matrix  World;
-			public Color4  Color;
-			public Vector4 ViewPosition;
-			public Vector4 PixelSize;
-		}
-
-		VertexBuffer		vertexBuffer;
-		Ubershader			effect;
-		StateFactory		factory;
-		ConstantBuffer		constBuffer;
-
-		List<DebugVertex>	vertexDataAccum	= new List<DebugVertex>();
-		DebugVertex[]		vertexArray = new DebugVertex[vertexBufferSize];
-
-		const int vertexBufferSize = 4096*4;
-
-		ConstData	constData;
-
-
-		public DebugModelCollection DebugModels {
-			get {
-				return debugModels;
-			}
-		}
-
-
-		DebugModelCollection debugModels = new DebugModelCollection();
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public DebugRender(Game game) 
-		{
-			this.Game	=	game;
-			var dev		=	Game.GraphicsDevice;
-
-			LoadContent();
-			
-			constData	=	new ConstData();
-			constBuffer =	new ConstantBuffer(dev, typeof(ConstData));
-
-			//	create vertex buffer :
-			vertexBuffer		= new VertexBuffer(dev, typeof(DebugVertex), vertexBufferSize, VertexBufferOptions.Dynamic );
-			vertexDataAccum.Capacity = vertexBufferSize;
-
-			Game.Reloading += (s,e) => LoadContent();
-		}
-
-
-
-		public void LoadContent ()
-		{
-			effect		=	Game.Content.Load<Ubershader>("debugRender");
-			factory		=	effect.CreateFactory( typeof(RenderFlags), (ps,i) => Enum(ps, (RenderFlags)i ) );
-
-			//factory		=	effect.CreateFactory( typeof(RenderFlags), Primitive.LineList, VertexInputElement.FromStructure( typeof(LineVertex) ), BlendState.AlphaBlend, RasterizerState.CullNone, DepthStencilState.Default );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="ps"></param>
-		/// <param name="flags"></param>
-		void Enum ( PipelineState ps, RenderFlags flags )
-		{
-			ps.Primitive			=	Primitive.LineList;
-			ps.VertexInputElements	=	VertexInputElement.FromStructure( typeof(DebugVertex) );
-			ps.RasterizerState		=	RasterizerState.CullNone;
-
-			if (flags.HasFlag( RenderFlags.SOLID )) {
-				ps.BlendState			=	BlendState.Opaque;
-				ps.DepthStencilState	=	DepthStencilState.Default;
-			}
-			
-			if (flags.HasFlag( RenderFlags.GHOST )) {
-				ps.BlendState			=	BlendState.AlphaBlend;
-				ps.DepthStencilState	=	DepthStencilState.None;
-			}
-
-			if (flags.HasFlag( RenderFlags.MODEL )) {
-				ps.BlendState		=	BlendState.AlphaBlend;
-				ps.Primitive		=	Primitive.TriangleList;
-				ps.RasterizerState	=	RasterizerState.Wireframe;
-			}
-		}
-
-
-
-
-		/// <summary>
-		/// Dispose
-		/// </summary>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing) {
-				vertexBuffer.Dispose();
-				constBuffer.Dispose();
-
-				foreach ( var m in debugModels ) {
-					m?.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-
-
-
-		/// <summary>
-		/// Draws line between p0 and p1
-		/// </summary>
-		/// <param name="p0"></param>
-		/// <param name="p1"></param>
-		/// <param name="color"></param>
-		public void DrawLine(Vector3 p0, Vector3 p1, Color color)
-		{
-			Game.CheckMainThread();
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color.ToVector4() });
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color.ToVector4() });
-			//DrawLine( p0, p1, color, Matrix.Identity );
-		}
-
-
-
-		/// <summary>
-		/// Draws line between p0 and p1
-		/// </summary>
-		/// <param name="p0"></param>
-		/// <param name="p1"></param>
-		/// <param name="color"></param>
-		public void DrawLine(Vector2 p0, Vector2 p1, Color color)
-		{
-			Game.CheckMainThread();
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0, 0,0), Color = color.ToVector4() });
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1, 0,0), Color = color.ToVector4() });
-			//DrawLine( p0, p1, color, Matrix.Identity );
-		}
-
-
-
-		/// <summary>
-		/// Draws line between p0 and p1
-		/// </summary>
-		/// <param name="p0"></param>
-		/// <param name="p1"></param>
-		/// <param name="color"></param>
-		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1)
-		{
-			Game.CheckMainThread();
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color0.ToVector4() });
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color1.ToVector4() });
-			//DrawLine( p0, p1, color, Matrix.Identity );
-		}
-
-
-		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
-		{
-			Game.CheckMainThread();
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() });
-			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() });
-			//DrawLine( p0, p1, color, Matrix.Identity );
-		}
-
-
-
-		void SetupRender ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
-		{
-			var dev = Game.GraphicsDevice;
-			dev.ResetStates();
-
-			dev.SetTargets( depthBuffer, colorBuffer );
-			dev.SetViewport( colorBuffer.Bounds );
-			dev.SetScissorRect( colorBuffer.Bounds );
-
-			var a = camera.ProjectionMatrix.M11;
-			var b = camera.ProjectionMatrix.M22;
-			var w = (float)colorBuffer.Width;
-			var h = (float)colorBuffer.Height;
-
-			constData.View			=	camera.ViewMatrix;
-			constData.Projection	=	camera.ProjectionMatrix;
-			constData.World			=	Matrix.Identity;
-			constData.ViewPosition	=	camera.GetCameraPosition4(StereoEye.Mono);
-			constData.PixelSize		=	new Vector4( 1/w/a, 1/b/h, 1/w, 1/h );
-			constBuffer.SetData(ref constData);
-
-			dev.GfxConstants[0]		=	constBuffer ;
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="colorBuffer"></param>
-		/// <param name="depthBuffer"></param>
-		/// <param name="camera"></param>
-		void RenderModels( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
-		{
-			var dev = Game.GraphicsDevice;
-
-			dev.PipelineState = factory[ (int)RenderFlags.MODEL ];
-
-			foreach ( var debugModel in DebugModels ) {
-
-				if (debugModel==null) {
-					continue;
-				}
-
-				constData.World	=	debugModel.World;
-				constData.Color	=	debugModel.Color.ToColor4();	
-				constBuffer.SetData(ref constData);
-				
-				debugModel.Draw( dev );
-			}
-		}
-
-
-
-		void RenderLines ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
-		{
-			var dev = Game.GraphicsDevice;
-
-			dev.SetupVertexInput( vertexBuffer, null );
-
-			var flags = new[]{ RenderFlags.SOLID, RenderFlags.GHOST };
-
-			foreach ( var flag in flags ) {
-
-				if (Game.RenderSystem.SkipGhostDebugRendering && flag==RenderFlags.GHOST) {
-					break;
-				}
-
-				dev.PipelineState =	factory[(int)flag];
-
-				int numDPs = MathUtil.IntDivUp(vertexDataAccum.Count, vertexBufferSize);
-
-				for (int i = 0; i < numDPs; i++) {
-
-					int numVerts = i < numDPs - 1 ? vertexBufferSize : vertexDataAccum.Count % vertexBufferSize;
-
-					if (numVerts == 0) {
-						break;
-					}
-
-					vertexDataAccum.CopyTo(i * vertexBufferSize, vertexArray, 0, numVerts);
-
-					vertexBuffer.SetData(vertexArray, 0, numVerts);
-
-					dev.Draw( numVerts, 0);
-
-				}
-			}
-
-			vertexDataAccum.Clear();
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		internal void Render ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
-		{
-			DrawTracers();
-
-			if (Game.RenderSystem.SkipDebugRendering) {
-				vertexDataAccum.Clear();	
-				return;
-			}
-
-			var dev = Game.GraphicsDevice;
-			dev.ResetStates();
-
-			SetupRender( colorBuffer, depthBuffer, camera );
-
-			RenderLines( colorBuffer, depthBuffer, camera );
-
-			RenderModels( colorBuffer, depthBuffer, camera );
-
-		}
-
-
-
-
-		/*-----------------------------------------------------------------------------------------
-		 *	Tracers :
-		-----------------------------------------------------------------------------------------*/
-
-		class TraceRecord {
-			public Vector3 Position;
-			public Color Color;
-			public float Size;
-			public int LifeTime;
-		}
-
-
-		List<TraceRecord> tracers = new List<TraceRecord>();
-
-
-		public void Trace ( Vector3 position, float size, Color color, int lifeTimeInFrames = 300 )
-		{
-			tracers.Add( new TraceRecord() {
-					Position	=	position,
-					Size		=	size,
-					Color		=	color,
-					LifeTime	=	lifeTimeInFrames,
-				});
-		}
-
-
-		void DrawTracers ()
-		{
-			foreach ( var t in tracers ) {
-				t.LifeTime --;
-
-				DrawPoint( t.Position, t.Size, t.Color );
-			}
-
-			tracers.RemoveAll( t => t.LifeTime < 0 );
-		}
+		public abstract void Submit();
+		public abstract void PushVertex( DebugVertex v );
+		public abstract void AddModel( DebugModel model );
+		public abstract void RemoveModel( DebugModel model );
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Primitives :
 		-----------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="wireCount"></param>
+		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
+		{
+			var a = new DebugVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() };
+			var b = new DebugVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() };
+
+			PushVertex( a );
+			PushVertex( b );
+		}
+
+
+		public void DrawLine(Vector3 p0, Vector3 p1, Color color)
+		{
+			DrawLine( p0, p1, color, color, 0, 0 );
+		}
+
+
+		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1)
+		{
+			DrawLine( p0, p1, color0, color1, 0, 0 );
+		}
+
+
 		public void DrawGrid()
 		{
 			var color = new Color(64,64,64,255);

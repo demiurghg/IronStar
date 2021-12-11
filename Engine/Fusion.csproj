@@ -201,6 +201,8 @@
     <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowInterleave.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowSystem.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugRenderAsync.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -706,7 +708,7 @@
     <Compile Include="Engine\Graphics\Ubershaders\UbershaderGenerator.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugModelCollection.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugModel.cs" />
-    <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugRenderImpl.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRenderConfig.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugVertex.cs" />
     <Compile Include="Engine\Graphics\VirtualTexture.cs" />

@@ -10,10 +10,10 @@ using Fusion.Engine.Common;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;
 
-namespace Fusion.Engine.Graphics {
-
-	public struct DebugVertex {
-
+namespace Fusion.Engine.Graphics 
+{
+	public struct DebugVertex 
+	{
 		[Vertex("POSITION")] public Vector4 Pos;
 		[Vertex("COLOR", 0)] public Vector4 Color;
 

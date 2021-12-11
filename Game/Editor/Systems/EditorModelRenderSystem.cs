@@ -56,13 +56,13 @@ namespace IronStar.Editor.Systems
 				if (node.MeshIndex>=0 && model.AcceptCollisionNode(node))
 				{
 					var mesh = scene.Meshes[node.MeshIndex];
-					var debugModel		=	new DebugModel( dr, mesh.Vertices.Select( v => v.Position ).ToArray(), mesh.GetIndices() );
+					var debugModel		=	new DebugModel( entity.gs.Game, mesh.Vertices.Select( v => v.Position ).ToArray(), mesh.GetIndices() );
 					debugModel.World	=	transforms[i] * transform.TransformMatrix;
 					debugModel.Color	=	Editor.Utils.WireColor;
 					debugModel.Tag		=	entity;
 
 					modelList.Add( debugModel );
-					dr.DebugModels.Add( debugModel );
+					dr.AddModel( debugModel );
 				}
 			}
 
@@ -74,7 +74,7 @@ namespace IronStar.Editor.Systems
 		{
 			foreach (var m in models)
 			{
-				dr.DebugModels.Remove( m );
+				dr.RemoveModel( m );
 				m?.Dispose();
 			}
 		}

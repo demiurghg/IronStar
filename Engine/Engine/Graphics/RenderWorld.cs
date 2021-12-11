@@ -72,10 +72,10 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Gets debug render
 		/// </summary>
-		public DebugRender Debug {
+		public DebugRenderImpl Debug {
 			get { return debug; }
 		}
-		DebugRender debug;
+		DebugRenderImpl debug;
 
 		/// <summary>
 		/// Gets particle system instance.
@@ -199,7 +199,7 @@ namespace Fusion.Engine.Graphics
 			Instances		=	new RenderInstanceCollection();
 			LightSet		=	new LightSet( Game.RenderSystem );
 
-			debug			=	new DebugRender( Game );
+			debug			=	new DebugRenderImpl( Game );
 			lightmapNull	=	new LightMap( rs, new Size2(8,8), new Size3(1,1,1), Matrix.Identity );
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );

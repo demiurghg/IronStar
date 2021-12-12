@@ -97,10 +97,11 @@ namespace IronStar.AI
 						}
 					}
 
-					
+					/*
 					var color	=	visibility ? Color.Red : Color.Lime;
 					dr.DrawFrustum( frustum, color, 0.02f, 2 );
 					dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, Color.Green, 32, 2, 1 );
+					*/
 				}
 			}
 		}

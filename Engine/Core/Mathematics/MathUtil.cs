@@ -1152,7 +1152,7 @@ namespace Fusion.Core.Mathematics
 		/// </summary>
 		/// <param name="forward"></param>
 		/// <returns></returns>
-		public static Matrix ComputeAimedBasis ( Vector3 forward )
+		public static Matrix ComputeAimedBasis ( Vector3 forward, Vector3 origin )
 		{
 			forward	=	Vector3.Normalize( forward );
 			var rt	=	Vector3.Cross( forward, Vector3.Up );	
@@ -1169,10 +1169,16 @@ namespace Fusion.Core.Mathematics
 			m.Forward	=	forward;
 			m.Right		=	rt;
 			m.Up		=	up;
+			m.TranslationVector	=	origin;
 
 			return m;
 		}
 
+
+		public static Matrix ComputeAimedBasis ( Vector3 forward )
+		{
+			return ComputeAimedBasis( forward, Vector3.Zero );
+		}
 
 		
 		public static uint RandXorShift(uint seed)

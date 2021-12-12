@@ -44,7 +44,7 @@ namespace IronStar.ECSPhysics
 
 			var content		=	e.gs.Content;
 			
-			var scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );
+			var scene		=	rm.LoadScene(e.gs);
 			var transform	=	t.TransformMatrix;
 
 			var cm			=	new CollisionModel();

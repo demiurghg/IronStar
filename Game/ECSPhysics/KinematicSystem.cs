@@ -38,14 +38,7 @@ namespace IronStar.ECSPhysics
 		
 		protected override KinematicController Create( Entity entity, Transform transform, KinematicComponent kinematic, RenderModel renderModel, BoneComponent bones )
 		{
-			Scene scene;
-
-			if (!entity.gs.Content.TryLoad( renderModel.scenePath, out scene ))
-			{
-				scene	=	Scene.CreateEmptyScene();
-			}
-
-			return new KinematicController( physics, entity, scene, transform.TransformMatrix );
+			return new KinematicController( physics, entity, renderModel.LoadScene(entity.gs), transform.TransformMatrix );
 		}
 
 		
@@ -54,7 +47,7 @@ namespace IronStar.ECSPhysics
 			controller.Destroy( physics );
 		}
 
-		
+
 		protected override void Process( Entity entity, GameTime gameTime, KinematicController controller, Transform transform, KinematicComponent kinematic, RenderModel renderModel, BoneComponent bones )
 		{
 			bool skipSimulation = entity.gs.Paused;

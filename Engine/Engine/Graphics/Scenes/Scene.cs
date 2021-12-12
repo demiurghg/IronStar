@@ -296,6 +296,19 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public Matrix[] GetBindPose()
+		{
+			var transforms = new Matrix[Nodes.Count];
+
+			for (int i=0; i<Nodes.Count; i++)
+			{
+				transforms[i] = Nodes[i].BindPose;
+			}
+			
+			return transforms;			
+		}
+
+
 		/// <summary>
 		/// Copies absolute transform to provided array.
 		/// </summary>
@@ -514,9 +527,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Save/Load stuff :
-		 * 
 		-----------------------------------------------------------------------------------------*/
 
 		/// <summary>

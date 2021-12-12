@@ -85,6 +85,18 @@ namespace IronStar.SFX2
 			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : !node.Name.StartsWith(cmPrefix);
 		}
 
+		public Scene LoadScene( IGameState gs )
+		{
+			Scene scene;
+
+			if (!gs.Content.TryLoad( scenePath, out scene ))
+			{
+				scene	=	Scene.CreateEmptyScene();
+			}
+
+			return scene;
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	IComponent implementation :
 		-----------------------------------------------------------------------------------------*/

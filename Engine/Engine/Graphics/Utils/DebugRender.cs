@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
+using BEPUphysics.CollisionShapes.ConvexShapes;
 
 namespace Fusion.Engine.Graphics
 {
@@ -70,6 +71,29 @@ namespace Fusion.Engine.Graphics
 		public void DrawVector(Vector3 origin, Vector3 dir, Color color, float scale = 1.0f)
 		{
 			DrawLine(origin, origin + dir * scale, color/*, Matrix.Identity*/ );
+		}
+
+
+		public void DrawRay(Ray ray, Color color, float width = 1.0f)
+		{
+			DrawLine(ray.Position, ray.Position + ray.Direction, color, color, width, width );
+		}
+
+
+		public void DrawCapsule( CapsuleShape capsule, Matrix transform, Color color )
+		{
+			int segments = 4;
+
+			var X = transform.Right;
+			var Y = transform.Up;
+			var Z = transform.Backward;
+			var T = transform.TranslationVector;
+			var R = capsule.Radius;
+			var L = capsule.Length;
+
+			DrawSphere  ( T + Y * L / 2.0f, R, color, 8 );
+			DrawSphere  ( T - Y * L / 2.0f, R, color, 8 );
+			DrawCylinder( T, R, L, color, 8 );
 		}
 
 

@@ -21,7 +21,7 @@ namespace IronStar.ECSPhysics
 
 		protected override RagdollController Create( Entity entity, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
 		{
-			return null;//new RagdollController(physics, 
+			return new RagdollController( physics, rm.LoadScene(entity.gs) );
 		}
 
 		protected override void Destroy( Entity entity, RagdollController resource )
@@ -31,7 +31,7 @@ namespace IronStar.ECSPhysics
 
 		protected override void Process( Entity entity, GameTime gameTime, RagdollController controller, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
 		{
-			//throw new NotImplementedException();
+			controller.DrawDebug( entity.gs.Game.RenderSystem.RenderWorld.Debug.Async );
 		}
 	}
 }

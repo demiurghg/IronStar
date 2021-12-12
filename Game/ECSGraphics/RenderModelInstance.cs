@@ -57,7 +57,7 @@ namespace IronStar.SFX2
 			var content		=	gs.Content;
 			rs				=	gs.Game.GetService<RenderSystem>();
 
-			scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );
+			scene		=	rm.LoadScene(gs);
 			
 			sceneView	=	new SceneView<RenderInstance>( scene, 
 							(node,mesh)	=> CreateRenderInstance( rs, scene, node, mesh, rm ),

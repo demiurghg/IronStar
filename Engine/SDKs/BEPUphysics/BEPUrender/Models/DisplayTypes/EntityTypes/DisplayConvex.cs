@@ -14,7 +14,7 @@ using MathHelper = Fusion.Core.Mathematics.MathUtil;
 using Vector2 = Fusion.Core.Mathematics.Vector2;
 using Vector3 = Fusion.Core.Mathematics.Vector3;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.

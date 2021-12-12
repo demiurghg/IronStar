@@ -4,7 +4,7 @@ using Fusion.Engine.Graphics.Scenes;
 using System.Collections.Generic;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Superclass of display objects that follow entity collidables.

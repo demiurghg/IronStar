@@ -7,7 +7,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.
@@ -28,7 +28,7 @@ namespace BEPUphysicsDrawer.Models
 
             var n = new Vector3();
             var offset = new Vector3(0, capsuleShape.Length / 2, 0);
-            float angleBetweenFacets = MathHelper.TwoPi / NumSides;
+            float angleBetweenFacets = MathUtil.TwoPi / NumSides;
             float radius = capsuleShape.Radius;
 
             //Create the vertex list
@@ -37,7 +37,7 @@ namespace BEPUphysicsDrawer.Models
             //Upper hemisphere
             for (int i = 1; i <= NumSides / 4; i++)
             {
-                float phi = MathHelper.PiOver2 - i * angleBetweenFacets;
+                float phi = MathUtil.PiOverTwo - i * angleBetweenFacets;
                 var sinPhi = (float)Math.Sin(phi);
                 var cosPhi = (float)Math.Cos(phi);
 
@@ -55,7 +55,7 @@ namespace BEPUphysicsDrawer.Models
             //Lower hemisphere
             for (int i = NumSides / 4; i < NumSides / 2; i++)
             {
-                float phi = MathHelper.PiOver2 - i * angleBetweenFacets;
+                float phi = MathUtil.PiOverTwo - i * angleBetweenFacets;
                 var sinPhi = (float)Math.Sin(phi);
                 var cosPhi = (float)Math.Cos(phi);
 

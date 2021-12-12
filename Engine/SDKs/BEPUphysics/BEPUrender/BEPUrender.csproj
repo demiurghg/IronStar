@@ -184,6 +184,30 @@
     <Compile Include="Lines\SimulationIslandDrawer.cs" />
     <Compile Include="Lines\SolverDisplayObject.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="Models\BatchInformation.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayEntityModel.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayFluid.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayInstancedMesh.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayModel.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayStaticMesh.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayTerrain.cs" />
+    <Compile Include="Models\DisplayTypes\DisplayTriangleMesh.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayBox.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayCapsule.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayCompoundBody.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayCone.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayConvex.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayConvexHull.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayCylinder.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayEntityCollidable.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayMobileMesh.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplaySphere.cs" />
+    <Compile Include="Models\DisplayTypes\EntityTypes\DisplayTriangle.cs" />
+    <Compile Include="Models\DisplayTypes\ModelDisplayObject.cs" />
+    <Compile Include="Models\DisplayTypes\ModelDisplayObjectBase.cs" />
+    <Compile Include="Models\DisplayTypes\SelfDrawingModelDisplayObject.cs" />
+    <Compile Include="Models\ModelDisplayObjectBatch.cs" />
+    <Compile Include="Models\ModelDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">

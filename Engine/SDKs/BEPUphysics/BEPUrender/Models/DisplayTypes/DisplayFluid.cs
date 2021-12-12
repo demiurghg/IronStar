@@ -6,7 +6,7 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Simple display object for triangles.

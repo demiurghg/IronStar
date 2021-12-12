@@ -10,7 +10,7 @@ using Matrix  = Fusion.Core.Mathematics.Matrix;
 using Vector2 = Fusion.Core.Mathematics.Vector2;
 using Vector3 = Fusion.Core.Mathematics.Vector3;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Simple display object for triangles.

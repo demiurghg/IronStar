@@ -5,7 +5,7 @@ using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Simple display object for triangles.

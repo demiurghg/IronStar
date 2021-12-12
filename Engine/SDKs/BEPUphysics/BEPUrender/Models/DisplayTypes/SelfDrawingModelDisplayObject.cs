@@ -1,7 +1,7 @@
 ﻿
 using BEPUutilities;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Superclass of display types that can draw themselves.

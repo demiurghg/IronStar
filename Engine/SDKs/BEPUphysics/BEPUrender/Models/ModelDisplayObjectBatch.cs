@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Fusion.Drivers.Graphics;
+using Fusion.Engine.Graphics.Scenes;
+using Matrix  = Fusion.Core.Mathematics.Matrix;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Manages batching of display models and their drawing.
@@ -53,7 +54,7 @@ namespace BEPUphysicsDrawer.Models
         private InstancedVertex[] instancedVertices;
         private VertexBuffer vertexBuffer;
         private VertexPositionNormalTexture[] vertices;
-        private VertexBufferBinding[] bindings;
+        //private VertexBufferBinding[] bindings;
 
         //Has VertexBuffer, IndexBuffer, second stream for indices.
         //Why second stream?  Creating it will be easier since can addRange on lists gotten from ModelDisplayObject, then toss in
@@ -71,10 +72,10 @@ namespace BEPUphysicsDrawer.Models
             instancedVertices = new InstancedVertex[MaximumIndexCount];
             vertices = new VertexPositionNormalTexture[MaximumIndexCount];
             indices = new ushort[MaximumIndexCount];
-            vertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionNormalTexture.VertexDeclaration, MaximumIndexCount, BufferUsage.WriteOnly);
+            /*vertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionNormalTexture.VertexDeclaration, MaximumIndexCount, BufferUsage.WriteOnly);
             instancedBuffer = new VertexBuffer(graphicsDevice, InstancedVertex.VertexDeclaration, MaximumIndexCount, BufferUsage.WriteOnly);
             indexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, MaximumIndexCount, BufferUsage.WriteOnly);
-            bindings = new[] { new VertexBufferBinding(vertexBuffer), new VertexBufferBinding(instancedBuffer) };
+            bindings = new[] { new VertexBufferBinding(vertexBuffer), new VertexBufferBinding(instancedBuffer) };		*/
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         /// <param name="displayObject">Display object to add.</param>
         /// <param name="drawer">Drawer of the batch.</param>
-        public unsafe bool Add(ModelDisplayObject displayObject, InstancedModelDrawer drawer)
+        public unsafe bool Add(ModelDisplayObject displayObject, ModelDrawer drawer)
         {
             //In theory, don't need to test for duplicate entries since batch.Add
             //should only be called through a InstancedModelDrawer's add (which checks beforehand).
@@ -113,9 +114,9 @@ namespace BEPUphysicsDrawer.Models
             for (int i = vertexCount; i < newVertexCount; i++)
                 instancedVertices[i] = new InstancedVertex { InstanceIndex = instanceIndex, TextureIndex = textureIndex };
 
-            vertexBuffer.SetData(sizeof(VertexPositionNormalTexture) * vertexCount, vertices, vertexCount, vertexList.Count, sizeof(VertexPositionNormalTexture));
-            instancedBuffer.SetData(sizeof(InstancedVertex) * vertexCount, instancedVertices, vertexCount, vertexList.Count, sizeof(InstancedVertex));
-            indexBuffer.SetData(sizeof(ushort) * indexCount, indices, indexCount, indexList.Count);
+            //vertexBuffer.SetData(sizeof(VertexPositionNormalTexture) * vertexCount, vertices, vertexCount, vertexList.Count, sizeof(VertexPositionNormalTexture));
+            //instancedBuffer.SetData(sizeof(InstancedVertex) * vertexCount, instancedVertices, vertexCount, vertexList.Count, sizeof(InstancedVertex));
+            //indexBuffer.SetData(sizeof(ushort) * indexCount, indices, indexCount, indexList.Count);
 
             vertexCount = newVertexCount;
             indexCount = newIndexCount;
@@ -130,7 +131,7 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         /// <param name="displayObject">Display object to remove.</param>
         /// <param name="drawer">Instanced model drawer doing the removal.</param>
-        public unsafe void Remove(ModelDisplayObject displayObject, InstancedModelDrawer drawer)
+        public unsafe void Remove(ModelDisplayObject displayObject, ModelDrawer drawer)
         {
             //Copy the end of the list over the top of the  part back (after the display object)
             var vertexCopySource = displayObject.BatchInformation.BaseVertexBufferIndex + displayObject.BatchInformation.VertexCount;
@@ -170,9 +171,9 @@ namespace BEPUphysicsDrawer.Models
 
             if (displayObjects.Count > 0 && batchListIndex < displayObjects.Count)
             {
-                vertexBuffer.SetData(sizeof(VertexPositionNormalTexture) * vertexCopyTarget, vertices, vertexCopyTarget, vertexCopyLength, sizeof(VertexPositionNormalTexture));
-                instancedBuffer.SetData(sizeof(InstancedVertex) * vertexCopyTarget, instancedVertices, vertexCopyTarget, vertexCopyLength, sizeof(InstancedVertex));
-                indexBuffer.SetData(sizeof(ushort) * indexCopyTarget, indices, indexCopyTarget, indexCopyLength);
+                //vertexBuffer.SetData(sizeof(VertexPositionNormalTexture) * vertexCopyTarget, vertices, vertexCopyTarget, vertexCopyLength, sizeof(VertexPositionNormalTexture));
+                //instancedBuffer.SetData(sizeof(InstancedVertex) * vertexCopyTarget, instancedVertices, vertexCopyTarget, vertexCopyLength, sizeof(InstancedVertex));
+                //indexBuffer.SetData(sizeof(ushort) * indexCopyTarget, indices, indexCopyTarget, indexCopyLength);
             }
         }
 
@@ -204,9 +205,9 @@ namespace BEPUphysicsDrawer.Models
         /// <summary>
         /// Draws the models managed by the batch.
         /// </summary>
-        public void Draw(Effect effect, EffectParameter worldTransformsParameter, EffectParameter textureIndicesParameter, EffectPass pass)
+        public void Draw(/*Effect effect, EffectParameter worldTransformsParameter, EffectParameter textureIndicesParameter, EffectPass pass*/)
         {
-            if (vertexCount > 0)
+            /*if (vertexCount > 0)
             {
                 graphicsDevice.SetVertexBuffers(bindings);
                 graphicsDevice.Indices = indexBuffer;
@@ -216,7 +217,7 @@ namespace BEPUphysicsDrawer.Models
 
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList,
                                                      0, 0, indexCount / 3);
-            }
+            }  */
         }
 
         internal struct InstancedVertex
@@ -230,11 +231,11 @@ namespace BEPUphysicsDrawer.Models
             /// </summary>
             public float TextureIndex;
 
-            public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration(new[]
+            /*public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration(new[]
             {
                 new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 1),
                 new VertexElement(4, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 2)
-            });
+            });	 */
         }
 
         bool disposed;

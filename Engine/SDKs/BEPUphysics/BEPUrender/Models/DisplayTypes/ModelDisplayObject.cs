@@ -1,4 +1,4 @@
-﻿namespace BEPUphysicsDrawer.Models
+﻿namespace BEPUrender.Models
 {
     /// <summary>
     /// Model-based graphical representation of an object.

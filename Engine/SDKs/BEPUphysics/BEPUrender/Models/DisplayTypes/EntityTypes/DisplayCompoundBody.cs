@@ -5,7 +5,7 @@ using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.

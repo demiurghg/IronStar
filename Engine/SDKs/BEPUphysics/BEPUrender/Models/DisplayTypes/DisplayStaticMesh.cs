@@ -4,7 +4,7 @@ using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.BroadPhaseEntries;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Simple display object for triangles.

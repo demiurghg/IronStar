@@ -7,7 +7,7 @@ using System;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.
@@ -38,10 +38,10 @@ namespace BEPUphysicsDrawer.Models
             textureCoords[2] = new Vector2(1, 1);
             textureCoords[3] = new Vector2(0, 1);
 
-            vertices.Add(new VertexPositionNormalTexture(corners[0], Vector3.Backward, textureCoords[0]));
-            vertices.Add(new VertexPositionNormalTexture(corners[1], Vector3.Backward, textureCoords[1]));
-            vertices.Add(new VertexPositionNormalTexture(corners[2], Vector3.Backward, textureCoords[2]));
-            vertices.Add(new VertexPositionNormalTexture(corners[3], Vector3.Backward, textureCoords[3]));
+            vertices.Add(new VertexPositionNormalTexture(corners[0], Vector3.BackwardRH, textureCoords[0]));
+            vertices.Add(new VertexPositionNormalTexture(corners[1], Vector3.BackwardRH, textureCoords[1]));
+            vertices.Add(new VertexPositionNormalTexture(corners[2], Vector3.BackwardRH, textureCoords[2]));
+            vertices.Add(new VertexPositionNormalTexture(corners[3], Vector3.BackwardRH, textureCoords[3]));
             indices.Add(0);
             indices.Add(1);
             indices.Add(2);
@@ -60,10 +60,10 @@ namespace BEPUphysicsDrawer.Models
             indices.Add(7);
             indices.Add(5);
 
-            vertices.Add(new VertexPositionNormalTexture(corners[4], Vector3.Forward, textureCoords[1]));
-            vertices.Add(new VertexPositionNormalTexture(corners[5], Vector3.Forward, textureCoords[0]));
-            vertices.Add(new VertexPositionNormalTexture(corners[6], Vector3.Forward, textureCoords[3]));
-            vertices.Add(new VertexPositionNormalTexture(corners[7], Vector3.Forward, textureCoords[2]));
+            vertices.Add(new VertexPositionNormalTexture(corners[4], Vector3.ForwardRH, textureCoords[1]));
+            vertices.Add(new VertexPositionNormalTexture(corners[5], Vector3.ForwardRH, textureCoords[0]));
+            vertices.Add(new VertexPositionNormalTexture(corners[6], Vector3.ForwardRH, textureCoords[3]));
+            vertices.Add(new VertexPositionNormalTexture(corners[7], Vector3.ForwardRH, textureCoords[2]));
             indices.Add(9);
             indices.Add(8);
             indices.Add(11);

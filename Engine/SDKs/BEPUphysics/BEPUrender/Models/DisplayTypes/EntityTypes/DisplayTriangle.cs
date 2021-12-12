@@ -8,7 +8,7 @@ using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using Fusion.Engine.Graphics.Scenes;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.

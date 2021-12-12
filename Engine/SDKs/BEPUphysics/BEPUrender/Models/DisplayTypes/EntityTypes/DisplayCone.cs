@@ -7,7 +7,7 @@ using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.
@@ -27,7 +27,7 @@ namespace BEPUphysicsDrawer.Models
                 throw new ArgumentException("Wrong shape type.");
 
             float verticalOffset = -coneShape.Height / 4;
-            float angleBetweenFacets = MathHelper.TwoPi / NumSides;
+            float angleBetweenFacets = MathUtil.TwoPi / NumSides;
             float radius = coneShape.Radius;
 
             //Create the vertex list

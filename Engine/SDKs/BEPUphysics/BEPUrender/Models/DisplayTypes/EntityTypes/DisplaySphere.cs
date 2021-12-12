@@ -8,7 +8,7 @@ using BEPUphysics.CollisionShapes;
 using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Helper class that can create shape mesh data.
@@ -28,14 +28,14 @@ namespace BEPUphysicsDrawer.Models
                 throw new ArgumentException("Wrong shape type");
 
             var n = new Vector3();
-            float angleBetweenFacets = MathHelper.TwoPi / NumSides;
+            float angleBetweenFacets = MathUtil.TwoPi / NumSides;
             float radius = sphereShape.Radius;
 
             //Create the vertex list
             vertices.Add(new VertexPositionNormalTexture(new Vector3(0, radius, 0), Vector3.Up, Vector2.Zero));
             for (int i = 1; i < NumSides / 2; i++)
             {
-                float phi = MathHelper.PiOver2 - i * angleBetweenFacets;
+                float phi = MathUtil.PiOverTwo - i * angleBetweenFacets;
                 var sinPhi = (float)Math.Sin(phi);
                 var cosPhi = (float)Math.Cos(phi);
 

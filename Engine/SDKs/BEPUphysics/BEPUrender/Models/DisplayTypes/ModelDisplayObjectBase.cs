@@ -6,7 +6,7 @@ using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
 
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Base class of ModelDisplayObjects.

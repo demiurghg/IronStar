@@ -4,7 +4,7 @@ using BEPUutilities;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
 using Fusion.Drivers.Graphics;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Display object of a model that follows an entity.
@@ -44,7 +44,8 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         public Model Model
         {
-            get { return myModel; }
+			get; set;
+            /*get { return myModel; }
             set
             {
                 myModel = value;
@@ -58,7 +59,7 @@ namespace BEPUphysicsDrawer.Models
                             effect.EnableDefaultLighting();
                     }
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -66,28 +67,7 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         public Texture2D Texture
         {
-            get { return myTexture; }
-            set
-            {
-                myTexture = value;
-                for (int i = 0; i < Model.Meshes.Count; i++)
-                {
-                    for (int j = 0; j < Model.Meshes[i].Effects.Count; j++)
-                    {
-                        var effect = Model.Meshes[i].Effects[j] as BasicEffect;
-                        if (effect != null)
-                        {
-                            if (value != null)
-                            {
-                                effect.TextureEnabled = true;
-                                effect.Texture = Texture;
-                            }
-                            else
-                                effect.TextureEnabled = false;
-                        }
-                    }
-                }
-            }
+			get; set;
         }
 
         /// <summary>
@@ -117,7 +97,7 @@ namespace BEPUphysicsDrawer.Models
         {
             //This is not a particularly fast method of drawing.
             //It's used very rarely in the demos.
-            myModel.CopyAbsoluteBoneTransformsTo(transforms);
+            /*myModel.CopyAbsoluteBoneTransformsTo(transforms);
             for (int i = 0; i < Model.Meshes.Count; i++)
             {
                 for (int j = 0; j < Model.Meshes[i].Effects.Count; j++)
@@ -131,7 +111,7 @@ namespace BEPUphysicsDrawer.Models
                     }
                 }
                 Model.Meshes[i].Draw();
-            }
+            } */
         }
     }
 }

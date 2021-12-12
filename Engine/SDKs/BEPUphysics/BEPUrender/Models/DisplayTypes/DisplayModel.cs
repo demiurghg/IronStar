@@ -2,7 +2,7 @@
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Mathematics;
 
-namespace BEPUphysicsDrawer.Models
+namespace BEPUrender.Models
 {
     /// <summary>
     /// Model which just sits in space.
@@ -33,7 +33,8 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         public Model Model
         {
-            get { return model; }
+			get; set;
+            /*get { return model; }
             set
             {
                 model = value;
@@ -47,7 +48,7 @@ namespace BEPUphysicsDrawer.Models
                             effect.EnableDefaultLighting();
                     }
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -80,11 +81,11 @@ namespace BEPUphysicsDrawer.Models
         /// </summary>
         /// <param name="viewMatrix">Current view matrix.</param>
         /// <param name="projectionMatrix">Current projection matrix.</param>
-        public override void Draw(Fusion.Core.Mathematics.Matrix viewMatrix, Fusion.Core.Mathematics.Matrix projectionMatrix)
+        public override void Draw(BEPUutilities.Matrix viewMatrix, BEPUutilities.Matrix projectionMatrix)
         {
             //This is not a particularly fast method of drawing.
             //It's used very rarely in the demos.
-            model.CopyAbsoluteBoneTransformsTo(transforms);
+            /*model.CopyAbsoluteBoneTransformsTo(transforms);
             for (int i = 0; i < Model.Meshes.Count; i++)
             {
                 for (int j = 0; j < Model.Meshes[i].Effects.Count; j++)
@@ -107,7 +108,7 @@ namespace BEPUphysicsDrawer.Models
                     }
                 }
                 Model.Meshes[i].Draw();
-            }
+            }	 */
         }
 
     }

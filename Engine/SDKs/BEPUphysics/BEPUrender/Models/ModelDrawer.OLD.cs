@@ -21,6 +21,7 @@ namespace BEPUrender.Models
 
         private readonly List<SelfDrawingModelDisplayObject> selfDrawingDisplayObjects = new List<SelfDrawingModelDisplayObject>();
 
+
         private static readonly Dictionary<Type, Type> displayTypes = new Dictionary<Type, Type>();
         private static readonly Dictionary<Type, ShapeMeshGetter> shapeMeshGetters = new Dictionary<Type, ShapeMeshGetter>();
 

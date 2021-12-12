@@ -21,6 +21,7 @@ using RigidTransform = BEPUutilities.RigidTransform;
 using System.Collections.Concurrent;
 using BEPUphysics.EntityStateManagement;
 
+
 namespace IronStar.ECSPhysics
 {
 	public interface ITransformFeeder
@@ -37,7 +38,7 @@ namespace IronStar.ECSPhysics
 
 		readonly Space physSpace;
 
-		private Space Space 
+		internal Space Space 
 		{
 			get { return physSpace; }
 		}
@@ -145,18 +146,30 @@ namespace IronStar.ECSPhysics
 
 
 		/*-----------------------------------------------------------------------------------------------
-		 *	Parallel stuff :
+		 *	Acessor stuff :
 		-----------------------------------------------------------------------------------------------*/
+
+		public class SpaceObjectArgs : EventArgs 
+		{
+			public ISpaceObject SpaceObject;
+		}
+
+		public event EventHandler<SpaceObjectArgs>	ObjectAdded;
+		public event EventHandler<SpaceObjectArgs>	ObjectRemoved;
 
 		public void Add( ISpaceObject physObj )
 		{
 			Space.Add( physObj );
+
+			ObjectAdded?.Invoke(this, new SpaceObjectArgs() { SpaceObject = physObj } );
 		}
 
 
 		public void Remove( ISpaceObject physObj )
 		{
 			Space.Remove( physObj );
+
+			ObjectRemoved?.Invoke(this, new SpaceObjectArgs() { SpaceObject = physObj } );
 		}
 
 

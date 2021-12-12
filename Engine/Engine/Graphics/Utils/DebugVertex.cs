@@ -14,17 +14,29 @@ namespace Fusion.Engine.Graphics
 {
 	public struct DebugVertex 
 	{
-		[Vertex("POSITION")] public Vector4 Pos;
-		[Vertex("COLOR", 0)] public Vector4 Color;
+		[Vertex("POSITION")] public Vector3 Position;
+		[Vertex("WIDTH", 0)] public float Width;
+		[Vertex("COLOR", 0)] public Color Color;
 
-		/// <summary>
-		/// Creates white vertex
-		/// </summary>
-		/// <param name="pos"></param>
+		public DebugVertex( Vector3 pos, Color color )
+		{
+			Position	=	pos;
+			Color		=	color;
+			Width		=	1;
+		}
+
+		public DebugVertex( Vector3 pos, Color color, float width )
+		{
+			Position	=	pos;
+			Color		=	color;
+			Width		=	width;
+		}
+
 		public DebugVertex( Vector3 pos )
 		{
-			Pos		=	new Vector4( pos, 1 );
-			Color	=	Vector4.One;
+			Position	=	pos;
+			Color		=	Color.White;
+			Width		=	1;
 		}
 	}
 }

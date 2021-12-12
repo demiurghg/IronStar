@@ -151,6 +151,7 @@
     <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
     <Compile Include="ECSPhysics\PhysicsConfig.cs" />
+    <Compile Include="ECSPhysics\PhysicsDebugger.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.Overlap.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.Raycast.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.Queries.cs" />
@@ -362,7 +363,6 @@
     <Compile Include="SFX\FXInstance.DecalStage.cs" />
     <Compile Include="SFX\FXInstance.ParticleStage.cs" />
     <Compile Include="SFX\FXInstance.cs" />
-    <Compile Include="MathConverter.cs" />
     <Compile Include="ShooterInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -422,6 +422,10 @@
     <ProjectReference Include="..\Engine\SDKs\BEPUPhysics\BEPUphysics\BEPUphysics.csproj">
       <Project>{c0d52c9f-14b8-4008-8ddc-109c27561a5c}</Project>
       <Name>BEPUphysics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\SDKs\BEPUphysics\BEPUrender\BEPUrender.csproj">
+      <Project>{36266d42-6468-440a-879f-8700b4e62f4b}</Project>
+      <Name>BEPUrender</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\SDKs\BEPUPhysics\BEPUutilities\BEPUutilities.csproj">
       <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>

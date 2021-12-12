@@ -9,7 +9,8 @@ $ubershader SOLID|GHOST|MODEL
 #endif
 
 struct VS_IN {
-	float4 pos : POSITION;
+	float3 pos : POSITION;
+	float  wth : WIDTH;
 	float4 col : COLOR;
 };
 
@@ -76,7 +77,7 @@ GS_IN VSMain( VS_IN input )
 	
 	output.pos = float4(input.pos.xyz,1);
 	output.col = input.col;
-	output.wth = input.pos.w;
+	output.wth = input.wth;
 	
 	return output;
 }

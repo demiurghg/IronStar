@@ -20,10 +20,15 @@ namespace Fusion.Engine.Graphics
 		 *	Primitives :
 		-----------------------------------------------------------------------------------------*/
 
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Primitives :
+		-----------------------------------------------------------------------------------------*/
+
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
 		{
-			var a = new DebugVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() };
-			var b = new DebugVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() };
+			var a = new DebugVertex() { Position = p0, Width = width0, Color = color0 };
+			var b = new DebugVertex() { Position = p1, Width = width1, Color = color1 };
 
 			PushVertex( a );
 			PushVertex( b );

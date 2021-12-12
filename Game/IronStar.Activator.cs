@@ -118,6 +118,7 @@ namespace IronStar
 			gs.AddSystem( new ECSPhysics.DetectorSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore ) );
+			gs.AddSystem( new ECSPhysics.PhysicsDebugger(physicsCore) );
 
 			//	environment :
 			gs.AddSystem( new DoorSystem() );

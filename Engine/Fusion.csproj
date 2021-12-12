@@ -183,6 +183,7 @@
     <Compile Include="Core\Logging\LogSeverity.cs" />
     <Compile Include="Core\Logging\MemoryLogTarget.cs" />
     <Compile Include="Core\Mathematics\EulerAngles.cs" />
+    <Compile Include="Core\Mathematics\MathConverter.cs" />
     <Compile Include="Core\Shell\Invoker.Echo.cs" />
     <Compile Include="Core\Shell\Invoker.Redo.cs" />
     <Compile Include="Core\Shell\Invoker.Undo.cs" />
@@ -201,6 +202,8 @@
     <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowInterleave.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowSystem.cs" />
+    <Compile Include="Engine\Graphics\Scenes\VertexPositionNormalTexture.cs" />
+    <Compile Include="Engine\Graphics\Scenes\VertexPositionColor.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRenderAsync.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -638,7 +641,6 @@
     <Compile Include="Engine\Graphics\Lights\ShadowCascade.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\SpotLight.cs" />
-    <Compile Include="Engine\Graphics\MathConverter.cs" />
     <Compile Include="Engine\Graphics\PbrReference.cs" />
     <Compile Include="Engine\Graphics\RenderList.cs" />
     <Compile Include="Engine\Graphics\RenderInstance.cs" />

@@ -531,5 +531,41 @@ namespace Fusion.Core.Mathematics
 
             return Equals((BoundingBox)value);
         }
-    }
+
+		public static BoundingBox CreateMerged(BoundingBox a, BoundingBox b)
+		{
+			BoundingBox merged;
+			CreateMerged( ref a, ref b, out merged );
+			return merged;
+		}
+    
+        public static void CreateMerged(ref BoundingBox a, ref BoundingBox b, out BoundingBox merged)
+        {
+            if (a.Minimum.X < b.Minimum.X)
+                merged.Minimum.X = a.Minimum.X;
+            else
+                merged.Minimum.X = b.Minimum.X;
+            if (a.Minimum.Y < b.Minimum.Y)
+                merged.Minimum.Y = a.Minimum.Y;
+            else
+                merged.Minimum.Y = b.Minimum.Y;
+            if (a.Minimum.Z < b.Minimum.Z)
+                merged.Minimum.Z = a.Minimum.Z;
+            else
+                merged.Minimum.Z = b.Minimum.Z;
+
+            if (a.Maximum.X > b.Maximum.X)
+                merged.Maximum.X = a.Maximum.X;
+            else
+                merged.Maximum.X = b.Maximum.X;
+            if (a.Maximum.Y > b.Maximum.Y)
+                merged.Maximum.Y = a.Maximum.Y;
+            else
+                merged.Maximum.Y = b.Maximum.Y;
+            if (a.Maximum.Z > b.Maximum.Z)
+                merged.Maximum.Z = a.Maximum.Z;
+            else
+                merged.Maximum.Z = b.Maximum.Z;
+        }
+	}
 }

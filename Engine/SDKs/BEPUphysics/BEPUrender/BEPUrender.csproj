@@ -183,12 +183,8 @@
     <Compile Include="Lines\LineDrawer.cs" />
     <Compile Include="Lines\SimulationIslandDrawer.cs" />
     <Compile Include="Lines\SolverDisplayObject.cs" />
-    <Compile Include="Model.cs" />
-    <Compile Include="Models\BatchInformation.cs" />
-    <Compile Include="Models\DisplayTypes\DisplayEntityModel.cs" />
     <Compile Include="Models\DisplayTypes\DisplayFluid.cs" />
     <Compile Include="Models\DisplayTypes\DisplayInstancedMesh.cs" />
-    <Compile Include="Models\DisplayTypes\DisplayModel.cs" />
     <Compile Include="Models\DisplayTypes\DisplayStaticMesh.cs" />
     <Compile Include="Models\DisplayTypes\DisplayTerrain.cs" />
     <Compile Include="Models\DisplayTypes\DisplayTriangleMesh.cs" />
@@ -205,8 +201,6 @@
     <Compile Include="Models\DisplayTypes\EntityTypes\DisplayTriangle.cs" />
     <Compile Include="Models\DisplayTypes\ModelDisplayObject.cs" />
     <Compile Include="Models\DisplayTypes\ModelDisplayObjectBase.cs" />
-    <Compile Include="Models\DisplayTypes\SelfDrawingModelDisplayObject.cs" />
-    <Compile Include="Models\ModelDisplayObjectBatch.cs" />
     <Compile Include="Models\ModelDrawer.cs" />
   </ItemGroup>
   <ItemGroup>

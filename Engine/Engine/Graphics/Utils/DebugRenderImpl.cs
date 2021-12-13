@@ -10,8 +10,8 @@ using Fusion.Engine.Common;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
 	[RequireShader("debugRender", true)]
 	public class DebugRenderImpl : DebugRender 
 	{
@@ -19,9 +19,11 @@ namespace Fusion.Engine.Graphics {
 
 		[Flags]
 		public enum RenderFlags : int {
-			SOLID = 0x0001,
-			GHOST = 0x0002,
-			MODEL = 0x0004,
+			LINES		= 0x0001,
+			GHOST		= 0x0002,
+			MODEL		= 0x0100,
+			SOLID		= 0x0200,
+			WIREFRAME	= 0x0400,
 		}
 
 		[ShaderStructure]
@@ -98,23 +100,31 @@ namespace Fusion.Engine.Graphics {
 			ps.VertexInputElements	=	VertexInputElement.FromStructure( typeof(DebugVertex) );
 			ps.RasterizerState		=	RasterizerState.CullNone;
 
-			if (flags.HasFlag( RenderFlags.SOLID ))
+			if (flags.HasFlag( RenderFlags.MODEL ))
 			{
 				ps.BlendState			=	BlendState.Opaque;
 				ps.DepthStencilState	=	DepthStencilState.Default;
-			}
-			
-			if (flags.HasFlag( RenderFlags.GHOST ))
-			{
-				ps.BlendState			=	BlendState.AlphaBlend;
-				ps.DepthStencilState	=	DepthStencilState.None;
+
+				if (flags.HasFlag( RenderFlags.GHOST ))
+				{
+					ps.DepthStencilState	=	DepthStencilState.None;
+				}
 			}
 
 			if (flags.HasFlag( RenderFlags.MODEL ))
 			{
 				ps.BlendState		=	BlendState.AlphaBlend;
 				ps.Primitive		=	Primitive.TriangleList;
-				ps.RasterizerState	=	RasterizerState.Wireframe;
+
+				if (flags.HasFlag( RenderFlags.WIREFRAME ))
+				{
+					ps.RasterizerState	=	RasterizerState.Wireframe;
+				}
+
+				if (flags.HasFlag( RenderFlags.SOLID ))
+				{
+					ps.RasterizerState	=	RasterizerState.CullNone;
+				}
 			}
 		}
 
@@ -187,19 +197,32 @@ namespace Fusion.Engine.Graphics {
 		{
 			var dev = Game.GraphicsDevice;
 
-			dev.PipelineState = factory[ (int)RenderFlags.MODEL ];
+			dev.PipelineState = factory[ (int)(RenderFlags.MODEL|RenderFlags.SOLID) ];
 
-			foreach ( var debugModel in debugModels ) {
-
-				if (debugModel==null) {
-					continue;
-				}
-
-				constData.World	=	debugModel.World;
-				constData.Color	=	debugModel.Color.ToColor4();	
-				constBuffer.SetData(ref constData);
+			foreach ( var debugModel in debugModels ) 
+			{
+				if (debugModel!=null && debugModel.RenderMode.HasFlag(DebugRenderMode.Solid)) 
+				{
+					constData.World	=	debugModel.World;
+					constData.Color	=	debugModel.Color.ToColor4();	
+					constBuffer.SetData(ref constData);
 				
-				debugModel.Draw( dev );
+					debugModel.Draw( dev );
+				}
+			}
+
+			dev.PipelineState = factory[ (int)(RenderFlags.MODEL|RenderFlags.WIREFRAME) ];
+
+			foreach ( var debugModel in debugModels ) 
+			{
+				if (debugModel!=null && debugModel.RenderMode.HasFlag(DebugRenderMode.Wireframe)) 
+				{
+					constData.World	=	debugModel.World;
+					constData.Color	=	debugModel.Color.ToColor4();	
+					constBuffer.SetData(ref constData);
+				
+					debugModel.Draw( dev );
+				}
 			}
 		}
 
@@ -210,11 +233,12 @@ namespace Fusion.Engine.Graphics {
 
 			dev.SetupVertexInput( vertexBuffer, null );
 
-			var flags = new[]{ RenderFlags.SOLID, RenderFlags.GHOST };
+			var flags = new[]{ RenderFlags.LINES, RenderFlags.LINES | RenderFlags.GHOST };
 
 			foreach ( var flag in flags ) {
 
-				if (Game.RenderSystem.SkipGhostDebugRendering && flag==RenderFlags.GHOST) {
+				if (Game.RenderSystem.SkipGhostDebugRendering && flag.HasFlag(RenderFlags.GHOST)) 
+				{
 					break;
 				}
 

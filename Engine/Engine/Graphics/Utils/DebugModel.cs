@@ -12,6 +12,13 @@ using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics 
 {
+	[Flags]
+	public enum DebugRenderMode
+	{
+		Wireframe,
+		Solid,
+	}
+
 	public class DebugModel : DisposableBase 
 	{
 		IndexBuffer ib;
@@ -24,6 +31,8 @@ namespace Fusion.Engine.Graphics
 
 		public Matrix World { get; set; } = Matrix.Identity;
 		public Color Color { get; set; } = Color.White;
+
+		public DebugRenderMode RenderMode = DebugRenderMode.Wireframe;
 
 		readonly int vertexCount;
 		readonly int indexCount;

@@ -24,10 +24,10 @@ namespace BEPUrender.Models
         {
         }
 
-        public override int GetTriangleCountEstimate()
-        {
-            return DisplayedObject.Data.Indices.Length / 3;
-        }
+		public override Color Color 
+		{
+			get { return Color.Gray; }
+		}
 
         public static void GetMeshData(TriangleMesh mesh, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {

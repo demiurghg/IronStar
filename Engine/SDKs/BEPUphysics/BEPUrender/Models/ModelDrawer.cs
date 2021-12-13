@@ -7,56 +7,56 @@ using BEPUphysics.DataStructures;
 using BEPUphysics.Entities;
 using BEPUphysics.UpdateableSystems;
 using Matrix = BEPUutilities.Matrix;
-using Color = Fusion.Core.Mathematics;
+using Color = Fusion.Core.Mathematics.Color;
 using Fusion.Engine.Graphics.Scenes;
 using Fusion.Engine.Graphics;
 using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
 using BEPUutilities.DataStructures;
+using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 
 namespace BEPUrender.Models
 {
-	/// <summary>
-	/// Manages and draws models.
-	/// </summary>
 	public class ModelDrawer
 	{
 		public delegate void ShapeMeshGetter(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices);
 
 		private readonly Dictionary<object, ModelDisplayObject> displayObjects = new Dictionary<object, ModelDisplayObject>();
 
-		private readonly List<SelfDrawingModelDisplayObject> selfDrawingDisplayObjects = new List<SelfDrawingModelDisplayObject>();
-
-		private static readonly Dictionary<Type, Type> displayTypes = new Dictionary<Type, Type>();
+		private static readonly Dictionary<Type, Type>  displayTypes = new Dictionary<Type, Type>();
+		private static readonly Dictionary<Type, Color> displayColor = new Dictionary<Type, Color>();
 		private static readonly Dictionary<Type, ShapeMeshGetter> shapeMeshGetters = new Dictionary<Type, ShapeMeshGetter>();
 
 		RawList<DebugVertex>	vertexData	=	new RawList<DebugVertex>(64);
 		RawList<int>			indexData	=	new RawList<int>		(64);
 
-		/// <summary>
-		/// Gets the map from object types to display object types.
-		/// </summary>
+
 		public static Dictionary<Type, Type> DisplayTypes
 		{
 			get { return displayTypes; }
 		}
 
-		/// <summary>
-		/// Gets the map from shape object types to methods which can be used to construct the data.
-		/// </summary>
 		public static Dictionary<Type, ShapeMeshGetter> ShapeMeshGetters
 		{
 			get { return shapeMeshGetters; }
 		}
 
+
 		static ModelDrawer()
 		{
 			//Display types are sometimes requested from contexts lacking a convenient reference to a ModelDrawer instance.
 			//Having them static simplifies things.
-			displayTypes.Add(typeof(FluidVolume), typeof(DisplayFluid));
-			displayTypes.Add(typeof(Terrain), typeof(DisplayTerrain));
-			displayTypes.Add(typeof(TriangleMesh), typeof(DisplayTriangleMesh));
-			displayTypes.Add(typeof(StaticMesh), typeof(DisplayStaticMesh));
-			displayTypes.Add(typeof(InstancedMesh), typeof(DisplayInstancedMesh));
+			displayTypes.Add(typeof(FluidVolume),	typeof(DisplayFluid));
+			displayTypes.Add(typeof(Terrain),		typeof(DisplayTerrain));
+			displayTypes.Add(typeof(TriangleMesh),	typeof(DisplayTriangleMesh));
+			displayTypes.Add(typeof(StaticMesh),	typeof(DisplayStaticMesh));
+			displayTypes.Add(typeof(InstancedMesh),	typeof(DisplayInstancedMesh));
+
+			displayColor.Add(typeof(FluidVolume),	Color.Blue );
+			displayColor.Add(typeof(Terrain),		Color.Olive );
+			displayColor.Add(typeof(TriangleMesh),	Color.Orange );
+			displayColor.Add(typeof(StaticMesh),	Color.Gray );
+			displayColor.Add(typeof(InstancedMesh),	Color.Yellow );
 
 			//Entity types are handled through a special case that uses an Entity's Shape to look up one of the ShapeMeshGetters.
 			shapeMeshGetters.Add(typeof(ConvexCollidable<BoxShape>), DisplayBox.GetShapeMeshData);
@@ -76,18 +76,16 @@ namespace BEPUrender.Models
 
 		readonly DebugRender debugRender;
 
-
 		public ModelDrawer(DebugRender debugRender)
 		{
 			this.debugRender	=	debugRender;
 		}
 
 
-		/// <summary>
-		/// Constructs a new display object for an object.
-		/// </summary>
-		/// <param name="objectToDisplay">Object to create a display object for.</param>
-		/// <returns>Display object for an object.</returns>
+		/*-----------------------------------------------------------------------------------------------
+		 *	Add/Remove stuff :
+		-----------------------------------------------------------------------------------------------*/
+
 		public ModelDisplayObject GetDisplayObject(object objectToDisplay)
 		{
 			Type displayType;
@@ -136,21 +134,6 @@ namespace BEPUrender.Models
 		}
 
 		/// <summary>
-		/// Adds the display object to the drawer.
-		/// </summary>
-		/// <param name="displayObject">Display object to add.</param>
-		/// <returns>Whether or not the display object was added.</returns>
-		public bool Add(SelfDrawingModelDisplayObject displayObject)
-		{
-			if (!selfDrawingDisplayObjects.Contains(displayObject))
-			{
-				selfDrawingDisplayObjects.Add(displayObject);
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>
 		/// Adds a display object directly to the drawer without being linked to a source.
 		/// </summary>
 		/// <param name="displayObject">Display object to add.</param>
@@ -162,7 +145,8 @@ namespace BEPUrender.Models
 			displayObject.GetMeshData( vertexData, indexData );
 
 			displayObject.Model = new DebugModel( debugRender, vertexData.Elements, indexData.Elements );
-			displayObject.Model.Color = new Color.Color( 128,64,32,255 );
+			displayObject.Model.Color		= displayObject.Color;
+			displayObject.Model.RenderMode	= DebugRenderMode.Solid|DebugRenderMode.Wireframe;
 
 			debugRender.AddModel( displayObject.Model );
 		}
@@ -185,17 +169,6 @@ namespace BEPUrender.Models
 		}
 
 		/// <summary>
-		/// Removes an object from the drawer.
-		/// </summary>
-		/// <param name="displayObject">Display object to remove.</param>
-		/// <returns>Whether or not the object was present.</returns>
-		public bool Remove(SelfDrawingModelDisplayObject displayObject)
-		{
-			return selfDrawingDisplayObjects.Remove(displayObject);
-		}
-
-
-		/// <summary>
 		/// Removes a display object from the drawer.  Only use this if display object was added directly.
 		/// </summary>
 		/// <param name="displayObject">Object to remove.</param>
@@ -210,17 +183,8 @@ namespace BEPUrender.Models
 		public void Clear()
 		{
 			displayObjects.Clear();
-			selfDrawingDisplayObjects.Clear();
-			ClearManagedModels();
 		}
 
-		/// <summary>
-		/// Cleans out any data contained by derived drawers.
-		/// </summary>
-		protected virtual void ClearManagedModels()
-		{
-			throw new NotImplementedException();
-		}
 
 		/// <summary>
 		/// Determines if the object has an associated display object in this drawer.
@@ -232,26 +196,9 @@ namespace BEPUrender.Models
 			return displayObjects.ContainsKey(displayedObject);
 		}
 
-		/// <summary>
-		/// Updates the drawer and its components.
-		/// </summary>
-		public void Update()
-		{
-			foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
-			{
-				displayObject.Update();
-			}
-
-			UpdateManagedModels();
-		}
-
-		/// <summary>
-		/// Updates the drawer's technique.
-		/// </summary>
-		protected virtual void UpdateManagedModels()
-		{
-			throw new NotImplementedException();
-		}
+		/*-----------------------------------------------------------------------------------------------
+		 *	Update/Draw stuff :
+		-----------------------------------------------------------------------------------------------*/
 
 		/// <summary>
 		/// Draws the drawer's models.
@@ -267,23 +214,6 @@ namespace BEPUrender.Models
 
 				((DebugRenderAsync)debugRender).SetTransform( modelDisplayObject.Model, modelDisplayObject.WorldTransform );
 			}
-
-			foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
-			{
-				displayObject.Draw(Matrix.Identity, Matrix.Identity);
-			}
 		}
-
-		/// <summary>
-		/// Draws the models managed by the drawer using the appropriate technique.
-		/// </summary>
-		/// <param name="viewMatrix">View matrix to use to draw the objects.</param>
-		/// <param name="projectionMatrix">Projection matrix to use to draw the objects.</param>
-		protected virtual void DrawManagedModels(Matrix viewMatrix, Matrix projectionMatrix)
-		{
-			throw new NotImplementedException();
-		}
-
-
 	}
 }

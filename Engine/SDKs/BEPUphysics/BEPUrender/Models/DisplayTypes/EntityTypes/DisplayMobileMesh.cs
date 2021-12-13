@@ -9,48 +9,48 @@ using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
-    /// <summary>
-    /// Simple display object for triangles.
-    /// </summary>
-    public class DisplayMobileMesh
-    {
-        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
-        {
-            MobileMeshShape shape = collidable.Shape as MobileMeshShape;
-            var tempVertices = new VertexPositionNormalTexture[shape.TriangleMesh.Data.Vertices.Length];
-            for (int i = 0; i < shape.TriangleMesh.Data.Vertices.Length; i++)
-            {
-                BEPUutilities.Vector3 position;
-                shape.TriangleMesh.Data.GetVertexPosition(i, out position);
-                tempVertices[i] = new VertexPositionNormalTexture(
-                    MathConverter.Convert(position),
-                    Vector3.Zero, 
-                    Vector2.Zero);
-            }
+	/// <summary>
+	/// Simple display object for triangles.
+	/// </summary>
+	public class DisplayMobileMesh
+	{
+		public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
+		{
+			MobileMeshShape shape = collidable.Shape as MobileMeshShape;
+			var tempVertices = new VertexPositionNormalTexture[shape.TriangleMesh.Data.Vertices.Length];
+			for (int i = 0; i < shape.TriangleMesh.Data.Vertices.Length; i++)
+			{
+				BEPUutilities.Vector3 position;
+				shape.TriangleMesh.Data.GetVertexPosition(i, out position);
+				tempVertices[i] = new VertexPositionNormalTexture(
+					MathConverter.Convert(position),
+					Vector3.Zero, 
+					Vector2.Zero);
+			}
 
-            for (int i = 0; i < shape.TriangleMesh.Data.Indices.Length; i++)
-            {
-                indices.Add((ushort)shape.TriangleMesh.Data.Indices[i]);
-            }
-            for (int i = 0; i < indices.Count; i += 3)
-            {
-                int a = indices[i];
-                int b = indices[i + 1];
-                int c = indices[i + 2];
-                Vector3 normal = Vector3.Normalize(Vector3.Cross(
-                    tempVertices[c].Position - tempVertices[a].Position,
-                    tempVertices[b].Position - tempVertices[a].Position));
-                tempVertices[a].Normal += normal;
-                tempVertices[b].Normal += normal;
-                tempVertices[c].Normal += normal;
-            }
+			for (int i = 0; i < shape.TriangleMesh.Data.Indices.Length; i++)
+			{
+				indices.Add((ushort)shape.TriangleMesh.Data.Indices[i]);
+			}
+			for (int i = 0; i < indices.Count; i += 3)
+			{
+				int a = indices[i];
+				int b = indices[i + 1];
+				int c = indices[i + 2];
+				Vector3 normal = Vector3.Normalize(Vector3.Cross(
+					tempVertices[c].Position - tempVertices[a].Position,
+					tempVertices[b].Position - tempVertices[a].Position));
+				tempVertices[a].Normal += normal;
+				tempVertices[b].Normal += normal;
+				tempVertices[c].Normal += normal;
+			}
 
-            for (int i = 0; i < tempVertices.Length; i++)
-            {
-                tempVertices[i].Normal.Normalize();
-                vertices.Add(tempVertices[i]);
-            }
-        }
+			for (int i = 0; i < tempVertices.Length; i++)
+			{
+				tempVertices[i].Normal.Normalize();
+				vertices.Add(tempVertices[i]);
+			}
+		}
 
-    }
+	}
 }

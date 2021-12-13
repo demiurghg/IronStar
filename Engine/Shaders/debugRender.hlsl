@@ -5,13 +5,15 @@
 #include "auto/debugRender.fxi"
 
 #if 0
-$ubershader SOLID|GHOST|MODEL
+$ubershader LINES +GHOST
+$ubershader MODEL SOLID|WIREFRAME
 #endif
 
 struct VS_IN {
 	float3 pos : POSITION;
 	float  wth : WIDTH;
 	float4 col : COLOR;
+	float3 nrm : NORMAL;
 };
 
 struct GS_IN {
@@ -26,6 +28,7 @@ struct PS_IN {
 #ifdef MODEL
 	float4 ppos : TEXCOORD0;
 #endif	
+	float3 nrm : TEXCOORD1;
 };
 
 /*------------------------------------------------------------------------------
@@ -38,13 +41,16 @@ PS_IN VSMain( VS_IN input )
 {
 	PS_IN output = (PS_IN)0;
 	
-	float4 wpos	=	mul( float4(input.pos.xyz,1), Batch.World );
+	float3 nrm	=	input.nrm;
+	
+	float4 wpos	=	mul( float4(input.pos.xyz - nrm * 0.01f,1), Batch.World );
 	float4 vpos	=	mul( wpos, Batch.View );
 	float4 ppos	=	mul( vpos, Batch.Projection );
 	
 	output.pos = ppos;
 	output.col = Batch.Color;
 	output.ppos= ppos;
+	output.nrm = mul( float4(input.nrm.xyz,0), Batch.World ).xyz;
 	
 	return output;
 }
@@ -53,6 +59,13 @@ PS_IN VSMain( VS_IN input )
 float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Depth ) : SV_Target
 {
 	depth				=	abs(input.ppos.z / input.ppos.w);
+	float3	lighting	=	float3(1,1,1);
+	
+	#ifdef SOLID
+		clip((vpos.x+vpos.y)%2-1);
+		lighting = dot( input.nrm, -float3(0,1,0) ) * 0.5 + 0.5;
+		//lighting = 0;
+	#endif
 	
 	float biasScale0	=	1 - exp2(-24+2);
 	float biasScale1	=	1 - exp2(-24+10);
@@ -60,7 +73,7 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Dept
 	
 	depth =  depth * biasScale;
 	
-	return input.col.rgba;
+	return float4( input.col.rgb * lighting, input.col.a );
 }
 
 #endif
@@ -69,7 +82,7 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Dept
 	DEBUG LINE RENDERING
 ------------------------------------------------------------------------------*/
 
-#if defined(SOLID) || defined(GHOST)
+#if defined(LINES)
 
 GS_IN VSMain( VS_IN input )
 {
@@ -142,15 +155,19 @@ void GSMain( line GS_IN inputPoint[2], inout TriangleStream<PS_IN> outputStream 
 	
 	p0.pos = pos0;
 	p0.col = color1;
+	p0.nrm = float3(0,0,0);
 	
 	p1.pos = pos1;
 	p1.col = color0;
+	p1.nrm = float3(0,0,0);
 	
 	p2.pos = pos2;
 	p2.col = color0;
+	p2.nrm = float3(0,0,0);
 	
 	p3.pos = pos3;
 	p3.col = color1;
+	p3.nrm = float3(0,0,0);
 
 	
 	outputStream.Append(p0);
@@ -170,11 +187,10 @@ void GSMain( line GS_IN inputPoint[2], inout TriangleStream<PS_IN> outputStream 
 
 float4 PSMain( PS_IN input, float4 vpos : SV_Position ) : SV_Target
 {
-	#ifdef SOLID
-	return float4(input.col.rgb,1);
-	#endif
 	#ifdef GHOST
 		clip((vpos.x+vpos.y)%2-1);
+		return float4(input.col.rgb,1);
+	#else
 		return float4(input.col.rgb,1);
 	#endif
 }

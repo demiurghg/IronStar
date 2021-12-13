@@ -15,6 +15,7 @@ namespace Fusion.Engine.Graphics
 	public struct DebugVertex 
 	{
 		[Vertex("POSITION")] public Vector3 Position;
+		[Vertex("NORMAL",0)] public Vector3 Normal;
 		[Vertex("WIDTH", 0)] public float Width;
 		[Vertex("COLOR", 0)] public Color Color;
 
@@ -23,6 +24,7 @@ namespace Fusion.Engine.Graphics
 			Position	=	pos;
 			Color		=	color;
 			Width		=	1;
+			Normal		=	Vector3.Zero;
 		}
 
 		public DebugVertex( Vector3 pos, Color color, float width )
@@ -30,6 +32,15 @@ namespace Fusion.Engine.Graphics
 			Position	=	pos;
 			Color		=	color;
 			Width		=	width;
+			Normal		=	Vector3.Zero;
+		}
+
+		public DebugVertex( Vector3 pos, Vector3 normal, Vector2 uv )
+		{
+			Position	=	pos;
+			Color		=	Color.White;
+			Width		=	1;
+			Normal		=	normal;
 		}
 
 		public DebugVertex( Vector3 pos )
@@ -37,6 +48,7 @@ namespace Fusion.Engine.Graphics
 			Position	=	pos;
 			Color		=	Color.White;
 			Width		=	1;
+			Normal		=	Vector3.Zero;
 		}
 	}
 }

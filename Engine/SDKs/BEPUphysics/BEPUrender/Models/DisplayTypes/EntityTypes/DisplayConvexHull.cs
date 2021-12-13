@@ -12,6 +12,8 @@ using MathConverter = Fusion.Core.Mathematics.MathConverter;
 using Vector2 = Fusion.Core.Mathematics.Vector2;
 using Vector3 = Fusion.Core.Mathematics.Vector3;
 using Fusion.Engine.Graphics.Scenes;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -21,7 +23,7 @@ namespace BEPUrender.Models
     public static class DisplayConvexHull
     {
 
-        public static void GetShapeMeshData(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             var convexHullShape = collidable.Shape as ConvexHullShape;
             if (convexHullShape == null)

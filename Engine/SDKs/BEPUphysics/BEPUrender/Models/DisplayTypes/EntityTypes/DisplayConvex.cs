@@ -13,6 +13,8 @@ using MathConverter = Fusion.Core.Mathematics.MathConverter;
 using MathHelper = Fusion.Core.Mathematics.MathUtil;
 using Vector2 = Fusion.Core.Mathematics.Vector2;
 using Vector3 = Fusion.Core.Mathematics.Vector3;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -28,7 +30,7 @@ namespace BEPUrender.Models
             InertiaHelper.GenerateSphere(2, out SampleDirections, out sampleTriangleIndices);
         }
 
-        public static void GetShapeMeshData(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             var shape = collidable.Shape as ConvexShape;
             if (shape == null)

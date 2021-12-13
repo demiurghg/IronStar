@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
-
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
+using Fusion.Engine.Graphics;
 
 namespace BEPUrender.Models
 {
@@ -22,6 +24,8 @@ namespace BEPUrender.Models
             BatchInformation = new BatchInformation();
             TextureIndex = Random.Next(8);
         }
+
+		public DebugModel Model { get; set; }
 
         /// <summary>
         /// Gets or sets the world transform of the display object.
@@ -65,7 +69,7 @@ namespace BEPUrender.Models
         /// <param name="baseVertexBufferIndex">Index in the batch's vertex buffer where this display object's vertices start.</param>
         /// <param name="baseIndexBufferIndex">Index in the batch's index buffer where this display object's vertices start.</param>
         /// <param name="batchListIndex">Index in the batch's display object list where this display object will be inserted.</param>
-        public void GetVertexData(List<VertexPositionNormalTexture> vertices, List<ushort> indices,
+        public void GetVertexData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices,
                                   ModelDisplayObjectBatch batch, ushort baseVertexBufferIndex, int baseIndexBufferIndex, int batchListIndex)
         {
             BatchInformation.Batch = batch;
@@ -93,7 +97,7 @@ namespace BEPUrender.Models
         /// </summary>
         /// <param name="vertices">List of vertices to be filled with the model vertices.</param>
         /// <param name="indices">List of indices to be filled with the model indices.</param>
-        public abstract void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices);
+        public abstract void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices);
 
         /// <summary>
         /// Updates the display object and reports the world transform.

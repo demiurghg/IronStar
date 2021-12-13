@@ -16,10 +16,13 @@ namespace Fusion.Engine.Graphics
 		public abstract void AddModel( DebugModel model );
 		public abstract void RemoveModel( DebugModel model );
 
-		/*-----------------------------------------------------------------------------------------
-		 *	Primitives :
-		-----------------------------------------------------------------------------------------*/
+		public readonly Game Game;
 
+		public DebugRender( Game game )
+		{
+			this.Game = game;
+		}
+		
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Primitives :

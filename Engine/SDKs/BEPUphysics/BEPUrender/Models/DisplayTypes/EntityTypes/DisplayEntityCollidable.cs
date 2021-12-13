@@ -3,6 +3,8 @@ using MathConverter = Fusion.Core.Mathematics.MathConverter;
 using Fusion.Engine.Graphics.Scenes;
 using System.Collections.Generic;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -27,7 +29,7 @@ namespace BEPUrender.Models
         }
 
 
-        public override void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             ModelDrawer.ShapeMeshGetters[DisplayedObject.GetType()](DisplayedObject, vertices, indices);
         }

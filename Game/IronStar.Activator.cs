@@ -91,7 +91,7 @@ namespace IronStar
 			}
 			
 			//	physics and FX systems are used by many other systems :
-			var physicsCore = new ECSPhysics.PhysicsCore();
+			var physicsCore = new ECSPhysics.PhysicsCore(game);
 			var fxPlayback	= new SFX.FXPlayback(game, content );
 
 			gs.Services.AddService( content );

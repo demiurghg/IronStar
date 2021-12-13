@@ -6,9 +6,11 @@ using BEPUphysics.CollisionShapes;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
 using System;
-using Matrix  = Fusion.Core.Mathematics.Matrix;
+using Matrix = Fusion.Core.Mathematics.Matrix;
 using Vector2 = Fusion.Core.Mathematics.Vector2;
 using Vector3 = Fusion.Core.Mathematics.Vector3;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -33,7 +35,7 @@ namespace BEPUrender.Models
             return DisplayedObject.Shape.Heights.Length * 2;
         }
 
-        public override void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             int numColumns = DisplayedObject.Shape.Heights.GetLength(0);
             int numRows = DisplayedObject.Shape.Heights.GetLength(1);
@@ -52,7 +54,7 @@ namespace BEPUrender.Models
             {
                 for (int i = 0; i < numColumns; i++)
                 {
-                    VertexPositionNormalTexture v;
+                    VertexPositionNormalTexture v  = new VertexPositionNormalTexture();
                     BEPUutilities.Vector3 position, n;
                     DisplayedObject.GetPosition(i, j, out position);
                     shape.GetLocalNormal(i, j, out n);
@@ -64,7 +66,8 @@ namespace BEPUrender.Models
 
                     if (reverseWinding)
                         Vector3.Negate(ref v.Normal, out v.Normal);
-                    v.TexCoord = new Vector2(i, j);
+
+                    //v.TexCoord = new Vector2(i, j);
 
                     vertices.Add(v);
 

@@ -4,6 +4,8 @@ using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -12,7 +14,7 @@ namespace BEPUrender.Models
     /// </summary>
     public class DisplayMobileMesh
     {
-        public static void GetShapeMeshData(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             MobileMeshShape shape = collidable.Shape as MobileMeshShape;
             var tempVertices = new VertexPositionNormalTexture[shape.TriangleMesh.Data.Vertices.Length];

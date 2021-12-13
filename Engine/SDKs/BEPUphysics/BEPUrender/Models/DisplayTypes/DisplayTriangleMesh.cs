@@ -4,6 +4,8 @@ using Fusion.Core.Mathematics;
 using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -27,7 +29,7 @@ namespace BEPUrender.Models
             return DisplayedObject.Data.Indices.Length / 3;
         }
 
-        public static void GetMeshData(TriangleMesh mesh, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetMeshData(TriangleMesh mesh, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             var tempVertices = new VertexPositionNormalTexture[mesh.Data.Vertices.Length];
             for (int i = 0; i < mesh.Data.Vertices.Length; i++)
@@ -61,7 +63,7 @@ namespace BEPUrender.Models
             }
         }
 
-        public override void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             GetMeshData(DisplayedObject, vertices, indices);
         }

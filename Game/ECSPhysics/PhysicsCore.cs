@@ -36,6 +36,8 @@ namespace IronStar.ECSPhysics
 	{
 		public delegate RigidTransform TransformCallback( ISpaceObject spaceObject, Transform transform );
 
+		public readonly Game Game;
+
 		readonly Space physSpace;
 
 		internal Space Space 
@@ -74,9 +76,10 @@ namespace IronStar.ECSPhysics
 		readonly ConcurrentQueue<DeferredImpulse>		impulseQueue		=	new ConcurrentQueue<DeferredImpulse>();
 		readonly ConcurrentQueue<Action>				actionQueue			=	new ConcurrentQueue<Action>();
 		
-		public PhysicsCore ()
+		public PhysicsCore (Game game)
 		{
-			physSpace		=	new Space();
+			this.Game	=	game;
+			physSpace	=	new Space();
 
 			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 
@@ -86,7 +89,7 @@ namespace IronStar.ECSPhysics
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup    ), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup ), CollisionRule.NoSolver );
 
-			stopwatch			=	new Stopwatch();
+			stopwatch	=	new Stopwatch();
 		}
 
 

@@ -7,6 +7,8 @@ using System;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using Fusion.Engine.Graphics.Scenes;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -17,7 +19,7 @@ namespace BEPUrender.Models
     {
 
 
-        public static void GetShapeMeshData(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             var triangleShape = collidable.Shape as TriangleShape;
             if(triangleShape == null)

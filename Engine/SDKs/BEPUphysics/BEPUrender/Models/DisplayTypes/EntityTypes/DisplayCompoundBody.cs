@@ -4,6 +4,8 @@ using System;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -13,13 +15,13 @@ namespace BEPUrender.Models
     public static class DisplayCompoundBody
     {
 
-        public static void GetShapeMeshData(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public static void GetShapeMeshData(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             var compoundCollidable = collidable as CompoundCollidable;
             if (compoundCollidable == null)
                 throw new ArgumentException("Wrong shape type.");
-            var tempIndices = new List<ushort>();
-            var tempVertices = new List<VertexPositionNormalTexture>();
+            var tempIndices = new RawList<int>();
+            var tempVertices = new RawList<VertexPositionNormalTexture>();
             for (int i = 0; i < compoundCollidable.Children.Count; i++)
             {
                 var child = compoundCollidable.Children[i];

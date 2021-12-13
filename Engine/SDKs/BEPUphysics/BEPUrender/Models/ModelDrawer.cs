@@ -9,288 +9,281 @@ using BEPUphysics.UpdateableSystems;
 using Matrix = BEPUutilities.Matrix;
 using Color = Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics.Scenes;
+using Fusion.Engine.Graphics;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
-    /// <summary>
-    /// Manages and draws models.
-    /// </summary>
-    public abstract class ModelDrawer : IDisposable
-    {
-        private readonly Dictionary<object, ModelDisplayObject> displayObjects = new Dictionary<object, ModelDisplayObject>();
+	/// <summary>
+	/// Manages and draws models.
+	/// </summary>
+	public class ModelDrawer
+	{
+		public delegate void ShapeMeshGetter(EntityCollidable collidable, RawList<VertexPositionNormalTexture> vertices, RawList<int> indices);
 
-        private readonly List<SelfDrawingModelDisplayObject> selfDrawingDisplayObjects = new List<SelfDrawingModelDisplayObject>();
+		private readonly Dictionary<object, ModelDisplayObject> displayObjects = new Dictionary<object, ModelDisplayObject>();
 
-        private static readonly Dictionary<Type, Type> displayTypes = new Dictionary<Type, Type>();
-        private static readonly Dictionary<Type, ShapeMeshGetter> shapeMeshGetters = new Dictionary<Type, ShapeMeshGetter>();
+		private readonly List<SelfDrawingModelDisplayObject> selfDrawingDisplayObjects = new List<SelfDrawingModelDisplayObject>();
 
-        /// <summary>
-        /// Gets the map from object types to display object types.
-        /// </summary>
-        public static Dictionary<Type, Type> DisplayTypes
-        {
-            get { return displayTypes; }
-        }
+		private static readonly Dictionary<Type, Type> displayTypes = new Dictionary<Type, Type>();
+		private static readonly Dictionary<Type, ShapeMeshGetter> shapeMeshGetters = new Dictionary<Type, ShapeMeshGetter>();
 
-        /// <summary>
-        /// Gets the map from shape object types to methods which can be used to construct the data.
-        /// </summary>
-        public static Dictionary<Type, ShapeMeshGetter> ShapeMeshGetters
-        {
-            get { return shapeMeshGetters; }
-        }
+		RawList<DebugVertex>	vertexData	=	new RawList<DebugVertex>(64);
+		RawList<int>			indexData	=	new RawList<int>		(64);
 
-        static ModelDrawer()
-        {
-            //Display types are sometimes requested from contexts lacking a convenient reference to a ModelDrawer instance.
-            //Having them static simplifies things.
-            displayTypes.Add(typeof(FluidVolume), typeof(DisplayFluid));
-            displayTypes.Add(typeof(Terrain), typeof(DisplayTerrain));
-            displayTypes.Add(typeof(TriangleMesh), typeof(DisplayTriangleMesh));
-            displayTypes.Add(typeof(StaticMesh), typeof(DisplayStaticMesh));
-            displayTypes.Add(typeof(InstancedMesh), typeof(DisplayInstancedMesh));
+		/// <summary>
+		/// Gets the map from object types to display object types.
+		/// </summary>
+		public static Dictionary<Type, Type> DisplayTypes
+		{
+			get { return displayTypes; }
+		}
 
-            //Entity types are handled through a special case that uses an Entity's Shape to look up one of the ShapeMeshGetters.
-            shapeMeshGetters.Add(typeof(ConvexCollidable<BoxShape>), DisplayBox.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<SphereShape>), DisplaySphere.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<CapsuleShape>), DisplayCapsule.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<CylinderShape>), DisplayCylinder.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<ConeShape>), DisplayCone.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<TriangleShape>), DisplayTriangle.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<ConvexHullShape>), DisplayConvexHull.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<MinkowskiSumShape>), DisplayConvex.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<WrappedShape>), DisplayConvex.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(ConvexCollidable<TransformableShape>), DisplayConvex.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(CompoundCollidable), DisplayCompoundBody.GetShapeMeshData);
-            shapeMeshGetters.Add(typeof(MobileMeshCollidable), DisplayMobileMesh.GetShapeMeshData);
+		/// <summary>
+		/// Gets the map from shape object types to methods which can be used to construct the data.
+		/// </summary>
+		public static Dictionary<Type, ShapeMeshGetter> ShapeMeshGetters
+		{
+			get { return shapeMeshGetters; }
+		}
 
-        }
+		static ModelDrawer()
+		{
+			//Display types are sometimes requested from contexts lacking a convenient reference to a ModelDrawer instance.
+			//Having them static simplifies things.
+			displayTypes.Add(typeof(FluidVolume), typeof(DisplayFluid));
+			displayTypes.Add(typeof(Terrain), typeof(DisplayTerrain));
+			displayTypes.Add(typeof(TriangleMesh), typeof(DisplayTriangleMesh));
+			displayTypes.Add(typeof(StaticMesh), typeof(DisplayStaticMesh));
+			displayTypes.Add(typeof(InstancedMesh), typeof(DisplayInstancedMesh));
 
-        protected ModelDrawer(/*Game game*/)
-        {
-            /*Game = game;
-
-            colors = new Texture2D(game.GraphicsDevice, 8, 1);
-            colors.SetData(new[]
-            {
-                new Color(255, 216, 0),
-                new Color(79, 200, 255),
-                new Color(255, 0, 0),
-                new Color(177, 0, 254),
-                new Color(255, 130, 151),
-                new Color(254, 106, 0),
-                new Color(168, 165, 255),
-                new Color(0, 254, 33)
-            });
+			//Entity types are handled through a special case that uses an Entity's Shape to look up one of the ShapeMeshGetters.
+			shapeMeshGetters.Add(typeof(ConvexCollidable<BoxShape>), DisplayBox.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<SphereShape>), DisplaySphere.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<CapsuleShape>), DisplayCapsule.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<CylinderShape>), DisplayCylinder.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<ConeShape>), DisplayCone.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<TriangleShape>), DisplayTriangle.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<ConvexHullShape>), DisplayConvexHull.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<MinkowskiSumShape>), DisplayConvex.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<WrappedShape>), DisplayConvex.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(ConvexCollidable<TransformableShape>), DisplayConvex.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(CompoundCollidable), DisplayCompoundBody.GetShapeMeshData);
+			shapeMeshGetters.Add(typeof(MobileMeshCollidable), DisplayMobileMesh.GetShapeMeshData);
+		}
 
 
-            fillState = new RasterizerState();
-            wireframeState = new RasterizerState();
-            wireframeState.FillMode = FillMode.WireFrame;  */
-        }
+		readonly DebugRender debugRender;
 
 
-
-        /// <summary>
-        /// Gets the game using this ModelDrawer.
-        /// </summary>
-
-        /// <summary>
-        /// Gets or sets whether or not the model drawer is drawing wireframes.
-        /// </summary>
-        public bool IsWireframe { get; set; }
-
-        /// <summary>
-        /// Constructs a new display object for an object.
-        /// </summary>
-        /// <param name="objectToDisplay">Object to create a display object for.</param>
-        /// <returns>Display object for an object.</returns>
-        public ModelDisplayObject GetDisplayObject(object objectToDisplay)
-        {
-            Type displayType;
-            if (!displayObjects.ContainsKey(objectToDisplay))
-            {
-                if (displayTypes.TryGetValue(objectToDisplay.GetType(), out displayType))
-                {
-#if !WINDOWS
-                    return (ModelDisplayObject)displayType.GetConstructor(
-                                                     new Type[] { typeof(ModelDrawer), objectToDisplay.GetType() })
-                                                     .Invoke(new object[] { this, objectToDisplay });
-#else
-                    return (ModelDisplayObject)Activator.CreateInstance(displayType, new[] { this, objectToDisplay });
-#endif
-                }
-                Entity e;
-                if ((e = objectToDisplay as Entity) != null)
-                {
-                    return new DisplayEntityCollidable(this, e.CollisionInformation);
-                }
-                EntityCollidable entityCollidable;
-                if ((entityCollidable = objectToDisplay as EntityCollidable) != null)
-                {
-                    return new DisplayEntityCollidable(this, entityCollidable);
-                }
-
-            }
-            return null;
-        }
+		public ModelDrawer(DebugRender debugRender)
+		{
+			this.debugRender	=	debugRender;
+		}
 
 
-        /// <summary>
-        /// Attempts to add an object to the ModelDrawer.
-        /// </summary>
-        /// <param name="objectToDisplay">Object to be added to the model drawer.</param>
-        /// <returns>ModelDisplayObject created for the object.  Null if it couldn't be added.</returns>
-        public ModelDisplayObject Add(object objectToDisplay)
-        {
-            ModelDisplayObject displayObject = GetDisplayObject(objectToDisplay);
-            if (displayObject != null)
-            {
-                Add(displayObject);
-                displayObjects.Add(objectToDisplay, displayObject);
-                return displayObject;
-            }
-            return null; //Couldn't add it.
-        }
+		/// <summary>
+		/// Constructs a new display object for an object.
+		/// </summary>
+		/// <param name="objectToDisplay">Object to create a display object for.</param>
+		/// <returns>Display object for an object.</returns>
+		public ModelDisplayObject GetDisplayObject(object objectToDisplay)
+		{
+			Type displayType;
 
-        /// <summary>
-        /// Adds the display object to the drawer.
-        /// </summary>
-        /// <param name="displayObject">Display object to add.</param>
-        /// <returns>Whether or not the display object was added.</returns>
-        public bool Add(SelfDrawingModelDisplayObject displayObject)
-        {
-            if (!selfDrawingDisplayObjects.Contains(displayObject))
-            {
-                selfDrawingDisplayObjects.Add(displayObject);
-                return true;
-            }
-            return false;
-        }
+			if (!displayObjects.ContainsKey(objectToDisplay))
+			{
+				if (displayTypes.TryGetValue(objectToDisplay.GetType(), out displayType))
+				{
+					return (ModelDisplayObject)Activator.CreateInstance(displayType, new[] { this, objectToDisplay });
+				}
 
-        /// <summary>
-        /// Adds a display object directly to the drawer without being linked to a source.
-        /// </summary>
-        /// <param name="displayObject">Display object to add.</param>
-        public abstract void Add(ModelDisplayObject displayObject);
+				Entity e;
+				if ((e = objectToDisplay as Entity) != null)
+				{
+					return new DisplayEntityCollidable(this, e.CollisionInformation);
+				}
 
-        /// <summary>
-        /// Removes an object from the drawer.
-        /// </summary>
-        /// <param name="objectToRemove">Object to remove.</param>
-        /// <returns>Whether or not the object was present.</returns>
-        public bool Remove(object objectToRemove)
-        {
-            ModelDisplayObject displayObject;
-            if (displayObjects.TryGetValue(objectToRemove, out displayObject))
-            {
-                Remove(displayObject);
-                displayObjects.Remove(objectToRemove);
-                return true;
-            }
-            return false;
-        }
+				EntityCollidable entityCollidable;
+				if ((entityCollidable = objectToDisplay as EntityCollidable) != null)
+				{
+					return new DisplayEntityCollidable(this, entityCollidable);
+				}
 
-        /// <summary>
-        /// Removes an object from the drawer.
-        /// </summary>
-        /// <param name="displayObject">Display object to remove.</param>
-        /// <returns>Whether or not the object was present.</returns>
-        public bool Remove(SelfDrawingModelDisplayObject displayObject)
-        {
-            return selfDrawingDisplayObjects.Remove(displayObject);
-        }
+			}
+			return null;
+		}
 
 
-        /// <summary>
-        /// Removes a display object from the drawer.  Only use this if display object was added directly.
-        /// </summary>
-        /// <param name="displayObject">Object to remove.</param>
-        public abstract void Remove(ModelDisplayObject displayObject);
+		/// <summary>
+		/// Attempts to add an object to the ModelDrawer.
+		/// </summary>
+		/// <param name="objectToDisplay">Object to be added to the model drawer.</param>
+		/// <returns>ModelDisplayObject created for the object.  Null if it couldn't be added.</returns>
+		public ModelDisplayObject Add(object objectToDisplay)
+		{
+			ModelDisplayObject displayObject = GetDisplayObject(objectToDisplay);
 
-        /// <summary>
-        /// Cleans out the model drawer of any existing display objects.
-        /// </summary>
-        public void Clear()
-        {
-            displayObjects.Clear();
-            selfDrawingDisplayObjects.Clear();
-            ClearManagedModels();
-        }
+			if (displayObject != null)
+			{
+				Add(displayObject);
+				displayObjects.Add(objectToDisplay, displayObject);
+				return displayObject;
+			}
+			
+			return null; //Couldn't add it.
+		}
 
-        /// <summary>
-        /// Cleans out any data contained by derived drawers.
-        /// </summary>
-        protected abstract void ClearManagedModels();
+		/// <summary>
+		/// Adds the display object to the drawer.
+		/// </summary>
+		/// <param name="displayObject">Display object to add.</param>
+		/// <returns>Whether or not the display object was added.</returns>
+		public bool Add(SelfDrawingModelDisplayObject displayObject)
+		{
+			if (!selfDrawingDisplayObjects.Contains(displayObject))
+			{
+				selfDrawingDisplayObjects.Add(displayObject);
+				return true;
+			}
+			return false;
+		}
 
-        /// <summary>
-        /// Determines if the object has an associated display object in this drawer.
-        /// </summary>
-        /// <param name="displayedObject">Object to check for in the drawer.</param>
-        /// <returns>Whether or not the object has an associated display object in this drawer.</returns>
-        public bool Contains(object displayedObject)
-        {
-            return displayObjects.ContainsKey(displayedObject);
-        }
+		/// <summary>
+		/// Adds a display object directly to the drawer without being linked to a source.
+		/// </summary>
+		/// <param name="displayObject">Display object to add.</param>
+		public virtual void Add(ModelDisplayObject displayObject)
+		{
+			vertexData.Clear();
+			indexData.Clear();
 
-        /// <summary>
-        /// Updates the drawer and its components.
-        /// </summary>
-        public void Update()
-        {
-            foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
-                displayObject.Update();
-            UpdateManagedModels();
-        }
+			displayObject.GetMeshData( vertexData, indexData );
 
-        /// <summary>
-        /// Updates the drawer's technique.
-        /// </summary>
-        protected abstract void UpdateManagedModels();
+			displayObject.Model = new DebugModel( debugRender, vertexData.Elements, indexData.Elements );
+			displayObject.Model.Color = new Color.Color( 128,64,32,255 );
 
-        /// <summary>
-        /// Draws the drawer's models.
-        /// </summary>
-        /// <param name="viewMatrix">View matrix to use to draw the objects.</param>
-        /// <param name="projectionMatrix">Projection matrix to use to draw the objects.</param>
-        public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
-        {
-            /*Game.GraphicsDevice.RasterizerState = IsWireframe ? wireframeState : fillState;
+			debugRender.AddModel( displayObject.Model );
+		}
 
-            Game.GraphicsDevice.BlendState = BlendState.Opaque;
-            Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;*/
+		/// <summary>
+		/// Removes an object from the drawer.
+		/// </summary>
+		/// <param name="objectToRemove">Object to remove.</param>
+		/// <returns>Whether or not the object was present.</returns>
+		public bool Remove(object objectToRemove)
+		{
+			ModelDisplayObject displayObject;
+			if (displayObjects.TryGetValue(objectToRemove, out displayObject))
+			{
+				Remove(displayObject);
+				displayObjects.Remove(objectToRemove);
+				return true;
+			}
+			return false;
+		}
 
-            foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
-                displayObject.Draw(viewMatrix, projectionMatrix);
-            DrawManagedModels(viewMatrix, projectionMatrix);
-        }
-
-        /// <summary>
-        /// Draws the models managed by the drawer using the appropriate technique.
-        /// </summary>
-        /// <param name="viewMatrix">View matrix to use to draw the objects.</param>
-        /// <param name="projectionMatrix">Projection matrix to use to draw the objects.</param>
-        protected abstract void DrawManagedModels(Matrix viewMatrix, Matrix projectionMatrix);
+		/// <summary>
+		/// Removes an object from the drawer.
+		/// </summary>
+		/// <param name="displayObject">Display object to remove.</param>
+		/// <returns>Whether or not the object was present.</returns>
+		public bool Remove(SelfDrawingModelDisplayObject displayObject)
+		{
+			return selfDrawingDisplayObjects.Remove(displayObject);
+		}
 
 
-        public delegate void ShapeMeshGetter(EntityCollidable collidable, List<VertexPositionNormalTexture> vertices, List<ushort> indices);
+		/// <summary>
+		/// Removes a display object from the drawer.  Only use this if display object was added directly.
+		/// </summary>
+		/// <param name="displayObject">Object to remove.</param>
+		public virtual void Remove(ModelDisplayObject displayObject)
+		{
+			debugRender.RemoveModel( displayObject?.Model );
+		}
 
-        protected virtual void OnDisposed()
-        {
+		/// <summary>
+		/// Cleans out the model drawer of any existing display objects.
+		/// </summary>
+		public void Clear()
+		{
+			displayObjects.Clear();
+			selfDrawingDisplayObjects.Clear();
+			ClearManagedModels();
+		}
 
-        }
+		/// <summary>
+		/// Cleans out any data contained by derived drawers.
+		/// </summary>
+		protected virtual void ClearManagedModels()
+		{
+			throw new NotImplementedException();
+		}
 
-        bool disposed;
-        public void Dispose()
-        {
-            if (!disposed)
-            {
-                OnDisposed();
-                //colors.Dispose();
-                //fillState.Dispose();
-                //wireframeState.Dispose();
-                disposed = true;
-            }
-        }
-    }
+		/// <summary>
+		/// Determines if the object has an associated display object in this drawer.
+		/// </summary>
+		/// <param name="displayedObject">Object to check for in the drawer.</param>
+		/// <returns>Whether or not the object has an associated display object in this drawer.</returns>
+		public bool Contains(object displayedObject)
+		{
+			return displayObjects.ContainsKey(displayedObject);
+		}
+
+		/// <summary>
+		/// Updates the drawer and its components.
+		/// </summary>
+		public void Update()
+		{
+			foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
+			{
+				displayObject.Update();
+			}
+
+			UpdateManagedModels();
+		}
+
+		/// <summary>
+		/// Updates the drawer's technique.
+		/// </summary>
+		protected virtual void UpdateManagedModels()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Draws the drawer's models.
+		/// </summary>
+		/// <param name="viewMatrix">View matrix to use to draw the objects.</param>
+		/// <param name="projectionMatrix">Projection matrix to use to draw the objects.</param>
+		public void Draw(DebugRender debugRender)
+		{
+			foreach (var pair in displayObjects)
+			{
+				var modelDisplayObject			=	pair.Value;
+				modelDisplayObject.Update();
+
+				((DebugRenderAsync)debugRender).SetTransform( modelDisplayObject.Model, modelDisplayObject.WorldTransform );
+			}
+
+			foreach (SelfDrawingModelDisplayObject displayObject in selfDrawingDisplayObjects)
+			{
+				displayObject.Draw(Matrix.Identity, Matrix.Identity);
+			}
+		}
+
+		/// <summary>
+		/// Draws the models managed by the drawer using the appropriate technique.
+		/// </summary>
+		/// <param name="viewMatrix">View matrix to use to draw the objects.</param>
+		/// <param name="projectionMatrix">Projection matrix to use to draw the objects.</param>
+		protected virtual void DrawManagedModels(Matrix viewMatrix, Matrix projectionMatrix)
+		{
+			throw new NotImplementedException();
+		}
+
+
+	}
 }

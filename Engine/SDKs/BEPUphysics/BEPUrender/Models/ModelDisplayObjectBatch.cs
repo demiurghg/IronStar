@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using BEPUutilities.DataStructures;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics.Scenes;
-using Matrix  = Fusion.Core.Mathematics.Matrix;
+using Matrix = Fusion.Core.Mathematics.Matrix;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
 
 namespace BEPUrender.Models
 {
@@ -24,7 +26,7 @@ namespace BEPUrender.Models
         public const int MaximumIndexCount = MaximumPrimitiveCountPerBatch * 3;
 
         private readonly GraphicsDevice graphicsDevice;
-        private readonly List<ushort> indexList = new List<ushort>();
+        private readonly RawList<int> indexList = new RawList<int>();
         private readonly List<ModelDisplayObject> displayObjects = new List<ModelDisplayObject>();
         private readonly ReadOnlyCollection<ModelDisplayObject> myDisplayObjectsReadOnly;
 
@@ -34,7 +36,7 @@ namespace BEPUrender.Models
         private readonly float[] textureIndices = new float[MaximumObjectsPerBatch];
 
         //These lists are used to collect temporary data from display objects.
-        private readonly List<VertexPositionNormalTexture> vertexList = new List<VertexPositionNormalTexture>();
+        private readonly RawList<VertexPositionNormalTexture> vertexList = new RawList<VertexPositionNormalTexture>();
 
         /// <summary>
         /// List of all world transforms associated with display objects in the batch.
@@ -43,7 +45,7 @@ namespace BEPUrender.Models
 
         private IndexBuffer indexBuffer;
         int indexCount;
-        private ushort[] indices;
+        private int[] indices;
 
         /// <summary>
         /// Contains instancing data to be fed into the second stream.
@@ -71,7 +73,7 @@ namespace BEPUrender.Models
             myDisplayObjectsReadOnly = new ReadOnlyCollection<ModelDisplayObject>(displayObjects);
             instancedVertices = new InstancedVertex[MaximumIndexCount];
             vertices = new VertexPositionNormalTexture[MaximumIndexCount];
-            indices = new ushort[MaximumIndexCount];
+            indices = new int[MaximumIndexCount];
             /*vertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionNormalTexture.VertexDeclaration, MaximumIndexCount, BufferUsage.WriteOnly);
             instancedBuffer = new VertexBuffer(graphicsDevice, InstancedVertex.VertexDeclaration, MaximumIndexCount, BufferUsage.WriteOnly);
             indexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, MaximumIndexCount, BufferUsage.WriteOnly);

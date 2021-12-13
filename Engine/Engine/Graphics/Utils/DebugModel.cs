@@ -29,19 +29,26 @@ namespace Fusion.Engine.Graphics
 		readonly int indexCount;
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dr"></param>
-		/// <param name="vertices"></param>
-		/// <param name="indices"></param>
-		public DebugModel ( Game game, Vector3[] vertices, int[] indices )
+		public DebugModel ( DebugRender debugRender, Vector3[] vertices, int[] indices )
 		{
-			ib	=	new IndexBuffer( game.GraphicsDevice, indices.Length );
-			vb	=	new VertexBuffer( game.GraphicsDevice, typeof(DebugVertex), vertices.Length, VertexBufferOptions.Dynamic );
+			ib	=	new IndexBuffer( debugRender.Game.GraphicsDevice, indices.Length );
+			vb	=	new VertexBuffer( debugRender.Game.GraphicsDevice, typeof(DebugVertex), vertices.Length, VertexBufferOptions.Dynamic );
 
 			ib.SetData( indices );
 			vb.SetData( vertices.Select( v => new DebugVertex(v) ).ToArray() );
+
+			vertexCount	=	vertices.Length;
+			indexCount	=	indices.Length;
+		}
+
+
+		public DebugModel ( DebugRender debugRender, DebugVertex[] vertices, int[] indices )
+		{
+			ib	=	new IndexBuffer( debugRender.Game.GraphicsDevice, indices.Length );
+			vb	=	new VertexBuffer( debugRender.Game.GraphicsDevice, typeof(DebugVertex), vertices.Length, VertexBufferOptions.Dynamic );
+
+			ib.SetData( indices );
+			vb.SetData( vertices );
 
 			vertexCount	=	vertices.Length;
 			indexCount	=	indices.Length;
@@ -56,10 +63,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) 
@@ -70,6 +73,5 @@ namespace Fusion.Engine.Graphics
 
 			base.Dispose( disposing );
 		}
-
 	}
 }

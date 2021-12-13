@@ -3,6 +3,8 @@ using Fusion.Core.Mathematics;
 using Fusion.Core;
 using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.BroadPhaseEntries;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -26,7 +28,7 @@ namespace BEPUrender.Models
             return DisplayedObject.Mesh.Data.Indices.Length / 3;
         }
 
-        public override void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             DisplayTriangleMesh.GetMeshData(DisplayedObject.Mesh, vertices, indices);
         }

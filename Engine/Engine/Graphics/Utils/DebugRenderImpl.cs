@@ -17,8 +17,6 @@ namespace Fusion.Engine.Graphics {
 	{
 		static FXConstantBuffer<ConstData> regParams = new CRegister( 0, "Batch" );
 
-		public readonly Game Game;
-
 		[Flags]
 		public enum RenderFlags : int {
 			SOLID = 0x0001,
@@ -59,9 +57,8 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public DebugRenderImpl(Game game) 
+		public DebugRenderImpl(Game game) : base(game)
 		{
-			this.Game	=	game;
 			var dev		=	Game.GraphicsDevice;
 
 			LoadContent();
@@ -265,7 +262,6 @@ namespace Fusion.Engine.Graphics {
 			RenderLines( colorBuffer, depthBuffer, camera );
 
 			RenderModels( colorBuffer, depthBuffer, camera );
-
 		}
 
 

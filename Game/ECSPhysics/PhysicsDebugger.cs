@@ -21,7 +21,8 @@ using RigidTransform = BEPUutilities.RigidTransform;
 using System.Collections.Concurrent;
 using BEPUphysics.EntityStateManagement;
 using BEPUrender.Lines;
-
+using BEPUrender.Models;
+using Fusion.Engine.Graphics;
 
 namespace IronStar.ECSPhysics
 {
@@ -34,6 +35,9 @@ namespace IronStar.ECSPhysics
 		readonly BoundingBoxDrawer		bboxDrawer;
 		readonly LineDrawer				lineDrawer;
 
+		readonly ModelDrawer			modelDrawer;
+
+		readonly DebugRender			debugRender;
 
 		public PhysicsDebugger (PhysicsCore physics)
 		{
@@ -42,20 +46,26 @@ namespace IronStar.ECSPhysics
 			physics.ObjectAdded+=Physics_ObjectAdded;
 			physics.ObjectRemoved+=Physics_ObjectRemoved;
 
+			debugRender		=	physics.Game.RenderSystem.RenderWorld.Debug.Async;
+
 			islandDrawer	=	new SimulationIslandDrawer();
 			contactDrawer	=	new ContactDrawer();
 			bboxDrawer		=	new BoundingBoxDrawer();
 			lineDrawer		=	new LineDrawer();
+
+			modelDrawer		=	new ModelDrawer(debugRender);
 		}
 
 		private void Physics_ObjectAdded( object sender, PhysicsCore.SpaceObjectArgs e )
 		{
 			lineDrawer.Add( e.SpaceObject );
+			modelDrawer.Add( e.SpaceObject );
 		}
 
 		private void Physics_ObjectRemoved( object sender, PhysicsCore.SpaceObjectArgs e )
 		{
 			lineDrawer.Remove( e.SpaceObject );
+			modelDrawer.Remove( e.SpaceObject );
 		}
 
 		public Aspect GetAspect(){ return Aspect.Empty; }
@@ -64,14 +74,19 @@ namespace IronStar.ECSPhysics
 
 
 		public void Update( IGameState gs, GameTime gameTime )
-		{
-			var debugRender = gs.Game.RenderSystem.RenderWorld.Debug.Async;
-			
+		{													
+			if (debugRender.Game.RenderSystem.SkipDebugRendering)
+			{
+				return;
+			}
+
 			islandDrawer	.Draw( debugRender, physics.Space );
 			contactDrawer	.Draw( debugRender, physics.Space );
 			bboxDrawer		.Draw( debugRender, physics.Space );
 
 			lineDrawer		.Draw( debugRender );
+
+			modelDrawer		.Draw( debugRender );
 		}
 	}
 }

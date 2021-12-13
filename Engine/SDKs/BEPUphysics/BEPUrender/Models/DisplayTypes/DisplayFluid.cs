@@ -5,6 +5,8 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics.Scenes;
 using MathConverter = Fusion.Core.Mathematics.MathConverter;
+using VertexPositionNormalTexture = Fusion.Engine.Graphics.DebugVertex;
+using BEPUutilities.DataStructures;
 
 namespace BEPUrender.Models
 {
@@ -28,7 +30,7 @@ namespace BEPUrender.Models
             return 2 * DisplayedObject.SurfaceTriangles.Count;
         }
 
-        public override void GetMeshData(List<VertexPositionNormalTexture> vertices, List<ushort> indices)
+        public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)
         {
             for (int i = 0; i < DisplayedObject.SurfaceTriangles.Count; i++)
             {

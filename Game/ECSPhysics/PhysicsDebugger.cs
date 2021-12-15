@@ -26,7 +26,7 @@ using Fusion.Engine.Graphics;
 
 namespace IronStar.ECSPhysics
 {
-	public partial class PhysicsDebugger : ISystem
+	public partial class PhysicsDebugger : DisposableBase, ISystem
 	{
 		readonly PhysicsCore physics;
 
@@ -71,6 +71,18 @@ namespace IronStar.ECSPhysics
 		public Aspect GetAspect(){ return Aspect.Empty; }
 		public void Add( IGameState gs, Entity e ) {}
 		public void Remove( IGameState gs, Entity e ) {}
+
+
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+				lineDrawer.Clear();
+				modelDrawer.Clear();
+			}
+
+			base.Dispose( disposing );
+		}
 
 
 		public void Update( IGameState gs, GameTime gameTime )

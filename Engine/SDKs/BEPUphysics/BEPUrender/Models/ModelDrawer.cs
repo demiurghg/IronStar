@@ -182,6 +182,11 @@ namespace BEPUrender.Models
 		/// </summary>
 		public void Clear()
 		{
+			foreach ( var displayObject in displayObjects )
+			{
+				debugRender.RemoveModel( displayObject.Value.Model );
+			}
+
 			displayObjects.Clear();
 		}
 

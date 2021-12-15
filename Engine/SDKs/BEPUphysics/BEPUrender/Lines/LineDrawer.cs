@@ -126,7 +126,7 @@ namespace BEPUrender.Lines
         /// <summary>
         /// Updates the component.
         /// </summary>
-        public void Update()
+        void Update()
         {
             //Update vertex positions and data.
             foreach (var displayObject in displayMapping.Values)
@@ -143,6 +143,8 @@ namespace BEPUrender.Lines
         /// <param name="projectionMatrix">Projection matrix to use when rendering the lines.</param>
         public void Draw(DebugRender debugRender)
         {
+			Update();
+
             int numElements = firstOpenIndex / 2;
 
             if (numElements > 0)

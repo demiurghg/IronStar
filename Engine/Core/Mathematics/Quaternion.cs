@@ -1493,6 +1493,44 @@ namespace Fusion.Core.Mathematics
             return Equals(ref strongValue);
         }
 
+        /// <summary>
+        /// Computes the quaternion rotation between two normalized vectors.
+        /// </summary>
+        /// <param name="v1">First unit-length vector.</param>
+        /// <param name="v2">Second unit-length vector.</param>
+        /// <param name="q">Quaternion representing the rotation from v1 to v2.</param>
+        public static void GetQuaternionBetweenNormalizedVectors(ref Vector3 v1, ref Vector3 v2, out Quaternion q)
+        {
+            float dot;
+            Vector3.Dot(ref v1, ref v2, out dot);
+            //For non-normal vectors, the multiplying the axes length squared would be necessary:
+            //float w = dot + (float)Math.Sqrt(v1.LengthSquared() * v2.LengthSquared());
+            if (dot < -0.9999f) //parallel, opposing direction
+            {
+                //If this occurs, the rotation required is ~180 degrees.
+                //The problem is that we could choose any perpendicular axis for the rotation. It's not uniquely defined.
+                //The solution is to pick an arbitrary perpendicular axis.
+                //Project onto the plane which has the lowest component magnitude.
+                //On that 2d plane, perform a 90 degree rotation.
+                float absX = Math.Abs(v1.X);
+                float absY = Math.Abs(v1.Y);
+                float absZ = Math.Abs(v1.Z);
+                if (absX < absY && absX < absZ)
+                    q = new Quaternion(0, -v1.Z, v1.Y, 0);
+                else if (absY < absZ)
+                    q = new Quaternion(-v1.Z, 0, v1.X, 0);
+                else
+                    q = new Quaternion(-v1.Y, v1.X, 0, 0);
+            }
+            else
+            {
+                Vector3 axis;
+                Vector3.Cross(ref v1, ref v2, out axis);
+                q = new Quaternion(axis.X, axis.Y, axis.Z, dot + 1);
+            }
+            q.Normalize();
+        }
+
 #if SlimDX1xInterop
         /// <summary>
         /// Performs an implicit conversion from <see cref="Quaternion"/> to <see cref="SlimDX.Quaternion"/>.

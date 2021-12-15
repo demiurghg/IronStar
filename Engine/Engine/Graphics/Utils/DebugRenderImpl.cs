@@ -113,8 +113,9 @@ namespace Fusion.Engine.Graphics
 
 			if (flags.HasFlag( RenderFlags.MODEL ))
 			{
-				ps.BlendState		=	BlendState.AlphaBlend;
-				ps.Primitive		=	Primitive.TriangleList;
+				ps.BlendState			=	BlendState.Opaque;
+				ps.Primitive			=	Primitive.TriangleList;
+				ps.DepthStencilState	=	DepthStencilState.Default;
 
 				if (flags.HasFlag( RenderFlags.WIREFRAME ))
 				{

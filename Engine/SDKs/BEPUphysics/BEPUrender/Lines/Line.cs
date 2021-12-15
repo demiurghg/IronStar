@@ -35,8 +35,10 @@ namespace BEPUrender.Lines
             IndexB = IndexA + 1;
             drawer.vertices[IndexA].Position = positionA;
             drawer.vertices[IndexA].Color = colorA;
+			drawer.vertices[IndexA].Width = 3;
             drawer.vertices[IndexB].Position = positionB;
             drawer.vertices[IndexB].Color = colorB;
+			drawer.vertices[IndexB].Width = 3;
         }
 
         /// <summary>
@@ -52,8 +54,10 @@ namespace BEPUrender.Lines
             IndexB = IndexA + 1;
             drawer.vertices[IndexA].Position = Vector3.Zero;
             drawer.vertices[IndexA].Color = colorA;
+			drawer.vertices[IndexA].Width = 3;
             drawer.vertices[IndexB].Position = Vector3.Zero;
             drawer.vertices[IndexB].Color = colorB;
+			drawer.vertices[IndexB].Width = 3;
         }
 
         /// <summary>

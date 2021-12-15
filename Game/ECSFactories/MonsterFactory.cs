@@ -36,7 +36,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new BoneComponent() );
 
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
-			e.AddComponent( new RagdollComponent() );
+			e.AddComponent( new RagdollComponent(0.1f) );
 
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new StepComponent() );

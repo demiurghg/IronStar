@@ -43,7 +43,7 @@ PS_IN VSMain( VS_IN input )
 	
 	float3 nrm	=	input.nrm;
 	
-	float4 wpos	=	mul( float4(input.pos.xyz - nrm * 0.01f,1), Batch.World );
+	float4 wpos	=	mul( float4(input.pos.xyz,1), Batch.World );
 	float4 vpos	=	mul( wpos, Batch.View );
 	float4 ppos	=	mul( vpos, Batch.Projection );
 	
@@ -62,7 +62,7 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Dept
 	float3	lighting	=	float3(1,1,1);
 	
 	#ifdef SOLID
-		clip((vpos.x+vpos.y)%2-1);
+		clip((vpos.x+vpos.y+1)%2-1);
 		lighting = dot( input.nrm, -float3(0,1,0) ) * 0.5 + 0.5;
 		//lighting = 0;
 	#endif

@@ -18,6 +18,8 @@ namespace BEPUrender.Lines
 			{
 				foreach (var e in space.Entities)
 				{
+					debugRender.DrawBasis( MathConverter.Convert( e.WorldTransform ), 0.5f, 2 );
+
 					Vector3[] boundingBoxCorners = MathConverter.Convert(e.CollisionInformation.BoundingBox.GetCorners());
 					var color = e.ActivityInformation.IsActive ? Color.DarkRed : new Color(150, 100, 100);
 

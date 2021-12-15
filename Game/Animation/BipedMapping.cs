@@ -8,6 +8,10 @@ using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.CollisionShapes.ConvexShapes;
 using Fusion.Engine.Graphics;
+using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using BEPUphysics.PositionUpdating;
+using BepuEntity = BEPUphysics.Entities.Entity;
+using BEPUphysics.EntityStateManagement;
 
 namespace IronStar.Animation
 {
@@ -20,10 +24,7 @@ namespace IronStar.Animation
 	{
 		readonly Scene scene;
 
-		/// <summary>
-		/// Average ratio between limb's length and radius
-		/// </summary>
-		const float LimbRatio	=	2.7f;
+		public readonly float scale;
 
 		//	 0:                                  -1  
 		//	 1:    camera1                        0  
@@ -76,9 +77,10 @@ namespace IronStar.Animation
 
 
 
-		public BipedMapping( Scene scene )
+		public BipedMapping( Scene scene, float scale )
 		{
 			this.scene	=	scene;
+			this.scale	=	scale;
 
 			Base			=	FindNode( "base"	);
 			Pelvis			=	FindNode( "pelvis"	);
@@ -134,30 +136,76 @@ namespace IronStar.Animation
 		}
 
 
-		public bool TryGetLimbCapsule( Node rootLimb, Node nextLimb, out Matrix transform, out CapsuleShape capsule )
+		public Capsule GetLimbCapsule( Node rootLimb, Node nextLimb, float ratio )
 		{
-			var origin = rootLimb.BindPose.TranslationVector;
-			var dir    = nextLimb.BindPose.TranslationVector - origin;
+			var start		=	MathConverter.Convert( rootLimb.BindPose.TranslationVector * scale );
+			var end			=	MathConverter.Convert( nextLimb.BindPose.TranslationVector * scale );
 
-			transform	=	MathUtil.ComputeAimedBasis( dir, origin + dir * 0.5f );
-			var length	=	dir.Length();
-			var radius	=	length / LimbRatio;
+			var dir			=	end - start;
+				dir.Normalize();
 
-			capsule		=	new CapsuleShape( length, radius );
+			var length		=	BEPUutilities.Vector3.Distance( start, end );
+			var radius		=	length * ratio * 0.5f;
+				length		=	Math.Max(0, length - 2 * radius );
 
-			return true;
+			var capsule		=	new Capsule( start + dir * radius, end - dir * radius, radius, 5.0f );
+			capsule.PositionUpdateMode	=	PositionUpdateMode.Continuous;
+
+			//capsule.Material.Bounciness	=	0.8f;
+			//capsule.Material.KineticFriction = 1.5f;
+			//capsule.Material.StaticFriction = 2.5f;
+
+			return capsule;
 		}
 
 
-		public void DrawLimbCapsule( DebugRender dr, Node rootLimb, Node nextLimb )
+		public Box GetBoneBox( Node node1, Node node2, float mass )
 		{
-			CapsuleShape capsule;
-			Matrix transform;
+			if (node1==null) return null;
 
-			if (TryGetLimbCapsule( rootLimb, nextLimb, out transform, out capsule ))
+			var bbox = FitBBox(node1, node2);
+			var pos  = MathConverter.Convert( bbox.Center() );
+
+			var box  = new Box( pos, bbox.Size().X * 0.7f, bbox.Size().Y * 0.7f, bbox.Size().Z * 0.7f, mass );
+			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
+
+			//box.Material.Bounciness	=	0.8f;
+			//box.Material.KineticFriction = 1.5f;
+			//box.Material.StaticFriction = 2.5f;
+
+			return box;
+		}
+
+
+		bool AcceptVertex( MeshVertex vertex, int index, float threshold = 0.5f )
+		{
+			if (index<0) return false;
+			if (vertex.SkinIndices.X==index && vertex.SkinWeights.X > threshold) return true;
+			if (vertex.SkinIndices.Y==index && vertex.SkinWeights.Y > threshold) return true;
+			if (vertex.SkinIndices.Z==index && vertex.SkinWeights.Z > threshold) return true;
+			if (vertex.SkinIndices.W==index && vertex.SkinWeights.W > threshold) return true;
+			return false;
+		}
+
+
+		BoundingBox FitBBox( Node node1, Node node2 = null )
+		{
+			var points = new List<Vector3>();
+			var index1 = scene.Nodes.IndexOf(node1);
+			var index2 = scene.Nodes.IndexOf(node2);
+
+			foreach ( var mesh in scene.Meshes )
 			{
-				dr.DrawCapsule( capsule, transform, Color.Yellow );
+				foreach ( var vertex in mesh.Vertices )
+				{
+					if (AcceptVertex(vertex, index1) || AcceptVertex(vertex, index2))
+					{
+						points.Add( vertex.Position * scale );
+					}
+				}
 			}
+
+			return BoundingBox.FromPoints( points );
 		}
 	}
 }

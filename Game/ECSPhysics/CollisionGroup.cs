@@ -13,5 +13,6 @@ namespace IronStar.ECSPhysics
 		DymamicGroup	,
 		PickupGroup		,
 		CharacterGroup	,
+		Ragdoll			,
 	}
 }

@@ -52,11 +52,12 @@ namespace IronStar.ECSPhysics
 
 		ConcurrentQueue<Tuple<Entity,Entity>> touchEvents;
 
-		public readonly BEPUCollisionGroup StaticGroup		= new BEPUCollisionGroup();
-		public readonly BEPUCollisionGroup KinematicGroup	= new BEPUCollisionGroup();
-		public readonly BEPUCollisionGroup DymamicGroup		= new BEPUCollisionGroup();
-		public readonly BEPUCollisionGroup PickupGroup		= new BEPUCollisionGroup();
-		public readonly BEPUCollisionGroup CharacterGroup	= new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup StaticGroup		=	new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup KinematicGroup	=	new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup DymamicGroup		=	new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup PickupGroup		=	new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup CharacterGroup	=	new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup RagdollGroup		=	new BEPUCollisionGroup();
 
 		struct DeferredImpulse
 		{
@@ -83,11 +84,13 @@ namespace IronStar.ECSPhysics
 
 			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	CharacterGroup ), CollisionRule.Normal );
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	DymamicGroup   ), CollisionRule.Normal );
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( CharacterGroup, DymamicGroup   ), CollisionRule.Normal );
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup    ), CollisionRule.Normal );
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup ), CollisionRule.NoSolver );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	CharacterGroup	), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	DymamicGroup	), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( CharacterGroup, DymamicGroup	), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup		), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup	), CollisionRule.NoSolver );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( RagdollGroup,	RagdollGroup	), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( RagdollGroup,	CharacterGroup	), CollisionRule.NoSolver );
 
 			stopwatch	=	new Stopwatch();
 		}
@@ -112,6 +115,7 @@ namespace IronStar.ECSPhysics
 				case CollisionGroup.DymamicGroup	: return DymamicGroup	;
 				case CollisionGroup.PickupGroup		: return PickupGroup	;
 				case CollisionGroup.CharacterGroup	: return CharacterGroup	;
+				case CollisionGroup.Ragdoll			: return RagdollGroup	;
 				default: throw new ArgumentException("group");
 			}
 		}

@@ -10,6 +10,17 @@ namespace IronStar.ECSPhysics
 {
 	public class RagdollComponent : IComponent
 	{
+		public float Scale;
+
+		public RagdollComponent()
+		{
+		}
+
+		public RagdollComponent(float scale)
+		{
+			this.Scale	=	scale;
+		}
+
 		public IComponent Clone()
 		{
 			return (IComponent)MemberwiseClone();

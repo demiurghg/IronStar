@@ -27,7 +27,7 @@ namespace IronStar.Monsters.Systems
 		const string		ANIM_TURN		=	"turn"	;
 		const string		ANIM_WALK		=	"walk"	;
 		const string		ANIM_RUN		=	"run"	;
-		const string		ANIM_JUMP		=	"jump"	;
+		const string		ANIM_JUMP		=	"run"	;//"jump"	;
 		const string		ANIM_LAND		=	"land"	;
 		const string		ANIM_DEATH		=	"death1";
 		const float			YAW_THRESHOLD	=	MathUtil.PiOverFour; // 45 degrees

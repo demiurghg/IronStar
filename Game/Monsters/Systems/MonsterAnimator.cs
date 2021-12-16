@@ -34,6 +34,8 @@ namespace IronStar.Monsters.Systems
 		LocomotionState		locomotionState;
 		WeaponState			prevWeaponState = WeaponState.Idle;
 
+		public readonly Scene Scene;
+
 		float	baseYaw;
 
 
@@ -42,6 +44,7 @@ namespace IronStar.Monsters.Systems
 			this.monsterEntity	=	e;
 			this.fxPlayback		=	fxPlayback;
 			this.physics		=	physics;
+			this.Scene			=	scene;
 
 			baseYaw				=	uc.Yaw;
 

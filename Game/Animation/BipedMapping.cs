@@ -12,6 +12,7 @@ using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using BEPUphysics.PositionUpdating;
 using BepuEntity = BEPUphysics.Entities.Entity;
 using BEPUphysics.EntityStateManagement;
+using IronStar.ECSPhysics;
 
 namespace IronStar.Animation
 {
@@ -23,8 +24,6 @@ namespace IronStar.Animation
 	public sealed class BipedMapping
 	{
 		readonly Scene scene;
-
-		public readonly float scale;
 
 		//	 0:                                  -1  
 		//	 1:    camera1                        0  
@@ -76,11 +75,9 @@ namespace IronStar.Animation
 		public readonly Node	        RightToe;
 
 
-
-		public BipedMapping( Scene scene, float scale )
+		public BipedMapping( Scene scene )
 		{
-			this.scene	=	scene;
-			this.scale	=	scale;
+			this.scene		=	scene;
 
 			Base			=	FindNode( "base"	);
 			Pelvis			=	FindNode( "pelvis"	);
@@ -136,30 +133,46 @@ namespace IronStar.Animation
 		}
 
 
-		public Capsule GetLimbCapsule( Node rootLimb, Node nextLimb, float ratio )
+		public RagdollBone GetLimbCapsule( Node rootLimb, Node nextLimb, float radius )
 		{
-			var start		=	MathConverter.Convert( rootLimb.BindPose.TranslationVector * scale );
-			var end			=	MathConverter.Convert( nextLimb.BindPose.TranslationVector * scale );
+			//	#TODO #RAGDOLL -- ged limb radius from predefined body shape: bulky, skinny, male, female
+			//	capsule is aligned along Y axis
+			//	Z-axis of capsule looks backward
+			var start		=	rootLimb.BindPose.TranslationVector;
+			var end			=	nextLimb.BindPose.TranslationVector;
+			var translation	=	0.5f * ( start + end );
+
+			var axisY		=	(end - start).Normalized();
+			var axisZ		=	Vector3.ForwardRH;
+			var axisX		=	Vector3.Cross( axisY, axisZ ).Normalized();
+				axisZ		=	Vector3.Cross( axisX, axisY ).Normalized();
+
+			var basis		=	new Matrix();
+			basis.Right		=	axisX;
+			basis.Up		=	axisY;
+			basis.Backward	=	axisZ;
+			var rotation	=	Quaternion.RotationMatrix( basis );
 
 			var dir			=	end - start;
 				dir.Normalize();
 
-			var length		=	BEPUutilities.Vector3.Distance( start, end );
-			var radius		=	length * ratio * 0.5f;
+			var length		=	Vector3.Distance( start, end );
 				length		=	Math.Max(0, length - 2 * radius );
 
-			var capsule		=	new Capsule( start + dir * radius, end - dir * radius, radius, 5.0f );
+			var ms	=	new MotionState();
+			ms.Orientation		=	MathConverter.Convert( rotation );
+			ms.Position			=	MathConverter.Convert( translation );
+			ms.LinearVelocity	=	BEPUutilities.Vector3.Zero;
+			ms.AngularVelocity	=	BEPUutilities.Vector3.Zero;
+
+			var capsule		=	new Capsule( ms, length, radius, 5 );
 			capsule.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 
-			//capsule.Material.Bounciness	=	0.8f;
-			//capsule.Material.KineticFriction = 1.5f;
-			//capsule.Material.StaticFriction = 2.5f;
-
-			return capsule;
+			return new RagdollBone( scene.Nodes.IndexOf(rootLimb), rootLimb, capsule );
 		}
 
 
-		public Box GetBoneBox( Node node1, Node node2, float mass )
+		public RagdollBone GetBoneBox( Node node1, Node node2, float mass )
 		{
 			if (node1==null) return null;
 
@@ -169,11 +182,7 @@ namespace IronStar.Animation
 			var box  = new Box( pos, bbox.Size().X * 0.7f, bbox.Size().Y * 0.7f, bbox.Size().Z * 0.7f, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 
-			//box.Material.Bounciness	=	0.8f;
-			//box.Material.KineticFriction = 1.5f;
-			//box.Material.StaticFriction = 2.5f;
-
-			return box;
+			return new RagdollBone( scene.Nodes.IndexOf(node1), node1, box );
 		}
 
 
@@ -200,7 +209,7 @@ namespace IronStar.Animation
 				{
 					if (AcceptVertex(vertex, index1) || AcceptVertex(vertex, index2))
 					{
-						points.Add( vertex.Position * scale );
+						points.Add( vertex.Position );
 					}
 				}
 			}

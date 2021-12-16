@@ -157,6 +157,7 @@
     <Compile Include="ECSPhysics\PhysicsCore.Queries.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\ProjectileController.cs" />
+    <Compile Include="ECSPhysics\RagdollBone.cs" />
     <Compile Include="ECSPhysics\RagdollComponent.cs" />
     <Compile Include="ECSPhysics\RagdollController.cs" />
     <Compile Include="ECSPhysics\RagdollSystem.cs" />

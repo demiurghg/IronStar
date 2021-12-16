@@ -35,7 +35,7 @@ namespace IronStar.Monsters.Systems
 
 		public override Aspect GetAspect()
 		{
-			return base.GetAspect().Include<BoneComponent,Transform>();
+			return base.GetAspect().Include<BoneComponent,Transform>().Exclude<RagdollComponent>();
 		}
 
 		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step, UserCommandComponent uc )
@@ -56,9 +56,21 @@ namespace IronStar.Monsters.Systems
 		{
 			if (true)
 			{
+				var dr = physics.Game.RenderSystem.RenderWorld.Debug.Async;
+
+				foreach ( var node in animator.Scene.Nodes )
+				{
+					//dr.DrawBasis( node.BindPose, 1.0f, 2 );
+				}
+
 				var bones		=	entity.GetComponent<BoneComponent>();
 				var transform	=	entity.GetComponent<Transform>();
 				animator?.Update( gameTime, transform, step, uc, bones.Bones );
+
+				foreach ( var bone in bones.Bones )
+				{
+					dr.DrawBasis( bone, 0.7f, 3 );
+				}
 			}
 		}
 	}

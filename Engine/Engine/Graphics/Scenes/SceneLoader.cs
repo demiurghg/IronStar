@@ -35,19 +35,21 @@ namespace Fusion.Engine.Graphics.Scenes {
 		{																			
 			var scene = Scene.Load( stream );
 
-			foreach ( var mtrl in scene.Materials ) {
-				if (!string.IsNullOrWhiteSpace(mtrl.ColorMap)) {
+			if (assetPath.Contains("marine"))
+			{
+				scene.TransformScene( Matrix.RotationY( MathUtil.Pi * 0 ), 0.2f );
+			}
+
+			foreach ( var mtrl in scene.Materials ) 
+			{
+				if (!string.IsNullOrWhiteSpace(mtrl.ColorMap)) 
+				{
 					mtrl.ColorMap =	Path.Combine( Path.GetDirectoryName(assetPath), mtrl.ColorMap );
 				}
 			}
 
-			foreach ( var mesh in scene.Meshes ) {	
-
-				//if (mesh.VertexCount<50) {
-				//	Log.Warning("Unwrapping...");
-				//	var unwrapper = new Unwrapper( mesh, 1 );
-				//}
-
+			foreach ( var mesh in scene.Meshes ) 
+			{	
 				mesh.CreateVertexAndIndexBuffers( content.Game.GraphicsDevice );
 			}
 

@@ -711,7 +711,6 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
-
 		/// <summary>
 		/// Make texture paths relative to base directory.
 		/// </summary>
@@ -781,6 +780,66 @@ namespace Fusion.Engine.Graphics.Scenes {
 			}
 
 			return BoundingBox.FromPoints( points );
+		}
+
+
+		Matrix FixTransform( Matrix transform, int index, Matrix rotation, float scaling )
+		{
+			int parentIndex = Nodes[index].ParentIndex;
+
+			if (parentIndex<=0)
+			{
+				//transform = transform * rotation;
+				transform.TranslationVector *= scaling; 
+			}
+			else
+			{
+				transform.TranslationVector *= scaling; 
+			}
+
+			return transform;
+		}
+
+
+		public void TransformScene( Matrix rotation, float scaling )
+		{
+			for ( int i=0; i<Nodes.Count; i++ )
+			{
+				Nodes[i].Transform = FixTransform( Nodes[i].Transform, i, rotation, scaling );
+				Nodes[i].BindPose  = FixTransform( Nodes[i].BindPose,  0, rotation, scaling );
+			}
+
+			foreach ( var mesh in Meshes )
+			{
+				for (int i=0; i<mesh.Vertices.Count; i++)
+				{
+					var vertex		=	mesh.Vertices[i];
+
+					//vertex.Position	=	Vector3.TransformCoordinate( vertex.Position,	rotation );
+					vertex.Position	*=	scaling;
+					//vertex.Normal	=	Vector3.TransformNormal( vertex.Normal,			rotation );
+					//vertex.Binormal	=	Vector3.TransformNormal( vertex.Binormal,		rotation );
+					//vertex.Tangent	=	Vector3.TransformNormal( vertex.Tangent,		rotation );
+
+					mesh.Vertices[i] = vertex;
+				}
+			}
+
+			foreach ( var take in Takes )
+			{
+				for ( int i=0; i<Nodes.Count; i++ )
+				{
+					for ( int k=0; k<take.FrameCount; k++)
+					{
+						int frm = k + take.FirstFrame;
+						var key = take.GetKey( frm, i );
+
+						key = FixTransform( key, i, rotation, scaling );
+
+						take.SetKey( frm, i, key );
+					}
+				}
+			}
 		}
 	}
 }

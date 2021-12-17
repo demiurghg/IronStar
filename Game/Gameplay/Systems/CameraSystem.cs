@@ -239,7 +239,7 @@ namespace IronStar.Gameplay
 		AnimationTake CreatePainAnimation( float amount )
 		{
 			var length	=	MathUtil.Lerp(15,30, amount);
-			var take	=	new AnimationTake("pain", 2, 0, length);
+			var take	=	new AnimationTake("pain", 2, length);
 
 			var maxPitch	=	MathUtil.DegreesToRadians( amount * 1  );
 			var maxYaw		=	MathUtil.DegreesToRadians( amount * 5  );
@@ -301,9 +301,9 @@ namespace IronStar.Gameplay
 			scene.Nodes.Add( camera );
 
 			//	generate takes :
-			var takeStand	=	new AnimationTake("stand"	, 2, 0, 15);
-			var takeCrouch	=	new AnimationTake("crouch"	, 2, 0, 15);
-			var takeDeath	=	new AnimationTake("death"	, 2, 0, 20);
+			var takeStand	=	new AnimationTake("stand"	, 2, 15);
+			var takeCrouch	=	new AnimationTake("crouch"	, 2, 15);
+			var takeDeath	=	new AnimationTake("death"	, 2, 20);
 
 			
 			takeStand.RecordTake( 1, 
@@ -331,7 +331,7 @@ namespace IronStar.Gameplay
 				var amp		=	MathUtil.DegreesToRadians(1);
 				var shake	=	Matrix.RotationYawPitchRoll( rand.NextFloat(-amp,amp)*0.5f, rand.NextFloat(amp,2*amp), rand.NextFloat(-amp,amp)*0.25f )
 							*	Matrix.Translation(0,0,0.5f);
-				var take	=	new AnimationTake("shake" + i.ToString(), 2, 0, 10);
+				var take	=	new AnimationTake("shake" + i.ToString(), 2, 10);
 				take.RecordTake( 1, (f,t) => AnimationUtils.Lerp( identity, shake, AnimationUtils.KickCurve(t) ) );
 				scene.Takes.Add(take);
 			}

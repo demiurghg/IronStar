@@ -29,7 +29,7 @@ namespace IronStar.ECSPhysics
 			sceneView	=	new SceneView<KinematicBody>( scene, (n,m) => new KinematicBody(entity,transform,n,m), n => true );
 			take		=	scene.Takes.FirstOrDefault();
 
-			AnimLength	=	Scene.ComputeFrameLength( take.LastFrame - take.FirstFrame, scene.TimeMode );
+			AnimLength	=	Scene.ComputeFrameLength( take.FrameCount-1, scene.TimeMode );
 
 			frame0	=	new AnimationKey[ sceneView.transforms.Length ];
 			frame1	=	new AnimationKey[ sceneView.transforms.Length ];
@@ -52,8 +52,8 @@ namespace IronStar.ECSPhysics
 
 			Scene.TimeToFrames( time, sceneView.scene.TimeMode, out prev, out next, out weight );
 
-			prev = MathUtil.Wrap( prev + take.FirstFrame, take.FirstFrame, take.LastFrame );
-			next = MathUtil.Wrap( next + take.FirstFrame, take.FirstFrame, take.LastFrame );
+			prev = MathUtil.Wrap( prev, 0, take.FrameCount );
+			next = MathUtil.Wrap( next, 0, take.FrameCount );
 
 			take.GetPose( prev, AnimationBlendMode.Override, frame0 ); 
 			take.GetPose( next, AnimationBlendMode.Override, frame1 ); 

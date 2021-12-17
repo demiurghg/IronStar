@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
 using Fusion.Core;
 using IronStar.Animation;
 using IronStar.ECS;
@@ -21,6 +22,7 @@ namespace IronStar.ECSPhysics
 
 		protected override RagdollController Create( Entity entity, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
 		{
+			if (rm.ComputeScale()!=1) Log.Warning("Ragdoll does not support scaled meshes");
 			return new RagdollController( physics, rm.LoadScene(entity.gs) );
 		}
 

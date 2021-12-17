@@ -21,9 +21,8 @@ namespace IronStar.ECSPhysics
 		readonly public BepuEntity PhysEntity;
 		readonly public Node Node;
 		readonly Matrix physToBone;
-		readonly Matrix scaleBack;
 
-		public RagdollBone( int index, Node node, BepuEntity physEntity, float scale = 1 )
+		public RagdollBone( int index, Node node, BepuEntity physEntity )
 		{
 			Index		=	index;
 			Node		=	node;
@@ -31,9 +30,8 @@ namespace IronStar.ECSPhysics
 
 			var physTransform	=	MathConverter.Convert( physEntity.MotionState.WorldTransform );
 			var bindPose		=	node.BindPose;
-			scaleBack			=	Matrix.Scaling(1/scale);
 
-			physToBone = bindPose * Matrix.Invert( physTransform );
+			physToBone			=	bindPose * Matrix.Invert( physTransform );
 		}
 
 		public Matrix GetPhysicsTransform()
@@ -41,10 +39,10 @@ namespace IronStar.ECSPhysics
 			return MathConverter.Convert( PhysEntity.WorldTransform );
 		}
 
-		public Matrix ComputePhysicalBoneTransform( Matrix modelWorldTransform )
+		public Matrix ComputeSimulatedBoneTransform( Matrix invModelWorldTransform )
 		{
-			var physTransform		=	MathConverter.Convert( PhysEntity.WorldTransform );
-			return	physToBone * physTransform * Matrix.Invert(modelWorldTransform) * scaleBack;
+			var physTransform	=	MathConverter.Convert( PhysEntity.WorldTransform );
+			return	physToBone * physTransform * invModelWorldTransform;
 		}
 	}
 }

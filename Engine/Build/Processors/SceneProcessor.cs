@@ -59,6 +59,9 @@ namespace Fusion.Build.Processors {
 		[CommandLineParser.Option]
 		public string RetargetSource { get; set; }
 
+		[CommandLineParser.Name("scale", "scales entire scene")]
+		[CommandLineParser.Option]
+		public float Scale { get; set; } = 1;
 
 		public override string GenerateParametersHash()
 		{
@@ -70,6 +73,7 @@ namespace Fusion.Build.Processors {
 				+ "/" + OutputReport.ToString()
 				+ "/" + GenerateMissingMaterials.ToString()
 				+ "/" + RetargetSource.ToString()
+				+ "/" + Scale.ToString()
 				+ "/" + Version.ToString()
 			);
 		}
@@ -79,7 +83,7 @@ namespace Fusion.Build.Processors {
 		/// <summary>
 		/// 
 		/// </summary>
-		public SceneProcessor ( bool geom, bool anim, float merge, bool genMtrls, string retargetSource )
+		public SceneProcessor ( bool geom, bool anim, float merge, bool genMtrls, string retargetSource, float scale = 1.0f )
 		{
 			ImportAnimation				=	anim;
 			ImportGeometry				=	geom;
@@ -87,6 +91,7 @@ namespace Fusion.Build.Processors {
 			GenerateMissingMaterials	=	genMtrls;
 			RetargetSource				=	retargetSource;
 			OutputReport				=	true;
+			Scale						=	scale;
 		}
 
 
@@ -105,11 +110,12 @@ namespace Fusion.Build.Processors {
 
 			var dependencies	=	new List<string>();
 
-			if (retarget) {
+			if (retarget) 
+			{
 				dependencies.Add( RetargetSource );
 			}
 
-			var cmdLine			=	string.Format("\"{0}\" /out:\"{1}\" /base:\"{2}\" /merge:{3} {4} {5} {6} {7}", 
+			var cmdLine	=	string.Format("\"{0}\" /out:\"{1}\" /base:\"{2}\" /merge:{3} {4} {5} {6} {7} {8}", 
 				resolvedPath, 
 				destPath, 
 				assetFile.BaseDirectory,
@@ -117,12 +123,14 @@ namespace Fusion.Build.Processors {
 				ImportAnimation ? "/anim":"", 
 				ImportGeometry ? "/geom":"", 
 				OutputReport ? "/report:" + "\"" + reportPath + "\"":"",
-				retarget ? "/retarget:" + "\"" + retargetPath + "\"":""
+				retarget ? "/retarget:" + "\"" + retargetPath + "\"":"",
+				Scale!=1 ? "/scale:" + Scale.ToString() : ""
 			);
 
 			context.RunTool( "FScene.exe", cmdLine );
 
-			using ( var target = assetFile.OpenTargetStream( dependencies, typeof( Scene ) ) ) {
+			using ( var target = assetFile.OpenTargetStream( dependencies, typeof( Scene ) ) ) 
+			{
 				context.CopyFileTo( destPath, target );
 			}
 		}

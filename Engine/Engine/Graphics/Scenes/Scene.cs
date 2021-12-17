@@ -789,8 +789,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			if (parentIndex<=0)
 			{
-				//transform = transform * rotation;
 				transform.TranslationVector *= scaling; 
+				transform = transform * rotation;
 			}
 			else
 			{
@@ -803,10 +803,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 		public void TransformScene( Matrix rotation, float scaling )
 		{
-			for ( int i=0; i<Nodes.Count; i++ )
+			for ( int i=1; i<Nodes.Count; i++ )
 			{
-				Nodes[i].Transform = FixTransform( Nodes[i].Transform, i, rotation, scaling );
-				Nodes[i].BindPose  = FixTransform( Nodes[i].BindPose,  0, rotation, scaling );
+				Nodes[i].Transform = FixTransform( Nodes[i].Transform, i, rotation,			scaling );
+				Nodes[i].BindPose  = FixTransform( Nodes[i].BindPose,  0, Matrix.Identity,	scaling );
 			}
 
 			foreach ( var mesh in Meshes )
@@ -827,18 +827,24 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			foreach ( var take in Takes )
 			{
-				for ( int i=0; i<Nodes.Count; i++ )
+				for ( int i=1; i<Nodes.Count; i++ )
 				{
-					for ( int k=0; k<take.FrameCount; k++)
+					for ( int f=0; f < take.FrameCount; f++)
 					{
-						int frm = k + take.FirstFrame;
-						var key = take.GetKey( frm, i );
+						/*AnimationKey key = new AnimationKey();
+						take.GetKey( f, i, ref key );
+						key.Translation *= scaling;
+						take.SetKey( f, i, key );  */
+
+						var key = take.GetKey( f, i );
 
 						key = FixTransform( key, i, rotation, scaling );
 
-						take.SetKey( frm, i, key );
+						take.SetKey( f, i, key );
 					}
 				}
+
+				take.ComputeDeltaAnimation();
 			}
 		}
 	}

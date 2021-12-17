@@ -16,11 +16,12 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics;
 using Newtonsoft.Json;
 using Fusion.Engine.Graphics.Scenes;
+using Fusion.Core.Mathematics;
 
-namespace FScene {
-
-	class Options {
-
+namespace FScene 
+{
+	class Options 
+	{
 		[CommandLineParser.Name("in", "input FBX file")]
 		[CommandLineParser.Required()]
 		public string Input { get; set; }
@@ -52,12 +53,16 @@ namespace FScene {
 		[CommandLineParser.Name("retarget", "provides scene to retarget animation clips from")]
 		[CommandLineParser.Option()]
 		public string RetargetSource { get; set; }
+
+		[CommandLineParser.Name("scale", "scales entire scene")]
+		[CommandLineParser.Option]
+		public float Scale { get; set; } = 1;
 	};
 
 
 
-	partial class FScene {
-
+	partial class FScene 
+	{
 		static int Main ( string[] args )
 		{
 			Thread.CurrentThread.CurrentCulture	=	System.Globalization.CultureInfo.InvariantCulture;
@@ -66,13 +71,14 @@ namespace FScene {
 			var options = new Options();
 			var parser = new CommandLineParser( options.GetType() );
 
-			try {
-
+			try 
+			{
 				//	parse arguments :
 				parser.ParseCommandLine( options, args );
 
 				//	change extension of output not set :
-				if (options.Output==null) {
+				if (options.Output==null) 
+				{
 					options.Output = Path.ChangeExtension( options.Input, ".scene");
 				}
 
@@ -80,11 +86,13 @@ namespace FScene {
 				Log.Message("Reading FBX: {0}", options.Input);
 
 				var loader = new FbxLoader();
-				using ( var scene  = loader.LoadScene( options.Input, options.ImportGeometry, options.ImportAnimation ) ) {
-				
+				using ( var scene  = loader.LoadScene( options.Input, options.ImportGeometry, options.ImportAnimation ) ) 
+				{
 					Log.Message("Preparation...");
-					foreach ( var mesh in scene.Meshes ) {
-						if (mesh!=null) {
+					foreach ( var mesh in scene.Meshes ) 
+					{
+						if (mesh!=null) 
+						{
 							mesh.MergeVertices( options.MergeTolerance );
 							mesh.DefragmentSubsets(scene, true);
 							mesh.ComputeTangentFrame();
@@ -107,14 +115,19 @@ namespace FScene {
 					var retargetLog = new StringBuilder();
 					FSceneRetarget.RetargetAnimation( scene, options, retargetLog );
 
+					Log.Message("Resolving material paths...");
+					scene.TransformScene( Matrix.Identity, options.Scale );
+
 					//	save scene :
 					Log.Message("Writing binary file: {0}", options.Output);
-					using ( var stream = File.OpenWrite( options.Output ) ) {
+					using ( var stream = File.OpenWrite( options.Output ) ) 
+					{
 						scene.Save( stream );
 					}
 
 					//	write report :
-					if (!string.IsNullOrWhiteSpace(options.Report)) {
+					if (!string.IsNullOrWhiteSpace(options.Report)) 
+					{
 						var reportPath = options.Report;
 						Log.Message("Writing report: {0}", reportPath);
 						File.WriteAllText( reportPath, FSceneReport.CreateHtmlReport(scene, retargetLog.ToString()));
@@ -123,7 +136,9 @@ namespace FScene {
 
 				Log.Message("Done.");
 
-			} catch ( Exception e ) {
+			} 
+			catch ( Exception e ) 
+			{
 				parser.PrintError( "{0}", e.ToString() );
 				return 1;
 			}

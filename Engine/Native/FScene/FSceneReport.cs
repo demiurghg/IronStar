@@ -36,7 +36,7 @@ namespace FScene {
 
 			foreach ( var take in scene.Takes ) {
 				var index = scene.Takes.IndexOf(take);
-				sb.AppendFormat("{0,4}:  {1,-30} : [{2}..{3}]\r\n", index, "\"" + take.Name + "\"", take.FirstFrame, take.LastFrame );
+				sb.AppendFormat("{0,4}:  {1,-30} : [{2} frames]\r\n", index, "\"" + take.Name + "\"", take.FrameCount );
 			}
 
 

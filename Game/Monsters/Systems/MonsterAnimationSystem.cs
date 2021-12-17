@@ -58,19 +58,14 @@ namespace IronStar.Monsters.Systems
 			{
 				var dr = physics.Game.RenderSystem.RenderWorld.Debug.Async;
 
-				foreach ( var node in animator.Scene.Nodes )
-				{
-					//dr.DrawBasis( node.BindPose, 1.0f, 2 );
-				}
-
 				var bones		=	entity.GetComponent<BoneComponent>();
 				var transform	=	entity.GetComponent<Transform>();
 				animator?.Update( gameTime, transform, step, uc, bones.Bones );
 
-				foreach ( var bone in bones.Bones )
+				/*foreach ( var bone in bones.Bones )
 				{
 					dr.DrawBasis( bone, 0.7f, 3 );
-				}
+				}*/
 			}
 		}
 	}

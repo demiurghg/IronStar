@@ -174,9 +174,10 @@ Fusion::Engine::Graphics::Scenes::Scene ^ FbxLoader::LoadScene( string ^filename
 
 			auto firstTakeFrame =	(int)takeSpan.GetStart().GetFrameCount(timeMode);
 			auto lastTakeFrame	=	(int)takeSpan.GetStop().GetFrameCount(timeMode);
+			auto frameCount		=	lastTakeFrame - firstTakeFrame + 1;
 			auto takeName		=	gcnew String(lTakeInfo->mName.Buffer());
 
-			auto animTake		=	gcnew AnimationTake(takeName, fbxNodeCount, firstTakeFrame, lastTakeFrame );
+			auto animTake		=	gcnew AnimationTake(takeName, fbxNodeCount, frameCount );
 
 			auto animStack		=	(FbxAnimStack*)fbxScene->GetSrcObject<FbxAnimStack>(takeIndex);
 			auto stackName		=	animStack->GetName();
@@ -186,16 +187,17 @@ Fusion::Engine::Graphics::Scenes::Scene ^ FbxLoader::LoadScene( string ^filename
 			evaluator->SetContext( fbxScene->GetSrcObject<FbxAnimStack>(takeIndex) );
 
 			//	Animate :
-			for (int nodeId = 0; nodeId<fbxNodeCount; nodeId++ ) {
-				for (int frame = firstTakeFrame; frame <= lastTakeFrame; frame++) {
-				
+			for (int nodeId = 0; nodeId<fbxNodeCount; nodeId++ ) 
+			{
+				for (int takeFrame = firstTakeFrame; takeFrame <= lastTakeFrame; takeFrame++) 
+				{
 					FbxTime time;
-					time.SetFrame(frame, this->timeMode);
+					time.SetFrame(takeFrame, this->timeMode);
 
 					auto fbxNode = fbxNodes[nodeId];
 					auto animKey = FbxAMatrix2Matrix(evaluator->GetNodeLocalTransform(fbxNode, time, FbxNode::eSourcePivot, false, true));
 
-					animTake->SetKey( frame, nodeId, animKey );
+					animTake->SetKey( takeFrame - firstTakeFrame, nodeId, animKey );
 					//fbxScene->GetNode(
 					//evaluator->SetContext(
 					//Console::WriteLine("{0} {2} : {1}", frame, animKey.ToString(), time.GetSecondDouble() );
@@ -205,10 +207,6 @@ Fusion::Engine::Graphics::Scenes::Scene ^ FbxLoader::LoadScene( string ^filename
 
 			scene->Takes->Add( animTake );
 		}
-
-
-		//scene->StartTime	=	TimeSpan::FromMilliseconds( (long)start.GetMilliSeconds() );
-		//scene->EndTime		=	TimeSpan::FromMilliseconds( (long)end.GetMilliSeconds() );
 
 		Console::WriteLine("Scene range : {0} - {1}", scene->FirstFrame, scene->LastFrame);
 		Console::WriteLine("Total nodes : {0}", fbxScene->GetNodeCount());

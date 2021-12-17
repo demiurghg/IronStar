@@ -7,12 +7,13 @@ using Fusion.Engine.Graphics;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using System.Diagnostics;
 
 
-namespace Fusion.Engine.Graphics.Scenes {
-
-	public sealed class Node : IEquatable<Node> {
-
+namespace Fusion.Engine.Graphics.Scenes 
+{
+	public sealed class Node : IEquatable<Node> 
+	{
 		/// <summary>
 		/// Node name.
 		/// </summary>
@@ -58,6 +59,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Comment		=	"";
 			MeshIndex	=	-1;
 			ParentIndex	=	-1;
+		}
+
+
+		public override string ToString()
+		{
+			return string.Format("{0} P:{1} M:{2}", Name, ParentIndex, MeshIndex);
 		}
 
 

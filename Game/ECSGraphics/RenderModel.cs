@@ -97,6 +97,16 @@ namespace IronStar.SFX2
 			return scene;
 		}
 
+
+		public float ComputeScale()
+		{
+			float scale;
+			Quaternion r;
+			Vector3 t;
+			this.transform.DecomposeUniformScale( out scale, out r, out t );
+			return scale;
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	IComponent implementation :
 		-----------------------------------------------------------------------------------------*/

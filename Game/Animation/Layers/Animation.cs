@@ -109,7 +109,7 @@ namespace IronStar.Animation
 			targetPose	=	new AnimationKey[ sequencer.Scene.Nodes.Count ];
 			originPose	=	new AnimationKey[ sequencer.Scene.Nodes.Count ];
 
-			frame		=	MathUtil.Clamp( frame + take.FirstFrame, take.FirstFrame, take.FirstFrame + take.FrameCount );
+			frame		=	take.Clamp(frame);
 
 			take.GetPose( frame, sequencer.blendMode, targetPose );
 		}
@@ -165,19 +165,19 @@ namespace IronStar.Animation
 
 			if (Reverse)
 			{
-				prev	=	frameCount - MathUtil.Wrap( prev, 0, frameCount );
-				next	=	frameCount - MathUtil.Wrap( next, 0, frameCount );
+				prev	=	frameCount - Take.Wrap( prev );
+				next	=	frameCount - Take.Wrap( next );
 			}
 
 			if (Looped) 
 			{
-				prev = MathUtil.Wrap( prev + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
-				next = MathUtil.Wrap( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+				prev = Take.Wrap( prev );
+				next = Take.Wrap( next );
 			} 
 			else 
 			{
-				prev = MathUtil.Clamp( prev + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
-				next = MathUtil.Clamp( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+				prev = Take.Clamp( prev );
+				next = Take.Clamp( next );
 			}
 				
 			var prevT = AnimationKey.Identity;

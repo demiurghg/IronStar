@@ -86,8 +86,8 @@ namespace IronStar.Animation
 	public class BlendSpace2 : BlendSpace
 	{
 		public float Factor { get; set; }
-		public int LocalFrame1 { get { return frame1 - take.FirstFrame; } set { frame1 = take.ClampFrameIndex( value + take.FirstFrame ); } }
-		public int LocalFrame2 { get { return frame2 - take.FirstFrame; } set { frame2 = take.ClampFrameIndex( value + take.FirstFrame ); } }
+		public int LocalFrame1 { get { return frame1; } set { frame1 = take.Clamp( value ); } }
+		public int LocalFrame2 { get { return frame2; } set { frame2 = take.Clamp( value ); } }
 
 		int frame1;
 		int frame2;
@@ -147,11 +147,11 @@ namespace IronStar.Animation
 		public BlendSpaceD4( Scene scene, string channel, string takeName, AnimationBlendMode blendMode )
 		:base( scene, channel, takeName, blendMode )
 		{
-			f0	=	take.ClampFrameIndex( take.FirstFrame + 0 );
-			f1	=	take.ClampFrameIndex( take.FirstFrame + 1 );
-			f2	=	take.ClampFrameIndex( take.FirstFrame + 2 );
-			f3	=	take.ClampFrameIndex( take.FirstFrame + 3 );
-			f4	=	take.ClampFrameIndex( take.FirstFrame + 4 );
+			f0	=	take.Clamp( 0 );
+			f1	=	take.Clamp( 1 );
+			f2	=	take.Clamp( 2 );
+			f3	=	take.Clamp( 3 );
+			f4	=	take.Clamp( 4 );
 		}
 
 		protected override void GetLocalBlendedKey( int nodeIndex, bool additive, ref AnimationKey key )

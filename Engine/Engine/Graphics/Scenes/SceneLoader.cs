@@ -32,13 +32,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="requestedType"></param>
 		/// <returns></returns>
 		public override object Load ( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
-		{																			
+		{
 			var scene = Scene.Load( stream );
-
-			if (assetPath.Contains("marine"))
-			{
-				scene.TransformScene( Matrix.RotationY( MathUtil.Pi * 0 ), 0.2f );
-			}
 
 			foreach ( var mtrl in scene.Materials ) 
 			{

@@ -19,6 +19,13 @@ namespace Fusion.Engine.Graphics.Scenes
 
 		public AnimationKey( Matrix transform )
 		{
+			Vector3 scaling;
+			float eps = 0.00001f;
+			transform.Decompose( out scaling, out Rotation, out Translation );
+			if (!MathUtil.WithinEpsilon(scaling.X, scaling.Y, eps) || !MathUtil.WithinEpsilon(scaling.Z, scaling.Y, eps))
+			{
+				Log.Warning("BAD SCALING: {0}", scaling);
+			}
 			transform.DecomposeUniformScale( out Scaling, out Rotation, out Translation );
 		}
 

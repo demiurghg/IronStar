@@ -24,33 +24,11 @@ namespace Fusion.Engine.Graphics.Scenes {
 		readonly AnimationKey[]	animDelta;
 		readonly int		frameCount;
 		readonly int		nodeCount;
-		readonly int		firstFrame;
-		readonly int		lastFrame;
-
-		/// <summary>
-		/// Returns clamed frame index
-		/// </summary>
-		/// <param name="frameIndex"></param>
-		/// <returns></returns>
-		public int ClampFrameIndex( int frameIndex )
-		{
-			return MathUtil.Clamp( frameIndex, FirstFrame, LastFrame );
-		}
 
 		/// <summary>
 		/// Gets take name
 		/// </summary>
 		public string Name { get { return name; } }
-
-		/// <summary>
-		/// First inclusive frame
-		/// </summary>
-		public int FirstFrame { get { return firstFrame; } }
-
-		/// <summary>
-		/// Last inclusive frame
-		/// </summary>
-		public int LastFrame { get { return lastFrame; } }
 
 		/// <summary>
 		/// Gets frame count
@@ -69,14 +47,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="nodeCount">Node count</param>
 		/// <param name="firstFrame">First inclusive frame</param>
 		/// <param name="lastFrame">Last inclusive frame</param>
-		public AnimationTake ( string name, int nodeCount, int firstFrame, int lastFrame )
+		public AnimationTake ( string name, int nodeCount, int frameCount )
 		{
 			this.name		=	name;
 			this.nodeCount	=	nodeCount;
 
-			this.firstFrame	=	firstFrame;
-			this.lastFrame	=	lastFrame;
-			this.frameCount	=	lastFrame - firstFrame + 1;
+			this.frameCount	=	frameCount;
 
 			this.animData	=	new AnimationKey[ nodeCount * frameCount ];
 			this.animDelta	=	new AnimationKey[ nodeCount * frameCount ];
@@ -88,6 +64,17 @@ namespace Fusion.Engine.Graphics.Scenes {
 			}
 		}
 
+
+		public int Clamp( int frame )
+		{
+			return MathUtil.Clamp( frame, 0, FrameCount-1 );
+		}
+
+
+		public int Wrap( int frame )
+		{
+			return MathUtil.Wrap( frame, 0, FrameCount-1 );
+		}
 
 
 		/// <summary>
@@ -107,13 +94,11 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			switch (wrapMode) 
 			{
-				case AnimationWrapMode.Clamp:	frame = MathUtil.Clamp( frame, FirstFrame, LastFrame ); break;
-				case AnimationWrapMode.Repeat:	frame = MathUtil.Wrap ( frame, FirstFrame, LastFrame ); break;
+				case AnimationWrapMode.Clamp:	frame = MathUtil.Clamp( frame, 0, frameCount-1 ); break;
+				case AnimationWrapMode.Repeat:	frame = MathUtil.Wrap ( frame, 0, frameCount ); break;
 				default: throw new ArgumentException("mode");
 			}
 				
-			frame = frame - FirstFrame;
-
 			for (int i=0; i<nodeCount; i++) 
 			{
 				destination[i] = animData[ Address( frame, i ) ].Transform;
@@ -135,21 +120,24 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="transform"></param>
 		public void SetKey ( int frame, int node, Matrix transform )
 		{
-			if (frame<FirstFrame) {
-				throw new ArgumentOutOfRangeException("frame < FirstFrame");
-			}
-			if (frame>LastFrame) {
-				throw new ArgumentOutOfRangeException("frame < LastFrame");
-			}
+			if (frame<0) { throw new ArgumentOutOfRangeException("frame < 0");	}
+			if (frame>frameCount) {	throw new ArgumentOutOfRangeException("frame < FrameCount");	}
+			if (node<0) { throw new ArgumentOutOfRangeException("node < 0"); }
+			if (node>=NodeCount) {	throw new ArgumentOutOfRangeException("node >= NodeCount");		}
 
-			if (node<0) {
-				throw new ArgumentOutOfRangeException("node < 0");
-			}
-			if (node>=NodeCount) {
-				throw new ArgumentOutOfRangeException("node >= NodeCount");
-			}
+			animData[ Address( frame, node ) ] = new AnimationKey( transform );
 
-			animData[ Address( frame - firstFrame, node ) ] = new AnimationKey( transform );
+		}
+
+
+		public void SetKey ( int frame, int node, AnimationKey key )
+		{
+			if (frame<0) { throw new ArgumentOutOfRangeException("frame < 0");	}
+			if (frame>frameCount) {	throw new ArgumentOutOfRangeException("frame < FrameCount");	}
+			if (node<0) { throw new ArgumentOutOfRangeException("node < 0"); }
+			if (node>=NodeCount) {	throw new ArgumentOutOfRangeException("node >= NodeCount");		}
+
+			animData[ Address( frame, node ) ] = key;
 
 		}
 
@@ -186,14 +174,6 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
-
-		public void GetKeyByIndex( int index, int node, ref AnimationKey key )
-		{
-			index	=	MathUtil.Clamp( index, 0, FrameCount-1 );
-			GetKey( index + firstFrame, node, ref key );
-		}
-
-
 		/// <summary>
 		/// Sets anim key
 		/// </summary>
@@ -202,21 +182,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="transform"></param>
 		public void GetKey ( int frame, int node, out Matrix transform )
 		{
-			if (frame<FirstFrame) {
-				throw new ArgumentOutOfRangeException("frame < FirstFrame");
-			}
-			if (frame>LastFrame) {
-				throw new ArgumentOutOfRangeException("frame < LastFrame");
-			}
+			if (frame<0) { throw new ArgumentOutOfRangeException("frame < 0");	}
+			if (frame>frameCount) {	throw new ArgumentOutOfRangeException("frame < FrameCount");	}
+			if (node<0) { throw new ArgumentOutOfRangeException("node < 0"); }
+			if (node>=NodeCount) {	throw new ArgumentOutOfRangeException("node >= NodeCount");		}
 
-			if (node<0) {
-				throw new ArgumentOutOfRangeException("node < 0");
-			}
-			if (node>=NodeCount) {
-				throw new ArgumentOutOfRangeException("node >= NodeCount");
-			}
-
-			transform  = animData[ Address( frame - firstFrame, node ) ].Transform;
+			transform  = animData[ Address( frame, node ) ].Transform;
 		}
 
 
@@ -228,21 +199,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="transform"></param>
 		public void GetKey ( int frame, int node, ref AnimationKey key )
 		{
-			if (frame<FirstFrame) {
-				throw new ArgumentOutOfRangeException("frame < FirstFrame");
-			}
-			if (frame>LastFrame) {
-				throw new ArgumentOutOfRangeException("frame < LastFrame");
-			}
+			if (frame<0) { throw new ArgumentOutOfRangeException("frame < 0");	}
+			if (frame>frameCount) {	throw new ArgumentOutOfRangeException("frame < FrameCount");	}
+			if (node<0) { throw new ArgumentOutOfRangeException("node < 0"); }
+			if (node>=NodeCount) {	throw new ArgumentOutOfRangeException("node >= NodeCount");		}
 
-			if (node<0) {
-				throw new ArgumentOutOfRangeException("node < 0");
-			}
-			if (node>=NodeCount) {
-				throw new ArgumentOutOfRangeException("node >= NodeCount");
-			}
-
-			key  = animData[ Address( frame - firstFrame, node ) ];
+			key  = animData[ Address( frame, node ) ];
 		}
 
 
@@ -262,21 +224,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="transform"></param>
 		public void GetDeltaKey ( int frame, int node, out AnimationKey key )
 		{
-			if (frame<FirstFrame) {
-				throw new ArgumentOutOfRangeException("frame < FirstFrame");
-			}
-			if (frame>LastFrame) {
-				throw new ArgumentOutOfRangeException("frame < LastFrame");
-			}
+			if (frame<0) { throw new ArgumentOutOfRangeException("frame < 0");	}
+			if (frame>frameCount) {	throw new ArgumentOutOfRangeException("frame < FrameCount");	}
+			if (node<0) { throw new ArgumentOutOfRangeException("node < 0"); }
+			if (node>=NodeCount) {	throw new ArgumentOutOfRangeException("node >= NodeCount");		}
 
-			if (node<0) {
-				throw new ArgumentOutOfRangeException("node < 0");
-			}
-			if (node>=NodeCount) {
-				throw new ArgumentOutOfRangeException("node >= NodeCount");
-			}
-
-			key  = animDelta[ Address( frame - firstFrame, node ) ];
+			key  = animDelta[ Address( frame, node ) ];
 		}
 
 
@@ -286,18 +239,18 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public void ComputeDeltaAnimation ()
 		{
 			var initialPose = new Matrix[ NodeCount ];
-			Evaluate( FirstFrame, AnimationWrapMode.Clamp, initialPose );
+			Evaluate( 0, AnimationWrapMode.Clamp, initialPose );
 
 			for ( int i=0; i < NodeCount; i++ ) 
 			{
 				initialPose[i]	=	Matrix.Invert( initialPose[i] );
 			}
 
-			for ( int frame = FirstFrame; frame <= LastFrame; frame++ ) 
+			for ( int frame = 0; frame < frameCount; frame++ ) 
 			{
 				for ( int node = 0; node<NodeCount; node++ ) 
 				{
-					int addr = Address( frame - firstFrame, node );
+					int addr = Address( frame, node );
 					animDelta[ addr ] = new AnimationKey( initialPose[node] * animData[ addr ].Transform );
 				}
 			}
@@ -306,89 +259,15 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 		public void RecordTake( int node, Func<int,float,Matrix> action )
 		{
-			float d = 1.0f / frameCount;
+			float d = 1.0f / (frameCount - 1);
 
-			for (int i=firstFrame; i<=lastFrame; i++)
+			for (int frame=0; frame < frameCount; frame++)
 			{
-				SetKey( i, node, action(i, i*d) );
+				SetKey( frame, node, action(frame, frame*d) );
 			}
 
 			ComputeDeltaAnimation();
 		}
-
-
-		#region	GetAnimSnapshot
-		#if false
-		/// <summary>
-		/// Get local matricies for each node for given animation frame.
-		/// First, this method copies node's local matricies
-		/// then, it replace this matrices by node's animation track values.
-		/// </summary>
-		/// <param name="frame"></param>
-		/// <returns></returns>
-		public void GetAnimSnapshot ( float frame, int firstFrame, int lastFrame, AnimationWrapMode animMode, Matrix[] destination )
-		{
-			if ( animData==null ) {
-				throw new InvalidOperationException("Animation data is not created");
-			}
-
-			if (destination.Length<Nodes.Count) {
-				throw new ArgumentOutOfRangeException("destination.Length must be greater of equal to Nodes.Count");
-			}
-
-			if ( firstFrame < FirstFrame || firstFrame > LastFrame ) {
-				throw new ArgumentOutOfRangeException("firstFrame");
-			}
-			if ( lastFrame < FirstFrame || lastFrame > LastFrame ) {
-				throw new ArgumentOutOfRangeException("firstFrame");
-			}
-			if ( firstFrame > lastFrame ) {
-				throw new ArgumentOutOfRangeException("firstFrame > lastFrame");
-			}
-
-
-			int frame0	=	(int)Math.Floor( frame );
-			int frame1	=	frame0 + 1;
-			var factor	=	(frame >= 0) ? (frame%1) : (1 + frame%1);
-
-			if (animMode==AnimationWrapMode.Repeat) {
-				frame0	=	MathUtil.Wrap( frame0, firstFrame, lastFrame );
-				frame1	=	MathUtil.Wrap( frame1, firstFrame, lastFrame );
-			} else if (animMode==AnimationWrapMode.Clamp) {
-				frame0	=	MathUtil.Clamp( frame0, firstFrame, lastFrame );
-				frame1	=	MathUtil.Clamp( frame1, firstFrame, lastFrame );
-			}
-
-			for (int i=0; i<Nodes.Count; i++) {
-				var node = Nodes[i];
-
-				if (node.TrackIndex<0) {
-					destination[i] = node.Transform;
-				} else {
-
-					var x0	=	GetAnimKey( frame0, node.TrackIndex );
-					var x1	=	GetAnimKey( frame1, node.TrackIndex );
-
-					Quaternion q0, q1;
-					Vector3 t0, t1;
-					Vector3 s0, s1;
-
-					x0.Decompose( out s0, out q0, out t0 );
-					x1.Decompose( out s1, out q1, out t1 );
-
-					var q	=	Quaternion.Slerp( q0, q1, factor );
-					var t	=	Vector3.Lerp( t0, t1, factor );
-					var s	=	Vector3.Lerp( s0, s1, factor );
-
-					var x	=	Matrix.Scaling( s ) * Matrix.RotationQuaternion( q ) * Matrix.Translation( t );
-
-					destination[i] = x;
-				}
-			}
-		}
-		#endif
-		#endregion
-
 
 		/// <summary>
 		/// 
@@ -397,17 +276,15 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public static AnimationTake Read( BinaryReader reader )
 		{
 			int nodeCount	=	reader.ReadInt32();
-			int firstFrame	=	reader.ReadInt32();
-			int lastFrame	=	reader.ReadInt32();
-			int dummy		=	reader.ReadInt32();
+			int frameCount	=	reader.ReadInt32();
 
 			var name		=	reader.ReadString();
 
-			var take		=	new AnimationTake( name, nodeCount, firstFrame, lastFrame );
+			var take		=	new AnimationTake( name, nodeCount, frameCount );
 
 			var data		=	new Matrix[ take.animData.Length ];
 
-			reader.Read<Matrix>( data, take.animData.Length );
+			reader.Read( data, take.animData.Length );
 
 			for (int i=0; i<take.animData.Length; i++)
 			{
@@ -428,9 +305,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public static void Write( AnimationTake animTake, BinaryWriter writer )
 		{
 			writer.Write( animTake.NodeCount );
-			writer.Write( animTake.FirstFrame );
-			writer.Write( animTake.LastFrame );
-			writer.Write( (int)0 );
+			writer.Write( animTake.FrameCount );
 
 			writer.Write( animTake.Name );
 

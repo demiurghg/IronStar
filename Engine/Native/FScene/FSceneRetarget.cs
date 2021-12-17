@@ -54,7 +54,7 @@ namespace FScene {
 						continue;
 					}
 					
-					var dstTake = new AnimationTake( srcTake.Name, targetScene.Nodes.Count, srcTake.FirstFrame, srcTake.LastFrame );
+					var dstTake = new AnimationTake( srcTake.Name, targetScene.Nodes.Count, srcTake.FrameCount );
 
 					FillTakeWithDefaultAnimation( dstTake, targetScene );
 
@@ -78,12 +78,11 @@ namespace FScene {
 		/// <param name="source"></param>
 		static void FillTakeWithDefaultAnimation ( AnimationTake take, Scene source )
 		{
-			for ( int nodeIndex = 0; nodeIndex < source.Nodes.Count; nodeIndex ++ ) {
-
-				for ( int frame = take.FirstFrame; frame<=take.LastFrame; frame++ ) {
-				
+			for ( int nodeIndex = 0; nodeIndex < source.Nodes.Count; nodeIndex ++ ) 
+			{
+				for ( int frame = 0; frame < take.FrameCount; frame++ ) 
+				{
 					take.SetKey( frame, nodeIndex, source.Nodes[ nodeIndex ].Transform );
-
 				}
 			}
 		}
@@ -97,26 +96,26 @@ namespace FScene {
 		/// <param name="source"></param>
 		static void FillTakeWithSourceAnimation ( AnimationTake dstTake, Scene target, AnimationTake srcTake, Scene source, StringBuilder log )
 		{
-			for ( int srcNodeIndex = 0; srcNodeIndex < source.Nodes.Count; srcNodeIndex ++ ) {
-
+			for ( int srcNodeIndex = 0; srcNodeIndex < source.Nodes.Count; srcNodeIndex ++ ) 
+			{
 				var srcNodeName	 = source.Nodes[ srcNodeIndex ].Name;
 				int dstNodeIndex = target.GetNodeIndex( srcNodeName );
 
 				Log.Message("...remap '{0}': {1} -> {2}", srcNodeName, srcNodeIndex, dstNodeIndex );
 
-				if ( dstNodeIndex<0) {
+				if ( dstNodeIndex<0) 
+				{
 					log.AppendFormat(" * dst node '{0}' does not exist, skipped.\r\n"	, srcNodeName );
 					Log.Message		(" * dst node '{0}' does not exist, skipped."		, srcNodeName );
 					continue;
 				}
 
-				for ( int frame = dstTake.FirstFrame; frame<=dstTake.LastFrame; frame++ ) {
-
+				for ( int frame = 0; frame < dstTake.FrameCount; frame++ ) 
+				{
 					Matrix transform;
 
 					srcTake.GetKey( frame, srcNodeIndex, out transform );
 					dstTake.SetKey( frame, dstNodeIndex, transform );
-
 				}
 			}
 		}

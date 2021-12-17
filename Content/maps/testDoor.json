@@ -292,7 +292,7 @@
         "Factory": {
           "$id": "22",
           "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
-          "Position": "-1, 2, 3",
+          "Position": "-1, 2, 17.5",
           "Rotation": "0, 0, 0, 1",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -301,12 +301,12 @@
         "Name": "MapEntity0",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-1, 2, 3",
+        "Translation": "-1, 2, 17.5",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -1.0,
         "TranslateY": 2.0,
-        "TranslateZ": 3.0
+        "TranslateZ": 17.5
       },
       {
         "$id": "23",
@@ -999,7 +999,7 @@
         "Factory": {
           "$id": "71",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
-          "Position": "-40, 0, 0.5",
+          "Position": "-8.5, 0, -0.837340355",
           "Rotation": "0, 0.258819044, 0, 0.9659258",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -1008,17 +1008,44 @@
         "Name": "MapEntity20",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-40, 0, 0.5",
+        "Translation": "-8.5, 0, -0.837340355",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0.258819044, 0, 0.9659258",
-        "TranslateX": -40.0,
+        "TranslateX": -8.5,
         "TranslateY": 0.0,
-        "TranslateZ": 0.5
+        "TranslateZ": -0.837340355
+      },
+      {
+        "$id": "72",
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\scaleTest.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "SkipShadow": false,
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap32",
+        "UseLightVolume": true,
+        "UseCollisionMesh": false,
+        "Collidable": true,
+        "Walkable": true,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
+        "Animated": false,
+        "Name": "MapModel4",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "9, 7.5, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 9.0,
+        "TranslateY": 7.5,
+        "TranslateZ": 0.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "72",
+    "$id": "73",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

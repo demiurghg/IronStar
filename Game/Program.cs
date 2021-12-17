@@ -64,6 +64,7 @@ namespace IronStar
 			var staticModelProcessor    =   new SceneProcessor( true,  true, 0, true, "" );
 			var animationProcessor      =   new SceneProcessor( false, true, 0, true, "" );
 			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon2\weapon_common.fbx" );
+			var monsterModelProcessor	=	new SceneProcessor( true,  true, 0, true, "", 0.1f );
 			var jsonClassProcessor      =   new JsonProcessor();
 			var textProcessor           =   new TextProcessor();
 			var luaProcessor            =   new LuaProcessor();
@@ -124,6 +125,7 @@ namespace IronStar
 				.Process("*.fbx"                , staticModelProcessor )
 				.Process("*anim_*.fbx"          , animationProcessor )
 				.Process("scenes/weapon2/*.fbx" , weaponModelProcessor )
+				.Process("scenes/monsters/*.fbx", monsterModelProcessor )
 
 				.Process("*.lua"                , luaProcessor )
 

@@ -226,8 +226,8 @@ namespace IronStar.Animation
 
 			for ( int nodeIndex=0; nodeIndex<nodeCount; nodeIndex++ )
 			{
-				take0.GetKeyByIndex( frame0, nodeIndex, ref key0 ); 
-				take1.GetKeyByIndex( frame1, nodeIndex, ref key1 ); 
+				take0.GetKey( frame0, nodeIndex, ref key0 ); 
+				take1.GetKey( frame1, nodeIndex, ref key1 ); 
 
 				targetPose[ nodeIndex ] = AnimationKey.Lerp( key0, key1, factor );
 			}

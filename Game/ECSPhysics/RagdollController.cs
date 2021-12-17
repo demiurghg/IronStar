@@ -14,6 +14,7 @@ using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.Constraints.TwoEntity.Joints;
 using BEPUphysics.Constraints.SolverGroups;
 using BEPUphysics.Constraints.TwoEntity.JointLimits;
+using BEPUphysics.CollisionRuleManagement;
 
 namespace IronStar.ECSPhysics
 {
@@ -55,11 +56,11 @@ namespace IronStar.ECSPhysics
 			ragdollBones.Add( handR		 );
 			ragdollBones.Add( handL		 );
 
-			ConnectKneeElbow( leftShldr,  leftArm,  Vector3.Right );
-			ConnectKneeElbow( rightShldr, rightArm, Vector3.Right );
+			ConnectKneeElbow( leftShldr,  leftArm,  Vector3.Left );
+			ConnectKneeElbow( rightShldr, rightArm, Vector3.Left );
 
-			ConnectBallSocket( leftArm,  handL, Vector3.Down, 45 );
-			ConnectBallSocket( rightArm, handR, Vector3.Down, 45 );	 //*/
+			ConnectBallSocket( leftArm,  handL, Vector3.Down, 45, 30 );
+			ConnectBallSocket( rightArm, handR, Vector3.Down, 45, 30 );	 //*/
 
 			//--------------------------
 			//	Legs :
@@ -76,8 +77,8 @@ namespace IronStar.ECSPhysics
 			var footL = mapping.GetBoneBox( mapping.LeftFoot,	mapping.LeftToe,  1 );
 			var footR = mapping.GetBoneBox( mapping.RightFoot,	mapping.RightToe, 1 );
 
-			ConnectBallSocket( shinL, footL, Vector3.Down, 45 );
-			ConnectBallSocket( shinR, footR, Vector3.Down, 45 );		//*/
+			ConnectBallSocket( shinL, footL, Vector3.Down, 25, 25 );
+			ConnectBallSocket( shinR, footR, Vector3.Down, 25, 25 );
 			
 			ragdollBones.Add( hipL	);
 			ragdollBones.Add( hipR	);
@@ -95,10 +96,10 @@ namespace IronStar.ECSPhysics
 			var pelvis	=	mapping.GetBoneBox( mapping.Pelvis,	null,	4 );
 			var head	=	mapping.GetBoneBox( mapping.Head,	null,	3 );
 
-			ConnectBallSocket( pelvis, spine1,	Vector3.Up, 30 );
-			ConnectBallSocket( spine1, spine2,	Vector3.Up, 30 );
-			ConnectBallSocket( spine2, chest,	Vector3.Up, 30 );
-			ConnectBallSocket( chest, head,		Vector3.Up, 30 ); //*/
+			ConnectBallSocket( pelvis, spine1,	Vector3.Up, 10, 15 );
+			ConnectBallSocket( spine1, spine2,	Vector3.Up, 10, 15 );
+			ConnectBallSocket( spine2, chest,	Vector3.Up, 10, 15 );
+			ConnectBallSocket( chest, head,		Vector3.Up, 10, 45 ); //*/
 
 			ragdollBones.Add( chest	 );
 			ragdollBones.Add( spine1 );
@@ -109,13 +110,17 @@ namespace IronStar.ECSPhysics
 			//--------------------------
 			//	Torso + Limbs :
 			//--------------------------
-			ConnectBallSocket( pelvis, hipL, Vector3.Down - Vector3.Left,  90 );
-			ConnectBallSocket( pelvis, hipR, Vector3.Down - Vector3.Right, 90 );
+			ConnectBallSocket( pelvis, hipL, 0.3f*Vector3.Down - Vector3.Left,  20, 45 );
+			ConnectBallSocket( pelvis, hipR, 0.3f*Vector3.Down - Vector3.Right, 20, 45 );
 
-			ConnectBallSocket( chest, leftShldr,  Vector3.Left,  90 );
-			ConnectBallSocket( chest, rightShldr, Vector3.Right, 90 ); //*/
+			ConnectBallSocket( chest, leftShldr,  Vector3.Left,  10, 45 );
+			ConnectBallSocket( chest, rightShldr, Vector3.Right, 10, 45 ); //*/
 
-			chest.PhysEntity.ApplyImpulse( chest.PhysEntity.Position, MathConverter.Convert( Vector3.Right + Vector3.ForwardRH ) * 400 );
+			//chest.PhysEntity.ApplyImpulse( chest.PhysEntity.Position + BEPUutilities.Vector3.Right,  );
+			//footR.PhysEntity.ApplyImpulse( footR.PhysEntity.Position, MathConverter.Convert( Vector3.Right*0 + Vector3.ForwardRH ) * 100 );					  
+
+			var hitBone = chest;
+			var hitImp =  MathConverter.Convert( Vector3.Right *0.2f + Vector3.ForwardRH ) * 1000;
 
 			//--------------------------
 			//	Add ragdoll bones to 
@@ -124,25 +129,46 @@ namespace IronStar.ECSPhysics
 			foreach (var bone in ragdollBones)
 			{
 				Add( bone.PhysEntity );
+
+				float k = 0;
+
+				if (bone==hitBone)
+				{
+					k = 1;
+				}
+				if (bone==footL || bone==footR)
+				{
+					k = -0.1f;
+				}
+
+				bone.PhysEntity.ApplyImpulse( bone.PhysEntity.Position + BEPUutilities.Vector3.Right, hitImp * k );
 			}
 		}
 
 
-		void ConnectBallSocket( RagdollBone a, RagdollBone b, Vector3 axis, float angle )
+		void ConnectBallSocket( RagdollBone a, RagdollBone b, Vector3 axis, float angle, float maxTwist )
 		{
 			var pos = MathConverter.Convert( b.Node.BindPose.TranslationVector );
 			var ballSocketJoint = new BallSocketJoint(a.PhysEntity, b.PhysEntity, pos);
 			Add(ballSocketJoint);
 
 			var angularMotor = new BEPUphysics.Constraints.TwoEntity.Motors.AngularMotor(a.PhysEntity, b.PhysEntity);
-			angularMotor.Settings.MaximumForce = 50;
+			angularMotor.Settings.MaximumForce = 250;
 			angularMotor.Settings.Mode = BEPUphysics.Constraints.TwoEntity.Motors.MotorMode.VelocityMotor;
-			Add(angularMotor);
+			Add(angularMotor);		
 
 			var angleRad	= MathUtil.DegreesToRadians(angle);
+			var twistRad	= MathUtil.DegreesToRadians(maxTwist);
 			var swingLimit	= new EllipseSwingLimit(a.PhysEntity, b.PhysEntity, MathConverter.Convert(axis), angleRad, angleRad);
 
+			var bpaxis = MathConverter.Convert(axis);
+
+			var twistLimit	= new TwistLimit(a.PhysEntity, b.PhysEntity, bpaxis, bpaxis, -twistRad, twistRad);
+
+			//Add(twistLimit);
 			Add(swingLimit);
+
+			CollisionRules.AddRule( a.PhysEntity, b.PhysEntity, CollisionRule.NoSolver );
 		}
 
 		
@@ -158,21 +184,29 @@ namespace IronStar.ECSPhysics
 			var joint = new SwivelHingeJoint( a.PhysEntity, b.PhysEntity, MathConverter.Convert( b.Node.BindPose.TranslationVector ), MathConverter.Convert( axis ) );
 
 			joint.TwistLimit.IsActive = true;
-			joint.TwistLimit.MinimumAngle = angle - MathUtil.PiOverFour / 2;
-			joint.TwistLimit.MaximumAngle = angle + MathUtil.PiOverFour / 2;
+			joint.TwistLimit.MinimumAngle = -MathUtil.PiOverFour / 8;
+			joint.TwistLimit.MaximumAngle = +MathUtil.PiOverFour / 8;
 			joint.TwistLimit.SpringSettings.Damping = 100;
-			joint.TwistLimit.SpringSettings.Advanced.Softness = 0.5f;
+			joint.TwistLimit.SpringSettings.Stiffness = 100;
 
 			//The joint is like a hinge, but it can't hyperflex.
 			joint.HingeLimit.IsActive = true;
 			joint.HingeLimit.MinimumAngle = 0;
-			joint.HingeLimit.MaximumAngle = MathUtil.Pi * .9f;
+			joint.HingeLimit.MaximumAngle = MathUtil.Pi * 0.7f;
+			//joint.HingeLimit.MaximumAngle = MathUtil.Pi * 0.9f;
+			/*joint.HingeLimit.SpringSettings.Damping = 100;
+			joint.HingeLimit.SpringSettings.Stiffness = 100;*/
+			joint.HingeMotor.IsActive = true;
+			joint.HingeMotor.Settings.VelocityMotor.Softness = 500f;
+			joint.HingeMotor.Settings.Mode =  BEPUphysics.Constraints.TwoEntity.Motors.MotorMode.VelocityMotor;
 
-			var angularMotor = new BEPUphysics.Constraints.TwoEntity.Motors.AngularMotor(a.PhysEntity, b.PhysEntity);
+			/*var angularMotor = new BEPUphysics.Constraints.TwoEntity.Motors.AngularMotor(a.PhysEntity, b.PhysEntity);
 			angularMotor.Settings.MaximumForce = 20;
 			angularMotor.Settings.Mode = BEPUphysics.Constraints.TwoEntity.Motors.MotorMode.VelocityMotor;
+			Add( angularMotor );//*/
 
-			Add( angularMotor );
+			CollisionRules.AddRule( a.PhysEntity, b.PhysEntity, CollisionRule.NoSolver );
+
 			Add( joint );
 		}
 
@@ -190,16 +224,16 @@ namespace IronStar.ECSPhysics
 
 			foreach ( var node in scene.Nodes )
 			{
-				dr.DrawBasis( node.BindPose, 0.5f, 4 );
+				//dr.DrawBasis( node.BindPose, 0.5f, 4 );
 			}
 
-			var world = transform.TransformMatrix;
+			var worldInv = Matrix.Invert( transform.TransformMatrix );
 
 			foreach ( var ragdollBone in ragdollBones )
 			{
-				bones.Bones[ ragdollBone.Index ] = ragdollBone.ComputePhysicalBoneTransform(world);
+				bones.Bones[ ragdollBone.Index ] = ragdollBone.ComputeSimulatedBoneTransform(worldInv);
 
-				dr.DrawBasis( ragdollBone.ComputePhysicalBoneTransform(world), 3.5f, 4 );
+				//dr.DrawBasis( ragdollBone.ComputeSimulatedBoneTransform(Matrix.Identity), 1.5f, 4 );
 			}
 		}
 

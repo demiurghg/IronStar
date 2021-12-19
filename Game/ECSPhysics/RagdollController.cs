@@ -15,6 +15,7 @@ using BEPUphysics.Constraints.TwoEntity.Joints;
 using BEPUphysics.Constraints.SolverGroups;
 using BEPUphysics.Constraints.TwoEntity.JointLimits;
 using BEPUphysics.CollisionRuleManagement;
+using Fusion;
 
 namespace IronStar.ECSPhysics
 {
@@ -116,12 +117,6 @@ namespace IronStar.ECSPhysics
 			ConnectBallSocket( chest, leftShldr,  Vector3.Left,  10, 45 );
 			ConnectBallSocket( chest, rightShldr, Vector3.Right, 10, 45 ); //*/
 
-			//chest.PhysEntity.ApplyImpulse( chest.PhysEntity.Position + BEPUutilities.Vector3.Right,  );
-			//footR.PhysEntity.ApplyImpulse( footR.PhysEntity.Position, MathConverter.Convert( Vector3.Right*0 + Vector3.ForwardRH ) * 100 );					  
-
-			var hitBone = chest;
-			var hitImp =  MathConverter.Convert( Vector3.Right *0.2f + Vector3.ForwardRH ) * 1000;
-
 			//--------------------------
 			//	Add ragdoll bones to 
 			//	physics world
@@ -129,19 +124,6 @@ namespace IronStar.ECSPhysics
 			foreach (var bone in ragdollBones)
 			{
 				Add( bone.PhysEntity );
-
-				float k = 0;
-
-				if (bone==hitBone)
-				{
-					k = 1;
-				}
-				if (bone==footL || bone==footR)
-				{
-					k = -0.1f;
-				}
-
-				bone.PhysEntity.ApplyImpulse( bone.PhysEntity.Position + BEPUutilities.Vector3.Right, hitImp * k );
 			}
 		}
 
@@ -163,7 +145,7 @@ namespace IronStar.ECSPhysics
 
 			var bpaxis = MathConverter.Convert(axis);
 
-			var twistLimit	= new TwistLimit(a.PhysEntity, b.PhysEntity, bpaxis, bpaxis, -twistRad, twistRad);
+			//var twistLimit	= new TwistLimit(a.PhysEntity, b.PhysEntity, bpaxis, bpaxis, -twistRad, twistRad);
 
 			//Add(twistLimit);
 			Add(swingLimit);
@@ -218,23 +200,71 @@ namespace IronStar.ECSPhysics
 		}
 
 
+
+		public void LoadAnimatedTransforms( ECS.Transform transform, BoneComponent bones )
+		{
+			foreach ( var ragdollBone in ragdollBones )
+			{
+				ragdollBone.LoadAnimatedTransforms( transform.TransformMatrix, transform.LinearVelocity, bones.Bones );
+			}
+		}
+
+
 		public void ApplyTransforms( ECS.Transform transform, BoneComponent bones )
 		{
 			var dr = physics.Game.RenderSystem.RenderWorld.Debug.Async;
-
-			foreach ( var node in scene.Nodes )
-			{
-				//dr.DrawBasis( node.BindPose, 0.5f, 4 );
-			}
 
 			var worldInv = Matrix.Invert( transform.TransformMatrix );
 
 			foreach ( var ragdollBone in ragdollBones )
 			{
-				bones.Bones[ ragdollBone.Index ] = ragdollBone.ComputeSimulatedBoneTransform(worldInv);
-
-				//dr.DrawBasis( ragdollBone.ComputeSimulatedBoneTransform(Matrix.Identity), 1.5f, 4 );
+				ragdollBone.ApplySimulatedTransform( worldInv, bones.Bones );
 			}
+		}
+
+		public void ApplyInitialImpulse( ImpulseComponent impulse )
+		{
+			if (impulse==null) return;
+			if (impulse.Impulse.Length()<0.001f) return;
+
+			Plane plane = new Plane( impulse.Location, impulse.Impulse.Normalized() );
+
+			RagdollBone closestBone = null;
+			float minDistance = 9999999;
+			
+			foreach ( var ragdollBone in ragdollBones )
+			{
+				var bonePos	 = MathConverter.Convert( ragdollBone.PhysEntity.MotionState.Position );
+				var projPos  = ProjectOnPlane( plane, bonePos );
+				var distance = Vector3.Distance( impulse.Location, projPos );
+
+				if (distance<minDistance)
+				{
+					minDistance = distance;
+					closestBone = ragdollBone;
+				}
+			}
+
+			//Log.Warning("RAGDOLL IMPULSE : {0} {1} {2}", closestBone.Node.Name, impulse.Location, impulse.Impulse );
+
+			var impulseMagnitude	=	ClampVector( impulse.Impulse, 300, 1000 );
+			var impulseLocation		=	impulse.Location;
+
+			closestBone?.PhysEntity?.ApplyImpulse( MathConverter.Convert( impulseLocation ), MathConverter.Convert( impulseMagnitude ) );
+		}
+
+
+		Vector3 ClampVector( Vector3 vector, float min, float max )
+		{
+			var length = MathUtil.Clamp( vector.Length(), min, max );
+			return vector.Normalized() * length;
+		}
+
+
+		Vector3 ProjectOnPlane( Plane plane, Vector3 point )
+		{
+			float dist = Plane.DotCoordinate( plane, point );
+			return point - plane.Normal * dist;
 		}
 
 

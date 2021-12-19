@@ -113,8 +113,8 @@ namespace IronStar
 			//	physics simulation :
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore ) );
 			gs.AddSystem( new ECSPhysics.KinematicSystem(physicsCore) );
-			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.RagdollSystem(physicsCore) );
+			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.DetectorSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore ) );

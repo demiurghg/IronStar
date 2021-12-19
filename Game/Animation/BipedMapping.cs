@@ -167,10 +167,8 @@ namespace IronStar.Animation
 
 			var capsule		=	new Capsule( ms, length, radius, 5 );
 			capsule.PositionUpdateMode	=	PositionUpdateMode.Continuous;
-			capsule.Material.KineticFriction *= 0.5f;
-			capsule.Material.StaticFriction *= 0.5f;
 
-			return new RagdollBone( scene.Nodes.IndexOf(rootLimb), rootLimb, capsule );
+			return new RagdollBone( scene, rootLimb, capsule );
 		}
 
 
@@ -183,10 +181,8 @@ namespace IronStar.Animation
 
 			var box  = new Box( pos, bbox.Size().X * 0.7f, bbox.Size().Y * 0.7f, bbox.Size().Z * 0.7f, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
-			box.Material.KineticFriction *= 0.5f;
-			box.Material.StaticFriction *= 0.5f;
 
-			return new RagdollBone( scene.Nodes.IndexOf(node1), node1, box );
+			return new RagdollBone( scene, node1, box, node2 );
 		}
 
 

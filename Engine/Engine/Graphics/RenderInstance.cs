@@ -280,6 +280,13 @@ namespace Fusion.Engine.Graphics
 				worldBBox = BoundingBox.FromPoints( LocalBoundingBox.GetCorners().Select( p => Vector3.TransformCoordinate( p, World ) ) );
 				worldBBoxDirty = false;
 			}
+			if (IsSkinned)
+			{
+				foreach ( var bone in Bones )
+				{
+					worldBBox.Expand( Vector3.TransformCoordinate( bone.TranslationVector, World ) );
+				}
+			}
 			return worldBBox;
 		}
 

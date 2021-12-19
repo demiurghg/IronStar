@@ -229,6 +229,7 @@ namespace Fusion.Engine.Graphics
 
 					if (feedbackQueue.TryDequeue(out feedbackBuffer))
 					{
+						//	#PERf #MEMORY -- the following code is suspected in exccessive memory traffic
 						var feedback = BuildFeedbackVTAddressTree(feedbackBuffer);
 						UpdateCacheAndRequestTiles( feedback );
 						vt.FeedbackBufferPool.Recycle( feedbackBuffer );

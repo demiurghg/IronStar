@@ -180,26 +180,46 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void ApplyImpulse( Entity entity, Vector3 position, Vector3 impulse )
+		public void ApplyImpulse( Entity entity, Vector3 location, Vector3 impulse )
 		{
-			impulseQueue.Enqueue( new DeferredImpulse( entity, position, impulse ) );
+			//	#TODO #PHYSICS #PHYS -- accumulate impulse
+			var impulseComponent	= entity.GetComponent<ImpulseComponent>();
+			var transformComponent	= entity.GetComponent<ImpulseComponent>();
+
+			if (impulseComponent==null)
+			{
+				impulseComponent	=	new ImpulseComponent( location, impulse );
+				entity.AddComponent( impulseComponent );
+			}
 		}
 
 
-		void ApplyDeferredImpulses()
+		void ApplyDeferredImpulses( IGameState gs )
 		{
-			DeferredImpulse impulse;
+			Aspect impulseAspect = new Aspect().Include<ImpulseComponent>();
 
-			while (impulseQueue.TryDequeue(out impulse))
+			foreach ( var impulsedEntity in gs.QueryEntities( impulseAspect ) )
 			{
-				foreach (var physEntity in Space.Entities)
+				var impulse = impulsedEntity.GetComponent<ImpulseComponent>();
+
+				if (impulse.Applied)
 				{
-					if (physEntity.Tag==impulse.Entity)
+					//	#HACK #PHYSICS -- keep impulse for entire frame but apply once
+					impulsedEntity.RemoveComponent<ImpulseComponent>();
+				}
+				else
+				{
+					foreach (var physEntity in Space.Entities)
 					{
-						var p = MathConverter.Convert( impulse.Position );
-						var i = MathConverter.Convert( impulse.Impulse );
-						physEntity.ApplyImpulse( p, i );
+						if (physEntity.Tag==impulsedEntity)
+						{
+							var p = MathConverter.Convert( impulse.Location );
+							var i = MathConverter.Convert( impulse.Impulse );
+							physEntity.ApplyImpulse( p, i );
+						}
 					}
+
+					impulse.Applied = true;
 				}
 			}
 		}
@@ -246,7 +266,7 @@ namespace IronStar.ECSPhysics
 			}
 
 			//	apply impulses :
-			ApplyDeferredImpulses();
+			ApplyDeferredImpulses(gs);
 
 			//	run simulation :
 			Space.Update();

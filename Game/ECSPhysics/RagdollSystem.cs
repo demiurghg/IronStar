@@ -11,7 +11,7 @@ using IronStar.SFX2;
 
 namespace IronStar.ECSPhysics
 {
-	public class RagdollSystem : ProcessingSystem<RagdollController, RagdollComponent, RenderModel, BoneComponent>
+	public class RagdollSystem : ProcessingSystem<RagdollController, Transform, RagdollComponent, RenderModel, BoneComponent>, ITransformFeeder
 	{
 		readonly PhysicsCore physics;
 
@@ -20,10 +20,19 @@ namespace IronStar.ECSPhysics
 			this.physics	=	physics;
 		}
 
-		protected override RagdollController Create( Entity entity, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
+		protected override RagdollController Create( Entity entity, Transform transform, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
 		{
-			if (rm.ComputeScale()!=1) Log.Warning("Ragdoll does not support scaled meshes");
-			return new RagdollController( physics, rm.LoadScene(entity.gs) );
+			if (rm.ComputeScale()!=1) 
+			{
+				Log.Warning("Ragdoll does not support scaled meshes");
+			}
+			
+			var ragdollController = new RagdollController( physics, rm.LoadScene(entity.gs) );
+
+			ragdollController.LoadAnimatedTransforms( transform, bones );
+			ragdollController.ApplyInitialImpulse( entity.GetComponent<ImpulseComponent>() );
+
+			return ragdollController;
 		}
 
 		protected override void Destroy( Entity entity, RagdollController resource )
@@ -31,14 +40,21 @@ namespace IronStar.ECSPhysics
 			resource.Destroy();
 		}
 
-		protected override void Process( Entity entity, GameTime gameTime, RagdollController controller, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
+		protected override void Process( Entity entity, GameTime gameTime, RagdollController controller, Transform transform, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
 		{
-			var transform = entity.GetComponent<Transform>();
-			if (transform!=null)
-			{
-				controller.ApplyTransforms( transform, bones );
-			}
-			//controller.DrawDebug( entity.gs.Game.RenderSystem.RenderWorld.Debug.Async );
 		}
+
+
+		void StoreSimulatedTransforms( Entity entity, GameTime gameTime, RagdollController controller, Transform transform, RagdollComponent ragdoll, RenderModel rm, BoneComponent bones )
+		{
+			controller.ApplyTransforms( transform, bones );
+		}
+
+
+		public void FeedTransform( IGameState gs, GameTime gameTime )
+		{
+			ForEach( gs, gameTime, StoreSimulatedTransforms );
+		}
+
 	}
 }

@@ -34,7 +34,7 @@ namespace IronStar.Gameplay.Weaponry
 
 		const float ColorIntensity	=	3.0f;
 
-		const float IMPULSE_LIGHT	=	5.0f;
+		const float IMPULSE_LIGHT	=	50.0f;
 		const float IMPULSE_MEDIUM	=	200.0f;
 		const float IMPULSE_HEAVY	=	500.0f;
 

@@ -141,6 +141,7 @@
     <Compile Include="ECSPhysics\CharacterTrackingSystem.cs" />
     <Compile Include="ECSPhysics\DetectorComponent.cs" />
     <Compile Include="ECSPhysics\DetectorSystem.cs" />
+    <Compile Include="ECSPhysics\ImpulseComponent.cs" />
     <Compile Include="ECSPhysics\ISpaceQuery.cs" />
     <Compile Include="ECSPhysics\KinematicBody.cs" />
     <Compile Include="ECSPhysics\KinematicController.cs" />

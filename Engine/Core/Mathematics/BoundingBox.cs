@@ -538,6 +538,12 @@ namespace Fusion.Core.Mathematics
 			CreateMerged( ref a, ref b, out merged );
 			return merged;
 		}
+
+		public void Expand( Vector3 point )
+		{
+			Vector3.Max( ref point, ref Maximum, out Maximum );
+			Vector3.Min( ref point, ref Minimum, out Minimum );
+		}
     
         public static void CreateMerged(ref BoundingBox a, ref BoundingBox b, out BoundingBox merged)
         {

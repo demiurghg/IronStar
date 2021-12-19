@@ -34,9 +34,39 @@ namespace IronStar.Monsters.Systems
 		LocomotionState		locomotionState;
 		WeaponState			prevWeaponState = WeaponState.Idle;
 
+		readonly BipedMapping	bipedMapping;
+		readonly int			baseIndex;
+
 		public readonly Scene Scene;
 
+
+		readonly static Matrix  flipMatrix	=	new Matrix(	 -1,  0,  0,  0,
+													  0,  1,  0,  0,
+													  0,  0, -1,  0,
+													  0,  0,  0,  1 );
+
+
 		float	baseYaw;
+
+
+		class BaseBoneRotator : BaseLayer
+		{
+			readonly int index;
+
+			public override bool IsPlaying { get { return true;	} }
+
+			public BaseBoneRotator( Scene scene, int index ) : base( scene, null, AnimationBlendMode.Override )
+			{
+				this.index	=	index;
+			}
+
+			public override bool Evaluate( GameTime gameTime, Matrix[] destination )
+			{
+				destination[ index ] = destination[ index ] * flipMatrix;
+				return true;
+			}
+
+		}
 
 
 		public MonsterAnimator( SFX.FXPlayback fxPlayback, Entity e, Scene scene, PhysicsCore physics, UserCommandComponent uc )
@@ -45,6 +75,9 @@ namespace IronStar.Monsters.Systems
 			this.fxPlayback		=	fxPlayback;
 			this.physics		=	physics;
 			this.Scene			=	scene;
+			this.bipedMapping	=	new BipedMapping(scene);
+
+			baseIndex			=	scene.Nodes.IndexOf( bipedMapping.Base );
 
 			baseYaw				=	uc.Yaw;
 
@@ -60,6 +93,7 @@ namespace IronStar.Monsters.Systems
 			composer.Tracks.Add( torsoLayer );
 			composer.Tracks.Add( rotateTorso );
 			composer.Tracks.Add( tiltForward );
+			composer.Tracks.Add( new BaseBoneRotator( scene, baseIndex ) );
 		}
 
 

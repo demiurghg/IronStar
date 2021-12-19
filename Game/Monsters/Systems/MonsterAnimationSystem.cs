@@ -60,12 +60,8 @@ namespace IronStar.Monsters.Systems
 
 				var bones		=	entity.GetComponent<BoneComponent>();
 				var transform	=	entity.GetComponent<Transform>();
-				animator?.Update( gameTime, transform, step, uc, bones.Bones );
 
-				/*foreach ( var bone in bones.Bones )
-				{
-					dr.DrawBasis( bone, 0.7f, 3 );
-				}*/
+				animator?.Update( gameTime, transform, step, uc, bones.Bones );
 			}
 		}
 	}

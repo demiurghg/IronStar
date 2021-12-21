@@ -182,6 +182,7 @@ namespace IronStar.ECS
 		 *	Interface implementation :
 		-----------------------------------------------------------------------------------------*/
 
+		public bool Exists( Entity entity ) { throw new NotImplementedException(); }
 		public Entity GetEntity( uint id ) { throw new NotImplementedException(); }
 		public void ForceRefresh() { throw new NotImplementedException(); }
 		public IEnumerable<Entity> QueryEntities( Aspect aspect ) {	throw new NotImplementedException(); }

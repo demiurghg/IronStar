@@ -16,6 +16,7 @@ using IronStar.ECS;
 using Fusion.Widgets.Advanced;
 using Fusion.Core.Extensions;
 using IronStar.Editor;
+using Fusion;
 
 namespace IronStar.Mapping 
 {

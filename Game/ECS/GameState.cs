@@ -611,6 +611,11 @@ namespace IronStar.ECS
 		 *	Queries :
 		-----------------------------------------------------------------------------------------------*/
 
+		public bool Exists( Entity entity )
+		{
+			return entity==null ? false : entities.Contains(entity.ID);
+		}
+
 		public bool Exists( uint id )
 		{
 			return entities.Contains(id);

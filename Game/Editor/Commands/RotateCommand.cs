@@ -8,6 +8,7 @@ using IronStar.Mapping;
 using System.Reflection;
 using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
+using Fusion;
 
 namespace IronStar.Editor.Commands
 {
@@ -20,8 +21,9 @@ namespace IronStar.Editor.Commands
 		}
 		
 		readonly RollbackInfo[] rollbackInfo;
-		public Quaternion Rotation;
-		
+		public Quaternion Rotation = Quaternion.Identity;
+
+
 		public RotateCommand( MapEditor editor ) : base(editor)
 		{
 			this.rollbackInfo	=	editor

@@ -40,7 +40,7 @@ namespace IronStar.SFX
 			{
 				if (Target.GetComponent<StaticCollisionComponent>()==null)
 				{
-					entity.AddComponent( new AttachmentComponent( Target.ID ) );
+					entity.AddComponent( new AttachmentComponent( Target ) );
 				}
 			}
 		}

@@ -23,7 +23,7 @@ namespace IronStar.Gameplay.Systems
 		public void Add( IGameState gs, Entity entityToAttach ) 
 		{
 			var attachment		=	entityToAttach.GetComponent<AttachmentComponent>();
-			var targetEntity	=	gs.GetEntity( attachment.TargetID );
+			var targetEntity	=	attachment.Target;
 
 			var attachTransform	=	entityToAttach?.GetComponent<Transform>();
 			var targetTransform	=	targetEntity?.GetComponent<Transform>();
@@ -55,8 +55,15 @@ namespace IronStar.Gameplay.Systems
 				var attachment		=	entity.GetComponent<AttachmentComponent>();
 				var transform		=	entity.GetComponent<Transform>();
 
-				var targetEntity	=	gs.GetEntity( attachment.TargetID );
+				var targetEntity	=	attachment.Target;
 				var targetTransform	=	targetEntity?.GetComponent<Transform>();
+
+				//	target entity is dead
+				//	kill current entity too
+				if (!gs.Exists(targetEntity))
+				{
+					entity.Kill();
+				}
 
 				if (targetTransform!=null)
 				{

@@ -19,6 +19,7 @@ using Fusion.Build;
 using BEPUphysics;
 using IronStar.ECS;
 using IronStar.Editor.Commands;
+using IronStar.Gameplay;
 
 namespace IronStar.Editor 
 {
@@ -82,7 +83,7 @@ namespace IronStar.Editor
 
 		public bool GetRenderProperties( Entity entity, out Color color, out bool selected )
 		{
-			var node	=	GetNodeByEntity(entity);
+			var node	=	GetNodeByEntity(entity.FindAttachmentRoot());
 
 			if (node!=null)
 			{

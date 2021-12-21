@@ -12,16 +12,16 @@ namespace IronStar.Gameplay.Components
 {
 	public class AttachmentComponent : IComponent
 	{
-		public uint TargetID { get; set; } = 0;
+		public Entity Target { get; set; } = null;
 		public Matrix LocalTransform { get; set; } = Matrix.Identity;
 
 		public AttachmentComponent()
 		{
 		}
 
-		public AttachmentComponent( uint targetId )
+		public AttachmentComponent( Entity target )
 		{
-			TargetID		=	targetId;
+			Target		=	target;
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -30,13 +30,13 @@ namespace IronStar.Gameplay.Components
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
-			writer.Write( TargetID );
+			writer.WriteEntity( gs, Target );
 			writer.Write( LocalTransform );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
-			TargetID		=	reader.ReadUInt32();
+			Target			=	reader.ReadEntity(gs);
 			LocalTransform	=	reader.Read<Matrix>();
 		}
 

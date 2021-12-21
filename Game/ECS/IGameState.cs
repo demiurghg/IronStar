@@ -27,6 +27,8 @@ namespace IronStar.ECS
 
 		Entity GetEntity(uint id);
 
+		bool Exists(Entity entity);
+
 		TService GetService<TService>() where TService : class;
 
 		IEnumerable<ISystem> Systems { get; }

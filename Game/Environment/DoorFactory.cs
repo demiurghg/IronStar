@@ -29,14 +29,16 @@ namespace IronStar.Environment
 		public string TargetName { get; set; } = "";
 		public bool Toggle { get; set; }
 
+		const string BasePath = @"scenes\doors\door";
 
 		public override void Construct( Entity e, IGameState gs )
 		{
-			string scenePath	=	@"scenes\doors\door" + Door.ToString();
+			base.Construct( e, gs );
+
+			string scenePath	=	BasePath + Door.ToString();
 
 			BoundingBox	bbox	=	ComputeDoorBounds( Door );
 
-			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
 			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, 10, RMFlags.None ) );
 			e.AddComponent( new KinematicComponent( KinematicState.StoppedInitial) );
 			e.AddComponent( new BoneComponent() );
@@ -52,9 +54,34 @@ namespace IronStar.Environment
 				e.AddComponent( new DoorComponent() { Mode = DoorControlMode.ExternalToggle } );
 				e.AddComponent( new TriggerComponent() { Name = TargetName } );
 			}
+
+			AttachDoorFrame( e, Door );
 		}
 
 
+		void AttachDoorFrame( Entity rootEntity, Door door )
+		{
+			RenderModel renderModel;
+
+			switch (Door)
+			{
+				case Door.LargeFourway:
+				case Door.LargeVertical:
+				case Door.LargeVerticalSplit:
+				case Door.LargeSplit:
+					renderModel = new RenderModel( BasePath + "LargeFrame", 1.0f, Color.White, 10, RMFlags.None );
+					break;
+				case Door.Small:
+					return;
+				default:
+					return;
+			}
+
+			var attachment	=	new AttachmentComponent(rootEntity);
+			var collision	=	new StaticCollisionComponent() { Collidable = true, Walkable = true };
+
+			rootEntity.gs.Spawn( new EntityFactory( Position, Rotation, Scaling, renderModel, attachment, collision ) );
+		}
 
 		BoundingBox ComputeDoorBounds( Door door )
 		{

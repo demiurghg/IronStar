@@ -7,12 +7,12 @@ FBXHeaderExtension:  {
 	CreationTimeStamp:  {
 		Version: 1000
 		Year: 2021
-		Month: 11
-		Day: 26
-		Hour: 2
-		Minute: 42
-		Second: 1
-		Millisecond: 208
+		Month: 12
+		Day: 22
+		Hour: 0
+		Minute: 17
+		Second: 36
+		Millisecond: 345
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.0.1"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -34,14 +34,14 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya LT"
 			P: "Original|ApplicationVersion", "KString", "", "", "202001"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "25/11/2021 23:42:01.207"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "21/12/2021 21:17:36.343"
 			P: "Original|FileName", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\doors\doorSmall.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya LT"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "202001"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "25/11/2021 23:42:01.207"
-			P: "Original|ApplicationActiveProject", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "21/12/2021 21:17:36.343"
+			P: "Original|ApplicationActiveProject", "KString", "", "", "C:\Users\demiurg\Documents\maya\projects"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\doors\doors.mlt"
 		}
 	}
@@ -77,7 +77,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 668204237440, "", "Scene" {
+	Document: 495342886432, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -276,13 +276,13 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	NodeAttribute: 668122622336, "NodeAttribute::", "Null" {
+	NodeAttribute: 495290824576, "NodeAttribute::", "Null" {
 		Properties70:  {
 			P: "Look", "enum", "", "",0
 		}
 		TypeFlags: "Null"
 	}
-	Geometry: 668205334464, "Geometry::", "Mesh" {
+	Geometry: 495359854000, "Geometry::", "Mesh" {
 		Vertices: *276 {
 			a: -2,0,0.5,2,0,0.5,-2.5,0.5,0.5,2.5,0.5,0.5,-2.5,7.5,0.5,2.5,7.5,0.5,-2,8,0.5,2,8,0.5,-2,8,-0.5,2,8,-0.5,-2.5,7.5,-0.5,2.5,7.5,-0.5,-2.5,0.5,-0.5,2.5,0.5,-0.5,-2,0,-0.5,2,0,-0.5,-0.453989028930664,8,-0.5,-0.453987121582031,7.49999952316284,-0.5,-1.45398712158203,0.5,-0.5,-1.45398807525635,0,-0.5,-1.45398807525635,0,0.5,-1.45398712158203,0.5,0.5,-0.453987121582031,7.5,0.5,-0.453989028930664,8,0.5,2.5,6.5,-0.5,-0.453987121582031,6.5,-0.5,-2.5,6.5,-0.5,-2.5,6.5,0.5,-0.453987121582031,6.5,0.5,2.5,6.5,0.5,2.5,4.5,-0.5,-1.45398712158203,4.5,-0.5,-2.5,4.5,-0.5,-2.5,4.5,0.5,-1.45398712158203,4.5,0.5,2.5,4.5,0.5,2.5,5.5,-0.5,-1.45398712158203,5.5,-0.5,-2.5,5.5,-0.5,-2.5,5.5,0.5,-1.45398712158203,5.5,0.5,2.5,5.5,0.5,1.54601335525513,8,0.5,1.54601335525513,8,-0.5,1.54601573944092,7.49999952316284,-0.5,1.54601573944092,6.5,-0.5,1.54601144790649,5.5,-0.5,1.54601144790649,4.5,-0.5,1.54601144790649,0.5,-0.5,1.54600858688354,0,-0.5,1.54600858688354,0,0.5,1.54601144790649,0.5,0.5,1.54601144790649,4.5,0.5,1.54601144790649,5.5,0.5,1.54601573944092,6.5,0.5,1.54601573944092,7.5,0.5,-0.402210235595703,6.375,-0.5,-1.32898712158203,5.44822311401367,-0.5,1.42101097106934,5.50000047683716,-0.5,-0.402210235595703,6.375,0.5,-1.32898712158203,5.44822311401367,0.5,1.42101097106934,5.50000047683716,0.5,-0.350433349609375,6.25,-0.375,-1.20398712158203,5.39644622802734,-0.375,1.29601097106934,5.50000095367432,-0.375,-0.350433349609375,6.25,0.375,-1.20398712158203,5.39644622802734,0.375,1.29601097106934,5.50000095367432,0.375,1.29602718353271,6.375,-0.5,1.42101383209229,6.25001192092896,-0.5,1.17102718353271,6.25,-0.375,1.29601383209229,6.12501239776611,-0.375,-1.20399951934814,4.625,-0.5,-1.32898712158203,4.74998760223389,-0.5,-1.07899951934814,4.75,-0.375,-1.20398712158203,4.87498760223389,-0.375,1.42101097106934,4.74998760223389,-0.5,1.29602336883545,4.625,-0.5,1.29601097106934,4.87498760223389,-0.375,1.17102336883545,4.75,-0.375,1.42101383209229,6.25001192092896,0.5,1.29602718353271,6.375,0.5,1.29601383209229,6.12501239776611,0.375,
 1.17102718353271,6.25,0.375,-1.32898712158203,4.74998760223389,0.5,-1.20399951934814,4.625,0.5,-1.20398712158203,4.87498760223389,0.375,-1.07899951934814,4.75,0.375,1.29602336883545,4.625,0.5,1.42101097106934,4.74998760223389,0.5,1.17102336883545,4.75,0.375,1.29601097106934,4.87498760223389,0.375
@@ -403,7 +403,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 661547729392, "Model::doorSmall", "Null" {
+	Model: 495336014224, "Model::doorSmall", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -414,7 +414,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 661547736352, "Model::doorSmallDoor", "Mesh" {
+	Model: 495336000304, "Model::doorSmallDoor", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -426,7 +426,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 668062114928, "Material::phong1", "" {
+	Material: 495346145712, "Material::phong1", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -446,13 +446,13 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	AnimationStack: 668277189552, "AnimStack::Take 001", "" {
+	AnimationStack: 494613526224, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStop", "KTime", "Time", "",46186158000
 			P: "ReferenceStop", "KTime", "Time", "",46186158000
 		}
 	}
-	AnimationCurve: 668207731376, "AnimCurve::", "" {
+	AnimationCurve: 495344532864, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -473,7 +473,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207733296, "AnimCurve::", "" {
+	AnimationCurve: 495344542944, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -494,7 +494,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207732016, "AnimCurve::", "" {
+	AnimationCurve: 495344539424, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -515,7 +515,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207736656, "AnimCurve::", "" {
+	AnimationCurve: 495344541184, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -536,7 +536,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207726896, "AnimCurve::", "" {
+	AnimationCurve: 495344541024, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -557,7 +557,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207727056, "AnimCurve::", "" {
+	AnimationCurve: 495344542624, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -578,7 +578,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207727216, "AnimCurve::", "" {
+	AnimationCurve: 495344543744, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -599,7 +599,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207732176, "AnimCurve::", "" {
+	AnimationCurve: 495344543264, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -620,7 +620,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207732816, "AnimCurve::", "" {
+	AnimationCurve: 495344535424, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -641,7 +641,7 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurve: 668207733776, "AnimCurve::", "" {
+	AnimationCurve: 495344536544, "AnimCurve::", "" {
 		Default: 0
 		KeyVer: 4009
 		KeyTime: *61 {
@@ -662,33 +662,33 @@ Objects:  {
 			a: 31,30
 		} 
 	}
-	AnimationCurveNode: 668277186224, "AnimCurveNode::Visibility", "" {
+	AnimationCurveNode: 494613522064, "AnimCurveNode::Visibility", "" {
 		Properties70:  {
 			P: "d|Visibility", "Visibility", "", "A",1
 		}
 	}
-	AnimationCurveNode: 668277194128, "AnimCurveNode::T", "" {
+	AnimationCurveNode: 494613513744, "AnimCurveNode::T", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",0
 			P: "d|Z", "Number", "", "A",0
 		}
 	}
-	AnimationCurveNode: 668277186432, "AnimCurveNode::S", "" {
+	AnimationCurveNode: 494613522480, "AnimCurveNode::S", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",1
 			P: "d|Y", "Number", "", "A",1
 			P: "d|Z", "Number", "", "A",1
 		}
 	}
-	AnimationCurveNode: 668277191424, "AnimCurveNode::R", "" {
+	AnimationCurveNode: 494613513328, "AnimCurveNode::R", "" {
 		Properties70:  {
 			P: "d|X", "Number", "", "A",0
 			P: "d|Y", "Number", "", "A",0
 			P: "d|Z", "Number", "", "A",0
 		}
 	}
-	AnimationLayer: 663557153216, "AnimLayer::BaseLayer", "" {
+	AnimationLayer: 494855702240, "AnimLayer::BaseLayer", "" {
 	}
 }
 
@@ -698,76 +698,76 @@ Objects:  {
 Connections:  {
 	
 	;Model::doorSmall, Model::RootNode
-	C: "OO",661547729392,0
+	C: "OO",495336014224,0
 	
 	;AnimLayer::BaseLayer, AnimStack::Take 001
-	C: "OO",663557153216,668277189552
+	C: "OO",494855702240,494613526224
 	
 	;AnimCurveNode::Visibility, AnimLayer::BaseLayer
-	C: "OO",668277186224,663557153216
+	C: "OO",494613522064,494855702240
 	
 	;AnimCurveNode::T, AnimLayer::BaseLayer
-	C: "OO",668277194128,663557153216
+	C: "OO",494613513744,494855702240
 	
 	;AnimCurveNode::S, AnimLayer::BaseLayer
-	C: "OO",668277186432,663557153216
+	C: "OO",494613522480,494855702240
 	
 	;AnimCurveNode::R, AnimLayer::BaseLayer
-	C: "OO",668277191424,663557153216
+	C: "OO",494613513328,494855702240
 	
 	;NodeAttribute::, Model::doorSmall
-	C: "OO",668122622336,661547729392
+	C: "OO",495290824576,495336014224
 	
 	;Model::doorSmallDoor, Model::doorSmall
-	C: "OO",661547736352,661547729392
+	C: "OO",495336000304,495336014224
 	
 	;Geometry::, Model::doorSmallDoor
-	C: "OO",668205334464,661547736352
+	C: "OO",495359854000,495336000304
 	
 	;Material::phong1, Model::doorSmallDoor
-	C: "OO",668062114928,661547736352
+	C: "OO",495346145712,495336000304
 	
 	;AnimCurveNode::T, Model::doorSmallDoor
-	C: "OP",668277194128,661547736352, "Lcl Translation"
+	C: "OP",494613513744,495336000304, "Lcl Translation"
 	
 	;AnimCurveNode::R, Model::doorSmallDoor
-	C: "OP",668277191424,661547736352, "Lcl Rotation"
+	C: "OP",494613513328,495336000304, "Lcl Rotation"
 	
 	;AnimCurveNode::S, Model::doorSmallDoor
-	C: "OP",668277186432,661547736352, "Lcl Scaling"
+	C: "OP",494613522480,495336000304, "Lcl Scaling"
 	
 	;AnimCurveNode::Visibility, Model::doorSmallDoor
-	C: "OP",668277186224,661547736352, "Visibility"
+	C: "OP",494613522064,495336000304, "Visibility"
 	
 	;AnimCurve::, AnimCurveNode::Visibility
-	C: "OP",668207731376,668277186224, "d|Visibility"
+	C: "OP",495344532864,494613522064, "d|Visibility"
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",668207733296,668277194128, "d|X"
+	C: "OP",495344542944,494613513744, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",668207732016,668277194128, "d|Y"
+	C: "OP",495344539424,494613513744, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::T
-	C: "OP",668207736656,668277194128, "d|Z"
+	C: "OP",495344541184,494613513744, "d|Z"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",668207726896,668277186432, "d|X"
+	C: "OP",495344541024,494613522480, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",668207727056,668277186432, "d|Y"
+	C: "OP",495344542624,494613522480, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::S
-	C: "OP",668207727216,668277186432, "d|Z"
+	C: "OP",495344543744,494613522480, "d|Z"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",668207732176,668277191424, "d|X"
+	C: "OP",495344543264,494613513328, "d|X"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",668207732816,668277191424, "d|Y"
+	C: "OP",495344535424,494613513328, "d|Y"
 	
 	;AnimCurve::, AnimCurveNode::R
-	C: "OP",668207733776,668277191424, "d|Z"
+	C: "OP",495344536544,494613513328, "d|Z"
 }
 ;Takes section
 ;----------------------------------------------------

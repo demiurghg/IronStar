@@ -24,6 +24,7 @@ using IronStar.Gameplay;
 using Fusion.Core.Extensions;
 using BEPUCollisionGroup = BEPUphysics.CollisionRuleManagement.CollisionGroup;
 using System.Collections.Concurrent;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.ECSPhysics
 {
@@ -119,19 +120,24 @@ namespace IronStar.ECSPhysics
 				var staticMesh	=	rcr.HitObject as StaticMesh;
 				var detector	=	rcr.HitObject as DetectorVolume;
 
-				if (detector!=null) {
-					return detector.Tag as Entity;
+				Entity pickedEntity	=	null;
+
+				if (detector!=null) 
+				{
+					pickedEntity = detector.Tag as Entity;
 				}
 
-				if (convexMesh!=null) {
-					return convexMesh.Entity.Tag as Entity;
+				if (convexMesh!=null) 
+				{
+					pickedEntity = convexMesh.Entity.Tag as Entity;
 				}
 			
-				if (staticMesh!=null) {
-					return staticMesh.Tag as Entity;
+				if (staticMesh!=null) 
+				{
+					pickedEntity = staticMesh.Tag as Entity;
 				}
 
-				return null;
+				return pickedEntity.FindAttachmentRoot();
 			}
 		}
 

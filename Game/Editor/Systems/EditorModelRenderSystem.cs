@@ -12,6 +12,7 @@ using Fusion.Core.Content;
 using Fusion.Engine.Graphics.Scenes;
 using IronStar.SFX2;
 using BEPUutilities.Threading;
+using IronStar.Gameplay;
 
 namespace IronStar.Editor.Systems
 {
@@ -85,9 +86,10 @@ namespace IronStar.Editor.Systems
 			Color color;
 			bool selected;
 
+			editor.GetRenderProperties(entity, out color, out selected );
+
 			foreach ( var dm in models )
 			{
-				editor.GetRenderProperties(entity, out color, out selected );
 				dm.Color	=	color;
 			}
 		}

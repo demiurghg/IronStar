@@ -65,7 +65,8 @@ namespace IronStar.Mapping
 			//	NEW STUFF :
 			Factory.Position	=	this.Translation;
 			Factory.Rotation	=	this.Rotation;
-			Factory.Scaling	=	this.Scaling.X;
+			Factory.Scaling		=	this.Scaling.X;
+			Factory.NodeName	=	this.Name;
 
 			ecsEntity		=	gs.Spawn( this );
 			ecsEntity.Tag	=	this;

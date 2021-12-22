@@ -80,6 +80,9 @@ namespace IronStar.Environment
 			var attachment	=	new AttachmentComponent(rootEntity);
 			var collision	=	new StaticCollisionComponent() { Collidable = true, Walkable = true };
 
+			renderModel.lightmapName	=	NodeName + ":DoorFrame";
+			renderModel.lightmapSize	=	new Size2(32,32);
+
 			rootEntity.gs.Spawn( new EntityFactory( Position, Rotation, Scaling, renderModel, attachment, collision ) );
 		}
 

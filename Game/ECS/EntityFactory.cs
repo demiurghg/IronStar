@@ -12,6 +12,9 @@ namespace IronStar.ECS
 	public class EntityFactory : IFactory, ICloneable
 	{
 		[AEIgnore]
+		public string NodeName { get; set; } = null;
+
+		[AEIgnore]
 		public Vector3 Position { get; set; } = Vector3.Zero;
 
 		[AEIgnore]

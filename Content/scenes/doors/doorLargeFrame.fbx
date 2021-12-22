@@ -9,10 +9,10 @@ FBXHeaderExtension:  {
 		Year: 2021
 		Month: 12
 		Day: 22
-		Hour: 0
-		Minute: 17
-		Second: 36
-		Millisecond: 462
+		Hour: 23
+		Minute: 2
+		Second: 16
+		Millisecond: 584
 	}
 	Creator: "FBX SDK/FBX Plugins version 2020.0.1"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -34,13 +34,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya LT"
 			P: "Original|ApplicationVersion", "KString", "", "", "202001"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "21/12/2021 21:17:36.460"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "22/12/2021 20:02:16.582"
 			P: "Original|FileName", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\doors\doorLargeFrame.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya LT"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "202001"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "21/12/2021 21:17:36.460"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "22/12/2021 20:02:16.582"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "C:\Users\demiurg\Documents\maya\projects"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\doors\doors.mlt"
 		}
@@ -77,7 +77,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 495342890272, "", "Scene" {
+	Document: 821131464032, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -255,7 +255,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 495359864400, "Geometry::", "Mesh" {
+	Geometry: 821047567632, "Geometry::", "Mesh" {
 		Vertices: *144 {
 			a: -16,0,4,-11,0,4,11,0,4,16,0,4,-16,1,4,-12,1,4,12,1,4,16,1,4,-16,11,4,-12,11,4,12,11,4,16,11,4,-16,12,4,-11,12,4,11,12,4,16,12,4,-16,16,4,-11,16,4,11,16,4,16,16,4,-16,16,-4,-11,16,-4,11,16,-4,16,16,-4,-16,12,-4,-11,12,-4,11,12,-4,16,12,-4,-16,11,-4,-12,11,-4,12,11,-4,16,11,-4,-16,1,-4,-12,1,-4,12,1,-4,16,1,-4,-16,0,-4,-11,0,-4,11,0,-4,16,0,-4,-16,-4,-4,-11,-4,-4,-11,-4,4,-16,-4,4,11,-4,-4,16,-4,-4,16,-4,4,11,-4,4
 		} 
@@ -421,7 +421,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 495336014224, "Model::doorLargeFrame", "Mesh" {
+	Model: 821233086640, "Model::doorLargeFrame", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -433,7 +433,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 495346146672, "Material::phong1", "" {
+	Material: 821133966864, "Material::phong1", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -453,13 +453,13 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	AnimationStack: 494613525808, "AnimStack::Take 001", "" {
+	AnimationStack: 821093923968, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStop", "KTime", "Time", "",46186158000
 			P: "ReferenceStop", "KTime", "Time", "",46186158000
 		}
 	}
-	AnimationLayer: 494855717440, "AnimLayer::BaseLayer", "" {
+	AnimationLayer: 821703210352, "AnimLayer::BaseLayer", "" {
 	}
 }
 
@@ -469,16 +469,16 @@ Objects:  {
 Connections:  {
 	
 	;Model::doorLargeFrame, Model::RootNode
-	C: "OO",495336014224,0
+	C: "OO",821233086640,0
 	
 	;AnimLayer::BaseLayer, AnimStack::Take 001
-	C: "OO",494855717440,494613525808
+	C: "OO",821703210352,821093923968
 	
 	;Geometry::, Model::doorLargeFrame
-	C: "OO",495359864400,495336014224
+	C: "OO",821047567632,821233086640
 	
 	;Material::phong1, Model::doorLargeFrame
-	C: "OO",495346146672,495336014224
+	C: "OO",821133966864,821233086640
 }
 ;Takes section
 ;----------------------------------------------------

@@ -39,7 +39,7 @@ namespace IronStar.Environment
 
 			BoundingBox	bbox	=	ComputeDoorBounds( Door );
 
-			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, 10, RMFlags.None ) );
+			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, 10, RMFlags.None ) { lightmapName = NodeName + ":Door", lightmapSize = new Size2(16,16) } );
 			e.AddComponent( new KinematicComponent( KinematicState.StoppedInitial) );
 			e.AddComponent( new BoneComponent() );
 

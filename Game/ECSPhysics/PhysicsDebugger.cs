@@ -87,7 +87,7 @@ namespace IronStar.ECSPhysics
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{													
-			if (debugRender.Game.RenderSystem.SkipDebugRendering)
+			if (debugRender.Game.RenderSystem.SkipDebugRendering || debugRender.Game.RenderSystem.SkipDebugPhysics)
 			{
 				return;
 			}

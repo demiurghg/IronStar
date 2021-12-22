@@ -100,7 +100,7 @@ namespace Fusion.Engine.Graphics
 			ps.VertexInputElements	=	VertexInputElement.FromStructure( typeof(DebugVertex) );
 			ps.RasterizerState		=	RasterizerState.CullNone;
 
-			if (flags.HasFlag( RenderFlags.MODEL ))
+			if (flags.HasFlag( RenderFlags.LINES ))
 			{
 				ps.BlendState			=	BlendState.Opaque;
 				ps.DepthStencilState	=	DepthStencilState.Default;
@@ -236,8 +236,8 @@ namespace Fusion.Engine.Graphics
 
 			var flags = new[]{ RenderFlags.LINES, RenderFlags.LINES | RenderFlags.GHOST };
 
-			foreach ( var flag in flags ) {
-
+			foreach ( var flag in flags ) 
+			{
 				if (Game.RenderSystem.SkipGhostDebugRendering && flag.HasFlag(RenderFlags.GHOST)) 
 				{
 					break;
@@ -247,11 +247,12 @@ namespace Fusion.Engine.Graphics
 
 				int numDPs = MathUtil.IntDivUp(vertexDataAccum.Count, vertexBufferSize);
 
-				for (int i = 0; i < numDPs; i++) {
-
+				for (int i = 0; i < numDPs; i++) 
+				{
 					int numVerts = i < numDPs - 1 ? vertexBufferSize : vertexDataAccum.Count % vertexBufferSize;
 
-					if (numVerts == 0) {
+					if (numVerts == 0) 
+					{
 						break;
 					}
 
@@ -260,7 +261,6 @@ namespace Fusion.Engine.Graphics
 					vertexBuffer.SetData(vertexArray, 0, numVerts);
 
 					dev.Draw( numVerts, 0);
-
 				}
 			}
 
@@ -274,7 +274,8 @@ namespace Fusion.Engine.Graphics
 
 			asyncRender.Render();
 
-			if (Game.RenderSystem.SkipDebugRendering) {
+			if (Game.RenderSystem.SkipDebugRendering) 
+			{
 				vertexDataAccum.Clear();	
 				return;
 			}
@@ -294,7 +295,8 @@ namespace Fusion.Engine.Graphics
 		 *	Tracers :
 		-----------------------------------------------------------------------------------------*/
 
-		class TraceRecord {
+		class TraceRecord 
+		{
 			public Vector3 Position;
 			public Color Color;
 			public float Size;
@@ -318,7 +320,8 @@ namespace Fusion.Engine.Graphics
 
 		void DrawTracers ()
 		{
-			foreach ( var t in tracers ) {
+			foreach ( var t in tracers ) 
+			{
 				t.LifeTime --;
 
 				DrawPoint( t.Position, t.Size, t.Color );

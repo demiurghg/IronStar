@@ -26,7 +26,7 @@ namespace BEPUrender.Models
 
 		public override Color Color 
 		{
-			get { return new Color( 32, 32, 32, 255 ); }
+			get { return new Color( 32, 32, 32, 0 ); }
 		}
 
 		public override void GetMeshData(RawList<VertexPositionNormalTexture> vertices, RawList<int> indices)

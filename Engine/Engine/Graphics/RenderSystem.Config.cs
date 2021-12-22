@@ -254,6 +254,9 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Debug")]
 		public bool SkipDebugRendering { get; set; }
 
+		// #TODO #PHYSICS #CONFIG -- move to static config
+		public bool SkipDebugPhysics { get; set; }
+
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>

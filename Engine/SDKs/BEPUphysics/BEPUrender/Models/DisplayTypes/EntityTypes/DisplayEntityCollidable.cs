@@ -36,7 +36,7 @@ namespace BEPUrender.Models
 			{ 
 				float mass = DisplayedObject.Entity.Mass;
 
-				return mass==0 ? Color.Red : Color.Yellow;
+				return mass==0 ? new Color(255,0,0,128) : new Color(255,255,0,128);
 			}
 		}
 

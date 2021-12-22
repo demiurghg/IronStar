@@ -55,6 +55,7 @@ PS_IN VSMain( VS_IN input )
 	return output;
 }
 
+static const float bayer2x2[2][2] = { 0.01f, 0.66f, 0.99f, 0.33f };
 
 float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Depth ) : SV_Target
 {
@@ -62,8 +63,9 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Dept
 	float3	lighting	=	float3(1,1,1);
 	
 	#ifdef SOLID
-		clip((vpos.x+vpos.y+1)%2-1);
-		lighting = dot( input.nrm, -float3(0,1,0) ) * 0.5 + 0.5;
+		float alpha = bayer2x2[vpos.y%2][vpos.x%2];
+		clip( input.col.a - alpha );
+		//lighting = dot( input.nrm, -float3(0,1,0) ) * 0.5 + 0.5;
 		//lighting = 0;
 	#endif
 	

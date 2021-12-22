@@ -64,11 +64,14 @@ namespace IronStar.Editor
 
 		MapNode GetNodeByEntity ( Entity entity )
 		{
-			if (entity==null) throw new ArgumentNullException("entity");
+			if (entity==null) 
+			{
+				return null;
+			}
 			
 			foreach ( var node in Map.Nodes )
 			{
-				if (node.EcsEntity!=null)
+				if (node?.EcsEntity!=null)
 				{
 					if (node.EcsEntity.ID==entity.ID)
 					{

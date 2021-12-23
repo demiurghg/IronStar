@@ -282,3 +282,4 @@ SamplerState                   ParticleSampler                : register(s4);
 SamplerState                   MipSampler                     : register(s5);
 SamplerState                   FogSampler                     : register(s6);
 SamplerComparisonState         ShadowSampler                  : register(s7);
+SamplerState                   SamplerLightProbe              : register(s8);

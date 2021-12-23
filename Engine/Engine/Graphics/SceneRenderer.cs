@@ -76,6 +76,7 @@ namespace Fusion.Engine.Graphics
 		static FXSamplerState					regMipSampler				=	new SRegister( 5, "MipSampler"			);
 		static FXSamplerState					regFogSampler				=	new SRegister( 6, "FogSampler"			);
 		static FXSamplerComparisonState			regShadowSampler			=	new SRegister( 7, "ShadowSampler"		);
+		static FXSamplerState					regSamplerLightProbe		=	new SRegister( 8, "SamplerLightProbe"	);
 
 		Ubershader		surfaceShader;
 		StateFactory	factory;
@@ -296,6 +297,7 @@ namespace Fusion.Engine.Graphics
 			device.GfxSamplers[ regMipSampler			]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
 			device.GfxSamplers[ regFogSampler			]	=	rs.UsePointLightmapSampling ? SamplerState.PointClamp : SamplerState.LinearClamp;
 			device.GfxSamplers[ regShadowSampler		]	=	ss.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
+			device.GfxSamplers[ regSamplerLightProbe	]	=	SamplerState.LinearClamp;
 
 			//-----------------------------
 

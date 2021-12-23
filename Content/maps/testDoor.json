@@ -809,7 +809,7 @@
           "TargetName": "",
           "Toggle": false,
           "NodeName": "MapEntity17",
-          "Position": "48, 0, 1",
+          "Position": "66.5, 0, 1",
           "Rotation": "0, 0.70710665, 0, 0.7071069",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -818,10 +818,10 @@
         "Name": "MapEntity17",
         "Visible": true,
         "Frozen": false,
-        "Translation": "48, 0, 1",
+        "Translation": "66.5, 0, 1",
         "Scaling": "0.9999999, 1, 0.9999999",
         "Rotation": "0, 0.70710665, 0, 0.7071069",
-        "TranslateX": 48.0,
+        "TranslateX": 66.5,
         "TranslateY": 0.0,
         "TranslateZ": 1.0
       },
@@ -1491,11 +1491,26 @@
         "TranslateX": -48.0,
         "TranslateY": 0.5,
         "TranslateZ": 0.0
+      },
+      {
+        "$id": "110",
+        "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
+        "Radius": 72.0,
+        "Transition": 8.0,
+        "Name": "MapLightProbeSphere16",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "2, 13, 189.5",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 2.0,
+        "TranslateY": 13.0,
+        "TranslateZ": 189.5
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "110",
+    "$id": "111",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,
@@ -1504,6 +1519,6 @@
     "UseDilate": true,
     "FilterFalloff": 0.2,
     "FilterWeight": 0.5,
-    "WhiteDiffuse": true
+    "WhiteDiffuse": false
   }
 }

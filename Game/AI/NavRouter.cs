@@ -11,12 +11,14 @@ using Native.NRecast;
 
 namespace IronStar.AI
 {
-	public static class NavigationRouter
+	public static class NavRouter
 	{
-		public static BTStatus FollowRoute( Vector3[] route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target )
+		public static BTStatus FollowRoute( Vector3[] route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target, out float velocity )
 		{
 			float fraction = 0f;
 			float distance = 0f;
+			velocity = 0f;
+			int lastSegmentIndex = route.Length-2;
 
 			if (route.Length<2) 
 			{
@@ -34,14 +36,30 @@ namespace IronStar.AI
 				var b	= route[segmentIndex+1];
 				var ab	= b - a;
 				var p	= Vector3.Lerp( a, b, fraction );
-				target = p + ab.Normalized() * leadingDistance;
 
-				var distanceToTarget = Vector3.Distance( route.Last(), origin );
+				if (segmentIndex==lastSegmentIndex)
+				{
+					target	=	b;
+				}
+				else
+				{
+					target = p + ab.Normalized() * leadingDistance;
+				}
+
+				velocity	=	MathUtil.Clamp( ProjectedDistance(origin, target) / leadingDistance, 0, 1 );
+
+				var distanceToTarget = ProjectedDistance( route.Last(), origin );
 
 				if (distanceToTarget <= acceptanceRadius) return BTStatus.Success;
 				if (distance >= failureRadius) return BTStatus.Failure;
 				return BTStatus.InProgress;
 			}
+		}
+
+
+		static float ProjectedDistance( Vector3 a, Vector3 b )
+		{
+			return Vector2.Distance( new Vector2(a.X, a.Z), new Vector2(b.X, b.Z) );
 		}
 
 

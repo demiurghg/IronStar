@@ -21,6 +21,16 @@ using Fusion.Build;
 
 namespace IronStar.AI
 {
+	[ContentLoader(typeof(NavMesh))]
+	class NavMeshLoader : ContentLoader
+	{
+		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
+		{
+			return new NavMesh( stream.ReadAllBytes() );
+		}
+	}
+
+
 	class NavBakingSystem : ISystem
 	{
 		readonly IGameState	gs;

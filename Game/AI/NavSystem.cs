@@ -18,26 +18,17 @@ using Fusion.Core.Extensions;
 using System.IO;
 using Fusion.Core.Shell;
 using Fusion.Build;
+using IronStar.Gameplay;
 
 namespace IronStar.AI
 {
-	[ContentLoader(typeof(NavMesh))]
-	class NavMeshLoader : ContentLoader
-	{
-		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
-		{
-			return new NavMesh( stream.ReadAllBytes() );
-		}
-	}
-
-
 	class NavSystem : ISystem
 	{
 		readonly IGameState	gs;
 		readonly string		navMeshPath;
 		NavMesh				navMesh			=	null;
 
-		readonly Aspect	navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
+		readonly Aspect	navigatorAspect	=	new Aspect().Include<AIComponent,Transform,CharacterController,UserCommandComponent>();
 
 
 		public NavSystem(IGameState gs, string mapName)
@@ -65,7 +56,7 @@ namespace IronStar.AI
 
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty;
+			return navigatorAspect;
 		}
 
 		

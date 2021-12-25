@@ -81,7 +81,8 @@ namespace IronStar.AI.Actions
 			var originPoint	=	entity.GetComponent<Transform>().Position;
 			var targetPoint =	Vector3.Zero;
 
-			var routeResult	=	NavigationRouter.FollowRoute( route, originPoint, 10, 7, 3, out targetPoint );
+			var dummy = 0f;
+			var routeResult	=	NavRouter.FollowRoute( route, originPoint, 10, 7, 3, out targetPoint, out dummy );
 
 			if (DebugRouteRender)
 			{

@@ -154,4 +154,44 @@ namespace IronStar.ECS
 
 		protected abstract void Process( Entity entity, GameTime gameTime, T1 component1, T2 component2, T3 component3, T4 component4 );
 	}
+
+	public abstract class StatelessSystem<T1,T2,T3,T4,T5> : ISystem 
+	where T1: IComponent
+	where T2: IComponent
+	where T3: IComponent
+	where T4: IComponent
+	where T5: IComponent
+	{
+		private readonly Aspect aspect;
+
+		public StatelessSystem()
+		{
+			aspect	=	GetAspect();
+		}
+
+		public virtual Aspect GetAspect()
+		{
+			return	new Aspect().Include<T1,T2,T3,T4>().Include<T5>();
+		}
+
+		public virtual void Add( IGameState gs, Entity e ) {}
+		public virtual void Remove( IGameState gs, Entity e ) {}
+
+		public virtual void Update( IGameState gs, GameTime gameTime )
+		{
+			var entities = gs.QueryEntities(aspect);
+
+			foreach ( var e in entities )
+			{
+				var c1	=	e.GetComponent<T1>();
+				var c2	=	e.GetComponent<T2>();
+				var c3	=	e.GetComponent<T3>();
+				var c4	=	e.GetComponent<T4>();
+				var c5	=	e.GetComponent<T5>();
+				Process( e, gameTime, c1,c2,c3,c4,c5 );
+			}
+		}
+
+		protected abstract void Process( Entity entity, GameTime gameTime, T1 component1, T2 component2, T3 component3, T4 component4, T5 component5 );
+	}
 }

@@ -48,7 +48,7 @@ namespace IronStar.ECSFactories
 			var weaponState	=	new WeaponStateComponent();
 			e.AddComponent( inventory );
 			e.AddComponent( weaponState );
-			e.AddComponent( new BehaviorComponent() );
+			e.AddComponent( new AIComponent() );
 
 			var weapons = new[]
 			{

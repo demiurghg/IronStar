@@ -21,7 +21,7 @@ namespace IronStar.Monsters.Systems
 		public void Add( IGameState gs, Entity e ) {}
 		public void Remove( IGameState gs, Entity e ) {}
 
-		readonly Aspect monsterAspect = new Aspect().Include<HealthComponent,UserCommandComponent>().Single<BehaviorComponent,PlayerComponent>();
+		readonly Aspect monsterAspect = new Aspect().Include<HealthComponent,UserCommandComponent>().Single<BehaviorComponent,AIComponent,PlayerComponent>();
 		readonly Aspect ragdollAspect = new Aspect().Include<RagdollComponent>();
 
 
@@ -43,6 +43,7 @@ namespace IronStar.Monsters.Systems
 
 				if (health.Health<=0)
 				{
+					monsterEntity.RemoveComponent<AIComponent>();
 					monsterEntity.RemoveComponent<BehaviorComponent>();
 					monsterEntity.RemoveComponent<CharacterController>();
 

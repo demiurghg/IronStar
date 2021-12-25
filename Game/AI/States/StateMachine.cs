@@ -8,7 +8,7 @@ using Fusion.Core;
 
 namespace IronStar.AI
 {
-	public class StateMachine<TState,TInput>
+	public class StateMachine<TState,TData,TInput>
 	{
 		readonly Type stateType;
 		readonly Dictionary<TState,MethodInfo> stateBinding;
@@ -35,21 +35,21 @@ namespace IronStar.AI
 		}
 
 		
-		public void Update ( TInput input )
+		public void Update ( GameTime gameTime, TData data, TInput input )
 		{
 			var method		=	stateBinding[ state ];
 			var oldState	=	state;
-			var newState	=	(TState)method.Invoke( this, new object[] { input } );
+			var newState	=	(TState)method.Invoke( this, new object[] { data, input } );
 
 			if (!oldState.Equals(newState))
 			{
 				state	=	newState;
-				Transition( oldState, newState );
+				Transition( data, input, oldState, newState );
 			}
 		}
 
 
-		protected virtual void Transition( TState previous, TState next )
+		protected virtual void Transition( TData data, TInput input, TState previous, TState next )
 		{
 		}
 	}

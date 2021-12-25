@@ -133,9 +133,10 @@ namespace IronStar
 			gs.AddSystem( new ExplosionSystem() );
 
 			//	AI :
+			var navSystem	=	new NavSystem(gs, mapName);
 			gs.AddSystem( new PerceptionSystem(physicsCore) );
-			gs.AddSystem( new BehaviorSystem(physicsCore ) );
-			gs.AddSystem( new NavSystem(gs, mapName) );
+			gs.AddSystem( new DMSystem(navSystem ) );
+			gs.AddSystem( navSystem );
 			gs.AddSystem( new MonsterKillSystem() );
 
 			//	animation systems :

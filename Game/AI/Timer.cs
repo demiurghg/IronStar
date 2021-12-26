@@ -12,35 +12,46 @@ namespace IronStar.AI
 	public struct Timer
 	{
 		private int counter;
+		private int timeout;
 
 		public Timer( int msec )
 		{
-			counter	=	msec;
+			timeout	=	msec;
+			counter	=	timeout;
 		}
 
 		public Timer( int msecMin, int msecMax )
 		{
-			counter = MathUtil.Random.Next( msecMin, msecMax );
+			timeout	=	MathUtil.Random.Next( msecMin, msecMax );
+			counter	=	timeout;
 		}
 
 		public void Set( int msec )
 		{
-			counter = msec;
+			timeout	=	msec;
+			counter	=	timeout;
 		}
 
 		public void SetND( int msec )
 		{
-			counter = Math.Max(msec/6, (int)MathUtil.Random.GaussDistribution( msec, msec/3 ));
+			timeout	=	Math.Max(msec/6, (int)MathUtil.Random.GaussDistribution( msec, msec/3 ));
+			counter	=	timeout;
 		}
 
 		public void Set( int msecMin, int msecMax )
 		{
-			counter = MathUtil.Random.Next( msecMin, msecMax );
+			timeout	=	MathUtil.Random.Next( msecMin, msecMax );
+			counter	=	timeout;
 		}
 
 		public void Update ( GameTime gameTime )
 		{
 			counter -= gameTime.Milliseconds;
+		}
+
+		public float Fraction
+		{
+			get { return MathUtil.Clamp( counter / (float)timeout, 0, 1); }
 		}
 
 		public bool IsElapsed

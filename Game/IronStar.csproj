@@ -34,6 +34,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Hybrid|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -78,24 +79,14 @@
   <ItemGroup>
     <Compile Include="AI\AIConfig.cs" />
     <Compile Include="AI\AIComponent.cs" />
+    <Compile Include="AI\AITarget.cs" />
     <Compile Include="AI\AIGoal.cs" />
+    <Compile Include="AI\AIUtils.cs" />
     <Compile Include="AI\DMNode.cs" />
-    <Compile Include="AI\OldBT\Actions\FindReachablePointInRadius.cs" />
-    <Compile Include="AI\OldBT\Actions\Attack.cs" />
-    <Compile Include="AI\OldBT\Actions\MoveTo.cs" />
-    <Compile Include="AI\OldBT\Actions\FindPlayer.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\AIExtensions.cs" />
-    <Compile Include="AI\OldBT\AITokenPool.cs" />
-    <Compile Include="AI\OldBT\AIToken.cs" />
-    <Compile Include="AI\OldBT\Decorators\HasLineOfSight.cs" />
-    <Compile Include="AI\OldBT\Decorators\HasBlackboardValue.cs" />
-    <Compile Include="AI\OldBT\Decorators\AcquireToken.cs" />
-    <Compile Include="AI\OldBT\Decorators\HasTarget.cs" />
     <Compile Include="AI\DMSystem.cs" />
     <Compile Include="AI\NavBakingSystem.cs" />
-    <Compile Include="AI\OldBT\PerceptionSystem.cs" />
-    <Compile Include="AI\NavRouter.cs" />
     <Compile Include="AI\Timer.cs" />
     <Compile Include="Animation\BipedMapping.cs" />
     <Compile Include="Animation\BoneComponent.cs" />
@@ -107,7 +98,6 @@
     <Compile Include="BTCore\Actions\Print.cs" />
     <Compile Include="BTCore\Actions\Wait.cs" />
     <Compile Include="BTCore\BTBuilder.cs" />
-    <Compile Include="AI\OldBT\Components\BehaviorComponent.cs" />
     <Compile Include="BTCore\BTAction.cs" />
     <Compile Include="BTCore\Condition.cs" />
     <Compile Include="BTCore\Decorator.cs" />
@@ -118,7 +108,6 @@
     <Compile Include="BTCore\NodeCollection.cs" />
     <Compile Include="BTCore\BTNode.cs" />
     <Compile Include="BTCore\BTStatus.cs" />
-    <Compile Include="AI\OldBT\BehaviorSystem.cs" />
     <Compile Include="AI\NavSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
     <Compile Include="Animation\Layers\BlendSpace.cs" />
@@ -458,6 +447,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AI\OldBT\" />
     <Folder Include="Monsters\Components\" />
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,10 @@ namespace IronStar.AI
 		public AIGoal		Goal;
 		public Vector3[]	ActiveRoute	=	null;
 
+		public AITarget		Target = null;
+		public readonly List<AITarget>	Targets =	new List<AITarget>();
+		public Vector3		PrevAimError = Vector3.Zero;
+		public Vector3		NextAimError = Vector3.Zero;
 
 
 		public IComponent Clone()

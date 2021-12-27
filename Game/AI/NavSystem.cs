@@ -81,7 +81,14 @@ namespace IronStar.AI
 
 		public Route FindRoute( Vector3 startPoint, Vector3 endPoint )
 		{
-			return new Route( navMesh?.FindRoute( startPoint, endPoint ) );
+			var waypoints = navMesh?.FindRoute( startPoint, endPoint );
+
+			if (waypoints!=null)
+			{
+				return new Route( waypoints );
+			}
+
+			return null;
 		}
 
 		public Vector3 GetReachablePointInRadius( Vector3 startPoint, float maxRadius )
@@ -90,9 +97,14 @@ namespace IronStar.AI
 
 			Vector3 result = startPoint;
 
-			navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result );
-
-			return result;
+			if (navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result ))
+			{
+				return result;
+			}
+			else
+			{
+				return startPoint;
+			}
 		}
 	}
 }

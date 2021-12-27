@@ -23,6 +23,9 @@ namespace IronStar.SFX
 {
 	public class FXTracker : StatelessSystem<FXComponent>
 	{
+		//	at least three frame
+		const float addition = 3f / 60f;
+
 		public override void Add( IGameState gs, Entity e )
 		{
 			base.Add( gs, e );
@@ -35,16 +38,16 @@ namespace IronStar.SFX
 
 				if (gs.Content.TryLoad( Path.Combine("fx", fx.FXName), out factory ) )
 				{
-					fx.Timeout	=	factory.GetEstimatedLifetime( ss );
+					fx.Timeout	=	factory.GetEstimatedLifetime( ss ) + addition;
 				}
 				else
 				{
-					fx.Timeout	=	0;
+					fx.Timeout	=	addition;
 				}
 			}
 			else
 			{
-				fx.Timeout	=	0;
+				fx.Timeout	=	addition;
 			}
 		}
 

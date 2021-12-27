@@ -80,13 +80,12 @@
     <Compile Include="AI\AIConfig.cs" />
     <Compile Include="AI\AIComponent.cs" />
     <Compile Include="AI\AITarget.cs" />
-    <Compile Include="AI\AIGoal.cs" />
     <Compile Include="AI\AIUtils.cs" />
-    <Compile Include="AI\DMNode.cs" />
     <Compile Include="AI\AICore.cs" />
-    <Compile Include="AI\AIExtensions.cs" />
-    <Compile Include="AI\DMSystem.cs" />
-    <Compile Include="AI\NavBakingSystem.cs" />
+    <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\DMNode.cs" />
+    <Compile Include="AI\NavBaker.cs" />
+    <Compile Include="AI\Route.cs" />
     <Compile Include="AI\Timer.cs" />
     <Compile Include="Animation\BipedMapping.cs" />
     <Compile Include="Animation\BoneComponent.cs" />
@@ -226,6 +225,7 @@
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />
+    <Compile Include="Gameplay\Components\TeamComponent.cs" />
     <Compile Include="Gameplay\Components\TriggerComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
@@ -447,7 +447,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AI\OldBT\" />
     <Folder Include="Monsters\Components\" />
   </ItemGroup>
   <ItemGroup>

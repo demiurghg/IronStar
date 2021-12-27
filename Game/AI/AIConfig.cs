@@ -23,7 +23,12 @@ namespace IronStar.AI
 		public readonly float	VisibilityRange	=	450.0f;
 		public readonly float	HearingRange	=	15.0f;
 
+		public readonly int		GapeTimeout		=	1000;
 		public readonly int		TimeToForget	=	30*1000;
+
+		public readonly int		AttackTime			=	300;
+		public readonly float	CombatMoveRadius	=	30.0f;
+		public readonly float	AttackWhileMoving	=	0.5f;
 
 		public readonly float	Accuracy		=	0.2f;
 	}

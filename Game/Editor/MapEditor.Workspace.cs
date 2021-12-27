@@ -344,7 +344,7 @@ namespace IronStar.Editor
 
 		void BakeNavMesh()
 		{
-			Game.Invoker.Execute( new NavBakingSystem.BakeNavMeshCommand( gameState ) );
+			Game.Invoker.Execute( new NavBaker.BakeNavMeshCommand( gameState ) );
 			Game.Invoker.ExecuteString("contentBuild");
 			//Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
 		}

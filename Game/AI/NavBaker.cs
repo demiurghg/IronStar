@@ -31,7 +31,7 @@ namespace IronStar.AI
 	}
 
 
-	class NavBakingSystem : ISystem
+	class NavBaker : ISystem
 	{
 		readonly IGameState	gs;
 		readonly string		navMeshPath;
@@ -40,7 +40,7 @@ namespace IronStar.AI
 		PolyMesh	polyMesh	=	null;
 
 
-		public NavBakingSystem(IGameState gs, string mapName)
+		public NavBaker(IGameState gs, string mapName)
 		{
 			this.gs				=	gs;
 			this.navMeshPath	=	Path.Combine("maps", "navmesh", mapName);
@@ -58,7 +58,7 @@ namespace IronStar.AI
 
 			public object Execute()
 			{
-				var navBaking = gs.GetService<NavBakingSystem>();
+				var navBaking = gs.GetService<NavBaker>();
 
 				navBaking.BuildNavmesh( navBaking.GetStaticGeometry() );
 

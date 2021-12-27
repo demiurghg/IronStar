@@ -18,6 +18,8 @@ namespace IronStar.ECSFactories
 	[EntityFactory("MONSTER_MARINE")]
 	public class MonsterMarineFactory : EntityFactory
 	{
+		public Team Team { get; set; } = Team.Monsters;
+
 		void GiveWeapon(IGameState gs, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
 		{
 			inventory.TryGiveWeapon(weapon);
@@ -49,6 +51,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( inventory );
 			e.AddComponent( weaponState );
 			e.AddComponent( new AIComponent() );
+			e.AddComponent( new TeamComponent(Team) );
 
 			var weapons = new[]
 			{

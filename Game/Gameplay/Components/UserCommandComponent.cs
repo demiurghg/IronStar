@@ -135,6 +135,18 @@ namespace IronStar.Gameplay
 			}
 		}
 
+
+		public void ComputeMoveAndStrafe( Vector3 originPoint, Vector3 targetPoint, float factor )
+		{
+			var matrix			=	Matrix.RotationYawPitchRoll( Yaw, 0, 0 );
+			var moveVector		=	matrix.Forward;
+			var strafeVector	=	matrix.Right;
+			var direction		=	Vector3.Normalize( targetPoint - originPoint );
+			
+			Move	=	Vector3.Dot( moveVector, direction ) * factor;
+			Strafe	=	Vector3.Dot( strafeVector, direction ) * factor;
+		}
+
 		
 		public float RotateTo( Vector3 originPoint, Vector3 targetPoint, float maxYawRate, float maxPitchRate )
 		{

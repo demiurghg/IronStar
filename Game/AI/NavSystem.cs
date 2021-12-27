@@ -79,9 +79,9 @@ namespace IronStar.AI
 		 *	Navmesh queries :
 		-----------------------------------------------------------------------------------------*/
 
-		public Vector3[] FindRoute( Vector3 startPoint, Vector3 endPoint )
+		public Route FindRoute( Vector3 startPoint, Vector3 endPoint )
 		{
-			return navMesh?.FindRoute( startPoint, endPoint );
+			return new Route( navMesh?.FindRoute( startPoint, endPoint ) );
 		}
 
 		public Vector3 GetReachablePointInRadius( Vector3 startPoint, float maxRadius )

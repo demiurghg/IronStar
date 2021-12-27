@@ -288,7 +288,7 @@ namespace IronStar.Gameplay.Systems
 
 		void FireBeam ( GameState gs, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
 		{
-			Log.Debug("SPREAD: {0}", state.Spread);
+			//Log.Debug("SPREAD: {0}", state.Spread);
 
 			var p	=	povTransform.TranslationVector;
 			var q	=	Quaternion.RotationMatrix( povTransform );

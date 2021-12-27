@@ -11,6 +11,7 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Mathematics;
 using System.Diagnostics;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.AI
 {
@@ -54,6 +55,12 @@ namespace IronStar.AI
 		public static float Falloff( float distance, float radius )
 		{
 			return radius * radius / ( distance * distance + radius * radius );
+		}
+
+
+		public static bool RollTheDice( float probability )
+		{
+			return MathUtil.Random.NextFloat(0, 1) <= probability;
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -168,85 +175,33 @@ namespace IronStar.AI
 				target.Visible = false; // assume, SpotTarget will update visibility flag
 			}
 
-			ai.Targets.RemoveAll( tt => tt.ForgettingTimer.IsElapsed );
-		}
-
-		/*-----------------------------------------------------------------------------------------
-		 *	Navigation utils :
-		-----------------------------------------------------------------------------------------*/
-
-		public static Status FollowRoute( Vector3[] route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target, out float velocity )
-		{
-			float fraction = 0f;
-			float distance = 0f;
-			velocity = 0f;
-			int lastSegmentIndex = route.Length-2;
-
-			if (route.Length<2) 
-			{
-				target		=	route[0];
-				distance	=	Vector3.Distance( target, origin );
-
-				if (distance <= acceptanceRadius) return Status.Success;
-				if (distance >= failureRadius) return Status.Failure;
-				return Status.InProgress;
-			}
-			else
-			{
-				int segmentIndex = GetClosestSegment( route, origin, out distance, out fraction );
-				var a	= route[segmentIndex];
-				var b	= route[segmentIndex+1];
-				var ab	= b - a;
-				var p	= Vector3.Lerp( a, b, fraction );
-
-				if (segmentIndex==lastSegmentIndex)
-				{
-					target	=	b;
-				}
-				else
-				{
-					target = p + ab.Normalized() * leadingDistance;
-				}
-
-				velocity	=	MathUtil.Clamp( ProjectedDistance(origin, target) / leadingDistance, 0, 1 );
-
-				var distanceToTarget = ProjectedDistance( route.Last(), origin );
-
-				if (distanceToTarget <= acceptanceRadius) return Status.Success;
-				if (distance >= failureRadius) return Status.Failure;
-				return Status.InProgress;
-			}
+			ai.Targets.RemoveAll( tt => tt.ForgettingTimer.IsElapsed || !IsAlive(tt.Entity) );
 		}
 
 
-		static float ProjectedDistance( Vector3 a, Vector3 b )
+		static bool IsAlive( Entity a )
 		{
-			return Vector2.Distance( new Vector2(a.X, a.Z), new Vector2(b.X, b.Z) );
+			var health = a?.GetComponent<HealthComponent>();
+			return health==null ? true : health.Health > 0;
 		}
 
 
-		static int GetClosestSegment( Vector3[] route, Vector3 origin, out float distance, out float fraction )
+		public static bool IsEnemies( Entity a, Entity b )
 		{
-			var closestSegment = 0;
-			distance = float.MaxValue;
-			fraction = 0;
+			var teamA = a.GetComponent<TeamComponent>();
+			var teamB = b.GetComponent<TeamComponent>();
 
-			for (int i=route.Length-2; i>=0; i--)
+			if (teamA==null || teamB==null)
 			{
-				float d, t;
-				var a = route[i];
-				var b = route[i+1];
-				Intersection.DistancePointToLineSegment( a, b, origin, out d, out t );
-
-				if ( d < distance )
-				{
-					closestSegment	= i;
-					distance		= d;
-					fraction		= t;
-				}
+				return false;
 			}
 
-			return closestSegment;
+			if (teamA.Team!=teamB.Team)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

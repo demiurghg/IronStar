@@ -8,7 +8,12 @@ namespace IronStar.AI
 {
 	public enum DMNode
 	{
-		Idle,
+		Dead,
+		Stand,
+		StandGaping,
 		Roaming,
+		CombatChase,
+		CombatAttack,
+		CombatMove
 	}
 }

@@ -119,7 +119,7 @@ namespace IronStar.Monsters.Systems
 
 				if (Math.Abs(arc)>=YAW_THRESHOLD)
 				{
-				//	return new Turn(animator, uc, baseYaw); 
+					return new Turn(animator, uc, baseYaw); 
 				}
 
 				if (crouch!=cr) return new Idle(animator, uc, cr);

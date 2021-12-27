@@ -103,8 +103,11 @@ namespace IronStar
 			var triggerSystem		=	new TriggerSystem();
 
 			//	player system :
-			gs.AddSystem( playerInputSlave );
-			gs.AddSystem( new PlayerSpawnSystem() );
+			if (!isEditor)
+			{
+				gs.AddSystem( playerInputSlave );
+				gs.AddSystem( new PlayerSpawnSystem() );
+			}
 
 			//	weapon system :
 			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback ) );
@@ -135,7 +138,7 @@ namespace IronStar
 			//	AI :
 			var navSystem	=	new NavSystem(gs, mapName);
 			//gs.AddSystem( new PerceptionSystem(physicsCore) );
-			gs.AddSystem( new DMSystem(physicsCore, navSystem) );
+			gs.AddSystem( new AISystem(physicsCore, navSystem) );
 			gs.AddSystem( navSystem );
 			gs.AddSystem( new MonsterKillSystem() );
 
@@ -184,7 +187,7 @@ namespace IronStar
 				gs2.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs2.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
 
-				gs2.AddSystem( new NavBakingSystem( gs2, mapName ) );
+				gs2.AddSystem( new NavBaker( gs2, mapName ) );
 			}
 
 			map.ActivateGameState(gs);

@@ -29,7 +29,7 @@ namespace Fusion.Engine.Graphics
 		const float depthBiasScale = 1.0f / 65536.0f;
 		
 
-		public ShadowContext ( RenderSystem rs, Camera camera, IShadowProvider shadowProvider, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
+		public ShadowContext ( RenderSystem rs, Camera camera, IShadowProvider shadowProvider, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer, bool csm )
 		{
 			var projection		=	shadowProvider.ProjectionMatrix;
 
@@ -38,8 +38,12 @@ namespace Fusion.Engine.Graphics
 			this.region			=	shadowProvider.ShadowRegion;
 			this.depthBuffer	=	depthBuffer;
 			this.colorBuffer	=	colorBuffer;
-			this.depthBias		=	rs.ShadowSystem.SpotDepthBias * depthBiasScale;
-			this.slopeBias		=	rs.ShadowSystem.SpotSlopeBias;
+
+			float depthBias		=	csm ? rs.ShadowSystem.CascadeDepthBias : rs.ShadowSystem.SpotDepthBias;
+			float slopeBias		=	csm ? rs.ShadowSystem.CascadeSlopeBias : rs.ShadowSystem.SpotSlopeBias;
+
+			this.depthBias		=	depthBias * depthBiasScale;
+			this.slopeBias		=	slopeBias;
 		}
 
 

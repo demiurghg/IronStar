@@ -299,7 +299,7 @@ namespace Fusion.Engine.Graphics
 				result = true;
 			}
 
-			if (biasDirty)
+			/*if (biasDirty)
 			{
 				spotShadowRasterizerState		=	RasterizerState.Create( CullMode.CullCW, FillMode.Solid, 0,0 ); 
 				spotShadowRasterizerState.ScissorEnabled	=	true;
@@ -318,7 +318,7 @@ namespace Fusion.Engine.Graphics
 				}
 				biasDirty = false;
 				result = true;
-			}
+			}  */
 
 			return result;
 		}
@@ -404,9 +404,9 @@ namespace Fusion.Engine.Graphics
 
 				light.ShadowViewProjection		=	light.ViewMatrix * light.ProjectionMatrix;
 
-				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface );
+				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface, light.IsCSM );
 
-				rs.SceneRenderer.RenderShadowMap( context, light.ShadowCasters, group, false );
+				rs.SceneRenderer.RenderShadowMap( context, light.ShadowCasters, group, light.IsCSM );
 
 				light.IsShadowDirty = false;
 			}

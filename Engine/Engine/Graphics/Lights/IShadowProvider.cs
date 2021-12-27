@@ -16,6 +16,12 @@ namespace Fusion.Engine.Graphics.Lights
 		bool IsVisible { get; }
 
 		/// <summary>
+		/// Indicates that given light and its shadow 
+		/// is visible and should be rendered
+		/// </summary>
+		bool IsCSM { get; }
+
+		/// <summary>
 		/// Gets shadow LOD 
 		/// </summary>
 		int ShadowLod { get; }

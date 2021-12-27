@@ -28,6 +28,8 @@ namespace Fusion.Engine.Graphics
 			return string.Format("Spot: Mask:{0}, LOD:{1}", ShadowMaskName, ShadowLod);
 		}
 
+		
+
 		/// <summary>
 		/// Spot-light view matrix.
 		/// </summary>
@@ -116,6 +118,7 @@ namespace Fusion.Engine.Graphics
 		readonly RenderList shadowCasters = new RenderList();
 		public RenderList ShadowCasters { get { return shadowCasters; } }
 
+		public bool IsCSM { get { return false; } }
 		
 		/// <summary>
 		/// Indicates that shadow map must be updated

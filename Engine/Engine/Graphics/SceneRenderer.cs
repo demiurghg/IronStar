@@ -176,8 +176,10 @@ namespace Fusion.Engine.Graphics
 
 			if (flags.HasFlag( SurfaceFlags.SHADOW )) 
 			{
-				if (flags.HasFlag( SurfaceFlags.SPOT )) ps.RasterizerState = rs.ShadowSystem.SpotShadowRasterizerState;
-				if (flags.HasFlag( SurfaceFlags.CSM )) 	ps.RasterizerState = rs.ShadowSystem.CascadeShadowRasterizerState;
+				//if (flags.HasFlag( SurfaceFlags.SPOT )) ps.RasterizerState = rs.ShadowSystem.SpotShadowRasterizerState;
+				//if (flags.HasFlag( SurfaceFlags.CSM )) 	ps.RasterizerState = rs.ShadowSystem.CascadeShadowRasterizerState;
+				if (flags.HasFlag( SurfaceFlags.SPOT )) ps.RasterizerState = RasterizerState.ShadowsCW;
+				if (flags.HasFlag( SurfaceFlags.CSM )) 	ps.RasterizerState = RasterizerState.ShadowsCW;
 			}
 
 			if (flags.HasFlag( SurfaceFlags.TRANSPARENT)) 

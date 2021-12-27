@@ -40,6 +40,8 @@ namespace Fusion.Engine.Graphics
 
 		public bool IsVisible {	get { return true; } }
 
+		public bool IsCSM { get { return true; } }
+
 		public int ShadowLod { get { return lod; } }
 
 		public bool IsShadowDirty { get { return true; } set {} }

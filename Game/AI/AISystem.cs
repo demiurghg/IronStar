@@ -89,15 +89,18 @@ namespace IronStar.AI
 				if (ai.Target==null)
 				{
 					uc.RotateTo( origin, target, rate, 0 );
-					uc.Move = factor;
+					uc.ComputeMoveAndStrafe( origin, target, factor );
 				}
 				else
 				{
 					uc.ComputeMoveAndStrafe( origin, target, factor );
 				}
 
+				var dir = new Vector3( (float)Math.Cos( -uc.Yaw ), 0, (float)Math.Sin( -uc.Yaw ) );
+
 				dr.DrawPoint( origin, 1, Color.Black, 3 );
 				dr.DrawLine( origin, target, Color.Black, Color.Black, 5, 1 );
+				dr.DrawLine( origin, origin + dir * 5, Color.Red, Color.Red, 5, 1 );
 
 				for (int i=0; i<route.Count-1; i++)
 				{

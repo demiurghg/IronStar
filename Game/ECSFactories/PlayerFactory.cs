@@ -34,13 +34,12 @@ namespace IronStar.ECSFactories
 			base.Construct( e, gs );
 
 			//	rotate character's model to face along forward vector :
-			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
-
 			e.AddComponent( new PlayerComponent() );
 			e.AddComponent( new TeamComponent(Team.Player) );
 
-			/*e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
-			e.AddComponent( new BoneComponent() ); //*/
+			//	uncomment to use third person view	//
+			//	e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", 1, Color.Red, 7, RMFlags.None ) );
+			//	e.AddComponent( new BoneComponent() );
 
 			e.AddComponent( new HealthComponent(100,0) );
 			e.AddComponent( new CharacterController(6,4,1.5f, 24,8, 20, 10, 2.2f) );

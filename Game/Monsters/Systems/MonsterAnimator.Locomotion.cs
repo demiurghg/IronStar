@@ -63,8 +63,8 @@ namespace IronStar.Monsters.Systems
 					{
 						var sign  = ( uc.Move < 0 ) ? -1 : 1;
 						var coeff = ( uc.Move !=0 ) ? 0.25f : 0.33f;
-						if (uc.Strafe>0) targetYaw -= sign * MathUtil.Pi * coeff;
-						if (uc.Strafe<0) targetYaw += sign * MathUtil.Pi * coeff;
+						if (uc.Strafe > 0.2f) targetYaw -= sign * MathUtil.Pi * coeff;
+						if (uc.Strafe <-0.2f) targetYaw += sign * MathUtil.Pi * coeff;
 					}
 
 					var delta	=	MathUtil.ShortestAngle( currentYaw, targetYaw, turnRate * gameTime.ElapsedSec );

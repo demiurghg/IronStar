@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = marine_anim_marineBase_BaseColor.png
+NormalMap = marine_anim_marineBase_Normal.png
+Metallic  = marine_anim_marineBase_Metallic.png
+Roughness = marine_anim_marineBase_Roughness.png
+Emission  = 
+Occlusion = marine_anim_marineBase_Occlusion.png

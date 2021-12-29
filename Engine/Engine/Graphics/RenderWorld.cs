@@ -375,14 +375,14 @@ namespace Fusion.Engine.Graphics
 				inst1 => inst1.ComputeWorldBoundingBox(), 
 				inst2 => inst2.World.TranslationVector );
 
-			if (rs.LockVisibility) return;
+			if (RenderSystem.LockVisibility) return;
 
-			if (rs.ShowBoundingBoxes)
+			if (RenderSystem.ShowBoundingBoxes)
 			{
 				sceneBvhTree.Traverse( (inst,bbox) => Debug.DrawBox( bbox, DebugBBoxColor(bbox) ) );
 			}
 
-			if (rs.SkipFrustumCulling)
+			if (RenderSystem.SkipFrustumCulling)
 			{
 				rlMainView.Clear();
 				rlMainView.AddRange( Instances );
@@ -405,7 +405,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		internal void Render ( GameTime gameTime, StereoEye stereoEye, RenderTargetSurface targetSurface )
 		{
-			if (rs.ClearBackbuffer) {
+			if (RenderSystem.ClearBackbuffer) {
 				rs.Device.Clear( targetSurface, Color.Magenta.ToColor4() );
 			}
 
@@ -500,7 +500,7 @@ namespace Fusion.Engine.Graphics
 
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
-					if (!rs.SkipBackgroundBlur)
+					if (!RenderSystem.SkipBackgroundBlur)
 					{
 						using ( new PixEvent( "Background downsample" ) ) 
 						{
@@ -545,9 +545,12 @@ namespace Fusion.Engine.Graphics
 					}
 
 					//	apply FXAA
-					if (rs.UseFXAA) {
+					if (RenderSystem.UseFXAA) 
+					{
 						rs.Filter.Fxaa( targetSurface, viewHdrFrame.FinalColor );
-					} else {
+					} 
+					else 
+					{
 						rs.Filter.Copy( targetSurface, viewHdrFrame.FinalColor );
 					} 
 				}
@@ -564,7 +567,7 @@ namespace Fusion.Engine.Graphics
 
 		void DrawDebugImages( Viewport viewport, RenderTargetSurface targetSurface )
 		{
-			switch (rs.VisualizeBuffer) 
+			switch (RenderSystem.VisualizeBuffer) 
 			{
 				case VisualizeBuffer.Normals			: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
 				case VisualizeBuffer.DofCOC				: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofCOC ); return;

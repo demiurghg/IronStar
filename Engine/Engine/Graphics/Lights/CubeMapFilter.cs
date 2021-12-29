@@ -19,8 +19,9 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
 using Fusion.Widgets.Advanced;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
+	[ConfigClass]
 	[RequireShader("cubegen", true)]
 	internal partial class CubeMapFilter : RenderComponent 
 	{
@@ -66,61 +67,61 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("General")] public bool UseReference { get; set; } = false;
 		[AECategory("General")] public bool UseDifference { get; set; } = false;
 
-		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip0_Weight1  { get; set; } =  -9.0f;
-		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip0_Weight2  { get; set; } = -12.0f;
-		[Config] [AECategory("MipLevel0")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip0_Radius1  { get; set; } =   1.3f;
-		[Config] [AECategory("MipLevel0")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip0_Radius2  { get; set; } =   2.0f;
-		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip0_LodBias0 { get; set; } =   0.0f;
-		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip0_LodBias1 { get; set; } =   0.5f;
-		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip0_LodBias2 { get; set; } =   0.0f;
+		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip0_Weight1  { get; set; } =  -9.0f;
+		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip0_Weight2  { get; set; } = -12.0f;
+		[Config] [AECategory("MipLevel0")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip0_Radius1  { get; set; } =   1.3f;
+		[Config] [AECategory("MipLevel0")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip0_Radius2  { get; set; } =   2.0f;
+		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip0_LodBias0 { get; set; } =   0.0f;
+		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip0_LodBias1 { get; set; } =   0.5f;
+		[Config] [AECategory("MipLevel0")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip0_LodBias2 { get; set; } =   0.0f;
 
-		[Config] [AECategory("MipLevel1")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip1_Weight1  { get; set; } =  -3.0f;
-		[Config] [AECategory("MipLevel1")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip1_Weight2  { get; set; } =  -5.0f;
-		[Config] [AECategory("MipLevel1")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip1_Radius1  { get; set; } =   2.0f;
-		[Config] [AECategory("MipLevel1")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip1_Radius2  { get; set; } =   6.5f;
-		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip1_LodBias0 { get; set; } =   0.8f;
-		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip1_LodBias1 { get; set; } =   1.5f;
-		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip1_LodBias2 { get; set; } =   2.5f;
+		[Config] [AECategory("MipLevel1")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip1_Weight1  { get; set; } =  -3.0f;
+		[Config] [AECategory("MipLevel1")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip1_Weight2  { get; set; } =  -5.0f;
+		[Config] [AECategory("MipLevel1")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip1_Radius1  { get; set; } =   2.0f;
+		[Config] [AECategory("MipLevel1")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip1_Radius2  { get; set; } =   6.5f;
+		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip1_LodBias0 { get; set; } =   0.8f;
+		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip1_LodBias1 { get; set; } =   1.5f;
+		[Config] [AECategory("MipLevel1")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip1_LodBias2 { get; set; } =   2.5f;
 
-		[Config] [AECategory("MipLevel2")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip2_Weight1  { get; set; } =  -2.0f;
-		[Config] [AECategory("MipLevel2")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip2_Weight2  { get; set; } =  -4.3f;
-		[Config] [AECategory("MipLevel2")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip2_Radius1  { get; set; } =   3.5f;
-		[Config] [AECategory("MipLevel2")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip2_Radius2  { get; set; } =   4.5f;
-		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip2_LodBias0 { get; set; } =   1.0f;
-		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip2_LodBias1 { get; set; } =   1.5f;
-		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip2_LodBias2 { get; set; } =   3.5f;
+		[Config] [AECategory("MipLevel2")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip2_Weight1  { get; set; } =  -2.0f;
+		[Config] [AECategory("MipLevel2")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip2_Weight2  { get; set; } =  -4.3f;
+		[Config] [AECategory("MipLevel2")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip2_Radius1  { get; set; } =   3.5f;
+		[Config] [AECategory("MipLevel2")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip2_Radius2  { get; set; } =   4.5f;
+		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip2_LodBias0 { get; set; } =   1.0f;
+		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip2_LodBias1 { get; set; } =   1.5f;
+		[Config] [AECategory("MipLevel2")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip2_LodBias2 { get; set; } =   3.5f;
 
-		[Config] [AECategory("MipLevel3")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip3_Weight1  { get; set; } = -2;
-		[Config] [AECategory("MipLevel3")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip3_Weight2  { get; set; } = -2;
-		[Config] [AECategory("MipLevel3")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip3_Radius1  { get; set; } = 3.5f;
-		[Config] [AECategory("MipLevel3")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip3_Radius2  { get; set; } = 6.5f;
-		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip3_LodBias0 { get; set; } = 1;
-		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip3_LodBias1 { get; set; } = 1.5f;
-		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip3_LodBias2 { get; set; } = 3.5f;
+		[Config] [AECategory("MipLevel3")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip3_Weight1  { get; set; } = -2;
+		[Config] [AECategory("MipLevel3")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip3_Weight2  { get; set; } = -2;
+		[Config] [AECategory("MipLevel3")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip3_Radius1  { get; set; } = 3.5f;
+		[Config] [AECategory("MipLevel3")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip3_Radius2  { get; set; } = 6.5f;
+		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip3_LodBias0 { get; set; } = 1;
+		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip3_LodBias1 { get; set; } = 1.5f;
+		[Config] [AECategory("MipLevel3")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip3_LodBias2 { get; set; } = 3.5f;
 
-		[Config] [AECategory("MipLevel4")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip4_Weight1  { get; set; } = -1;
-		[Config] [AECategory("MipLevel4")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip4_Weight2  { get; set; } = -1;
-		[Config] [AECategory("MipLevel4")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip4_Radius1  { get; set; } =  3;
-		[Config] [AECategory("MipLevel4")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip4_Radius2  { get; set; } =  5;
-		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip4_LodBias0 { get; set; } = 2.5f;
-		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip4_LodBias1 { get; set; } = 2.5f;
-		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip4_LodBias2 { get; set; } = 2.5f;
+		[Config] [AECategory("MipLevel4")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip4_Weight1  { get; set; } = -1;
+		[Config] [AECategory("MipLevel4")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip4_Weight2  { get; set; } = -1;
+		[Config] [AECategory("MipLevel4")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip4_Radius1  { get; set; } =  3;
+		[Config] [AECategory("MipLevel4")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip4_Radius2  { get; set; } =  5;
+		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip4_LodBias0 { get; set; } = 2.5f;
+		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip4_LodBias1 { get; set; } = 2.5f;
+		[Config] [AECategory("MipLevel4")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip4_LodBias2 { get; set; } = 2.5f;
 
-		[Config] [AECategory("MipLevel5")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip5_Weight1  { get; set; } = -1;
-		[Config] [AECategory("MipLevel5")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip5_Weight2  { get; set; } = -1;
-		[Config] [AECategory("MipLevel5")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip5_Radius1  { get; set; } = 3;
-		[Config] [AECategory("MipLevel5")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip5_Radius2  { get; set; } = 5;
-		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip5_LodBias0 { get; set; } = 1;
-		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip5_LodBias1 { get; set; } = 1;
-		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip5_LodBias2 { get; set; } = 1;
+		[Config] [AECategory("MipLevel5")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip5_Weight1  { get; set; } = -1;
+		[Config] [AECategory("MipLevel5")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip5_Weight2  { get; set; } = -1;
+		[Config] [AECategory("MipLevel5")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip5_Radius1  { get; set; } = 3;
+		[Config] [AECategory("MipLevel5")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip5_Radius2  { get; set; } = 5;
+		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip5_LodBias0 { get; set; } = 1;
+		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip5_LodBias1 { get; set; } = 1;
+		[Config] [AECategory("MipLevel5")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip5_LodBias2 { get; set; } = 1;
 
-		[Config] [AECategory("MipLevel6")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip6_Weight1  { get; set; } = -1;
-		[Config] [AECategory("MipLevel6")] [AESlider(-12, 0, 1.0f, 0.1f)] public float Mip6_Weight2  { get; set; } =  0;
-		[Config] [AECategory("MipLevel6")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip6_Radius1  { get; set; } =  0;
-		[Config] [AECategory("MipLevel6")] [AESlider(  0,10, 0.5f, 0.1f)] public float Mip6_Radius2  { get; set; } = 10;
-		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip6_LodBias0 { get; set; } = 0;
-		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip6_LodBias1 { get; set; } = 0;
-		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] public float Mip6_LodBias2 { get; set; } = 0;
+		[Config] [AECategory("MipLevel6")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip6_Weight1  { get; set; } = -1;
+		[Config] [AECategory("MipLevel6")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip6_Weight2  { get; set; } =  0;
+		[Config] [AECategory("MipLevel6")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip6_Radius1  { get; set; } =  0;
+		[Config] [AECategory("MipLevel6")] [AESlider(  0,10, 0.5f, 0.1f)] static public float Mip6_Radius2  { get; set; } = 10;
+		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip6_LodBias0 { get; set; } = 0;
+		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip6_LodBias1 { get; set; } = 0;
+		[Config] [AECategory("MipLevel6")] [AESlider(  0, 5, 0.5f, 0.1f)] static public float Mip6_LodBias2 { get; set; } = 0;
 
 
 		ConstantBuffer	cbFilterData;

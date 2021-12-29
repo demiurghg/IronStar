@@ -125,7 +125,7 @@ namespace Fusion.Engine.Common {
 				client	=	new NetClient( netConfig );
 				client.Start();
 
-				var svPort	=	Game.Network.Port;
+				var svPort	=	Network.Port;
 
 				var ports = Enumerable.Range(svPort, numPorts)
 							.Where( p => p <= ushort.MaxValue )

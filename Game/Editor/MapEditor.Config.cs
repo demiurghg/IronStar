@@ -29,25 +29,26 @@ namespace IronStar.Editor
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
+	[ConfigClass]
 	public partial class MapEditor : GameComponent {
 
 		[Config]
 		[AECategory("Camera")]
 		[AESlider(10,160,10,1)]
-		public float CameraFov { 
+		static public float CameraFov { 
 			get { return cameraFov; }
 			set { cameraFov = MathUtil.Clamp( value, 10, 160 ); }
 		}
-		float cameraFov = 90;
+		static float cameraFov = 90;
 
 		[Config]
 		[AECategory("Camera")]
-		public bool LockAzimuth { get; set; } = false;
+		static public bool LockAzimuth { get; set; } = false;
 
 
 		[Config]
 		[AECategory("Snapping")]
-		public float MoveToolSnapValue { 
+		static public float MoveToolSnapValue { 
 			get {
 				return moveToolSnapValue;	
 			}
@@ -55,26 +56,12 @@ namespace IronStar.Editor
 				moveToolSnapValue = MathUtil.Clamp( value, 1/64.0f, 8.0f );
 			}
 		}
-		float moveToolSnapValue = 1.0f;
+		static float moveToolSnapValue = 1.0f;
 
 
 		[Config]
 		[AECategory("Snapping")]
-		public AxisMode MoveAxisMode { 
-			get {
-				return moveAxisMode;	
-			}
-			set {
-				moveAxisMode = value;
-				workspace.Manipulator = new MoveTool(this);
-			}
-		}
-		AxisMode moveAxisMode = AxisMode.Global;
-
-
-		[Config]
-		[AECategory("Snapping")]
-		public float RotateToolSnapValue { 
+		static public float RotateToolSnapValue { 
 			get {
 				return rotateToolSnapValue;
 			}
@@ -82,22 +69,16 @@ namespace IronStar.Editor
 				rotateToolSnapValue = MathUtil.Clamp( value, 5, 90 );
 			}
 		}
-		float rotateToolSnapValue = 1.0f;
-
+		static float rotateToolSnapValue = 1.0f;
 
 
 		[Config]
 		[AECategory("Snapping")]
-		public AxisMode RotateAxisMode { 
-			get {
-				return rotateAxisMode;	
-			}
-			set {
-				rotateAxisMode = value;
-				workspace.Manipulator = new RotateTool(this);
-			}
-		}
-		AxisMode rotateAxisMode = AxisMode.Global;
+		static public AxisMode MoveAxisMode { get; set; } = AxisMode.Global;
+
+		[Config]
+		[AECategory("Snapping")]
+		static public AxisMode RotateAxisMode { get; set; } = AxisMode.Global;
 
 		[AECommand]
 		public void ToggleSimulation ()

@@ -84,91 +84,80 @@ namespace Fusion.Engine.Graphics
 		public const int	MaxSpotLights	=	16;
 
 
+
 		/// <summary>
 		/// Fullscreen
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public bool Fullscreen { 
-			get { 
-				return isFullscreen;
-			}
-			set { 
-				if (isFullscreen!=value) {
-					isFullscreen = value;
-					if (Device!=null && Device.IsInitialized) {
-						Device.FullScreen = value;
-					}
-				}
-			}
-		}
-		bool isFullscreen = false;
+		// #TODO #CFG -- restore
+		public static bool Fullscreen { get; set; } = false;
 
 		/// <summary>
 		/// Screen width
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public int	Width { get; set; }
+		public static int	Width { get; set; } = 1024;
 
 		/// <summary>
 		/// Screen height
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public int	Height { get; set; }
+		public static int	Height { get; set; } = 768;
 		
 		/// <summary>
 		/// Stereo mode.
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public StereoMode StereoMode { get; set; }
+		public static StereoMode StereoMode { get; set; } = StereoMode.Disabled;
 
 		/// <summary>
 		/// Interlacing mode for stereo.
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public InterlacingMode InterlacingMode { get; set; }
+		public static InterlacingMode InterlacingMode { get; set; }	= InterlacingMode.HorizontalLR;
 
 		/// <summary>
 		/// Vertical synchronization interval.
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public int VSyncInterval { get; set; }
+		public static int VSyncInterval { get; set; } = 1;
 
 		/// <summary>
 		/// Vertical synchronization interval.
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public bool ClearBackbuffer { get; set; }
+		public static bool ClearBackbuffer { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public bool UseDebugDevice { get; set; }
+		public static bool UseDebugDevice { get; set; } = false;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
 		[AECategory("Video")]
-		public bool UseRenderDoc { get; set; }
+		public static bool UseRenderDoc { get; set; } = false;
 
 
 		[Config]
 		[AECategory("Performance")]
-		public bool UseBatching { get; set; }
+		public static bool UseBatching { get; set; } = true;
 
 
 		[Config]
 		[AECategory("Debug")]
-		public VisualizeBuffer VisualizeBuffer { get; set; }
+		public static VisualizeBuffer VisualizeBuffer { get; set; }
 
 
 		/// <summary>
@@ -176,7 +165,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool ShowParticles { get; set; }
+		public static bool ShowParticles { get; set; }
 
 
 		/// <summary>
@@ -184,7 +173,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool ShowExtents { get; set; }
+		public static bool ShowExtents { get; set; }
 
 
 		/// <summary>
@@ -192,43 +181,35 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipParticles { get; set; }
+		public static bool SkipParticles { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipParticleShadows { get; set; }
+		public static bool SkipParticleShadows { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipParticlesSimulation { get; set; }
+		public static bool SkipParticlesSimulation { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipSceneRendering { get; set; }
+		public static bool SkipSceneRendering { get; set; }
 
 		/// <summary>
 		/// Skips feed-back buffer reading
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipFeedback { get; set; }
-
-
-		/// <summary>
-		/// Skips feed-back buffer reading
-		/// </summary>
-		[Config]
-		[AECategory("Debug")]
-		public bool SkipZPass { get; set; }
+		public static bool SkipFeedback { get; set; }
 
 
 		/// <summary>
@@ -236,33 +217,38 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipShadows { get; set; }
+		public static bool SkipZPass { get; set; }
+
+
+		/// <summary>
+		/// Skips feed-back buffer reading
+		/// </summary>
+		[Config]
+		[AECategory("Debug")]
+		public static bool SkipShadows { get; set; }
 
 
 		[Config]
 		[AECategory("Performance")]
-		public bool SkipSpotLights { get; set; }
+		public static bool SkipSpotLights { get; set; }
 
 		[Config]
 		[AECategory("Performance")]
-		public bool SkipDecals { get; set; }
+		public static bool SkipDecals { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipDebugRendering { get; set; }
-
-		// #TODO #PHYSICS #CONFIG -- move to static config
-		public bool SkipDebugPhysics { get; set; }
+		public static bool SkipDebugRendering { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool FreezeParticles { get; set; }
+		public static bool FreezeParticles { get; set; }
 
 
 		/// <summary>
@@ -270,14 +256,14 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool ShowCounters { get; set; }
+		public static bool ShowCounters { get; set; }
 
 		/// <summary>
 		/// Shows counters
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool ShowLightCounters { get; set; }
+		public static bool ShowLightCounters { get; set; }
 
 
 		/// <summary>
@@ -285,43 +271,44 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool ShowLightComplexity { get; set; }
+		public static bool ShowLightComplexity { get; set; }
 
 		/// <summary>
 		/// Shows counters
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipDirectLighting { get; set; } = false;
+		public static bool SkipDirectLighting { get; set; } = false;
 
 		/// <summary>
 		/// Shows counters
 		/// </summary>
 		[Config]
 		[AECategory("Debug")]
-		public bool SkipBackgroundBlur { get; set; } = false;
+		public static bool SkipBackgroundBlur { get; set; } = false;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]	
 		[AECategory("Postprocessing")]	
-		public bool		UseFXAA { get; set; }
+		public static bool		UseFXAA { get; set; } = true;
 
 		[Config]
 		[AECategory("Debug Render")]
-		public bool SkipGhostDebugRendering { get; set; }
+		public static bool SkipGhostDebugRendering { get; set; }
 
-		[AECategory("Lightmap")] [Config]	public bool UsePointLightmapSampling { get; set; } = false;
+		[AECategory("Lightmap")] [Config]	public static bool UsePointLightmapSampling { get; set; } = false;
 
 		[AECommand]
-		public void KillParticles ()
+		public static void KillParticles ()
 		{
-			RenderWorld.ParticleSystem.KillParticles();
+			//	#TODO #CONFIG #CFG 
+			//	RenderWorld.ParticleSystem.KillParticles();
 		}
 
-		[AECategory("Visibility")]  [Config]	public bool LockVisibility { get; set; } = false;
-		[AECategory("Visibility")]  [Config]	public bool SkipFrustumCulling { get; set; } = false;
-		[AECategory("Visibility")]  [Config]	public bool ShowBoundingBoxes { get; set; } = false;
+		[AECategory("Visibility")]  [Config]	public static bool LockVisibility { get; set; } = false;
+		[AECategory("Visibility")]  [Config]	public static bool SkipFrustumCulling { get; set; } = false;
+		[AECategory("Visibility")]  [Config]	public static bool ShowBoundingBoxes { get; set; } = false;
 	}
 }

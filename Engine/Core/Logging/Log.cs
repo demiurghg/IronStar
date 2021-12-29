@@ -54,6 +54,16 @@ namespace Fusion
 		}
 
 
+		public static void Flush()
+		{
+			LogEntry dummy;
+
+			while (logQueue.TryPeek(out dummy))
+			{
+				Thread.Sleep(1);
+			}
+		}
+
 
 		static void LoggingLoop()
 		{

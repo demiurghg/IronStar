@@ -21,11 +21,6 @@ namespace Fusion.Widgets.Binding
 		
 		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo, PropertyChangeHandler changing, PropertyChangeHandler changed  )
 		{
-			if (targetObject==null) 
-			{
-				throw new ArgumentNullException( "targetObject" );
-			}
-			
 			if (propertyInfo==null) 
 			{
 				throw new ArgumentNullException( "propertyInfo" );

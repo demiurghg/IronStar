@@ -11,6 +11,7 @@ using Fusion.Engine.Common;
 using Fusion.Core.Input;
 using Fusion.Core;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Core.Configuration 
 {
@@ -26,8 +27,12 @@ namespace Fusion.Core.Configuration
 		{
 			this.game	=	game;
 			settings	=	new IniData();
-		}
 
+			foreach ( var cfg in GetConfigClasses() )
+			{
+				RuntimeHelpers.RunClassConstructor( cfg.TypeHandle );
+			}
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Private core functions :
@@ -46,7 +51,7 @@ namespace Fusion.Core.Configuration
 				}
 
 				var props = targetType
-							.GetProperties()
+							.GetProperties(BindingFlags.Public|BindingFlags.Static)
 							.Where( p1 => p1.HasAttribute<ConfigAttribute>() || importAll )
 							.ToArray();
 			
@@ -90,7 +95,7 @@ namespace Fusion.Core.Configuration
 				}
 
 				var props = sourceType
-							.GetProperties()
+							.GetProperties(BindingFlags.Public|BindingFlags.Static)
 							.Where( p1 => p1.HasAttribute<ConfigAttribute>() || exportAll )
 							.ToArray();
 			
@@ -109,54 +114,31 @@ namespace Fusion.Core.Configuration
 		}
 
 
+		void ApplyStaticSettings ()
+		{
+			Misc.GetAllClassesWithAttribute<ConfigClassAttribute>()
+				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigClassAttribute>().NiceName ?? type2.Name, Type = type2 } )
+				.ToList()
+				.ForEach( nameType => ApplySettings( nameType.Name, nameType.Type, null, false ) );
+		}
+
+
+		void RetrieveStaticSettings ()
+		{
+			Misc.GetAllClassesWithAttribute<ConfigClassAttribute>()
+				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigClassAttribute>().NiceName ?? type2.Name, Type = type2 } )
+				.ToList()
+				.ForEach( nameType => RetrieveSettings( nameType.Name, nameType.Type, null, false ) );
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Public export/import function
 		-----------------------------------------------------------------------------------------------*/
 
-		public void ApplyStaticSettings ()
+		public static Type[] GetConfigClasses()
 		{
-			Misc.GetAllClassesWithAttribute<ConfigAttribute>()
-				.Where( type1 => type1.IsAbstract && type1.IsSealed )
-				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigAttribute>().Name ?? type2.Name, Type = type2 } )
-				.ToList()
-				.ForEach( nameType => ApplySettings( nameType.Name, nameType.Type ) );
+			return Misc.GetAllClassesWithAttribute<ConfigClassAttribute>();
 		}
-
-
-		public void RetrieveStaticSettings ()
-		{
-			Misc.GetAllClassesWithAttribute<ConfigAttribute>()
-				.Where( type1 => type1.IsAbstract && type1.IsSealed )
-				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigAttribute>().Name ?? type2.Name, Type = type2 } )
-				.ToList()
-				.ForEach( nameType => RetrieveSettings( nameType.Name, nameType.Type ) );
-		}
-
-
-		public void ApplySettings ( string sectionName, object target )
-		{
-			ApplySettings( sectionName, target.GetType(), target, false );
-		}
-
-
-		public void ApplySettings ( string sectionName, Type type )
-		{
-			ApplySettings( sectionName, type, null, true );
-		}
-
-
-		public void RetrieveSettings ( string sectionName, object source )
-		{
-			RetrieveSettings( sectionName, source.GetType(), source, false );
-		}
-
-
-		public void RetrieveSettings ( string sectionName, Type type )
-		{
-			RetrieveSettings( sectionName, type, null, true );
-		}
-
 
 		/// <summary>
 		/// Loads file from specified file
@@ -211,6 +193,8 @@ namespace Fusion.Core.Configuration
 				{
 					settings	= parser.ReadData( sw );
 				}
+
+				ApplyStaticSettings();
 			}
 		}
 
@@ -221,7 +205,9 @@ namespace Fusion.Core.Configuration
 		/// <param name="stream"></param>
 		public void SaveSettings ( Stream stream )
 		{
-			lock (lockObject) {
+			lock (lockObject) 
+			{
+				RetrieveStaticSettings();
 
 				settings.Configuration.CommentString	=	"# ";
 

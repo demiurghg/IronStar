@@ -23,7 +23,7 @@ namespace IronStar.UI.HUD
 		{
 			Game	=	game;
 			Game.RenderSystem.GameFX.ClearFX();
-			Game.RenderSystem.DofFilter.Enabled = false;
+			DofFilter.Enabled = false;
 		}
 
 		public void Add( IGameState gs, Entity e ) {}
@@ -57,7 +57,7 @@ namespace IronStar.UI.HUD
 				if (health.Health<=0)
 				{
 					gameFx.RunDeathFX();
-					Game.RenderSystem.DofFilter.Enabled = true;
+					DofFilter.Enabled = true;
 				}
 			}
 		}

@@ -32,6 +32,7 @@ using IronStar.Editor.Commands;
 using Fusion.Widgets.Binding;
 using IronStar.Gameplay.DataAssets;
 using IronStar.ECS;
+using Fusion.Core.Configuration;
 
 namespace IronStar.Editor 
 {
@@ -62,7 +63,7 @@ namespace IronStar.Editor
 			//- PALETTES & EXPLORERS ---------------------------------------------------
 
 			var entityPalette		=	CreateEntityPalette( workspace );
-			var componentPalette	=	CreateComponentPalette( workspace );
+			var componentPalette	=	CreateSettingsPalette( workspace );
 			var outlinerPanel		=	CreateOutliner( workspace );
 			var assetExplorer		=	CreateAssetExplorer( workspace );
 			assetExplorer.Visible	=	false;
@@ -72,8 +73,8 @@ namespace IronStar.Editor
 			//- UPPER SHELF ------------------------------------------------------------
 
 			upperShelf.AddLButton("ST", @"editor\iconToolSelect",	()=> workspace.Manipulator = new NullTool() );
-			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> workspace.Manipulator = new MoveTool(this) );
-			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> workspace.Manipulator = new RotateTool(this) );
+			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> workspace.Manipulator = new MoveTool(this, MoveAxisMode) );
+			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> workspace.Manipulator = new RotateTool(this, RotateAxisMode) );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
@@ -194,7 +195,7 @@ namespace IronStar.Editor
 				var minFps = fpsCounter.MinFps;
 				var maxFps = fpsCounter.MaxFps;
 				var avgFps = fpsCounter.AverageFps;
-				var vsync  = rs.VSyncInterval!=0;
+				var vsync  = RenderSystem.VSyncInterval!=0;
 				statLabel.Text	=	
 					string.Format(
  					  "    FT: {0,6:000.00} {4}\r\n" +
@@ -217,10 +218,10 @@ namespace IronStar.Editor
 			//workspace.AddHotkey( Keys.F2		, ModKeys.None, () => rs.VSyncInterval = (rs.VSyncInterval==1) ? 0 : 1 );
 			
 			workspace.AddHotkey( Keys.Q			, ModKeys.None, () => workspace.Manipulator = new NullTool() );
-			workspace.AddHotkey( Keys.W			, ModKeys.None, () => workspace.Manipulator = new MoveTool(this) );
-			workspace.AddHotkey( Keys.E			, ModKeys.None, () => workspace.Manipulator = new RotateTool(this) );
-			workspace.AddHotkey( Keys.W			, ModKeys.Ctrl, () => MoveAxisMode = MoveAxisMode.NextEnum() );
-			workspace.AddHotkey( Keys.E			, ModKeys.Ctrl, () => RotateAxisMode = RotateAxisMode.NextEnum() );
+			workspace.AddHotkey( Keys.W			, ModKeys.None, () => workspace.Manipulator = new MoveTool(this, MoveAxisMode) );
+			workspace.AddHotkey( Keys.E			, ModKeys.None, () => workspace.Manipulator = new RotateTool(this, RotateAxisMode) );
+			workspace.AddHotkey( Keys.W			, ModKeys.Ctrl, () => { MoveAxisMode   = MoveAxisMode.NextEnum()  ; workspace.Manipulator = new MoveTool(this, MoveAxisMode); } );
+			workspace.AddHotkey( Keys.E			, ModKeys.Ctrl, () => { RotateAxisMode = RotateAxisMode.NextEnum(); workspace.Manipulator = new RotateTool(this, RotateAxisMode); } );
 			workspace.AddHotkey( Keys.T			, ModKeys.None, () => TargetSelection() );
 			
 			workspace.AddHotkey( Keys.D1		, ModKeys.None, ResetViewMode );
@@ -243,7 +244,7 @@ namespace IronStar.Editor
 			workspace.AddHotkey( Keys.D			, ModKeys.Ctrl, () => DuplicateSelection() );
 			workspace.AddHotkey( Keys.N			, ModKeys.None, () => ai.ShowNavigationMesh = !ai.ShowNavigationMesh );
 
-			workspace.AddHotkey( Keys.G			, ModKeys.None, () => rs.SkipDebugRendering = !rs.SkipDebugRendering );
+			workspace.AddHotkey( Keys.G			, ModKeys.None, () => RenderSystem.SkipDebugRendering = !RenderSystem.SkipDebugRendering );
 			workspace.AddHotkey( Keys.G			, ModKeys.Alt,	() => DrawGrid = !DrawGrid );
 			workspace.AddHotkey( Keys.G			, ModKeys.Ctrl, () => DrawGrid = !DrawGrid );
 
@@ -395,17 +396,17 @@ namespace IronStar.Editor
 
 
 
-		Palette CreateComponentPalette( Workspace workspace )
+		Palette CreateSettingsPalette( Workspace workspace )
 		{
-			var palette = new Palette( workspace.ui, "Components", 0,0, 150,450 );
+			var palette = new Palette( workspace.ui, "Settings", 0,0, 150,450 );
 
-			var componentList = Game.Components.OrderBy( c1 => c1.GetType().Name ).ToArray();
+			var configList = ConfigManager.GetConfigClasses();
 
-			foreach ( var component in componentList ) 
+			foreach ( var config in configList ) 
 			{
-				string name = component.GetType().Name;
+				string name = config.Name;
 
-				Action func = () => workspace.FeedProperties( component );
+				Action func = () => workspace.FeedProperties( config );
 
 				palette.AddButton( name, func );
 			}

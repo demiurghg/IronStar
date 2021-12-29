@@ -14,48 +14,37 @@ using Lidgren.Network;
 using System.IO.Compression;
 using System.IO;
 
-namespace Fusion.Engine.Common {
-
-	public class Network : GameComponent {
+namespace Fusion.Engine.Common 
+{
+	[ConfigClass]
+	public class Network
+	{
+		[Config]
+		static public int Port { get; set; } = 28101;
 
 		[Config]
-		public int Port { get; set; }
+		static public int MaxClients { get; set; }
 
 		[Config]
-		public int MaxClients { get; set; }
+		static public bool ShowPackets { get; set; }
 
 		[Config]
-		public bool ShowPackets { get; set; }
+		static public float SimulatePacketsLoss { get; set; }
 
 		[Config]
-		public float SimulatePacketsLoss { get; set; }
-
-		[Config]
-		public float SimulateMinLatency { get; set; }
+		static public float SimulateMinLatency { get; set; }
 		
 		[Config]
-		public float SimulateRandomLatency { get; set; }
+		static public float SimulateRandomLatency { get; set; }
 
 		[Config]
-		public bool ShowSnapshots { get; set; }
+		static public bool ShowSnapshots { get; set; }
 
 		[Config]
-		public bool ShowUserCommands { get; set; }
+		static public bool ShowUserCommands { get; set; }
 
 		[Config]
-		public bool ShowLatency { get; set; }
-
-
-		public Network(Game game) : base(game)
-		{
-			Port	=	28101;
-		}
-
-
-		public override void Initialize ()
-		{
-			//	do nothing
-		}
+		static public bool ShowLatency { get; set; }
 	}
 
 }

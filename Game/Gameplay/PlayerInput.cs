@@ -20,51 +20,52 @@ using IronStar.SinglePlayer;
 
 namespace IronStar.Gameplay 
 {
+	[ConfigClass]
 	public partial class PlayerInput : GameComponent 
 	{
-		[Config] public float	Sensitivity		{ get; set; }	=	5;
-		[Config] public bool	InvertMouse		{ get; set; }	=	true;
-		[Config] public float	PullFactor		{ get; set; }	=	1;
-		[Config] public bool	ThirdPerson		{ get; set; }	=	false;
+		[Config] public static float	Sensitivity		{ get; set; }	=	5;
+		[Config] public static bool		InvertMouse		{ get; set; }	=	true;
+		[Config] public static float	PullFactor		{ get; set; }	=	1;
+		[Config] public static bool		ThirdPerson		{ get; set; }	=	false;
 																
-		[Config] public float	ZoomFov			{ get; set; }	=	90.0f;
-		[Config] public float	Fov				{ get; set; }	=	30.0f;
-		[Config] public float	BobHeave		{ get; set; }	=	0.05f;
-		[Config] public float	BobPitch		{ get; set; }	=	1.0f;
-		[Config] public float	BobRoll			{ get; set; }	=	2.0f;
-		[Config] public float	BobStrafe		{ get; set; }	=	5.0f;
-		[Config] public float	BobJump			{ get; set; }	=	5.0f;
-		[Config] public float	BobLand			{ get; set; }	=	5.0f;
+		[Config] public static float	ZoomFov			{ get; set; }	=	90.0f;
+		[Config] public static float	Fov				{ get; set; }	=	30.0f;
+		[Config] public static float	BobHeave		{ get; set; }	=	0.05f;
+		[Config] public static float	BobPitch		{ get; set; }	=	1.0f;
+		[Config] public static float	BobRoll			{ get; set; }	=	2.0f;
+		[Config] public static float	BobStrafe		{ get; set; }	=	5.0f;
+		[Config] public static float	BobJump			{ get; set; }	=	5.0f;
+		[Config] public static float	BobLand			{ get; set; }	=	5.0f;
 
-		[Config] public Keys	MoveForward		{ get; set; }	=	Keys.S;
-		[Config] public Keys	MoveBackward	{ get; set; }	=	Keys.Z;	
-		[Config] public Keys	StrafeRight		{ get; set; }	=	Keys.X;	
-		[Config] public Keys	StrafeLeft		{ get; set; }	=	Keys.A;	
-		[Config] public Keys	TurnRight		{ get; set; }	=	Keys.Right;	
-		[Config] public Keys	TurnLeft		{ get; set; }	=	Keys.Left;	
-		[Config] public Keys	LookUp			{ get; set; }	=	Keys.Up;	
-		[Config] public Keys	LookDown		{ get; set; }	=	Keys.Down;	
-		[Config] public Keys	Jump			{ get; set; }	=	Keys.RightButton;	
-		[Config] public Keys	Crouch			{ get; set; }	=	Keys.LeftAlt;	
-		[Config] public Keys	Walk			{ get; set; }	=	Keys.LeftShift;	
+		[Config] public static Keys	MoveForward		{ get; set; }	=	Keys.S;
+		[Config] public static Keys	MoveBackward	{ get; set; }	=	Keys.Z;	
+		[Config] public static Keys	StrafeRight		{ get; set; }	=	Keys.X;	
+		[Config] public static Keys	StrafeLeft		{ get; set; }	=	Keys.A;	
+		[Config] public static Keys	TurnRight		{ get; set; }	=	Keys.Right;	
+		[Config] public static Keys	TurnLeft		{ get; set; }	=	Keys.Left;	
+		[Config] public static Keys	LookUp			{ get; set; }	=	Keys.Up;	
+		[Config] public static Keys	LookDown		{ get; set; }	=	Keys.Down;	
+		[Config] public static Keys	Jump			{ get; set; }	=	Keys.RightButton;	
+		[Config] public static Keys	Crouch			{ get; set; }	=	Keys.LeftAlt;	
+		[Config] public static Keys	Walk			{ get; set; }	=	Keys.LeftShift;	
 																
-		[Config] public Keys	Attack			{ get; set; }	=	Keys.LeftButton;
-		[Config] public Keys	Zoom			{ get; set; }	=	Keys.D;
-		[Config] public Keys	Use				{ get; set; }	=	Keys.LeftControl;
+		[Config] public static Keys	Attack			{ get; set; }	=	Keys.LeftButton;
+		[Config] public static Keys	Zoom			{ get; set; }	=	Keys.D;
+		[Config] public static Keys	Use				{ get; set; }	=	Keys.LeftControl;
 
-		[Config] public Keys	MeleeAttack		{ get; set; }	=	Keys.Space;
-		[Config] public Keys	SwitchWeapon	{ get; set; }	=	Keys.Q;	
-		[Config] public Keys	ReloadWeapon	{ get; set; }	=	Keys.R;
-		[Config] public Keys	ThrowGrenade	{ get; set; }	=	Keys.G;
+		[Config] public static Keys	MeleeAttack		{ get; set; }	=	Keys.Space;
+		[Config] public static Keys	SwitchWeapon	{ get; set; }	=	Keys.Q;	
+		[Config] public static Keys	ReloadWeapon	{ get; set; }	=	Keys.R;
+		[Config] public static Keys	ThrowGrenade	{ get; set; }	=	Keys.G;
 																
-		[Config] public Keys	Weapon1			{ get; set; }	=	Keys.D1;
-		[Config] public Keys	Weapon2			{ get; set; }	=	Keys.D2;	
-		[Config] public Keys	Weapon3			{ get; set; }	=	Keys.D3;
-		[Config] public Keys	Weapon4			{ get; set; }	=	Keys.D4;
-		[Config] public Keys	Weapon5			{ get; set; }	=	Keys.D5;
-		[Config] public Keys	Weapon6			{ get; set; }	=	Keys.D6;	
-		[Config] public Keys	Weapon7			{ get; set; }	=	Keys.D7;
-		[Config] public Keys	Weapon8			{ get; set; }	=	Keys.D8;
+		[Config] public static Keys	Weapon1			{ get; set; }	=	Keys.D1;
+		[Config] public static Keys	Weapon2			{ get; set; }	=	Keys.D2;	
+		[Config] public static Keys	Weapon3			{ get; set; }	=	Keys.D3;
+		[Config] public static Keys	Weapon4			{ get; set; }	=	Keys.D4;
+		[Config] public static Keys	Weapon5			{ get; set; }	=	Keys.D5;
+		[Config] public static Keys	Weapon6			{ get; set; }	=	Keys.D6;	
+		[Config] public static Keys	Weapon7			{ get; set; }	=	Keys.D7;
+		[Config] public static Keys	Weapon8			{ get; set; }	=	Keys.D8;
 
 
 		public PlayerInput( Game game ) : base( game )

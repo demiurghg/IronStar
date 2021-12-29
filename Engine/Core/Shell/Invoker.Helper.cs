@@ -21,11 +21,13 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public Suggestion AutoComplete ( string input )
 		{
-			if (string.IsNullOrWhiteSpace(input)) {
+			if (string.IsNullOrWhiteSpace(input)) 
+			{
 				return new Suggestion("");
 			}
 
-			lock (lockObject) {
+			lock (lockObject) 
+			{
 				var tailSpace	=	input.Last()==' ';
 				var suggestion	=	new Suggestion(input);
 				var args		=	new ArgList(input);
@@ -34,30 +36,34 @@ namespace Fusion.Core.Shell {
 				var varList		=	GetVariableNameList();
 				var comparison	=	StringComparison.OrdinalIgnoreCase;
 				PropertyInfo varPropInfo;
-				IGameComponent varComponent;
 
-				if (tailSpace) {
+				if (tailSpace) 
+				{
 					args.Add("");	//	add virtual element
 				}
 
 				var candidates		=	GetCommandNameList().Concat( GetVariableNameList() ).ToArray();
 
-				if ( cmdList.Any( c => string.Equals(c, cmd, comparison) ) ) {
-
+				if ( cmdList.Any( c => string.Equals(c, cmd, comparison) ) )
+				{
 					return AutoCompleteCommand( input, args.GetArray(), cmd );
-
-				} else if ( TryGetComponentProperty( cmd, out varPropInfo, out varComponent ) ) {
-
-					return AutoCompleteVariable( input, args.GetArray(), varPropInfo, varComponent );	 
-
-				} else {
-				
+				}
+				else if ( TryGetConfigProperty( cmd, out varPropInfo ) ) 
+				{
+					return AutoCompleteVariable( input, args.GetArray(), varPropInfo );	 
+				}
+				else
+				{
 					var longestCommon	=	LongestCommon( cmd, ref candidates );
 
-					if (!string.IsNullOrWhiteSpace(longestCommon)) {
-						if (candidates.Length<=1) {
+					if (!string.IsNullOrWhiteSpace(longestCommon)) 
+					{
+						if (candidates.Length<=1) 
+						{
 							suggestion.CommandLine	=	longestCommon + " ";
-						} else {
+						}
+						else 
+						{
 							suggestion.CommandLine	=	longestCommon;
 						}
 					}
@@ -256,7 +262,7 @@ namespace Fusion.Core.Shell {
 		/// <param name="variable"></param>
 		/// <param name="suggestions"></param>
 		/// <returns></returns>
-		Suggestion AutoCompleteVariable ( string input, string[] args, PropertyInfo variable, IGameComponent component )
+		Suggestion AutoCompleteVariable ( string input, string[] args, PropertyInfo variable )
 		{
 			var suggestion = new Suggestion(input);
 
@@ -271,7 +277,7 @@ namespace Fusion.Core.Shell {
 			} else if (type.IsEnum) {
 				candidates = Enum.GetNames(type);
 			} else {
-				var value = variable.GetValue(component)?.ToString();
+				var value = variable.GetValue(null)?.ToString();
 				candidates = new string[]{ value ?? "" };
 			}
 

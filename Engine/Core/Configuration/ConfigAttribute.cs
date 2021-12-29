@@ -4,7 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core.Configuration {
+namespace Fusion.Core.Configuration 
+{
+	[AttributeUsage(AttributeTargets.Class)]
+	public sealed class ConfigClassAttribute : Attribute
+	{
+		public readonly string NiceName;
+		public readonly string ShortName;
+	}
 
 	/// <summary>
 	/// Marks property as config
@@ -14,7 +21,7 @@ namespace Fusion.Core.Configuration {
 	///		larger than 4 (32-bit) or 8 (64-bit) bytes in config classes 
 	///		have lock on set and get.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property|AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Property)]
 	public sealed class ConfigAttribute : Attribute 
 	{
 		public readonly string Name;

@@ -50,7 +50,6 @@ namespace IronStar
 			this.AddServiceAndComponent(  300, new GameConsole( this ) );
 			this.AddServiceAndComponent(  350, new FrameProcessor(this) );
 			this.AddServiceAndComponent(  370, new PlayerInput(this) );
-			this.AddServiceAndComponent(  400, new Network( this ) );
 			this.AddServiceAndComponent(  500, new GameClient( this ) );
 			this.AddServiceAndComponent(  600, new GameServer( this ) );
 			this.AddServiceAndComponent(  800, new UserInterface( this, new ShooterInterface(this) ) );
@@ -76,7 +75,7 @@ namespace IronStar
 		{
 			var name = e.GameComponent.GetType().Name;
 			Log.Debug("Component added: {0}", name );
-			this.Config.ApplySettings( name, e.GameComponent );
+			//this.Config.ApplySettings( name, e.GameComponent );
 		}
 
 
@@ -84,7 +83,7 @@ namespace IronStar
 		{
 			var name = e.GameComponent.GetType().Name;
 			Log.Debug("Component removed: {0}", name );
-			this.Config.RetrieveSettings( name, e.GameComponent );
+			//this.Config.RetrieveSettings( name, e.GameComponent );
 		}
 
 
@@ -96,9 +95,9 @@ namespace IronStar
 			this.GetService<GameServer>().Wait();
 
 			//	save components' configuration
-			foreach ( var component in Components ) {
+			/*foreach ( var component in Components ) {
 				this.Config.RetrieveSettings( component.GetType().Name, component );
-			}
+			} */
 
 			//	save settings to file and unload content
 			this.Config.SaveSettings(ConfigFile);
@@ -142,7 +141,7 @@ namespace IronStar
 
 			if (e.Key==Keys.F2) {
 				
-				var vsync = this.GetService<RenderSystem>().VSyncInterval;
+				var vsync = RenderSystem.VSyncInterval;
 
 				if (vsync==0) {
 					vsync = 1;
@@ -150,7 +149,7 @@ namespace IronStar
 					vsync = 0;
 				}
 
-				this.GetService<RenderSystem>().VSyncInterval = vsync;
+				RenderSystem.VSyncInterval = vsync;
 			}
 
 

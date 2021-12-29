@@ -21,6 +21,7 @@ using Fusion.Core.Utils;
 
 namespace Fusion.Engine.Graphics 
 {
+	[ConfigClass]
 	[RequireShader("vtcache", true)]
 	[ShaderSharedStructure(typeof(PageGpu))]
 	internal class VTSystem : GameComponent 
@@ -53,54 +54,54 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Performamce")]
 		[Description("Max uploaded to physical texture pages per frame")]
-		public int MaxPPF { get; set; }
+		static public int MaxPPF { get; set; }
 
 		[Config]
 		[AECategory("Debugging")]
-		public bool ShowPageCaching { get; set; }
+		static public bool ShowPageCaching { get; set; }
 
 		[Config]
 		[AECategory("Debugging")]
-		public bool ShowPageLoads { get; set; }
+		static public bool ShowPageLoads { get; set; }
 
 		[Config]
 		[AECategory("Debugging")]
-		public bool SkipPageTableUpdate { get; set; }
+		static public bool SkipPageTableUpdate { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Shows tile border for each uploaded tile")]
-		public bool ShowTileBorder { get; set; }
+		static public bool ShowTileBorder { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Disables virtual texturing feedback")]
-		public bool LockTiles { get; set; }
+		static public bool LockTiles { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Shows tile address for each uploaded tile")]
-		public bool ShowTileAddress { get; set; }
+		static public bool ShowTileAddress { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Fills each tile with checkers, for filtering debugging")]
-		public bool ShowTileCheckers { get; set; }
+		static public bool ShowTileCheckers { get; set; }
 
 		[Config]
 		[AECategory("Debugging")]
 		[Description("Fills each tile with checkers, for filtering debugging")]
-		public bool UpdateStressTest { get; set; }
+		static public bool UpdateStressTest { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Fills each tile mip level with solid colors to debug mip transitions")]
-		public bool ShowMipLevels { get; set; }
+		static public bool ShowMipLevels { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Fills each tile with random color.")]
-		public bool RandomColor { get; set; }
+		static public bool RandomColor { get; set; }
 
 		[Config]
 		[AECategory("Performamce")]
@@ -109,34 +110,34 @@ namespace Fusion.Engine.Graphics
 
 		[Config]
 		[AECategory("Debugging")]
-		public bool ShowThrashing { get; set; } = false;
+		static public bool ShowThrashing { get; set; } = false;
 
 		[Config]
 		[AECategory("Tiles")]
-		public bool ShowDiffuse { get; set; } = false;
+		static public bool ShowDiffuse { get; set; } = false;
 
 		[Config]
 		[AECategory("Tiles")]
-		public bool ShowSpecular { get; set; } = false;
+		static public bool ShowSpecular { get; set; } = false;
 
 		[Config]
 		[AECategory("Tiles")]
 		[Description("Show thrashing.")]
-		public bool ShowMirror { get; set; } = false;
+		static public bool ShowMirror { get; set; } = false;
 
 		[Config]
 		[AECategory("Performamce")]
 		[Description("Enables and disables anisotropic filtering.")]
-		public bool UseAnisotropic { get; set; }
+		static public bool UseAnisotropic { get; set; }	= true;
 
 		[Config]
 		[AECategory("Debugging")]
-		public float DebugGradientScale { get; set; } = 1;
+		static public float DebugGradientScale { get; set; } = 1;
 
 		[Config]
 		[AECategory("Performamce")]
 		[Description("Size of physical texture")]
-		public int PhysicalSize 
+		static public int PhysicalSize 
 		{
 			get { return physicalSize; }
 			set 
@@ -148,8 +149,8 @@ namespace Fusion.Engine.Graphics
 				}
 			}
 		}
-		int physicalSize = 1024;
-		bool physicalSizeDirty = true;
+		static int physicalSize = 1024;
+		static bool physicalSizeDirty = true;
 
 		const int FeedBackBufferPoolSize = 8;
 		const int GpuPageDataPoolSize = 4;

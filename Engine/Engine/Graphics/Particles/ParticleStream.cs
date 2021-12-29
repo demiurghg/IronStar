@@ -10,7 +10,7 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics.Ubershaders;
-
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -19,6 +19,7 @@ namespace Fusion.Engine.Graphics {
 	/// 1. http://www.gdcvault.com/play/1014347/HALO-REACH-Effects
 	/// 2. Gareth Thomas Compute-based GPU Particle
 	/// </summary>
+	[ConfigClass]
 	[RequireShader("particles", true)]
 	public class ParticleStream : RenderComponent 
 	{
@@ -104,7 +105,7 @@ namespace Fusion.Engine.Graphics {
 		RenderTarget2D		lightmap;
 
 		[Config]
-		public float SimulationStepTime {
+		public static float SimulationStepTime {
 			get { 
 				return simulationStepTime; 
 			}
@@ -115,7 +116,7 @@ namespace Fusion.Engine.Graphics {
 				simulationStepTime = value; 
 			}
 		}
-		float simulationStepTime = 1 / 1000.0f;
+		static float simulationStepTime = 1 / 1000.0f;
 
 
 		/// <summary>
@@ -346,7 +347,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="particle"></param>
 		public void InjectParticle ( ref Particle particle )
 		{
-			if (renderWorld.IsPaused || rs.SkipParticles) {
+			if (renderWorld.IsPaused || RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -411,7 +412,7 @@ namespace Fusion.Engine.Graphics {
 			}
 			
 			//	freeze particles :
-			if (rs.FreezeParticles) 
+			if (RenderSystem.FreezeParticles) 
 			{
 				deltaTime = 0;
 			}
@@ -431,8 +432,8 @@ namespace Fusion.Engine.Graphics {
 			param.MaxParticles		=	MAX_PARTICLES;
 			param.IntegrationSteps	=	stepCount;
 
-			param.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
-			param.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
+			param.IndirectLightFactor	=	Radiosity.MasterIntensity;
+			param.DirectLightFactor		=	RenderSystem.SkipDirectLighting ? 0 : 1;
 
 			if (flags.HasFlag(Flags.INJECTION)) 
 			{
@@ -527,7 +528,7 @@ namespace Fusion.Engine.Graphics {
 				//
 				using (new PixEvent("Simulation")) 
 				{
-					if (!renderWorld.IsPaused && !rs.SkipParticlesSimulation) 
+					if (!renderWorld.IsPaused && !RenderSystem.SkipParticlesSimulation) 
 					{
 						device.SetComputeUnorderedAccess( 0, simulationBuffer.UnorderedAccess,		0 );
 						device.SetComputeUnorderedAccess( 1, deadParticlesIndices.UnorderedAccess, -1 );
@@ -555,7 +556,7 @@ namespace Fusion.Engine.Graphics {
 				//
 				using (new PixEvent("Alloc LightMap")) 
 				{
-					if (useLightmap && !renderWorld.IsPaused && !rs.SkipParticlesSimulation) 
+					if (useLightmap && !renderWorld.IsPaused && !RenderSystem.SkipParticlesSimulation) 
 					{
 						device.SetComputeUnorderedAccess( 0, simulationBuffer.UnorderedAccess,		0 );
 						device.SetComputeUnorderedAccess( 1, deadParticlesIndices.UnorderedAccess, -1 );
@@ -569,7 +570,7 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
-				if (rs.ShowParticles) 
+				if (RenderSystem.ShowParticles) 
 				{
 					rs.Stats.DeadParticles	=	deadParticlesIndices.GetStructureCount();
 				}
@@ -684,7 +685,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderSoft ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			if (rs.SkipParticles) {
+			if (RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -709,7 +710,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderDuDv ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			if (rs.SkipParticles) {
+			if (RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -732,7 +733,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderVelocity ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			if (rs.SkipParticles) {
+			if (RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -755,7 +756,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderHard ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			if (rs.SkipParticles) {
+			if (RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -779,7 +780,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderLightMap ( GameTime gameTime, Camera camera )
 		{
-			if (rs.SkipParticles) {
+			if (RenderSystem.SkipParticles) {
 				return;
 			}
 
@@ -814,7 +815,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderShadow ( GameTime gameTime, Viewport viewport, Camera camera, RenderTargetSurface particleShadow, DepthStencilSurface depthBuffer, bool soft )
 		{
-			if (rs.SkipParticleShadows) {
+			if (RenderSystem.SkipParticleShadows) {
 				return;
 			}
 

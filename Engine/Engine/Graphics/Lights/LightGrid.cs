@@ -253,7 +253,7 @@ namespace Fusion.Engine.Graphics
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
 
-					sl.IsVisible	=	!rs.SkipSpotLights;
+					sl.IsVisible	=	!RenderSystem.SkipSpotLights;
 
 					sl.ShadowLod	=	GetSpotLightLOD( sl, frustum, viewPosition );
 
@@ -320,7 +320,7 @@ namespace Fusion.Engine.Graphics
 		void UpdateDecalExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet, Vector3 viewPos )
 		{
 			var vp		=	new Rectangle(0,0,1,1);
-			var skip	= 	rs.SkipDecals;
+			var skip	= 	RenderSystem.SkipDecals;
 
 			foreach ( var dcl in lightSet.Decals ) 
 			{
@@ -360,7 +360,7 @@ namespace Fusion.Engine.Graphics
 
 		void TestExtent ( Vector3 min, Vector3 max, Color color )
 		{
-			if (rs.ShowExtents) {
+			if (RenderSystem.ShowExtents) {
 				var vp	=	rs.DisplayBounds;
 				var x	=	min.X * vp.Width;
 				var y	=	min.Y * vp.Height;

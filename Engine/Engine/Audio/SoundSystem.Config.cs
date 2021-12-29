@@ -9,11 +9,11 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Common;
 
-
-namespace Fusion.Engine.Audio {
-
-	public sealed partial class SoundSystem : GameComponent {
-
+namespace Fusion.Engine.Audio 
+{
+	[ConfigClass]
+	public sealed partial class SoundSystem : GameComponent 
+	{
 		/// <summary>
 		/// Mastering voice value.
 		/// </summary>

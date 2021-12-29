@@ -14,36 +14,38 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Widgets.Advanced;
 using Fusion.Core.Shell;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
 	[RequireShader("fog", true)]
+	[ConfigClass]
 	[ShaderSharedStructure(typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
 	internal partial class Fog : RenderComponent 
 	{
 		[Config]	
 		[AECategory("Fog")]
 		[AESlider(0, 0.1f, 0.01f, 0.001f)]
-		public float FogDensity { get; set; } = 0;
+		static public float FogDensity { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Fog")]
 		[AESlider(0, 1000, 50, 1)]
-		public float FogHeight { get; set; } = 50;
+		static public float FogHeight { get; set; } = 50;
 
 		[Config]	
 		[AECategory("Fog")]
 		[AESlider(0, 0.98f, 0.1f, 0.01f)]
-		public float HistoryFactor 
+		static public float HistoryFactor 
 		{ 
 			get { return historyFactor; }
 			set { historyFactor = MathUtil.Clamp( value, 0, 0.99f ); }
 		}
-		float historyFactor = 0.8f;
+		static float historyFactor = 0.8f;
 
 		[Config]
 		[AECategory("Quality")]
-		public QualityLevel FogQuality 
+		static public QualityLevel FogQuality 
 		{ 
 			get { return fogQuality; }
 			set
@@ -55,8 +57,8 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 		}
-		QualityLevel fogQuality	=	QualityLevel.Ultra;
-		bool fogQualityDirty	=	true;
+		static QualityLevel fogQuality	=	QualityLevel.Ultra;
+		static bool fogQualityDirty	=	true;
 
 		//[Config]
 		//[AECategory("Fog Grid")]
@@ -71,42 +73,42 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]
 		[AECategory("Fog Grid")]
-		public bool ShowSlices { get; set; }
+		static public bool ShowSlices { get; set; }
 
 		[Config]
 		[AECategory("Fog Grid")]
 		[AESlider(100, 5000, 100f, 1f)]
-		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 100, 5000 ); } }
-		float fogGridHalfDepth = 300.0f;
+		static public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 100, 5000 ); } }
+		static float fogGridHalfDepth = 300.0f;
 
 		[Config]
 		[AECategory("Fog Grid")]
 		[AESlider(100, 5000, 100f, 1f)]
-		public float FogFadeoutDistance { get { return fogFadeoutDistance; } set { fogFadeoutDistance = MathUtil.Clamp( value, 100, 5000 ); } }
-		float fogFadeoutDistance = 600.0f;
+		static public float FogFadeoutDistance { get { return fogFadeoutDistance; } set { fogFadeoutDistance = MathUtil.Clamp( value, 100, 5000 ); } }
+		static float fogFadeoutDistance = 600.0f;
 
 		[Config]
 		[AECategory("Ground Fog")]
-		public bool GroundFogEnabled { get; set; } = true;
+		static public bool GroundFogEnabled { get; set; } = true;
 
 		[Config]
 		[AECategory("Ground Fog")]
 		[AESlider(10, 5000, 100f, 10f)]
-		public float GroundFogHeight { get; set; } = 100;
+		static public float GroundFogHeight { get; set; } = 100;
 
 		[Config]
 		[AECategory("Ground Fog")]
 		[AESlider(1, 5000, 100, 1f)]
-		public float GroundFogDistance { get; set; } = 500;
+		static public float GroundFogDistance { get; set; } = 500;
 
 		[Config]
 		[AECategory("Ground Fog")]
 		[AESlider(-200, 200, 10, 1f)]
-		public float GroundFogLevel { get; set; } = 0;
+		static public float GroundFogLevel { get; set; } = 0;
 
 		[Config]
 		[AECategory("Ground Fog")]
-		public Color GroundFogColor { get; set; } = Color.Gray;
+		static public Color GroundFogColor { get; set; } = Color.Gray;
 
 
 		float FogGridExpK { get { return (float)Math.Log(0.5f) / fogGridHalfDepth; } }
@@ -333,12 +335,12 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			fogData.WorldToVolume			=	rw.LightMap.WorldToVolume;
-			fogData.IndirectLightFactor		=	rs.Radiosity.MasterIntensity;
-			fogData.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
+			fogData.IndirectLightFactor		=	Radiosity.MasterIntensity;
+			fogData.DirectLightFactor		=	RenderSystem.SkipDirectLighting ? 0 : 1;
 
 			fogData.FogSizeInv				=	new Vector4( 1.0f / fogGridSize.Width, 1.0f / fogGridSize.Height, 1.0f / fogGridSize.Depth, 0 );
 			fogData.FogGridExpK				=	FogGridExpK;
-			fogData.FogColor				=	rs.Sky.MieColor;
+			fogData.FogColor				=	Sky2.MieColor;
 
 			fogData.GroundFogColor			=	GroundFogColor;
 			fogData.GroundFogHeight			=	GroundFogHeight;
@@ -349,9 +351,9 @@ namespace Fusion.Engine.Graphics {
 			fogData.FogSizeY				=	(uint)fogGridSize.Height;
 			fogData.FogSizeZ				=	(uint)fogGridSize.Depth;
 
-			fogData.FogDensity				=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
-			fogData.FogHeight				=	rs.Sky.MieHeight;
-			fogData.FogScale				=	MathUtil.Exp2( rs.Sky.APScale );
+			fogData.FogDensity				=	MathUtil.Exp2( Sky2.MieScale ) * Sky2.BetaMie.Red;
+			fogData.FogHeight				=	Sky2.MieHeight;
+			fogData.FogScale				=	MathUtil.Exp2( Sky2.APScale );
 
 			fogData.SampleOffset			=	random.NextVector4( Vector4.Zero, Vector4.One );
 			fogData.HistoryFactor			=	HistoryFactor;

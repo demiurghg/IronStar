@@ -61,21 +61,21 @@ namespace Fusion.Development {
 			//	stereo mode :
 			stereoMode.Items.Clear();
 			stereoMode.Items.AddRange( Enum.GetValues(typeof(StereoMode)).Cast<object>().ToArray() );
-			stereoMode.SelectedItem = game.RenderSystem.StereoMode;
+			stereoMode.SelectedItem = RenderSystem.StereoMode;
 
 			//	display mode :
-			displayWidth.Value	=	game.RenderSystem.Width;
-			displayHeight.Value	=	game.RenderSystem.Height;
+			displayWidth.Value	=	RenderSystem.Width;
+			displayHeight.Value	=	RenderSystem.Height;
 
 			//	fullscreen
-			fullscreen.Checked	=	game.RenderSystem.Fullscreen;
+			fullscreen.Checked	=	RenderSystem.Fullscreen;
 
 			//	track objects
 			trackObjects.Checked	=	game.TrackObjects;
 
 			//	use debug device :
-			useRenderDoc.Checked	=	game.RenderSystem.UseRenderDoc;
-			debugDevice.Checked		=	game.RenderSystem.UseDebugDevice;
+			useRenderDoc.Checked	=	RenderSystem.UseRenderDoc;
+			debugDevice.Checked		=	RenderSystem.UseDebugDevice;
 		}
 
 
@@ -83,21 +83,21 @@ namespace Fusion.Development {
 		private void button1_Click ( object sender, EventArgs e )
 		{
 			// stereo mode :
-			game.RenderSystem.StereoMode	=	(StereoMode)stereoMode.SelectedItem;
+			RenderSystem.StereoMode	=	(StereoMode)stereoMode.SelectedItem;
 
 			//	displya mode :
-			game.RenderSystem.Width		=	(int)displayWidth.Value;
-			game.RenderSystem.Height	=	(int)displayHeight.Value;
+			RenderSystem.Width		=	(int)displayWidth.Value;
+			RenderSystem.Height	=	(int)displayHeight.Value;
 
 			//	fullscreen
-			game.RenderSystem.Fullscreen	=	fullscreen.Checked;
+			RenderSystem.Fullscreen	=	fullscreen.Checked;
 
 			//	track objects
 			game.TrackObjects	=	trackObjects.Checked;
 
 			//	use debug device :
-			game.RenderSystem.UseRenderDoc		=	useRenderDoc.Checked;
-			game.RenderSystem.UseDebugDevice	=	debugDevice.Checked;
+			RenderSystem.UseRenderDoc		=	useRenderDoc.Checked;
+			RenderSystem.UseDebugDevice	=	debugDevice.Checked;
 
 			if (!string.IsNullOrWhiteSpace(startupCommand.Text)) {
 				game.Invoker.ExecuteString( startupCommand.Text );

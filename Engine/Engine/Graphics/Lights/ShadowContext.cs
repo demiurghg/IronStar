@@ -39,8 +39,8 @@ namespace Fusion.Engine.Graphics
 			this.depthBuffer	=	depthBuffer;
 			this.colorBuffer	=	colorBuffer;
 
-			float depthBias		=	csm ? rs.ShadowSystem.CascadeDepthBias : rs.ShadowSystem.SpotDepthBias;
-			float slopeBias		=	csm ? rs.ShadowSystem.CascadeSlopeBias : rs.ShadowSystem.SpotSlopeBias;
+			float depthBias		=	csm ? ShadowSystem.CascadeDepthBias : ShadowSystem.SpotDepthBias;
+			float slopeBias		=	csm ? ShadowSystem.CascadeSlopeBias : ShadowSystem.SpotSlopeBias;
 
 			this.depthBias		=	depthBias * depthBiasScale;
 			this.slopeBias		=	slopeBias;

@@ -20,6 +20,7 @@ using Fusion.Engine.Graphics.GUI;
 
 namespace Fusion.Engine.Graphics {
 
+	[ConfigClass]
 	public partial class RenderSystem : GameComponent, IRenderSystem 
 	{
 		internal readonly GraphicsDevice Device;
@@ -106,15 +107,6 @@ namespace Fusion.Engine.Graphics {
 		public RenderSystem ( Game Game, bool useRenderWorld ) : base(Game)
 		{
 			this.useRenderWorld	=	useRenderWorld;
-
-			Width			=	1024;
-			Height			=	768;
-			Fullscreen		=	false;
-			StereoMode		=	StereoMode.Disabled;
-			InterlacingMode	=	InterlacingMode.HorizontalLR;
-			UseDebugDevice	=	false;
-			VSyncInterval	=	1;
-			UseFXAA			=	true;
 
 			this.Device	=	Game.GraphicsDevice;
 

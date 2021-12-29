@@ -9,6 +9,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.AI
 {
+	[ConfigClass]
 	public class AICore : GameComponent
 	{
 		[Config]

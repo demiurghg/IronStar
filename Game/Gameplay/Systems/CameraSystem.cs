@@ -19,16 +19,12 @@ using System.IO;
 
 namespace IronStar.Gameplay
 {
+	[ConfigClass]
 	public class CameraSystem : ISystem, IGameComponent
 	{
-		[Config]
-		public bool ThirdPersonEnable { get; set; }
-
-		[Config]
-		public float ThirdPersonRange { get; set; } = 8.0f;
-
-		[Config]
-		public float ThirdPersonAngle { get; set; } = 0.0f;
+		[Config] public static bool ThirdPersonEnable { get; set; }
+		[Config] public static float ThirdPersonRange { get; set; } = 8.0f;
+		[Config] public static float ThirdPersonAngle { get; set; } = 0.0f;
 
 		const string SOUND_LANDING	=	"player/landing"	;
 		const string SOUND_STEP		=	"player/step"		;

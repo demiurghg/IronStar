@@ -17,29 +17,30 @@ using Fusion.Widgets.Advanced;
 namespace Fusion.Engine.Graphics 
 {
 	[RequireShader("dof", true)]
+	[ConfigClass]
 	public class DofFilter : RenderComponent 
 	{
 		[ShaderDefine]
 		const uint BokehShapeSize = 19;
 
 		[Config]
-		public bool Enabled { get; set; } = false;
+		static public bool Enabled { get; set; } = false;
 
 		[Config]
 		[AESlider(35, 70, 5f, 1f)]
-		public float FilmFormat { get; set; } = 35;
+		static public float FilmFormat { get; set; } = 35;
 
 		[Config]
 		[AESlider(1.4f, 22, 0.1f, 0.01f)]
-		public float FNumber { get; set; } = 1;
+		static public float FNumber { get; set; } = 1;
 
 		[Config]
 		[AESlider(0.5f, 100, 0.5f, 0.01f)]
-		public float FocalDistance { get; set; } = 10;
+		static public float FocalDistance { get; set; } = 10;
 
 		[Config]
 		[AESlider(0, 360, 10f, 1f)]
-		public float DiaphragmAngle { get; set; } = 15;
+		static public float DiaphragmAngle { get; set; } = 15;
 
 
 		[ShaderDefine]

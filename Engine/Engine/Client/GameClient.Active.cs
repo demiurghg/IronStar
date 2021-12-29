@@ -131,7 +131,7 @@ namespace Fusion.Engine.Client {
 
 
 				//	show user commands :
-				bool showSnapshot = gameClient.Game.Network.ShowUserCommands;
+				bool showSnapshot = Network.ShowUserCommands;
 				if (showSnapshot) {
 					Log.Message("User cmd: #{0} : {1}", lastSnapshotFrame, userCmd.Length );
 				}

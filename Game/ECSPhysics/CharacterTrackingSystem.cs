@@ -53,7 +53,7 @@ namespace IronStar.ECSPhysics
 
 			if (record)
 			{
-				rs.SkipDebugRendering = false;
+				RenderSystem.SkipDebugRendering = false;
 
 				foreach ( var player in gs.QueryEntities(playerAspect) )
 				{

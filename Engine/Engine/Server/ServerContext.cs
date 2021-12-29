@@ -132,7 +132,7 @@ namespace Fusion.Engine.Server {
 					case NetIncomingMessageType.ErrorMessage:		Log.Error	("SV Net: " + msg.ReadString()); break;
 
 					case NetIncomingMessageType.ConnectionLatencyUpdated:
-						if (game.Network.ShowLatency) {
+						if (Network.ShowLatency) {
 							float latency = msg.ReadFloat();
 							Log.Trace("...SV ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (latency*1000) );
 						}
@@ -215,7 +215,7 @@ namespace Fusion.Engine.Server {
 		void DispatchSnapshots ( NetServer server, long serverTicks )
 		{
 			//	snapshot request is stored in connection's tag.s
-			var debug	=	game.Network.ShowSnapshots;
+			var debug	=	Network.ShowSnapshots;
 			var conns	=	server.Connections.ToArray();
 
 			var sw		=	new Stopwatch();

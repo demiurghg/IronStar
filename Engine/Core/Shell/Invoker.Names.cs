@@ -9,58 +9,42 @@ using System.Reflection;
 using Fusion.Core.Extensions;
 using System.Runtime.CompilerServices;
 
-namespace Fusion.Core.Shell {
-	public partial class Invoker {
-
+namespace Fusion.Core.Shell 
+{
+	public partial class Invoker 
+	{
 		string[] commandNames = null;
 		string[] variableNames = null;
 
-		void FlushNameCache ()
-		{
-			lock (lockObject) {
-				commandNames = null;
-				variableNames = null;
-			}
-		}
-
-
 		string[] GetCommandNameList ()
 		{
-			lock (lockObject) {
-				if (commandNames==null) {
-					commandNames =	commandsRegistry
-						.OrderBy( p1 => p1.Key )
-						.Select( p2 => p2.Key )
-						.ToArray();
-				}
-				return commandNames;
+			lock (lockObject)
+			{
+				return commandsRegistry
+					.OrderBy( p1 => p1.Key )
+					.Select( p2 => p2.Key )
+					.ToArray();
 			}
 		}
 
 
 		string[] GetVariableNameList ()
 		{
-			lock (lockObject) {
-				if (variableNames==null) {
+			lock (lockObject) 
+			{
+				var list = new List<string>();
 
-					var list = new List<string>();
+				foreach (var config in configClasses.OrderBy(c=>c.Name))
+				{
+					var props = config.GetProperties(BindingFlags.Static|BindingFlags.Public);
 
-					foreach ( var component in Game.Components ) {
-
-						var componentName = component.GetType().Name;
-
-						var varList = component
-									.GetType()
-									.GetProperties()
-									.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
-									.Select( p2 => componentName + "." + p2.Name )
-									.ToArray();
-				
-						list.AddRange( varList );
+					foreach (var prop in props.OrderBy(c=>c.Name))
+					{
+						list.Add( config.Name + "." + prop.Name );
 					}
-					variableNames = list.ToArray();
 				}
-				return variableNames;
+
+				return list.ToArray();
 			}
 		}
 	}

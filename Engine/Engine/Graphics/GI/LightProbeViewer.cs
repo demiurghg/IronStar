@@ -26,20 +26,20 @@ namespace Fusion.Engine.Graphics.GI {
 	{
 		[Config]
 		[AESlider(0.5f, 10.0f, 0.5f)]
-		public float LightProbeSize { get; set; } = 5.0f;
+		static public float LightProbeSize { get; set; } = 5.0f;
 		
 		[Config]
 		[AESlider(0, RenderSystem.LightProbeMaxSpecularMip, 0.1f)]
-		public float LightProbeMipLevel { get; set; } = 0.0f;
+		static public float LightProbeMipLevel { get; set; } = 0.0f;
 		
 		[Config]
-		public bool ShowLightProbes { get; set; } = false;
+		static public bool ShowLightProbes { get; set; } = false;
 		
 		[Config]
-		public bool ShowLightVolume { get; set; } = false;
+		static public bool ShowLightVolume { get; set; } = false;
 		
 		[Config]
-		public bool DrawLightProbeCubes { get; set; } = false;
+		static public bool DrawLightProbeCubes { get; set; } = false;
 
 		[ShaderDefine]
 		const int MaxLightProbes = RenderSystem.MaxEnvLights;

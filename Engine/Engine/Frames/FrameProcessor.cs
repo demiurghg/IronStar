@@ -18,13 +18,14 @@ using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Frames 
 {
+	[ConfigClass]
 	public partial class FrameProcessor	: GameComponent
 	{
 		public int	LayerOrder	{ get; set; } = 0;
 
-		[Config]	public bool		ShowFrames			{ get; set; }
-		[Config]	public bool		SkipUserInterface	{ get; set; }
-		[Config]	public bool		ShowProfilingInfo	{ get; set; }
+		[Config] public static bool	ShowFrames			{ get; set; }
+		[Config] public static bool	SkipUserInterface	{ get; set; }
+		[Config] public static bool	ShowProfilingInfo	{ get; set; }
 
 		/// <summary>
 		/// Gets FrameProcessor's sprite layer, that could be attached to RenderWorld and RenderView.

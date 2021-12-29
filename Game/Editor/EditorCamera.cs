@@ -74,7 +74,7 @@ namespace IronStar.Editor {
 		/// <returns></returns>
 		Matrix GetViewMatrix ()
 		{
-			if (editor.LockAzimuth) {
+			if (MapEditor.LockAzimuth) {
 				Yaw = 0;
 				addYaw = 0;
 			}
@@ -132,7 +132,7 @@ namespace IronStar.Editor {
 		/// <param name="gameTime"></param>
 		public void Update ( GameTime gameTime )
 		{
-			Fov			=	editor.CameraFov;
+			Fov			=	MapEditor.CameraFov;
 
 			var view	=	GetViewMatrix();
 
@@ -212,7 +212,7 @@ namespace IronStar.Editor {
 
 		public void StopManipulation ( int x, int y )
 		{
-			if (editor.LockAzimuth) {
+			if (MapEditor.LockAzimuth) {
 				Yaw = 0;
 				addYaw = 0;
 			}

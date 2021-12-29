@@ -125,7 +125,7 @@ namespace Fusion.Engine.Server {
 			try {
 				Log.Message("Server starting: {0}", serverInstance.ToString());
 
-				using ( var context = new ServerContext( Game, Game.Network.Port, serverInstance ) ) {
+				using ( var context = new ServerContext( Game, Network.Port, serverInstance ) ) {
 
 					//	Timer and fixed timestep stuff :
 					//	http://gafferongames.com/game-physics/fix-your-timestep/

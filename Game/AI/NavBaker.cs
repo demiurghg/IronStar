@@ -216,7 +216,7 @@ namespace IronStar.AI
 
 		public void DrawNavMesh( IGameState gs, PolyMesh mesh, DebugRender dr )
 		{
-			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			if (RenderSystem.SkipDebugRendering) 
 			{
 				return;
 			}

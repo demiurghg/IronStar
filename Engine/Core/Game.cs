@@ -33,8 +33,8 @@ using System.ComponentModel;
 using Fusion.Build;
 using Fusion.Engine.Common;
 
-namespace Fusion.Core {
-
+namespace Fusion.Core 
+{
 	/// <summary>
 	/// Provides basic graphics device initialization, game logic, and rendering code. 
 	/// </summary>
@@ -599,7 +599,7 @@ namespace Fusion.Core {
 			GraphicsDevice.ResetStates();
 			GraphicsDevice.RestoreBackbuffer();
 
-			GraphicsDevice.Present(rs.VSyncInterval);
+			GraphicsDevice.Present(RenderSystem.VSyncInterval);
 		}
 		
 

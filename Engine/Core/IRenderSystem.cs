@@ -7,8 +7,8 @@ using Fusion.Drivers.Graphics;
 
 namespace Fusion.Core {
 
-	public interface IRenderSystem {
-
+	public interface IRenderSystem 
+	{
 		/// <summary>
 		/// Called when the game determines it is time to draw a frame.
 		/// In stereo mode this method will be called twice to render left and right parts of stereo image.
@@ -22,10 +22,5 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="parameters"></param>
 		void ApplyParameters ( ref GraphicsParameters parameters );
-
-		/// <summary>
-		/// Gets VSync interval
-		/// </summary>
-		int VSyncInterval { get; }
 	}
 }

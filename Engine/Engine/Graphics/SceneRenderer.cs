@@ -14,6 +14,7 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Engine.Graphics.Scenes;
 using System.Runtime.CompilerServices;
 using System.IO;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -231,16 +232,16 @@ namespace Fusion.Engine.Graphics
 			var height	=	context.Viewport.Height;
 
 			cbDataStage.WorldToLightVolume		=	rw.LightMap.WorldToVolume;
-			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.VTPageScaleRCP			=	rs.VTSystem.PageScaleRCP;
-			cbDataStage.VTInvertedPhysicalSize	=	1.0f / rs.VTSystem.PhysicalSize;
+			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)vt.PhysicalPages0.Width;
+			cbDataStage.VTPageScaleRCP			=	vt.PageScaleRCP;
+			cbDataStage.VTInvertedPhysicalSize	=	1.0f / VTSystem.PhysicalSize;
 			cbDataStage.SsaoWeight				=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
 			cbDataStage.ViewportSize			=	new Vector4( width, height, 1.0f / width, 1.0f / height );
 			cbDataStage.DepthBias				=	context.DepthBias;
 			cbDataStage.SlopeBias				=	context.SlopeBias;
-			cbDataStage.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
-			cbDataStage.IndirectLightFactor		=	rs.Radiosity.MasterIntensity;
-			cbDataStage.ShowLightComplexity		=	rs.ShowLightComplexity ? 1 : 0;
+			cbDataStage.DirectLightFactor		=	RenderSystem.SkipDirectLighting ? 0 : 1;
+			cbDataStage.IndirectLightFactor		=	Radiosity.MasterIntensity;
+			cbDataStage.ShowLightComplexity		=	RenderSystem.ShowLightComplexity ? 1 : 0;
 
 			constBufferStage.SetData( ref cbDataStage );
 
@@ -291,19 +292,19 @@ namespace Fusion.Engine.Graphics
 
 			//-----------------------------
 
-			device.GfxSamplers[ regSamplerLinear		]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropic : SamplerState.VTTrilinear;
+			device.GfxSamplers[ regSamplerLinear		]	=	VTSystem.UseAnisotropic ? SamplerState.VTAnisotropic : SamplerState.VTTrilinear;
 			device.GfxSamplers[ regSamplerPoint			]	=	SamplerState.PointClamp;
-			device.GfxSamplers[ regSamplerLightmap		]	=	rs.UsePointLightmapSampling ? SamplerState.LightmapSamplerPoint : SamplerState.LightmapSamplerLinear;
+			device.GfxSamplers[ regSamplerLightmap		]	=	RenderSystem.UsePointLightmapSampling ? SamplerState.LightmapSamplerPoint : SamplerState.LightmapSamplerLinear;
 			device.GfxSamplers[ regDecalSampler			]	=	SamplerState.LinearClamp4Mips;
 			device.GfxSamplers[ regParticleSampler		]	=	SamplerState.LinearClamp;
-			device.GfxSamplers[ regMipSampler			]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
-			device.GfxSamplers[ regFogSampler			]	=	rs.UsePointLightmapSampling ? SamplerState.PointClamp : SamplerState.LinearClamp;
-			device.GfxSamplers[ regShadowSampler		]	=	ss.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
+			device.GfxSamplers[ regMipSampler			]	=	VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
+			device.GfxSamplers[ regFogSampler			]	=	RenderSystem.UsePointLightmapSampling ? SamplerState.PointClamp : SamplerState.LinearClamp;
+			device.GfxSamplers[ regShadowSampler		]	=	ShadowSystem.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
 			device.GfxSamplers[ regSamplerLightProbe	]	=	SamplerState.LinearClamp;
 
 			//-----------------------------
 
-			if (surfaceShader==null || rs.SkipSceneRendering) {
+			if (surfaceShader==null || RenderSystem.SkipSceneRendering) {
 				return false;
 			} else {
 				return true;
@@ -316,7 +317,7 @@ namespace Fusion.Engine.Graphics
 		{
 			if (!instance.Visible) return false;
 
-			bool aniso	=	vt.UseAnisotropic ;
+			bool aniso	=	VTSystem.UseAnisotropic ;
 
 			var  flag	=	stageFlag | (instance.IsSkinned ? SurfaceFlags.SKINNED : SurfaceFlags.RIGID);
 
@@ -496,7 +497,7 @@ namespace Fusion.Engine.Graphics
 
 		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
 		{		
-			if (rs.SkipZPass) 
+			if (RenderSystem.SkipZPass) 
 			{
 				return;
 			}
@@ -512,7 +513,7 @@ namespace Fusion.Engine.Graphics
 
 		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask, bool csm )
 		{
-			if (rs.SkipShadows)
+			if (RenderSystem.SkipShadows)
 			{
 				return;
 			}

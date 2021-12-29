@@ -103,7 +103,17 @@ namespace Fusion.Widgets.Advanced
 				{
 					targetObject = value;
 					Clear();
-					FeedObject(targetObject, 0, null, null);
+					if (targetObject!=null)
+					{
+						if (targetObject is Type)
+						{
+							FeedObject((Type)targetObject, null, 0, null, null);
+						}
+						else
+						{
+							FeedObject(targetObject.GetType(), targetObject, 0, null, null);
+						}
+					}
 				}
 			}
 		}
@@ -146,16 +156,12 @@ namespace Fusion.Widgets.Advanced
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedObject ( object obj, int nestingLevel, PropertyInfo parentProperty, string subcat )
+		void FeedObject ( Type type, object obj, int nestingLevel, PropertyInfo parentProperty, string subcat )
 		{
-			if (obj==null) 
-			{
-				return;
-			}
+			var propBinding = obj==null ? (BindingFlags.Public | BindingFlags.Static) : (BindingFlags.Default);
+			var funcBinding = obj==null ? (BindingFlags.Public | BindingFlags.Static) : (BindingFlags.Public | BindingFlags.Instance);
 
-			//--------------------------------------------------------------------------
-
-			foreach ( var pi in obj.GetType().GetProperties() ) 
+			foreach ( var pi in type.GetProperties(propBinding) ) 
 			{
 				if (!pi.CanWrite || !pi.CanRead) 
 				{
@@ -166,11 +172,6 @@ namespace Fusion.Widgets.Advanced
 				{
 					continue;
 				}
-
-				/*Action<object> setFunc  =	delegate (object value) {
-					pi.SetValue(obj,value);
-					OnPropertyChange(obj,pi,value);
-				};*/
 
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
 				var category	=	GetCategory(pi, subcat);
@@ -199,10 +200,10 @@ namespace Fusion.Widgets.Advanced
 					//	special case for enums :
 					if ( pi.PropertyType.IsEnum )
 					{
-						var type	=	pi.PropertyType;
-						var values	=	Enum.GetNames( type );
+						var enymType	=	pi.PropertyType;
+						var enumValues	=	Enum.GetNames( enymType );
 
-						AddToCollapseRegion( category, new AEDropDown( this, name, values, binding ) );
+						AddToCollapseRegion( category, new AEDropDown( this, name, enumValues, binding ) );
 					}
 
 					//	default editors :
@@ -216,29 +217,26 @@ namespace Fusion.Widgets.Advanced
 				{
 					if (pi.HasAttribute<AEExpandableAttribute>()) 
 					{
-						var type	=	pi.PropertyType;
-						var value	=	pi.GetValue(obj);
-						FeedObject( value, nestingLevel+1, pi, category + "/" + pi.Name );
+						var expandType	=	pi.PropertyType;
+						var expandValue	=	pi.GetValue(obj);
+						FeedObject( expandType, expandValue, nestingLevel+1, pi, category + "/" + pi.Name );
 					}
 				}
 			}
 
 			//--------------------------------------------------------------------------
 
-			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
-
+			foreach ( var mi in type.GetMethods(funcBinding) ) 
+			{
 				var name		=	mi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? mi.Name;
 				var category	=	mi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
 
-				if (mi.HasAttribute<AECommandAttribute>()) {
+				if (mi.HasAttribute<AECommandAttribute>()) 
+				{
 					AddButton( category, name, ()=>mi.Invoke(obj, new object[0]) );
 				}
 			}
-
-			//RunLayout();
-			//RunLayout();
 		}
-
 
 
 		/// <summary>

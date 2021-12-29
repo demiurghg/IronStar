@@ -19,6 +19,7 @@ using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics.GI
 {
+	[ConfigClass]
 	[RequireShader("relight", true)]
 	internal partial class LightProbeRelighter : RenderComponent
 	{
@@ -80,7 +81,7 @@ namespace Fusion.Engine.Graphics.GI
 		}
 		
 		[Config]
-		public int MaxLPPF { get; set; } = 8;
+		static public int MaxLPPF { get; set; } = 8;
 
 
 		public LightProbeRelighter( RenderSystem rs ) : base(rs)
@@ -206,7 +207,7 @@ namespace Fusion.Engine.Graphics.GI
 				var radiosity		=	Game.GetService<Radiosity>();
 
 				relightParams.CubeIndex			=	(uint)lightProbe.ImageIndex;
-				relightParams.RadiosityLevel	=	radiosity.MasterIntensity - radiosity.SecondBounce;
+				relightParams.RadiosityLevel	=	Radiosity.MasterIntensity - Radiosity.SecondBounce;
 				cbRelightParams.SetData( ref relightParams );
 
 

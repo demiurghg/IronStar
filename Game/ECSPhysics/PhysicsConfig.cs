@@ -7,7 +7,7 @@ using Fusion.Core.Configuration;
 
 namespace IronStar.ECSPhysics
 {
-	[Config("Physics")]
+	[ConfigClass]
 	public static class PhysicsConfig
 	{
 		public static bool UseParallelPhysics { get; set; }

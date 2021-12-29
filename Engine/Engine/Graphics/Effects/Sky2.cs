@@ -18,6 +18,7 @@ using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics {
 
+	[ConfigClass]
 	[RequireShader("sky2", true)]
 	public partial class Sky2 : RenderComponent 
 	{
@@ -35,143 +36,143 @@ namespace Fusion.Engine.Graphics {
 		[Config]	
 		[AECategory("Sun")]
 		[AESlider(-90, 90, 5, 0.1f)]
-		public float SunAltitude { get; set; } = 45;
+		static public float SunAltitude { get; set; } = 45;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AESlider(-180, 180, 5, 0.1f)]
-		public float SunAzimuth { get; set; } = 45;
+		static public float SunAzimuth { get; set; } = 45;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AEDisplayName("Sun Intensity (Ev)")]
 		[AESlider(0, 10, 1, 0.01f)]
-		public float SunIntensityEv { get; set; } = 8;
+		static public float SunIntensityEv { get; set; } = 8;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AESlider(1500, 27000, 100, 1)]
-		public float SunTemperature { get; set; } = 5900;
+		static public float SunTemperature { get; set; } = 5900;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AESlider(-5, 16, 1, 1)]
-		public float SunBrightnessEv { get; set; } = 12;
+		static public float SunBrightnessEv { get; set; } = 12;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AESlider(0, 5, 0.1f, 0.01f)]
-		public float SunAngularSize { get; set; } = 1;
+		static public float SunAngularSize { get; set; } = 1;
 
 		[Config]	
 		[AECategory("Atmosphere")]
 		[AESlider(500, 12000, 500, 10)]
-		public float PlanetRadius { get; set; } = 6360;
+		static public float PlanetRadius { get; set; } = 6360;
 		
 		[Config]	
 		[AESlider(0, 200, 10, 1)]
 		[AECategory("Atmosphere")]
-		public float AtmosphereHeight { get; set; } = 80;
+		static public float AtmosphereHeight { get; set; } = 80;
 		
 		[Config]	
 		[AESlider(1, 10000, 500, 10)]
 		[AECategory("Atmosphere")]
-		public float RayleighHeight { get; set; } = 8000;
+		static public float RayleighHeight { get; set; } = 8000;
 		
 		[Config]	
 		[AESlider(1, 5000, 200, 10)]
 		[AECategory("Atmosphere")]
-		public float MieHeight { get; set; } = 1200;
+		static public float MieHeight { get; set; } = 1200;
 		
 		[Config]	
 		[AESlider(0, 200000, 1000, 10)]
-		public float ViewElevation { get; set; } = 0;
+		static public float ViewElevation { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Atmosphere")]
 		[AESlider(-0.95f, 0.95f, 0.05f, 0.01f)]
-		public float MieExcentricity { get; set; } = 0.76f;
+		static public float MieExcentricity { get; set; } = 0.76f;
 		
 		[Config]	
 		[AECategory("Atmosphere")]
 		[AEDisplayName("Sky Exposure (Ev)")]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float SkyExposure { get; set; } = 0;
+		static public float SkyExposure { get; set; } = 0;
 
 		[Config]	
 		[AESlider(1000,5000,500,1)]
-		public float SkySphereSize { get; set; } = 10f;
+		static public float SkySphereSize { get; set; } = 10f;
 
 		[Config]	
 		[AECategory("Tweaks")]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float RayleighScale { get; set; } = 0;
+		static public float RayleighScale { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Tweaks")]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float MieScale { get; set; } = 0;
+		static public float MieScale { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Tweaks")]
-		public Color MieColor { get; set; } = Color.White;
+		static public Color MieColor { get; set; } = Color.White;
 		
 		[Config]	
 		[AECategory("Tweaks")]
 		[AESlider(0, 5, 1, 0.1f)]
-		public float APScale { get; set; } = 0;
+		static public float APScale { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Tweaks")]
 		[AESlider(0, 1, 0.1f, 0.001f)]
-		public float AmbientLevel { get; set; } = 0;
+		static public float AmbientLevel { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
 		[AESlider(0, 1, 0.1f, 0.001f)]
 		[AEDisplayName("Cirrus Coverage")]
-		public float CirrusCoverage { get; set; } = 1;
+		static public float CirrusCoverage { get; set; } = 1;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
 		[AESlider(0, 12000, 1000f, 1f)]
 		[AEDisplayName("Cirrus Height (m)")]
-		public float CirrusHeight { get; set; } = 6000;
+		static public float CirrusHeight { get; set; } = 6000;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
 		[AESlider(0, 1, 0.1f, 0.01f)]
 		[AEDisplayName("Cirrus Density")]
-		public float CirrusDensity { get; set; } = 1;
+		static public float CirrusDensity { get; set; } = 1;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
 		[AESlider(1, 100, 10f, 1f)]
 		[AEDisplayName("Cirrus Size (km)")]
-		public float CirrusSize { get; set; } = 24;
+		static public float CirrusSize { get; set; } = 24;
 		
 		[Config]	
 		[AECategory("Wind")]
 		[AEDisplayName("Wind Speed (km/h)")]
 		[AESlider(0, 500, 10f, 1f)]
-		public float WindVelocity { get; set; } = 240;
+		static public float WindVelocity { get; set; } = 240;
 		
 		[Config]	
 		[AECategory("Wind")]
 		[AEDisplayName("Wind Direction")]
 		[AESlider(-180, 180, 5f, 1f)]
-		public float WindDirection { get; set; } = 0;
+		static public float WindDirection { get; set; } = 0;
 		
 		[AECategory("Debug")]
-		public bool ShowLut { get; set; } = false;
+		static public bool ShowLut { get; set; } = false;
 		
 		[AECategory("Debug")]
-		public bool SkipSky { get; set; } = false;
+		static public bool SkipSky { get; set; } = false;
 
 		Vector2 currentCloudOffset = Vector2.Zero;
 
 		[AECommand]
-		public void Earth()
+		static public void Earth()
 		{
 			//SunAltitude			= 45;
 			//SunAzimuth			= 45;
@@ -198,7 +199,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 		[AECommand]
-		public void Moon()
+		static public void Moon()
 		{
 			SunIntensityEv = 7;
 			SunTemperature = 5900;
@@ -227,7 +228,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		[AECommand]
-		public void Alien()
+		static public void Alien()
 		{
 			SunIntensityEv = 5;
 			SunTemperature = 4100;
@@ -256,7 +257,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		[AECommand]
-		public void Titan()
+		static public void Titan()
 		{
 			SunAltitude	=	15;
 			SunAzimuth	=	45;
@@ -286,7 +287,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 		[AECommand]
-		public void Titan2()
+		static public void Titan2()
 		{
 			SunAltitude = 10				;
 			SunAzimuth = 45					;

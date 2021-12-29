@@ -34,7 +34,7 @@ namespace Fusion.Engine.Graphics
 		Low,
 	}
 	
-	
+	[ConfigClass]
 	internal class ShadowSystem : RenderComponent
 	{
 		public const int MaxCascades		=	4;
@@ -42,7 +42,7 @@ namespace Fusion.Engine.Graphics
 
 		int frameCounter = 0;
 		
-		[AECategory("General")]  [Config]	public QualityLevel ShadowQuality 
+		[AECategory("General")]  [Config]	static public QualityLevel ShadowQuality 
 		{ 
 			get { return shadowQualityLevel; }
 			set 
@@ -55,8 +55,8 @@ namespace Fusion.Engine.Graphics
 			}
 		}
 
-		bool shadowQualityDirty = true;
-		QualityLevel shadowQualityLevel	= QualityLevel.Medium;
+		static bool shadowQualityDirty = true;
+		static QualityLevel shadowQualityLevel	= QualityLevel.Medium;
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4)]
@@ -76,49 +76,39 @@ namespace Fusion.Engine.Graphics
 			public Vector4	CascadeScaleOffset3		;
 		}
 
-		[AECategory("Performance")]		[Config]	public bool UsePointShadowSampling { get; set; } = false;
-		[AECategory("Performance")]		[Config]	public bool SkipShadowMasks { get; set; } = false;
-		[AECategory("Performance")]		[Config]	public bool SkipParticleShadows { get; set; } = false;
+		[AECategory("Performance")]		[Config]	static public bool UsePointShadowSampling { get; set; } = false;
+		[AECategory("Performance")]		[Config]	static public bool SkipShadowMasks { get; set; } = false;
+		[AECategory("Performance")]		[Config]	static public bool SkipParticleShadows { get; set; } = false;
 		
 		[AESlider(0,MaxSPF,1,1)]
-		[AECategory("Performance")]		[Config]	public int  ShadowsPerFrame { get; set; } = 8;
+		[AECategory("Performance")]		[Config]	static public int  ShadowsPerFrame { get; set; } = 8;
 		
 		[AESlider(0,8,1,1)]
-		[AECategory("Performance")]		[Config]	public int  MaxParticleShadowsLod { get; set; } = 2;
-		[AECategory("Performance")]		[Config]	public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
+		[AECategory("Performance")]		[Config]	static public int  MaxParticleShadowsLod { get; set; } = 2;
+		[AECategory("Performance")]		[Config]	static public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
 
-		[AECategory("Debug")]			[Config]	public bool ShowSplits { get; set; } = false;
-		[AECategory("Debug")]			[Config]	public bool UseHighResFogShadows { get; set; } = false;
-		[AECategory("Debug")]			[Config]	public bool ClearEntireShadow { get; set; } = false;
-		[AECategory("Debug")]			[Config]	public bool SkipBorders { get; set; } = false;
-		[AECategory("Debug")]			[Config]	public bool SkipShadowCasterTracking { get; set; } = false;
+		[AECategory("Debug")]			[Config]	static public bool ShowSplits { get; set; } = false;
+		[AECategory("Debug")]			[Config]	static public bool UseHighResFogShadows { get; set; } = false;
+		[AECategory("Debug")]			[Config]	static public bool ClearEntireShadow { get; set; } = false;
+		[AECategory("Debug")]			[Config]	static public bool SkipBorders { get; set; } = false;
+		[AECategory("Debug")]			[Config]	static public bool SkipShadowCasterTracking { get; set; } = false;
 
-		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;
-		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasX { get; set; } = 1;
-		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasY { get; set; } = 1;
-		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
-		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeFactor { get; set; } = 3;
-		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeSize { get; set; } = 4;
+		[AECategory("Cascade Shadows")] [Config]	static public bool SnapShadowmapCascades { get; set; } = true;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowGradientBiasX { get; set; } = 1;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowGradientBiasY { get; set; } = 1;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowCascadeDepth { get; set; } = 1024;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowCascadeFactor { get; set; } = 3;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowCascadeFactor2{ get; set; } = 3;
+		[AECategory("Cascade Shadows")] [Config]	static public float ShadowCascadeSize { get; set; } = 4;
 
-		bool biasDirty = true;
-
-		float	spotSlopeBias = 2;
-		int		spotDepthBias = 10;
-		float	cascadeSlopeBias = 1;
-		int		cascadeDepthBias = 1;
-		[AECategory("Spot Shadows")]	[Config]	public float SpotSlopeBias { get { return spotSlopeBias; } set { if ( spotSlopeBias != value ) { biasDirty = true; spotSlopeBias = value; } } }
-		[AECategory("Spot Shadows")]	[Config]	public int	 SpotDepthBias { get { return spotDepthBias; } set { if ( spotDepthBias != value ) { biasDirty = true; spotDepthBias = value; } } }
-		[AECategory("Cascade Shadows")]	[Config]	public float CascadeSlopeBias { get { return cascadeSlopeBias; } set { if ( cascadeSlopeBias != value ) { biasDirty = true; cascadeSlopeBias = value; } } }
-		[AECategory("Cascade Shadows")]	[Config]	public int	 CascadeDepthBias { get { return cascadeDepthBias; } set { if ( cascadeDepthBias != value ) { biasDirty = true; cascadeDepthBias = value; } } }
+		[AECategory("Spot Shadows")]	[Config]	static public float	SpotSlopeBias	 { get; set; } = 2;
+		[AECategory("Spot Shadows")]	[Config]	static public int	SpotDepthBias	 { get; set; } = 10;
+		[AECategory("Cascade Shadows")]	[Config]	static public float	CascadeSlopeBias { get; set; } = 1;
+		[AECategory("Cascade Shadows")]	[Config]	static public int	CascadeDepthBias { get; set; } = 1;
 
 
 		public ShadowMap ShadowMap { get { return shadowMap; } }
 		ShadowMap shadowMap;
-
-		public RasterizerState CascadeShadowRasterizerState { get { return cascadeShadowRasterizerState; } }
-		public RasterizerState SpotShadowRasterizerState { get { return spotShadowRasterizerState; } }
-		RasterizerState cascadeShadowRasterizerState;
-		RasterizerState spotShadowRasterizerState;
 		ConstantBuffer	constCascadeShadow;
 
 		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
@@ -178,10 +168,10 @@ namespace Fusion.Engine.Graphics
 			lightList.AddRange( cascades );
 			lightList.AddRange( rw.LightSet.SpotLights.Where( spot => spot.IsVisible ) );
 
-			ComputeCascadeMatricies( cascades[0], camera, rw.LightSet );
-			ComputeCascadeMatricies( cascades[1], camera, rw.LightSet );
-			ComputeCascadeMatricies( cascades[2], camera, rw.LightSet );
-			ComputeCascadeMatricies( cascades[3], camera, rw.LightSet );
+			ComputeCascadeMatricies( 0, cascades[0], camera, rw.LightSet );
+			ComputeCascadeMatricies( 1, cascades[1], camera, rw.LightSet );
+			ComputeCascadeMatricies( 2, cascades[2], camera, rw.LightSet );
+			ComputeCascadeMatricies( 3, cascades[3], camera, rw.LightSet );
 
 
 			//	update visibility and track shadow caster changes :
@@ -293,8 +283,8 @@ namespace Fusion.Engine.Graphics
 
 				cascades[0]	=	new ShadowCascade(0, shadowMap.MaxRegionSize, 0, Color.White);
 				cascades[1]	=	new ShadowCascade(1, shadowMap.MaxRegionSize, 0, new Color(255,0,0) );
-				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 1, new Color(0,255,0) );
-				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 1, new Color(0,0,255) );
+				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 0, new Color(0,255,0) );
+				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 0, new Color(0,0,255) );
 
 				result = true;
 			}
@@ -469,7 +459,7 @@ namespace Fusion.Engine.Graphics
 		 *	Shadow Cascade stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		void ComputeCascadeMatricies ( ShadowCascade cascade, Camera camera, LightSet lightSet )
+		void ComputeCascadeMatricies ( int index, ShadowCascade cascade, Camera camera, LightSet lightSet )
 		{
 			var camMatrix		=	camera.CameraMatrix;
 			var viewPos			=	camera.CameraPosition;
@@ -477,10 +467,15 @@ namespace Fusion.Engine.Graphics
 			var viewMatrix		=	camera.ViewMatrix;
 			var lessDetailed	=	cascades.Length-1;
 
-			var splitSize		=	rs.ShadowSystem.ShadowCascadeSize;
-			var splitFactor		=	rs.ShadowSystem.ShadowCascadeFactor;
-			var projDepth		=	rs.ShadowSystem.ShadowCascadeDepth;
+			var splitSize		=	ShadowSystem.ShadowCascadeSize;
+			var splitFactor		=	ShadowSystem.ShadowCascadeFactor;
+			var projDepth		=	ShadowSystem.ShadowCascadeDepth;
 			var splitOffset		=	0;
+
+			if (index==3)
+			{
+				splitFactor *= ShadowCascadeFactor2;
+			}
 
 			lightDir.Normalize();
 

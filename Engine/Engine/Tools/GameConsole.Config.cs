@@ -14,37 +14,38 @@ using Fusion.Core.Configuration;
 using Fusion.Core.Shell;
 using Fusion.Widgets.Advanced;
 
-namespace Fusion.Engine.Tools {
-	
-	public partial class GameConsole : GameComponent {
-
+namespace Fusion.Engine.Tools 
+{
+	[ConfigClass]
+	public partial class GameConsole : GameComponent 
+	{
 		public int LayerOrder { get; set; } = 0;
 
-		[Config] public float FallSpeed { get; set; }
+		[Config] public static float FallSpeed { get; set; }
 
-		[Config] public float CursorBlinkRate { get; set; }
+		[Config] public static float CursorBlinkRate { get; set; }
 
-		[AECategory("Appearance")] [Config] public Color MessageColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color ErrorColor		{ get; set; }
-		[AECategory("Appearance")] [Config] public Color WarningColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color CmdLineColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color VersionColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color TraceColor		{ get; set; }
-		[AECategory("Appearance")] [Config] public Color DebugColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color MessageColor	{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color ErrorColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color WarningColor	{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color CmdLineColor	{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color VersionColor	{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color TraceColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color DebugColor		{ get; set; }
 
-		[AECategory("Appearance")] [Config] public Color BackColor		{ get; set; }
-		[AECategory("Appearance")] [Config] public Color HelpColor		{ get; set; }
-		[AECategory("Appearance")] [Config] public Color HintColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color BackColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color HelpColor		{ get; set; }
+		[AECategory("Appearance")] [Config] static public Color HintColor		{ get; set; }
 
 
-		[AECategory("History")] [Config] public string CommandHistory0 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory1 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory2 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory3 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory4 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory5 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory6 { get; set; }
-		[AECategory("History")] [Config] public string CommandHistory7 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory0 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory1 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory2 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory3 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory4 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory5 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory6 { get; set; }
+		[AECategory("History")] [Config] public static string CommandHistory7 { get; set; }
 
 
 		void SetDefaults ()

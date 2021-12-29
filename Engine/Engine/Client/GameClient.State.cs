@@ -73,7 +73,7 @@ namespace Fusion.Engine.Client {
 
 						case NetIncomingMessageType.ConnectionLatencyUpdated:
 							Ping = msg.ReadFloat();
-							if (game.Network.ShowLatency) {
+							if (Network.ShowLatency) {
 								Log.Trace("...CL ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (Ping*1000) );
 							}
 							break;

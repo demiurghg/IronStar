@@ -28,6 +28,7 @@ namespace Fusion.Engine.Graphics
 	}
 
 
+	[ConfigClass]
 	[RequireShader("hdr", true)]
 	internal class HdrFilter : RenderComponent 
 	{
@@ -41,27 +42,27 @@ namespace Fusion.Engine.Graphics
 		/// Tonemapping operator.
 		/// </summary>
 		[Config]
-		public TonemappingOperator TonemappingOperator { get; set; }
+		static public TonemappingOperator TonemappingOperator { get; set; }
 
 		/// <summary>
 		/// Tonemapping operator.
 		/// </summary>
 		[Config]
-		public bool ShowHistogram { get; set; }
+		static public bool ShowHistogram { get; set; }
 		
 		/// <summary>
 		/// Time to adapt. Default value is 0.5 seconds.
 		/// </summary>
 		[Config]
 		[AESlider(0.125f, 4f, 0.125f, 0.125f)]
-		public float AdaptationHalfTime { get; set; } = 0.5f;
+		static public float AdaptationHalfTime { get; set; } = 0.5f;
 
 		/// <summary>
 		/// Luminance key value. Default value is 0.18.
 		/// </summary>
 		[Config]
 		[AESlider(0.045f, 1, 0.05f, 0.01f)]
-		public float KeyValue { get; set; } = 0.18f;
+		static public float KeyValue { get; set; } = 0.18f;
 		
 		/// <summary>
 		/// Bloom gaussian blur sigma. Default is 3.
@@ -69,16 +70,16 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Bloom")]
 		[AESlider(1, 5, 0.1f, 0.01f)]
-		public float GaussBlurSigma { 
+		static public float GaussBlurSigma { 
 			get { return gaussBlurSigma; }
 			set { gaussBlurSigma = MathUtil.Clamp( value, 1, 5 ); }
 		}
 
-		float gaussBlurSigma = 2;
+		static float gaussBlurSigma = 2;
 
 		[Config]
 		[AECategory("Bloom")]
-		public BlurTaps BloomTaps { get; set; } = BlurTaps.Tap15;
+		static public BlurTaps BloomTaps { get; set; } = BlurTaps.Tap15;
 
 		/// <summary>
 		/// Amount of bloom. Zero means no bloom.
@@ -87,7 +88,7 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Bloom")]
 		[AESlider(0, 2, 0.1f, 0.01f)]
-		public float BloomScale { get; set; } = 0.1f;
+		static public float BloomScale { get; set; } = 0.1f;
 
 		/// <summary>
 		/// Amount of bloom. Zero means no bloom.
@@ -96,7 +97,7 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Bloom")]
 		[AESlider(-4, 8, 0.1f, 0.01f)]
-		public float BloomThreshold { get; set; } = 4f;
+		static public float BloomThreshold { get; set; } = 4f;
 
 		/// <summary>
 		/// Amount of dirt. Zero means no bloom.
@@ -105,7 +106,7 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Bloom")]
 		[AESlider(0, 1, 1f/32f, 1f/256f)]
-		public float DirtAmount { get; set; } = 0.9f;
+		static public float DirtAmount { get; set; } = 0.9f;
 
 		/// <summary>
 		/// Amount of dirt. Zero means no bloom.
@@ -113,7 +114,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AECategory("Bloom")]
-		public bool SkipBlur { get; set; } = false;
+		static public bool SkipBlur { get; set; } = false;
 
 		/// <summary>
 		/// Gets and sets overall image saturation
@@ -121,27 +122,27 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AESlider(0, 1, 1f/32f, 1f/256f)]
-		public float Saturation { get; set; } = 1.0f;
+		static public float Saturation { get; set; } = 1.0f;
 
 		static readonly int		MinLogLuminance = -16;
 		static readonly int		MaxLogLuminance =  16;
 		static readonly float	MinLinearLuminance	=	(float)Math.Pow( 2, MinLogLuminance );
 		static readonly float	MaxLinearLuminance	=	(float)Math.Pow( 2, MaxLogLuminance );
-		float minEv = MinLogLuminance;
-		float maxEv = MaxLogLuminance;
-		float adaptMinEv = MinLogLuminance;
-		float adaptMaxEv = MaxLogLuminance;
+		static float minEv = MinLogLuminance;
+		static float maxEv = MaxLogLuminance;
+		static float adaptMinEv = MinLogLuminance;
+		static float adaptMaxEv = MaxLogLuminance;
 
 		[Config]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float EVMin { 
+		static public float EVMin { 
 			get { return minEv; }
 			set { minEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float EVMax {
+		static public float EVMax {
 			get { return maxEv; }
 			set { maxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
@@ -149,7 +150,7 @@ namespace Fusion.Engine.Graphics
 
 		[Config]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float AdaptEVMin { 
+		static public float AdaptEVMin { 
 			get { return adaptMinEv; }
 			set { adaptMinEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
@@ -197,17 +198,17 @@ namespace Fusion.Engine.Graphics
 			whiteClip	=	0.025f;
 		}
 
-		float slope		=	0.980f;
-		float toe		=	0.300f;
-		float shoulder	=	0.220f;
-		float blackClip	=	0.000f;
-		float whiteClip =	0.025f;
-		float expBias	=	0.000f;
+		static float slope		=	0.980f;
+		static float toe		=	0.300f;
+		static float shoulder	=	0.220f;
+		static float blackClip	=	0.000f;
+		static float whiteClip =	0.025f;
+		static float expBias	=	0.000f;
 
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(0.1f, 2.0f, 0.1f, 0.01f)]
-		public float Slope 
+		static public float Slope 
 		{
 			get { return slope; }
 			set { slope	= value; }
@@ -217,7 +218,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
-		public float Toe 
+		static public float Toe 
 		{
 			get { return toe; }
 			set { toe	= value; }
@@ -227,7 +228,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
-		public float Shoulder 
+		static public float Shoulder 
 		{
 			get { return shoulder; }
 			set { shoulder	= value; }
@@ -237,7 +238,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
-		public float BlackClip 
+		static public float BlackClip 
 		{
 			get { return blackClip; }
 			set { blackClip	= value; }
@@ -247,7 +248,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
-		public float WhiteClip 
+		static public float WhiteClip 
 		{
 			get { return whiteClip; }
 			set { whiteClip	= value; }
@@ -256,15 +257,11 @@ namespace Fusion.Engine.Graphics
 		[AECategory("SCurve")]
 		[Config]
 		[AESlider(-4, 4, 0.1f, 0.01f)]
-		public float ExposureBias 
+		static public float ExposureBias 
 		{
 			get { return expBias; }
 			set { expBias	= value; }
 		}
-		
-		
-		
-		
 		
 		
 		static float ComputeLogLuminance ( float linear )

@@ -9,12 +9,13 @@ using Fusion.Engine.Audio;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Engine.Graphics.GI;
 using Native.NRecast;
+using Fusion.Core.Configuration;
+using Fusion.Engine.Graphics;
 
 namespace IronStar
 {
-
-	class Program {
-
+	class Program 
+	{
 		[STAThread]
 		static int Main ( string[] args )
 		{
@@ -28,11 +29,11 @@ namespace IronStar
 			//
 			//	Run game :
 			//
-			using (var game = new IronStar(builder)) {
-
+			using (var game = new IronStar(builder)) 
+			{
 				//	enable and disable debug direct3d device :
-				game.RenderSystem.UseDebugDevice = false;
-				game.RenderSystem.Fullscreen	= false;
+				RenderSystem.UseDebugDevice = false;
+				RenderSystem.Fullscreen	= false;
 
 				//	enable and disable object tracking :
 				game.TrackObjects = false;

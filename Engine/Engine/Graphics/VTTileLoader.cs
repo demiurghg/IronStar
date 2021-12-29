@@ -126,7 +126,7 @@ namespace Fusion.Engine.Graphics
 
 		List<VTAddress> BuildFeedbackVTAddressTree( VTAddress[] rawAddressData )
 		{
-			if (vt.LockTiles) return new List<VTAddress>();
+			if (VTSystem.LockTiles) return new List<VTAddress>();
 
 			var feedback = rawAddressData.Distinct().Where( p => !p.IsBad ).ToArray();
 
@@ -161,7 +161,7 @@ namespace Fusion.Engine.Graphics
 			//	Prevent thrashing:
 			while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) 
 			{
-				if (vt.ShowThrashing) 
+				if (VTSystem.ShowThrashing) 
 				{
 					Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);
 				}
@@ -205,7 +205,7 @@ namespace Fusion.Engine.Graphics
 					counter++;
 				}
 
-				if (counter>vt.MaxPPF) 
+				if (counter>VTSystem.MaxPPF) 
 				{
 					break;
 				}

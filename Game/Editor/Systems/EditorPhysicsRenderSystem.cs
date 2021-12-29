@@ -36,7 +36,7 @@ namespace IronStar.Editor.Systems
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			if (RenderSystem.SkipDebugRendering) 
 			{
 				return;
 			}

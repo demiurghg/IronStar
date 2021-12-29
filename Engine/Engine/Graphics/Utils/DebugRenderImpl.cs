@@ -238,7 +238,7 @@ namespace Fusion.Engine.Graphics
 
 			foreach ( var flag in flags ) 
 			{
-				if (Game.RenderSystem.SkipGhostDebugRendering && flag.HasFlag(RenderFlags.GHOST)) 
+				if (RenderSystem.SkipGhostDebugRendering && flag.HasFlag(RenderFlags.GHOST)) 
 				{
 					break;
 				}
@@ -274,7 +274,7 @@ namespace Fusion.Engine.Graphics
 
 			asyncRender.Render();
 
-			if (Game.RenderSystem.SkipDebugRendering) 
+			if (RenderSystem.SkipDebugRendering) 
 			{
 				vertexDataAccum.Clear();	
 				return;

@@ -45,7 +45,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ShadowTextureLowRes 
 		{
-			get { return ss.UseHighResFogShadows ? shadowMap : shadowMapLowRes;	}
+			get { return ShadowSystem.UseHighResFogShadows ? shadowMap : shadowMapLowRes;	}
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ParticleShadowTextureLowRes 
 		{
-			get { return ss.UseHighResFogShadows ? prtShadow : prtShadowLowRes; }
+			get { return ShadowSystem.UseHighResFogShadows ? prtShadow : prtShadowLowRes; }
 		}
 
 		/// <summary>

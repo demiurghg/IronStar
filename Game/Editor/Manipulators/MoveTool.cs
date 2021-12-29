@@ -25,9 +25,9 @@ namespace IronStar.Editor.Manipulators
 		readonly bool isLocalSpace;
 
 
-		public MoveTool ( MapEditor editor ) : base(editor)
+		public MoveTool ( MapEditor editor, AxisMode axisMode ) : base(editor)
 		{
-			isLocalSpace = editor.MoveAxisMode==AxisMode.Local;
+			isLocalSpace = axisMode==AxisMode.Local;
 
 			handles	=	new []
 			{
@@ -112,7 +112,7 @@ namespace IronStar.Editor.Manipulators
 				return false;
 			}
 
-			var snapping	=	useSnapping ? editor.MoveToolSnapValue : 0;
+			var snapping	=	useSnapping ? MapEditor.MoveToolSnapValue : 0;
 			var target		=	editor.Selection.Last();
 			var transform	=	target.Transform;
 			var pickPoint	=	new Point( x, y );

@@ -15,9 +15,10 @@ using Fusion.Core.Mathematics;
 using System.Collections.Concurrent;
 using Fusion.Drivers.Graphics;
 
-namespace Fusion.Core.Shell {
-	public partial class Invoker {
-
+namespace Fusion.Core.Shell 
+{
+	public partial class Invoker 
+	{
 		public readonly Game Game;
 
 		public delegate ICommand CommandCreator ();
@@ -27,6 +28,7 @@ namespace Fusion.Core.Shell {
 		readonly Stack<IUndoable> undoStack = new Stack<IUndoable>(1024);
 		readonly Stack<IUndoable> redoStack = new Stack<IUndoable>(1024);
 		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
+		readonly Type[] configClasses;
 
 		public IEnumerable<IUndoable> UndoStack { get { return undoStack; } }
 
@@ -64,8 +66,7 @@ namespace Fusion.Core.Shell {
 			RegisterCommand("redo",		()=>new RedoCmd(this)	);
 			RegisterCommand("echo",		()=>new EchoCmd(this)	);
 
-			Game.Components.ComponentAdded   += (s,e) => FlushNameCache();
-			Game.Components.ComponentRemoved += (s,e) => FlushNameCache();
+			configClasses	=	ConfigManager.GetConfigClasses();
 		}
 
 
@@ -77,8 +78,10 @@ namespace Fusion.Core.Shell {
 		/// <param name="creator"></param>
 		public void RegisterCommand<TCommand> ( string commandName, Func<TCommand> creator ) where TCommand: ICommand
 		{
-			lock (lockObject) {
-				if (commandsRegistry.ContainsKey( commandName ) ) {
+			lock (lockObject) 
+			{
+				if (commandsRegistry.ContainsKey( commandName ) ) 
+				{
 					Log.Warning("Command '{0}' is already registered", commandName );
 					return;
 				}
@@ -126,26 +129,28 @@ namespace Fusion.Core.Shell {
 		/// <param name="objectName"></param>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		private bool TryGetComponentProperty ( string objectName, out PropertyInfo propertyInfo, out IGameComponent component )
+		private bool TryGetConfigProperty ( string objectName, out PropertyInfo propertyInfo )
 		{
 			propertyInfo = null;
-			component = null;
 
 			string left, right;
 
-			if (!objectName.Split('.', out left, out right)) {
+			if (!objectName.Split('.', out left, out right)) 
+			{
 				return false;
 			}
 
-			component = Game.Components.FirstOrDefault( c1 => c1.GetType().Name==left);
+			var config = configClasses.FirstOrDefault( type => type.Name==left);
 
-			if (component==null) {
+			if (config==null)
+			{
 				return false;
 			}
 
-			propertyInfo = component.GetType().GetProperty(right);
+			propertyInfo = config.GetProperty(right);
 
-			if (propertyInfo==null) {
+			if (propertyInfo==null) 
+			{
 				return false;
 			}
 
@@ -160,10 +165,9 @@ namespace Fusion.Core.Shell {
 		/// <param name="value"></param>
 		private void SetComponentProperty ( string variable, string value )
 		{
-			IGameComponent component;
 			PropertyInfo pi;
 
-			if (!TryGetComponentProperty( variable, out pi, out component )) {
+			if (!TryGetConfigProperty( variable, out pi )) {
 				throw new InvokerException("bad component property name '{0}'", variable);
 			}
 
@@ -172,7 +176,7 @@ namespace Fusion.Core.Shell {
 			if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out newVal )) {
 				throw new InvokerException("can not set {0} from '{1}'", pi.PropertyType, value);
 			}
-			pi.SetValue( component, newVal );
+			pi.SetValue( null, newVal );
 		}
 
 
@@ -183,16 +187,17 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		private string GetComponentProperty ( string variable )
 		{
-			IGameComponent component;
 			PropertyInfo pi;
 
-			if (!TryGetComponentProperty( variable, out pi, out component )) {
+			if (!TryGetConfigProperty( variable, out pi )) 
+			{
 				throw new InvokerException("bad component property name '{0}'", variable);
 			}
 
 			string strValue;
 
-			if (!StringConverter.TryConvertToString( pi.GetValue(component), out strValue )) {
+			if (!StringConverter.TryConvertToString( pi.GetValue(null), out strValue )) 
+			{
 				throw new InvokerException("can not convert {0} to string", pi.PropertyType);
 			}
 
@@ -327,32 +332,36 @@ namespace Fusion.Core.Shell {
 		{
 			CommandEntry commandEntry;
 			PropertyInfo pi;
-			IGameComponent gc;
 
-			if (string.IsNullOrWhiteSpace( commandLine )) {
+			if (string.IsNullOrWhiteSpace( commandLine )) 
+			{
 				throw new InvokerException("Empty command line");
 			}
 
 			var args = commandLine.SplitCommandLine().ToArray();
 
 
-			if (commandsRegistry.TryGetValue(args[0], out commandEntry )) {
-				
+			if (commandsRegistry.TryGetValue(args[0], out commandEntry )) 
+			{
 				var command = commandEntry.Creator();
 
 				commandEntry.Parser?.ParseCommandLine( command, args.Skip(1).ToArray() );
 
 				return command;
-
-			} else if ( TryGetComponentProperty( args[0], out pi, out gc ) ) {
-
-				if (args.Length==2) {
+			} 
+			else if ( TryGetConfigProperty( args[0], out pi ) ) 
+			{
+				if (args.Length==2) 
+				{
 					return new Set(this, args[0], args[1] );
-				} else {
+				} 
+				else
+				{
 					return new Get(this, args[0], true );
 				}
-
-			} else {
+			}
+			else
+			{
 				throw new InvokerException("Unknown command : {0}", args.First() );
 			}
 		}

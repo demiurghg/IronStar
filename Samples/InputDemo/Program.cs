@@ -3,6 +3,7 @@ using Fusion;
 using Fusion.Build;
 using Fusion.Build.Processors;
 using Fusion.Core.Utils;
+using Fusion.Engine.Graphics;
 
 namespace SpriteDemo
 {
@@ -22,9 +23,9 @@ namespace SpriteDemo
 			//
 			using (var game = new SpriteDemo("InputDemo", "InputDemo")) 
 			{
-				game.RenderSystem.UseDebugDevice	=	false;	//	do not use debug graphics device
-				game.RenderSystem.Fullscreen		=	false;	//	no not use fullscreen mode on startup
-				game.RenderSystem.UseRenderDoc		=	false;	//	do not use debug graphics device
+				RenderSystem.UseDebugDevice	=	false;	//	do not use debug graphics device
+				RenderSystem.Fullscreen		=	false;	//	no not use fullscreen mode on startup
+				RenderSystem.UseRenderDoc	=	false;	//	do not use debug graphics device
 
 				game.TrackObjects					=	false;	//	do not track objects
 

@@ -12,11 +12,16 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using System.Diagnostics;
+using Fusion.Core.Configuration;
 
 namespace IronStar.AI
 {
+	[ConfigClass]
 	class AISystem : StatelessSystem<AIComponent>
 	{
+		[Config] public static bool DrawNavigation { get; set; } = false;
+		[Config] public static bool DrawVisibility { get; set; } = false;
+
 		readonly NavSystem nav;
 		readonly PhysicsCore physics;
 		readonly Aspect aiAspect;
@@ -39,6 +44,11 @@ namespace IronStar.AI
 			var dt	=	gameTime.ElapsedSec;
 			var t	=	entity.GetComponent<Transform>();
 			var uc	=	entity.GetComponent<UserCommandComponent>();
+
+			if (entity.gs.Paused)
+			{
+				return;
+			}
 
 			if (ai.ThinkTimer.IsElapsed)
 			{
@@ -98,13 +108,16 @@ namespace IronStar.AI
 
 				var dir = new Vector3( (float)Math.Cos( -uc.Yaw ), 0, (float)Math.Sin( -uc.Yaw ) );
 
-				dr.DrawPoint( origin, 1, Color.Black, 3 );
-				dr.DrawLine( origin, target, Color.Black, Color.Black, 5, 1 );
-				dr.DrawLine( origin, origin + dir * 5, Color.Red, Color.Red, 5, 1 );
-
-				for (int i=0; i<route.Count-1; i++)
+				if (DrawNavigation)
 				{
-					dr.DrawLine( route[i], route[i+1], Color.Black, Color.Black, 2, 2 );
+					dr.DrawPoint( origin, 1, Color.Black, 3 );
+					dr.DrawLine( origin, target, Color.Black, Color.Black, 5, 1 );
+					dr.DrawLine( origin, origin + dir * 5, Color.Red, Color.Red, 5, 1 );
+
+					for (int i=0; i<route.Count-1; i++)
+					{
+						dr.DrawLine( route[i], route[i+1], Color.Black, Color.Black, 2, 2 );
+					}
 				}
 			}
 			else
@@ -174,7 +187,10 @@ namespace IronStar.AI
 
 					float error		=	uc.RotateTo( attackPov, aimPoint, rateYaw, ratePitch );
 
-					dr.DrawPoint( aimPoint, 5.0f, Color.Red, 3 );
+					if (DrawVisibility)
+					{
+						dr.DrawPoint( aimPoint, 5.0f, Color.Red, 3 );
+					}
 
 					if (error<0.1f && ai.Target.Visible && ai.AllowFire)
 					{
@@ -224,9 +240,12 @@ namespace IronStar.AI
 					}
 				}
 
-				var color	=	visibility ? Color.Red : Color.Lime;
-				dr.DrawFrustum( frustum, color, 0.02f, 2 );
-				dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, color, 32, 2, 1 );
+				if (DrawVisibility)
+				{
+					var color	=	visibility ? Color.Red : Color.Lime;
+					dr.DrawFrustum( frustum, color, 0.02f, 2 );
+					dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, color, 32, 2, 1 );
+				}
 			}
 		}
 

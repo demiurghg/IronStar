@@ -20,7 +20,7 @@ using System.Diagnostics;
 using RigidTransform = BEPUutilities.RigidTransform;
 using System.Collections.Concurrent;
 using BEPUphysics.EntityStateManagement;
-
+using Fusion.Core.Configuration;
 
 namespace IronStar.ECSPhysics
 {
@@ -32,8 +32,13 @@ namespace IronStar.ECSPhysics
 	/// <summary>
 	/// https://github.com/bepu/bepuphysics1/blob/master/Documentation/Isolated%20Demos/AsynchronousUpdateDemo/AsynchronousUpdateGame.cs
 	/// </summary>
+	[ConfigClass]
 	public partial class PhysicsCore : DisposableBase, ISystem
 	{
+		[Config] public static bool UseDebugDraw { get; set; } = false;
+		[Config] public static bool SkipDebugLines { get; set; } = false;
+		[Config] public static bool SkipDebugModels { get; set; } = false;
+
 		public delegate RigidTransform TransformCallback( ISpaceObject spaceObject, Transform transform );
 
 		public readonly Game Game;

@@ -58,14 +58,20 @@ namespace IronStar.ECSPhysics
 
 		private void Physics_ObjectAdded( object sender, PhysicsCore.SpaceObjectArgs e )
 		{
-			lineDrawer.Add( e.SpaceObject );
-			modelDrawer.Add( e.SpaceObject );
+			if (PhysicsCore.UseDebugDraw)
+			{
+				lineDrawer.Add( e.SpaceObject );
+				modelDrawer.Add( e.SpaceObject );
+			}
 		}
 
 		private void Physics_ObjectRemoved( object sender, PhysicsCore.SpaceObjectArgs e )
 		{
-			lineDrawer.Remove( e.SpaceObject );
-			modelDrawer.Remove( e.SpaceObject );
+			if (PhysicsCore.UseDebugDraw)
+			{
+				lineDrawer.Remove( e.SpaceObject );
+				modelDrawer.Remove( e.SpaceObject );
+			}
 		}
 
 		public Aspect GetAspect(){ return Aspect.Empty; }
@@ -92,13 +98,21 @@ namespace IronStar.ECSPhysics
 				return;
 			}
 
-			islandDrawer	.Draw( debugRender, physics.Space );
-			contactDrawer	.Draw( debugRender, physics.Space );
-			bboxDrawer		.Draw( debugRender, physics.Space );
+			//	#TODO #PHYSICS -- restore deleted models
+			if (PhysicsCore.UseDebugDraw)
+			{
+				islandDrawer	.Draw( debugRender, physics.Space );
+				contactDrawer	.Draw( debugRender, physics.Space );
+				bboxDrawer		.Draw( debugRender, physics.Space );
 
-			lineDrawer		.Draw( debugRender );
-
-			modelDrawer		.Draw( debugRender );
+				lineDrawer		.Draw( debugRender );
+				modelDrawer		.Draw( debugRender );
+			}
+			else
+			{
+				lineDrawer	.Clear();
+				modelDrawer	.Clear();
+			}
 		}
 	}
 }

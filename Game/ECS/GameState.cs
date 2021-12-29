@@ -170,6 +170,8 @@ namespace IronStar.ECS
 				{
 					system.Update( this, gameTime );
 
+					CheckTransforms();
+
 					if (forceRefresh)
 					{
 						RefreshEntities();
@@ -220,6 +222,16 @@ namespace IronStar.ECS
 		/*-----------------------------------------------------------------------------------------------
 		 *	Debug stuff :
 		-----------------------------------------------------------------------------------------------*/
+
+		public void CheckTransforms()
+		{
+			foreach ( var t in components[typeof(Transform)] )
+			{
+				var e = entities[t.Key];
+				((Transform)(t.Value.Current))?.CheckTransform( "current", e );
+				((Transform)(t.Value.Lerped))?.CheckTransform( "lerped", e );
+			}
+		}
 
 		public void PrintState()
 		{

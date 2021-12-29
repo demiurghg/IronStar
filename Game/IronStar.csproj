@@ -144,7 +144,6 @@
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
-    <Compile Include="ECSPhysics\PhysicsConfig.cs" />
     <Compile Include="ECSPhysics\PhysicsDebugger.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.Overlap.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.Raycast.cs" />

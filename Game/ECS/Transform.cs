@@ -8,6 +8,7 @@ using Fusion.Core.Extensions;
 using BEPUphysics.EntityStateManagement;
 using System.Diagnostics;
 using System.IO;
+using Fusion;
 
 namespace IronStar.ECS
 {
@@ -97,6 +98,65 @@ namespace IronStar.ECS
 				value.Decompose( out s, out Rotation, out Position );
 				Scaling = s.X;
 			}
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Check transform :
+		-----------------------------------------------------------------------------------------*/
+
+		bool IsBad(float f)
+		{
+			return float.IsNaN(f) || float.IsInfinity(f);
+		}
+
+		bool IsBad(Vector3 v)
+		{
+			return IsBad(v.X) || IsBad(v.Y) || IsBad(v.Z);
+		}
+
+		bool IsBad(Quaternion q)
+		{
+			return IsBad(q.X) || IsBad(q.Y) || IsBad(q.Z) || IsBad(q.W) || q==Quaternion.Zero;
+		}
+
+		public void CheckTransform( string prefix, Entity e )
+		{
+			if (false
+				|| IsBad(Position)
+				|| IsBad(Rotation)
+				|| IsBad(Scaling)
+				|| IsBad(LinearVelocity)
+				|| IsBad(AngularVelocity)
+			)
+			{
+				Log.Warning("Bad {0} transform : {1}", prefix, e?.ToString() );
+				Log.Warning("  Position        = " + (Position).ToString() );
+				Log.Warning("  Rotation        = " + (Rotation).ToString() );
+				Log.Warning("  Scaling         = " + (Scaling).ToString() );
+				Log.Warning("  LinearVelocity  = " + (LinearVelocity).ToString() );
+				Log.Warning("  AngularVelocity = " + (AngularVelocity).ToString() );
+			}
+				
+			//if (IsBad( Scaling		)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Scaling), Scaling ); 
+
+			//if (IsBad( Position.X	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Position.X), Position.X ); 
+			//if (IsBad( Position.Y	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Position.Y), Position.Y ); 
+			//if (IsBad( Position.Z	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Position.Z), Position.Z ); 
+
+			//if (IsBad( LinearVelocity.X	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(LinearVelocity.X), LinearVelocity.X ); 
+			//if (IsBad( LinearVelocity.Y	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(LinearVelocity.Y), LinearVelocity.Y ); 
+			//if (IsBad( LinearVelocity.Z	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(LinearVelocity.Z), LinearVelocity.Z ); 
+
+			//if (IsBad( AngularVelocity.X	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(AngularVelocity.X), AngularVelocity.X ); 
+			//if (IsBad( AngularVelocity.Y	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(AngularVelocity.Y), AngularVelocity.Y ); 
+			//if (IsBad( AngularVelocity.Z	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(AngularVelocity.Z), AngularVelocity.Z ); 
+
+			//if (IsBad( Rotation.X	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Rotation.X), Rotation.X ); 
+			//if (IsBad( Rotation.Y	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Rotation.Y), Rotation.Y ); 
+			//if (IsBad( Rotation.Z	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Rotation.Z), Rotation.Z ); 
+			//if (IsBad( Rotation.W	)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Rotation.W), Rotation.W ); 
+
+			//if ( Rotation==Quaternion.Zero ) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Rotation), Rotation ); 
 		}
 
 		/*-----------------------------------------------------------------------------------------

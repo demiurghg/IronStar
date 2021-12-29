@@ -5367,7 +5367,7 @@
         "Frozen": false,
         "Translation": "-187.843948, 9.650347, -179.53096",
         "Scaling": "0.99999994, 1, 1",
-        "Rotation": "0, 0, 0, 0",
+        "Rotation": "0, 0, 0, 1",
         "TranslateX": -187.843948,
         "TranslateY": 9.650347,
         "TranslateZ": -179.53096
@@ -7827,7 +7827,7 @@
           "Looped": true,
           "NodeName": "b0049f37-a578-4fef-95de-9cd1b0236ae20",
           "Position": "-204, 14, -201.000031",
-          "Rotation": "0, 0, 0, 0",
+          "Rotation": "0, 0, 0, 1",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
           "Scaling": 0.999999762
@@ -7837,7 +7837,7 @@
         "Frozen": false,
         "Translation": "-204, 14, -201.000031",
         "Scaling": "0.999999762, 1, 0.999999762",
-        "Rotation": "0, 0, 0, 0",
+        "Rotation": "0, 0, 0, 1",
         "TranslateX": -204.0,
         "TranslateY": 14.0,
         "TranslateZ": -201.000031
@@ -12686,7 +12686,7 @@
         "Frozen": false,
         "Translation": "-164, 9, -191",
         "Scaling": "0.9999996, 0.999999166, 0.999999344",
-        "Rotation": "0, 0, 0, 0",
+        "Rotation": "0, 0, 0, 1",
         "TranslateX": -164.0,
         "TranslateY": 9.0,
         "TranslateZ": -191.0

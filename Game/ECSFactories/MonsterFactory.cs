@@ -19,8 +19,9 @@ namespace IronStar.ECSFactories
 	public class MonsterMarineFactory : EntityFactory
 	{
 		public Team Team { get; set; } = Team.Monsters;
+		public WeaponType Weapon { get; set; } = WeaponType.Machinegun;
 
-		void GiveWeapon(IGameState gs, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
+		void GiveWeapon(IGameState gs, Entity monster, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
 		{
 			inventory.TryGiveWeapon(weapon);
 			state.TrySwitchWeapon(weapon);
@@ -53,14 +54,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new AIComponent() );
 			e.AddComponent( new TeamComponent(Team) );
 
-			var weapons = new[]
-			{
-				WeaponType.Machinegun,
-				WeaponType.Plasmagun,
-				WeaponType.RocketLauncher,
-			};
-
-			GiveWeapon( gs, inventory, weaponState, weapons[ MathUtil.Random.Next(weapons.Length) ] );
+			GiveWeapon( gs, e, inventory, weaponState, Weapon );
 		}
 	}
 }

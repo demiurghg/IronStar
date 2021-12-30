@@ -14,6 +14,9 @@ namespace IronStar.Gameplay.Components
 	{
 		public Entity Target { get; set; } = null;
 		public Matrix LocalTransform { get; set; } = Matrix.Identity;
+		public string Bone = "";
+		public bool AutoAttach = true;
+		public bool DropOnKill = false;
 
 		public AttachmentComponent()
 		{
@@ -31,13 +34,19 @@ namespace IronStar.Gameplay.Components
 		public void Save( GameState gs, BinaryWriter writer )
 		{
 			writer.WriteEntity( gs, Target );
+			writer.Write( AutoAttach );
+			writer.Write( DropOnKill );
 			writer.Write( LocalTransform );
+			writer.Write( Bone );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
 			Target			=	reader.ReadEntity(gs);
+			AutoAttach		=	reader.ReadBoolean();
+			DropOnKill		=	reader.ReadBoolean();
 			LocalTransform	=	reader.Read<Matrix>();
+			Bone			=	reader.ReadString();
 		}
 
 		public IComponent Clone()

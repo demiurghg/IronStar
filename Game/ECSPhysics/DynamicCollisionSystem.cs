@@ -28,6 +28,7 @@ using BEPUEntity = BEPUphysics.Entities.Entity;
 using RigidTransform = BEPUutilities.RigidTransform;
 using IronStar.ECS;
 using BEPUutilities.Threading;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.ECSPhysics 
 {
@@ -38,6 +39,12 @@ namespace IronStar.ECSPhysics
 		public DynamicCollisionSystem( PhysicsCore physics )
 		{
 			this.physics	=	physics;
+		}
+
+
+		public override Aspect GetAspect()
+		{
+			return base.GetAspect().Exclude<AttachmentComponent>();
 		}
 
 

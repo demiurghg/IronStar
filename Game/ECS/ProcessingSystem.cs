@@ -254,6 +254,12 @@ namespace IronStar.ECS
 			ForEach( gs, gameTime, Process );
 		}
 
+		protected void RefreshResource( Entity entity )
+		{
+			Remove( entity.gs, entity );
+			Add( entity.gs, entity );
+		}
+
 		protected abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3 );
 		protected abstract void Destroy ( Entity entity, TResource resource );
 		protected abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3 );

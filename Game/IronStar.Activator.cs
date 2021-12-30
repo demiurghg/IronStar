@@ -145,7 +145,8 @@ namespace IronStar
 			//	animation systems :
 			gs.AddSystem( new Gameplay.BobbingSystem() );
 			gs.AddSystem( new StepSystem() );
-			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
+			gs.AddSystem( new MonsterAnimationSystem( game, fxPlayback, physicsCore ) );
+			gs.AddSystem( new MonsterWeaponSystem( game, fxPlayback ) );
 			gs.AddSystem( new SFX.FXTracker() );
 			gs.AddSystem( new SFX.SoundTracker() );
 

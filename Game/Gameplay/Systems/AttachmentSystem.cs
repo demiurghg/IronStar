@@ -6,69 +6,150 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
+using IronStar.Animation;
 using IronStar.ECS;
 using IronStar.Gameplay.Components;
+using IronStar.SFX2;
 
 namespace IronStar.Gameplay.Systems
 {
-	class AttachmentSystem : ISystem
+	public class AttachmentData
 	{
-		readonly Aspect attachmentAspect = new Aspect().Include<AttachmentComponent,Transform>();
+		public int BoneIndex = -1;
+	}
 
-		public Aspect GetAspect()
+	public class AttachmentSystem : ProcessingSystem<AttachmentData,AttachmentComponent,Transform>
+	{
+
+		protected override AttachmentData Create( Entity entity, AttachmentComponent attachment, Transform transform )
 		{
-			return attachmentAspect;
-		}
+			var data			=	new AttachmentData();
+			var rootTransform	=	Matrix.Identity;
 
-		public void Add( IGameState gs, Entity entityToAttach ) 
-		{
-			var attachment		=	entityToAttach.GetComponent<AttachmentComponent>();
-			var targetEntity	=	attachment.Target;
+			TryGetRootBoneIndex( entity.gs, attachment, out data.BoneIndex );
+			TryGetRootTransform( data, attachment, out rootTransform );
 
-			var attachTransform	=	entityToAttach?.GetComponent<Transform>();
-			var targetTransform	=	targetEntity?.GetComponent<Transform>();
-
-			if (attachTransform==null) 
+			if (attachment.AutoAttach)
 			{
-				Log.Warning("Attaching entity {0} has no transform", entityToAttach?.ToString() );
-				return;
-			}
+				var localTransform			=	transform.TransformMatrix * Matrix.Invert( rootTransform );
+				attachment.LocalTransform	=	localTransform;
 
-			if (targetTransform==null) 
+				return data;
+			}
+			else
 			{
-				Log.Warning("Target entity {0} has no transform", targetEntity?.ToString() );
-				return;
+				transform.TransformMatrix	=	attachment.LocalTransform * rootTransform;
+				return data;
 			}
-
-			var localTransform			=	attachTransform.TransformMatrix * Matrix.Invert( targetTransform.TransformMatrix );
-			attachment.LocalTransform	=	localTransform;
 		}
 
 
-		public void Remove( IGameState gs, Entity e ) {}
-
-		
-		public void Update( IGameState gs, GameTime gameTime )
+		protected override void Destroy( Entity entity, AttachmentData resource )
 		{
-			foreach ( var entity in gs.QueryEntities(attachmentAspect) )
+		}
+
+
+		protected override void Process( Entity entity, GameTime gameTime, AttachmentData data, AttachmentComponent attachment, Transform transform )
+		{
+			//	target entity is dead: kill or drop entity
+			if (!entity.gs.Exists(attachment.Target))
 			{
-				var attachment		=	entity.GetComponent<AttachmentComponent>();
-				var transform		=	entity.GetComponent<Transform>();
-
-				var targetEntity	=	attachment.Target;
-				var targetTransform	=	targetEntity?.GetComponent<Transform>();
-
-				//	target entity is dead
-				//	kill current entity too
-				if (!gs.Exists(targetEntity))
+				if (attachment.DropOnKill)
+				{
+					entity.RemoveComponent<AttachmentComponent>();
+				}
+				else
 				{
 					entity.Kill();
 				}
+			}
+			else
+			{
+				var rootTransform = Matrix.Identity;
 
-				if (targetTransform!=null)
+				if (TryGetRootTransform( data, attachment, out rootTransform ))
 				{
-					transform.TransformMatrix	=	attachment.LocalTransform * targetTransform.TransformMatrix;
+					transform.TransformMatrix	=	attachment.LocalTransform * rootTransform;
 				}
+			}
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Utils :
+		-----------------------------------------------------------------------------------------*/
+
+		bool TryGetRootTransform( AttachmentData data, AttachmentComponent attachment, out Matrix rootTransform )
+		{
+			rootTransform = Matrix.Identity;
+			
+			var targetTransform = attachment.Target.GetComponent<Transform>();
+
+			if (targetTransform==null)
+			{	
+				Log.Warning("AttachmentSystem: target entity does not have transform component");
+				return false;
+			}
+			
+			if (data.BoneIndex<0)
+			{
+				rootTransform	=	targetTransform.TransformMatrix;
+				return true;
+			}
+			else
+			{
+				var bones = attachment.Target.GetComponent<BoneComponent>();
+
+				if (bones==null)
+				{
+					rootTransform	=	targetTransform.TransformMatrix;
+					Log.Warning("AttachmentSystem: target entity does not have bone component");
+					return false;
+				}
+				else
+				{
+					rootTransform	=	bones.Bones[ data.BoneIndex ] * targetTransform.TransformMatrix;
+					return true;
+				}
+			}
+		}
+
+	
+		bool TryGetRootBoneIndex( IGameState gs, AttachmentComponent attachment, out int boneIndex )
+		{
+			boneIndex		=	-1;
+
+			if (string.IsNullOrWhiteSpace(attachment.Bone))
+			{
+				return true;
+			}
+			else
+			{
+				var model	=	attachment.Target?.GetComponent<RenderModel>();
+				var bones	=	attachment.Target?.GetComponent<BoneComponent>();
+
+				if (model==null)
+				{
+					Log.Warning("AttachmentSystem: target model component is null");
+					return false;
+				}
+
+				if (bones==null)
+				{
+					Log.Warning("AttachmentSystem: target bone component is null");
+					return false;
+				}
+
+				var scene = model.LoadScene(gs);
+
+				boneIndex = scene.GetNodeIndex( attachment.Bone );
+
+				if (boneIndex<0)
+				{
+					Log.Warning("AttachmentSystem: bone {} does not exist", attachment.Bone);
+					return false;
+				}
+
+				return true;
 			}
 		}
 	}

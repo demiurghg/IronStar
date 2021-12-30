@@ -279,6 +279,7 @@
     <Compile Include="Mapping\MapLightVolume.cs" />
     <Compile Include="Mapping\MapPrefab.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
+    <Compile Include="Monsters\Systems\MonsterWeaponSystem.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.Locomotion.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimationSystem.cs" />

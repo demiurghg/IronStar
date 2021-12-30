@@ -269,7 +269,7 @@ namespace IronStar.ECS
 			while (spawnQueue3.TryDequeue(out sd))
 			{
 				entities.Add( sd.Entity );
-				sd.Factory.Construct( sd.Entity, this );
+				sd.Factory?.Construct( sd.Entity, this );
 				Refresh( sd.Entity );
 			}
 

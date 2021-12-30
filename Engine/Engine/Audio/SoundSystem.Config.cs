@@ -18,25 +18,24 @@ namespace Fusion.Engine.Audio
 		/// Mastering voice value.
 		/// </summary>
 		[Config]
-        public float MasterVolume { get; set; }
+		public static float MasterVolume { get; set; } = 1.0f;
 
 		/// <summary>
 		/// Overall distance scale. Default = 1.
 		/// </summary>
 		[Config]
-        public float DistanceScale { get; set; }
+		public static float DistanceScale { get; set; } = 1.0f;
 
 		/// <summary>
 		/// Overall doppler scale. Default = 1;
 		/// </summary>
 		[Config]
-        public float DopplerScale { get; set; }
-
+		public static float DopplerScale { get; set; } = 1;
 
 		/// <summary>
 		/// Global speed of sound. Default = 343.5f;
 		/// </summary>
 		[Config]
-        public float SpeedOfSound { get; set; }
+		public static float SpeedOfSound { get; set; } = 343.5f;
 	}
 }

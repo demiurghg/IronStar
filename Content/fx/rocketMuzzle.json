@@ -1,6 +1,6 @@
 {
   "$type": "IronStar.SFX.FXFactory, IronStar",
-  "OverallScale": 0.5,
+  "OverallScale": 2,
   "Period": 0.1,
   "SoundStage": {
     "$type": "IronStar.SFX.FXSoundStage, IronStar",

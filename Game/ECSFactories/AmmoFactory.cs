@@ -46,34 +46,34 @@ namespace IronStar.ECSFactories
 	public class AmmoMachinegunFactory : AmmoFactory
 	{
 		public AmmoMachinegunFactory():
-		base( AmmoType.Bullets, 50, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
+		base( AmmoType.Bullets, 50, 1, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_CELLS")]
 	public class AmmoPlasmagunFactory : AmmoFactory
 	{
 		public AmmoPlasmagunFactory():
-		base(  AmmoType.Cells, 50, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_ammo" ) {}
+		base(  AmmoType.Cells, 50, 1, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_SLUGS")]
 	public class AmmoRailgunFactory : AmmoFactory
 	{
 		public AmmoRailgunFactory():
-		base(  AmmoType.Slugs, 10, 0.06f, "scenes\\items\\medkit\\medkit10" ) {} // <----- WTF?
+		base(  AmmoType.Slugs, 10, 1, "scenes\\items\\medkit\\medkit10" ) {} // <----- WTF?
 	}
 
 	[EntityFactory("AMMO_ROCKETS")]
 	public class AmmoRocketLauncherFactory : AmmoFactory
 	{
 		public AmmoRocketLauncherFactory():
-		base(  AmmoType.Rockets, 10, 0.042f, "scenes\\weapon2\\rocket_launcher\\rocket_ammo" ) {}
+		base(  AmmoType.Rockets, 10, 1, "scenes\\weapon2\\rocket_launcher\\rocket_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_SHELLS")]
 	public class AmmoShotgunFactory : AmmoFactory
 	{
 		public AmmoShotgunFactory():
-		base(  AmmoType.Shells, 10, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_ammo" ) {}
+		base(  AmmoType.Shells, 10, 1, "scenes\\weapon2\\canister_rifle\\canister_rifle_ammo" ) {}
 	}
 }

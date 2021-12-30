@@ -34,6 +34,7 @@ namespace IronStar.Gameplay.Systems
 		const string SOUND_NO_AMMO	=	"weapon/noAmmo"		;
 
 		const string JOINT_MUZZLE	=	"muzzle"			;
+		const float	 MUZZLE_SCALE	=	1f / 6f;
 
 		string SFX_MUZZLE			=	"";
 
@@ -139,7 +140,7 @@ namespace IronStar.Gameplay.Systems
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
-					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, 1 );
+					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, MUZZLE_SCALE );
 				}
 
 				//	idle animation :

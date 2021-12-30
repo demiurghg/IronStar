@@ -18,20 +18,24 @@ using Fusion.Engine.Graphics.Scenes;
 using BEPUutilities.Threading;
 using IronStar.Gameplay.Weaponry;
 using IronStar.ECSFactories;
+using Fusion;
 
 namespace IronStar.Monsters.Systems
 {
 	class MonsterWeaponBinding
 	{
-		public MonsterWeaponBinding( Entity weapon, WeaponType type, Vector3 muzzle )
+		public MonsterWeaponBinding( Entity weapon, WeaponType type, Matrix muzzle, string fx )
 		{
 			WeaponEntity	=	weapon;
 			WeaponType		=	type;
-			MuzzleLocation	=	muzzle;
+			MuzzleTransform	=	muzzle;
+			MuzzleFX		=	fx;
 		}
-		public			Entity		WeaponEntity;
-		public readonly	WeaponType	WeaponType;
-		public readonly	Vector3		MuzzleLocation;
+		public	Entity		WeaponEntity;
+		public	WeaponType	WeaponType;
+		public	WeaponState	WeaponState = WeaponState.Inactive;
+		public	Matrix		MuzzleTransform;
+		public	string		MuzzleFX;
 	}
 
 	class MonsterWeaponSystem : ProcessingSystem<MonsterWeaponBinding,InventoryComponent,WeaponStateComponent,RenderModel>
@@ -46,15 +50,18 @@ namespace IronStar.Monsters.Systems
 			this.fxPlayback	=	fxPlayback;
 		}
 
+
 		protected override MonsterWeaponBinding Create( Entity entity, InventoryComponent inventory, WeaponStateComponent weaponState, RenderModel model )
 		{
 			return CreateWeaponBinding( entity, weaponState.ActiveWeapon );
 		}
 
+
 		protected override void Destroy( Entity entity, MonsterWeaponBinding binding )
 		{
 			binding.WeaponEntity?.Kill();
 		}
+
 
 		protected override void Process( Entity entity, GameTime gameTime, MonsterWeaponBinding binding, InventoryComponent inventory, WeaponStateComponent weaponState, RenderModel model )
 		{
@@ -70,39 +77,94 @@ namespace IronStar.Monsters.Systems
 			{
 				RefreshResource( entity );
 			}
+
+			if (binding.WeaponState!=weaponState.State)
+			{
+				var newState = weaponState.State;
+				binding.WeaponState = newState;
+				
+				if (newState==WeaponState.Cooldown || newState==WeaponState.Cooldown2)
+				{
+					PlayMuzzleFX( binding );
+				}
+			}
 		}
 
 
-		Entity SpawnWeaponEntity( Entity monster, WeaponType weapon )
+		void PlayMuzzleFX( MonsterWeaponBinding binding )
 		{
-			var gs = monster.gs;
+			var weaponEntity = binding.WeaponEntity;
+
+			if (weaponEntity!=null)
+			{
+				var gs = weaponEntity.gs;
+				var transform =	weaponEntity.GetComponent<Transform>();
+
+				if (transform!=null)
+				{
+					if (binding.MuzzleFX!=null)
+					{
+						var worldMuzzleTransform = binding.MuzzleTransform * transform.TransformMatrix;
+
+						FXPlayback.AttachFX(gs, weaponEntity, binding.MuzzleFX, worldMuzzleTransform.TranslationVector, worldMuzzleTransform.Forward );
+					}
+				}
+			}
+		}
+
+
+		EntityFactory GetWeaponFactory( WeaponType weapon )
+		{
 			switch (weapon)
 			{
 				case WeaponType.None:				return null;
-				case WeaponType.Machinegun:			return gs.Spawn( new WeaponMachinegunFactory() );
-				case WeaponType.Machinegun2:		return gs.Spawn( new WeaponMachinegun2Factory() );
-				case WeaponType.Shotgun:			return gs.Spawn( new WeaponShotgunFactory() );
-				case WeaponType.Plasmagun:			return gs.Spawn( new WeaponPlasmagunFactory() );
-				case WeaponType.RocketLauncher:		return gs.Spawn( new WeaponRocketLauncherFactory() );
-				case WeaponType.Railgun:			return gs.Spawn( new WeaponRailgunFactory() );
+				case WeaponType.Machinegun:			return new WeaponMachinegunFactory();
+				case WeaponType.Machinegun2:		return new WeaponMachinegun2Factory();
+				case WeaponType.Shotgun:			return new WeaponShotgunFactory();
+				case WeaponType.Plasmagun:			return new WeaponPlasmagunFactory();
+				case WeaponType.RocketLauncher:		return new WeaponRocketLauncherFactory();
+				case WeaponType.Railgun:			return new WeaponRailgunFactory();
 				default: return null;
 			}
 		}
 
 		MonsterWeaponBinding CreateWeaponBinding( Entity monster, WeaponType weapon )
 		{
-			Entity weaponEntity = SpawnWeaponEntity(monster, weapon);
+			var gs = monster.gs;
+			var weaponFactory	= GetWeaponFactory(weapon); 
 
-			weaponEntity?.AddComponent( new AttachmentComponent() 
-			{ 
-				AutoAttach		=	false, 
-				Bone			=	"weapon", 
-				Target			=	monster,
-				DropOnKill		=	true,
-				LocalTransform	=	Matrix.RotationY( MathUtil.Pi )
-			});
+			if (weaponFactory!=null)
+			{
+				var weaponEntity	=	gs.Spawn(null);
+				var weaponMuzzle	=	Matrix.Identity;
+				var weaponHandle	=	Matrix.Identity;
+			
+				weaponFactory.Construct( weaponEntity, gs );
 
-			return new MonsterWeaponBinding( weaponEntity, weapon, Vector3.Zero );
+				var rm = weaponEntity.GetComponent<RenderModel>();
+
+				var scene = rm.LoadScene(gs);
+
+				if (!scene.TryGetNodeTransform("muzzle", out weaponMuzzle)) Log.Warning("Missing {0} muzzle: {1}", weapon, rm.scenePath);
+				if (!scene.TryGetNodeTransform("handle", out weaponHandle)) Log.Warning("Missing {0} handle: {1}", weapon, rm.scenePath);
+
+				weaponEntity?.AddComponent( new AttachmentComponent() 
+				{ 
+					AutoAttach		=	false, 
+					Bone			=	"weapon", 
+					Target			=	monster,
+					DropOnKill		=	true,
+					LocalTransform	=	Matrix.Invert(weaponHandle * rm.transform)
+				});
+
+				var muzzleFx = Arsenal.Get(weapon).MuzzleFX;
+
+				return new MonsterWeaponBinding( weaponEntity, weapon, weaponMuzzle * rm.transform, muzzleFx );
+			}
+			else
+			{
+				return new MonsterWeaponBinding( null, weapon, Matrix.Identity, null );
+			}
 		}
 	}
 }

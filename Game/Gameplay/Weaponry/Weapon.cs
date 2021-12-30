@@ -25,7 +25,7 @@ namespace IronStar.Gameplay.Weaponry
 	public class Weapon
 	{
 		public string		NiceName		{ get; private set; }	=	null;
-		public RenderModel	ViewRenderModel	{ get; private set; }	=	null;
+		public RenderModel	FPVRenderModel	{ get; private set; }	=	null;
 
 		public TimeSpan		TimeWarmup		{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
 		public TimeSpan		TimeCooldown	{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
@@ -64,7 +64,7 @@ namespace IronStar.Gameplay.Weaponry
 
 		public Weapon ViewModel(Color color, float intensityEv, float scale, string modelPath)
 		{
-			ViewRenderModel		=	new RenderModel( modelPath, scale, color, MathUtil.Exp2( intensityEv ), RMFlags.FirstPointView );
+			FPVRenderModel		=	new RenderModel( modelPath, scale, color, MathUtil.Exp2( intensityEv ), RMFlags.FirstPointView );
 
 			return this;
 		}

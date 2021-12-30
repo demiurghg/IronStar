@@ -64,7 +64,7 @@ namespace IronStar
 			var bc3TextureProcessor     =   new TextureProcessor(TextureCompression.BC3, true);
 			var staticModelProcessor    =   new SceneProcessor( true,  true, 0, true, "" );
 			var animationProcessor      =   new SceneProcessor( false, true, 0, true, "" );
-			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon2\weapon_common.fbx" );
+			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon2\weapon_common.fbx", 0.03f );
 			var monsterModelProcessor	=	new SceneProcessor( true,  true, 0, true, "", 0.1f );
 			var jsonClassProcessor      =   new JsonProcessor();
 			var textProcessor           =   new TextProcessor();

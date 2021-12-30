@@ -41,7 +41,7 @@ namespace IronStar.Gameplay.Weaponry
 		static Arsenal()
 		{
 			machinegun	=	new Weapon("MACHINEGUN")
-								.ViewModel	( ColorMachinegun, ColorIntensity, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
+								.ViewModel	( ColorMachinegun, ColorIntensity, 1, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
@@ -49,7 +49,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			machinegun2	=	new Weapon("MACHINEGUN2")
-								.ViewModel	( ColorMachinegun, ColorIntensity, 0.04f, "scenes\\weapon2\\battle_rifle\\battle_rifle_view")
+								.ViewModel	( ColorMachinegun, ColorIntensity, 1, "scenes\\weapon2\\battle_rifle\\battle_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
 								.Attack		( 5, IMPULSE_LIGHT, 1.0f, SpreadMode.Variable, "machinegunMuzzle" )
@@ -57,7 +57,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			shotgun		=	new Weapon("SHOTGUN")
-								.ViewModel	( ColorShotgun, ColorIntensity, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
+								.ViewModel	( ColorShotgun, ColorIntensity, 1, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
 								.Attack		( 10, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
@@ -65,7 +65,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			plasmagun		=	new Weapon("PLASMAGUN")
-								.ViewModel	( ColorPlasmagun, ColorIntensity, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_view")
+								.ViewModel	( ColorPlasmagun, ColorIntensity, 1, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_view")
 								.Ammo		( 1, AmmoType.Cells )
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 0.0f, SpreadMode.Const, "plasmaMuzzle" )
@@ -73,7 +73,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			rlauncher		=	new Weapon("ROCKET_LAUNCHER")
-								.ViewModel	( ColorRocketLauncher, ColorIntensity, 0.03f, "scenes\\weapon2\\rocket_launcher\\rocket_launcher_view")
+								.ViewModel	( ColorRocketLauncher, ColorIntensity, 1, "scenes\\weapon2\\rocket_launcher\\rocket_launcher_view")
 								.Ammo		( 1, AmmoType.Rockets )
 								.Cooldown	( 750 )
 								.Attack		( 100, IMPULSE_HEAVY, 0.0f, SpreadMode.Const, "rocketMuzzle" )
@@ -81,7 +81,7 @@ namespace IronStar.Gameplay.Weaponry
 								;
 
 			railgun			=	new Weapon("RAILGUN")
-								.ViewModel	( ColorRailgun, ColorIntensity, 0.03f, "scenes\\weapon2\\gauss_rifle\\gauss_rifle_view")
+								.ViewModel	( ColorRailgun, ColorIntensity, 1, "scenes\\weapon2\\gauss_rifle\\gauss_rifle_view")
 								.Ammo		( 1, AmmoType.Slugs )
 								.Cooldown	( 1500 )
 								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "railMuzzle" )

@@ -107,7 +107,7 @@ namespace IronStar.Gameplay.Systems
 			if (weaponType!=WeaponType.None)
 			{
 				var weapon = Arsenal.Get(weaponType);
-				renderModel	=	new RenderModelInstance( gs, weapon.ViewRenderModel, rw.Camera.CameraMatrix, CAMERA_NODE );
+				renderModel	=	new RenderModelInstance( gs, weapon.FPVRenderModel, rw.Camera.CameraMatrix, CAMERA_NODE );
 				animator	=	new WeaponAnimator(fx, renderModel); 
 				renderModel.AddInstances();
 			}

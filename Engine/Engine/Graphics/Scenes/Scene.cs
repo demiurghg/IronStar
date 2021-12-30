@@ -247,6 +247,22 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public bool TryGetNodeTransform( string name, out Matrix transform )
+		{
+			transform = Matrix.Identity;
+			var index = GetNodeIndex(name);
+
+			if (index<0) return false;
+
+			while (index>0)
+			{
+				transform = transform * Nodes[index].Transform;
+				index = Nodes[index].ParentIndex;
+			}
+
+			return true;
+		}
+
 
 		/// <summary>
 		/// Gets map dictionary

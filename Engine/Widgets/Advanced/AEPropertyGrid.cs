@@ -158,7 +158,7 @@ namespace Fusion.Widgets.Advanced
 		/// </summary>
 		void FeedObject ( Type type, object obj, int nestingLevel, PropertyInfo parentProperty, string subcat )
 		{
-			var propBinding = obj==null ? (BindingFlags.Public | BindingFlags.Static) : (BindingFlags.Default);
+			var propBinding = obj==null ? (BindingFlags.Public | BindingFlags.Static) : (BindingFlags.Public | BindingFlags.Instance);
 			var funcBinding = obj==null ? (BindingFlags.Public | BindingFlags.Static) : (BindingFlags.Public | BindingFlags.Instance);
 
 			foreach ( var pi in type.GetProperties(propBinding) ) 
@@ -217,9 +217,12 @@ namespace Fusion.Widgets.Advanced
 				{
 					if (pi.HasAttribute<AEExpandableAttribute>()) 
 					{
-						var expandType	=	pi.PropertyType;
 						var expandValue	=	pi.GetValue(obj);
-						FeedObject( expandType, expandValue, nestingLevel+1, pi, category + "/" + pi.Name );
+						if (expandValue!=null)
+						{
+							var expandType	=	expandValue?.GetType();
+							FeedObject( expandType, expandValue, nestingLevel+1, pi, category + "/" + pi.Name );
+						}
 					}
 				}
 			}

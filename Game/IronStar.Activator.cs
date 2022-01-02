@@ -30,6 +30,8 @@ namespace IronStar
 {
 	partial class IronStar : Game
 	{
+		public static string LastMapName { get; private set; }
+
 		class TrackData
 		{
 			public long Bits;
@@ -80,6 +82,8 @@ namespace IronStar
 			var gs			=	new GameState(Domain.Simulation,	game, content, false);
 			var gs2			=	new GameState(Domain.Presentation,	game, content, true );
 			var rs			=	game.RenderSystem;
+
+			LastMapName		=	mapName;
 
 			var rw			=	game.RenderSystem.RenderWorld;
 

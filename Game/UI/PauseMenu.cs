@@ -47,7 +47,7 @@ namespace IronStar.UI {
 			Add( new Button( ui, "Resume", 0,0,0,0, Resume ) );
 			Add( new Button( ui, "Options", 0,0,0,0, OptionsDialog ) );
 			Add( new Button( ui, "Restart Checkpoint", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
-			Add( new Button( ui, "Restart Level", 0,0,0,0, ()=> Log.Warning("Not implemented") ) );
+			Add( new Button( ui, "Restart Level", 0,0,0,0, RestartLevel ) );
 			Add( new Button( ui, "Exit To Menu", 0,0,0,0, ExitMenuDialog ) );
 			Add( new Button( ui, "Exit To System", 0,0,0,0, ExitGameDialog ) );
 		}
@@ -58,6 +58,11 @@ namespace IronStar.UI {
 			Game.GetService<Mission>().State.Continue();
 		}
 
+		void RestartLevel ()
+		{
+			Game.GetService<Mission>().State.Exit();
+			Game.Invoker.ExecuteString("map " + IronStar.LastMapName);
+		}
 
 		void ExitToMenu ()
 		{

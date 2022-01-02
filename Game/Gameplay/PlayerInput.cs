@@ -124,8 +124,8 @@ namespace IronStar.Gameplay
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:
 			var vp			=	Game.RenderSystem.DisplayBounds;
-			var deltaYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
-			var deltaPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
+			var deltaYaw	=	-2 * MathUtil.Pi * Sensitivity * Game.Mouse.PositionDelta.X / 16200.0f;
+			var deltaPitch	=	-2 * MathUtil.Pi * Sensitivity * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 
 			//	Q3A: 360 turn around takes approx 2.5 seconds:
 			float dt = gameTime.ElapsedSec;

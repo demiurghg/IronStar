@@ -33,6 +33,7 @@ namespace IronStar.AI
 
 
 		//	combat stuff :
+		public AIToken		CombatToken = null;
 		public bool			AllowFire = true;
 		public Timer		AttackTimer;
 		public Timer		GapeTimer;

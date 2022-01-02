@@ -21,11 +21,14 @@ namespace IronStar.AI
 	{
 		[Config] public static bool DrawNavigation { get; set; } = false;
 		[Config] public static bool DrawVisibility { get; set; } = false;
+		[Config] public static bool LogDM { get; set; } = false;
+		[Config] public static Difficulty Difficulty { get; set; } = Difficulty.Medium;
 
 		readonly NavSystem nav;
 		readonly PhysicsCore physics;
 		readonly Aspect aiAspect;
 		readonly AIConfig defaultConfig = new AIConfig();
+		readonly AITokenPool tokenPool;
 
 		public AISystem( PhysicsCore physics, NavSystem nav )
 		{
@@ -35,6 +38,8 @@ namespace IronStar.AI
 			aiAspect	=	new Aspect()
 						.Include<AIComponent,Transform>()
 						;
+
+			tokenPool = new AITokenPool( DifficultyUtils.GetTokenCount(Difficulty), DifficultyUtils.GetTokenTimeout(Difficulty) );
 		}
 
 
@@ -50,6 +55,14 @@ namespace IronStar.AI
 				var uc		=	UserCommand.FromTransform( transform );
 				ucc.UpdateFromUserCommand( uc.Yaw, uc.Pitch, uc.Move, uc.Strafe, uc.Action );
 			}
+		}
+
+
+		public override void Update( IGameState gs, GameTime gameTime )
+		{
+			base.Update( gs, gameTime );
+
+			tokenPool.Update( gameTime );
 		}
 
 
@@ -175,6 +188,15 @@ namespace IronStar.AI
 		}
 
 
+		void AcquireCombatToken( Entity e, AIComponent ai )
+		{
+			if (ai.CombatToken==null)
+			{
+				ai.CombatToken	=	tokenPool.Acquire(e);
+			}
+		}
+
+
 		bool Attack( float dt, Entity e, AIComponent ai, Transform t, UserCommandComponent uc, AIConfig cfg )
 		{
 			//	clear attack flag :
@@ -207,7 +229,9 @@ namespace IronStar.AI
 						dr.DrawPoint( aimPoint, 5.0f, Color.Red, 3 );
 					}
 
-					if (error<0.1f && ai.Target.Visible && ai.AllowFire)
+					var token = ai.CombatToken!=null;
+
+					if (error<cfg.AccuracyThreshold && ai.Target.Visible && ai.AllowFire && token)
 					{
 						uc.Action |= UserAction.Attack;
 						return true;
@@ -290,12 +314,28 @@ namespace IronStar.AI
 			ai.DMNode		=	newNode;	//	set new node
 			ai.AllowFire	=	true;		//	reset fire prevention
 
-			Log.Debug("{0} -> {1} : {2}", oldNode, newNode, reason );
+			if ( ai.CombatToken!=null )
+			{
+				ai.CombatToken.Release();
+				ai.CombatToken = null;
+			}
+
+			if (LogDM)
+			{
+				Log.Debug("{0} -> {1} : {2}", oldNode, newNode, reason );
+			}
 		}
 					
 		/*-----------------------------------------------------------------------------------------------
 		 *	Decision making nodes :
 		-----------------------------------------------------------------------------------------------*/
+
+		void EnterDead( Entity e, AIComponent ai, AIConfig cfg, string reason )
+		{
+			EnterNode( DMNode.Dead, ai, reason );
+		}
+
+		//-----------------------------------------------------------
 
 		void EnterStand( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
@@ -307,6 +347,13 @@ namespace IronStar.AI
 		bool NodeStand( Entity e, AIComponent ai, AIConfig cfg )
 		{
 			var transform	=	e.GetComponent<Transform>();
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
 
 			if (ai.Target!=null)
 			{
@@ -345,6 +392,14 @@ namespace IronStar.AI
 
 		bool NodeRoaming( Entity e, AIComponent ai, AIConfig cfg )
 		{
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
+
 			if (ai.Target!=null)
 			{
 				EnterStandGaping( e, ai, cfg, "WTF?" );
@@ -378,6 +433,14 @@ namespace IronStar.AI
 
 		bool NodeStandGaping( Entity e, AIComponent ai, AIConfig cfg )
 		{
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
+
 			if (ai.GapeTimer.IsElapsed)
 			{
 				if (ai.Target!=null && ai.Target.Visible)
@@ -416,6 +479,13 @@ namespace IronStar.AI
 		bool NodeCombatChase( Entity e, AIComponent ai, AIConfig cfg )
 		{
 			var transform	=	e.GetComponent<Transform>();
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
 
 			if (ai.Target!=null)
 			{
@@ -440,12 +510,21 @@ namespace IronStar.AI
 		{
 			EnterNode( DMNode.CombatAttack, ai, reason );
 			ai.Route = null; // stop moving
+			AcquireCombatToken(e, ai);
 			ai.AttackTimer.SetND( cfg.AttackTime );
 		}
 
 
 		bool NodeCombatAttack( Entity e, AIComponent ai, AIConfig cfg )
 		{
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
+
 			if (ai.Target==null)
 			{
 				EnterStand( e, ai, cfg, "target lost or destroyed");
@@ -473,9 +552,10 @@ namespace IronStar.AI
 
 		void EnterCombatMove( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
-			var origin	=	e.GetComponent<Transform>().Position;
-			var dst		=	nav.GetReachablePointInRadius( origin, cfg.CombatMoveRadius );
+			var origin		=	e.GetComponent<Transform>().Position;
+			var dst			=	nav.GetReachablePointInRadius( origin, cfg.CombatMoveRadius );
 			ai.Route		=	nav.FindRoute( origin, dst );
+			AcquireCombatToken(e, ai);
 			EnterNode( DMNode.CombatMove, ai, reason );
 
 			ai.AllowFire	=	AIUtils.RollTheDice( cfg.AttackWhileMoving );
@@ -484,6 +564,14 @@ namespace IronStar.AI
 
 		bool NodeCombatMove( Entity e, AIComponent ai, AIConfig cfg ) 
 		{
+			var health		=	e.GetComponent<HealthComponent>();
+
+			if (health!=null && health.Health<=0) 
+			{
+				EnterDead( e, ai, cfg, "health <= 0");
+				return false;
+			}
+
 			if ( ai.Route==null || ai.Route.Status!=Status.InProgress)
 			{
 				EnterCombatAttack( e, ai, cfg, "combat move is completed");

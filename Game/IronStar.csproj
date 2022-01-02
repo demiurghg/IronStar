@@ -80,9 +80,12 @@
     <Compile Include="AI\AIConfig.cs" />
     <Compile Include="AI\AIComponent.cs" />
     <Compile Include="AI\AITarget.cs" />
+    <Compile Include="AI\AIToken.cs" />
+    <Compile Include="AI\AITokenPool.cs" />
     <Compile Include="AI\AIUtils.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\Difficulty.cs" />
     <Compile Include="AI\DMNode.cs" />
     <Compile Include="AI\NavBaker.cs" />
     <Compile Include="AI\Route.cs" />

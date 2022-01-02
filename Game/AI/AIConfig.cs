@@ -30,6 +30,7 @@ namespace IronStar.AI
 		public readonly float	CombatMoveRadius	=	30.0f;
 		public readonly float	AttackWhileMoving	=	0.5f;
 
-		public readonly float	Accuracy		=	0.2f;
+		public readonly float	Accuracy			=	0.2f;
+		public readonly float	AccuracyThreshold	=	0.1f;
 	}
 }

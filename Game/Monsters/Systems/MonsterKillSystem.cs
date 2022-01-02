@@ -44,7 +44,6 @@ namespace IronStar.Monsters.Systems
 
 				if (health.Health<=0)
 				{
-					monsterEntity.RemoveComponent<AIComponent>();
 					monsterEntity.RemoveComponent<CharacterController>();
 
 					if (!ragdollAspect.Accept(monsterEntity))

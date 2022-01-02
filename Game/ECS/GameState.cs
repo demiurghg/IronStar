@@ -271,6 +271,8 @@ namespace IronStar.ECS
 				entities.Add( sd.Entity );
 				sd.Factory?.Construct( sd.Entity, this );
 				Refresh( sd.Entity );
+
+				if (ECS.TrackEntities) Log.Debug("spawned: {0} - {1}", sd.Entity.ID, sd.Factory?.GetType()?.Name ?? "(null)" );
 			}
 
 			while (componentToRemove.TryDequeue(out cd))
@@ -281,6 +283,7 @@ namespace IronStar.ECS
 			while (killQueue.TryDequeue(out e))
 			{
 				KillInternal(e);
+				if (ECS.TrackEntities) Log.Debug("killed: {0}", e.ID );
 			}
 
 			KillAllInternal();

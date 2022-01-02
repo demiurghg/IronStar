@@ -38,6 +38,21 @@ namespace IronStar.AI
 		}
 
 
+		public override void Add( IGameState gs, Entity e )
+		{
+			base.Add( gs, e );
+
+			var transform	=	e.GetComponent<Transform>();
+			var ucc			=	e.GetComponent<UserCommandComponent>();
+
+			if (transform!=null & ucc!=null)
+			{
+				var uc		=	UserCommand.FromTransform( transform );
+				ucc.UpdateFromUserCommand( uc.Yaw, uc.Pitch, uc.Move, uc.Strafe, uc.Action );
+			}
+		}
+
+
 		protected override void Process( Entity entity, GameTime gameTime, AIComponent ai )
 		{
 			var cfg	=	defaultConfig;
@@ -301,8 +316,16 @@ namespace IronStar.AI
 
 			if (ai.StandTimer.IsElapsed)
 			{
-				EnterRoaming( e, ai, cfg, "stand timeout");
-				return false;
+				if (ai.Options.HasFlag(AIOptions.Roaming))
+				{
+					EnterRoaming( e, ai, cfg, "stand timeout");
+					return false;
+				}
+				else
+				{
+					EnterStand( e, ai, cfg, "continue..." );
+					return false;
+				}
 			}
 
 			return true;

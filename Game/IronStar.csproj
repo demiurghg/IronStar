@@ -161,6 +161,7 @@
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />
     <Compile Include="ECS\Collections\StateInterpolator.cs" />
+    <Compile Include="ECS\ECS.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />

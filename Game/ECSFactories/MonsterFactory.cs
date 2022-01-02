@@ -20,6 +20,7 @@ namespace IronStar.ECSFactories
 	{
 		public Team Team { get; set; } = Team.Monsters;
 		public WeaponType Weapon { get; set; } = WeaponType.Machinegun;
+		public bool Roamer { get; set; } = false;
 
 		void GiveWeapon(IGameState gs, Entity monster, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
 		{
@@ -51,7 +52,11 @@ namespace IronStar.ECSFactories
 			var weaponState	=	new WeaponStateComponent();
 			e.AddComponent( inventory );
 			e.AddComponent( weaponState );
-			e.AddComponent( new AIComponent() );
+
+			var options = AIOptions.None;
+			if (Roamer) options |= AIOptions.Roaming;
+
+			e.AddComponent( new AIComponent(Position, options) );
 			e.AddComponent( new TeamComponent(Team) );
 
 			GiveWeapon( gs, e, inventory, weaponState, Weapon );

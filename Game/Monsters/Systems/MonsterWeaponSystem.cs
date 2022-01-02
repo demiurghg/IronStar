@@ -135,6 +135,7 @@ namespace IronStar.Monsters.Systems
 
 			if (weaponFactory!=null)
 			{
+				//	#TODO #ECS #HACK -- ugly hack, create null entity, construct manually to get component data immediately
 				var weaponEntity	=	gs.Spawn(null);
 				var weaponMuzzle	=	Matrix.Identity;
 				var weaponHandle	=	Matrix.Identity;
@@ -153,7 +154,6 @@ namespace IronStar.Monsters.Systems
 					AutoAttach		=	false, 
 					Bone			=	"weapon", 
 					Target			=	monster,
-					DropOnKill		=	true,
 					LocalTransform	=	Matrix.Invert(weaponHandle * rm.transform)
 				});
 

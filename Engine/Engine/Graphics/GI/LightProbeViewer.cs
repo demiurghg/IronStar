@@ -22,6 +22,7 @@ namespace Fusion.Engine.Graphics.GI {
 
 	[RequireShader("lightmapDebug",true)]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
+	[ConfigClass]
 	public class LightProbeViewer : RenderComponent, IPipelineStateProvider 
 	{
 		[Config]

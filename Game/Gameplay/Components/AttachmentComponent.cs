@@ -16,7 +16,6 @@ namespace IronStar.Gameplay.Components
 		public Matrix LocalTransform { get; set; } = Matrix.Identity;
 		public string Bone = "";
 		public bool AutoAttach = true;
-		public bool DropOnKill = false;
 
 		public AttachmentComponent()
 		{
@@ -35,7 +34,6 @@ namespace IronStar.Gameplay.Components
 		{
 			writer.WriteEntity( gs, Target );
 			writer.Write( AutoAttach );
-			writer.Write( DropOnKill );
 			writer.Write( LocalTransform );
 			writer.Write( Bone );
 		}
@@ -44,7 +42,6 @@ namespace IronStar.Gameplay.Components
 		{
 			Target			=	reader.ReadEntity(gs);
 			AutoAttach		=	reader.ReadBoolean();
-			DropOnKill		=	reader.ReadBoolean();
 			LocalTransform	=	reader.Read<Matrix>();
 			Bone			=	reader.ReadString();
 		}

@@ -10,8 +10,17 @@ using IronStar.ECS;
 
 namespace IronStar.AI
 {
+	public enum AIOptions
+	{
+		None	=	0x0000,
+		Roaming	=	0x0001,
+	}
+
 	public class AIComponent : IComponent
 	{
+		public AIOptions	Options;
+		public Vector3		HoldPoint;
+
 		//	general AI stuff :
 		public Timer	ThinkTimer;
 		public DMNode	DMNode = DMNode.Stand;
@@ -31,6 +40,18 @@ namespace IronStar.AI
 		public readonly List<AITarget>	Targets =	new List<AITarget>();
 		public Vector3		PrevAimError = Vector3.Zero;
 		public Vector3		NextAimError = Vector3.Zero;
+
+
+		public AIComponent()
+		{
+		}
+
+
+		public AIComponent( Vector3 origin, AIOptions options )
+		{
+			HoldPoint	=	origin;
+			Options		=	options;
+		}
 
 
 		public void UpdateTimers( GameTime gameTime )

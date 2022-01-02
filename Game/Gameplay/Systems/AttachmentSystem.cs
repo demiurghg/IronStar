@@ -26,8 +26,16 @@ namespace IronStar.Gameplay.Systems
 			var data			=	new AttachmentData();
 			var rootTransform	=	Matrix.Identity;
 
-			TryGetRootBoneIndex( entity.gs, attachment, out data.BoneIndex );
-			TryGetRootTransform( data, attachment, out rootTransform );
+			if (entity.gs.Exists(attachment.Target))
+			{
+				var r1	=	TryGetRootBoneIndex( entity.gs, attachment, out data.BoneIndex );
+				var r2	=	TryGetRootTransform( data, attachment, out rootTransform );
+
+				if (!r1 || !r2)
+				{
+					Log.Warning("Failed to attach entity #{0} to #{1}", entity.ID, attachment.Target==null ? "null" : attachment.Target.ID.ToString() );
+				}
+			}
 
 			if (attachment.AutoAttach)
 			{
@@ -54,14 +62,7 @@ namespace IronStar.Gameplay.Systems
 			//	target entity is dead: kill or drop entity
 			if (!entity.gs.Exists(attachment.Target))
 			{
-				if (attachment.DropOnKill)
-				{
-					entity.RemoveComponent<AttachmentComponent>();
-				}
-				else
-				{
-					entity.Kill();
-				}
+				entity.Kill();
 			}
 			else
 			{
@@ -86,7 +87,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (targetTransform==null)
 			{	
-				Log.Warning("AttachmentSystem: target entity does not have transform component");
+				Log.Warning("AttachmentSystem: target entity #{0} does not have transform component", attachment.Target.ID);
 				return false;
 			}
 			
@@ -102,7 +103,7 @@ namespace IronStar.Gameplay.Systems
 				if (bones==null)
 				{
 					rootTransform	=	targetTransform.TransformMatrix;
-					Log.Warning("AttachmentSystem: target entity does not have bone component");
+					Log.Warning("AttachmentSystem: target entity #{0} does not have bone component", attachment.Target.ID);
 					return false;
 				}
 				else
@@ -124,18 +125,23 @@ namespace IronStar.Gameplay.Systems
 			}
 			else
 			{
-				var model	=	attachment.Target?.GetComponent<RenderModel>();
-				var bones	=	attachment.Target?.GetComponent<BoneComponent>();
+				if (attachment.Target==null)
+				{
+					Log.Warning("AttachmentSystem: target entity component is null");
+				}
+
+				var model	=	attachment.Target.GetComponent<RenderModel>();
+				var bones	=	attachment.Target.GetComponent<BoneComponent>();
 
 				if (model==null)
 				{
-					Log.Warning("AttachmentSystem: target model component is null");
+					Log.Warning("AttachmentSystem: target entity #{0} model component is null", attachment.Target.ID);
 					return false;
 				}
 
 				if (bones==null)
 				{
-					Log.Warning("AttachmentSystem: target bone component is null");
+					Log.Warning("AttachmentSystem: target entity #{0} bone component is null", attachment.Target.ID);
 					return false;
 				}
 
@@ -145,7 +151,7 @@ namespace IronStar.Gameplay.Systems
 
 				if (boneIndex<0)
 				{
-					Log.Warning("AttachmentSystem: bone {} does not exist", attachment.Bone);
+					Log.Warning("AttachmentSystem: bone {0} does not exist", attachment.Bone);
 					return false;
 				}
 

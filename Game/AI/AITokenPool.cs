@@ -6,45 +6,46 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using IronStar.ECS;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.AI
 {
-	public class AITokenPool : IEnumerable<AIToken>
+	public class AITokenPool
 	{
-		AIToken[] tokens;
+		Dictionary<Team,AIToken[]> tokens;
 
 		public AITokenPool( int count, TimeSpan cooldown )
 		{
-			tokens	=	new AIToken[count];
+			tokens	=	new Dictionary<Team,AIToken[]>();
 
-			for (int i=0; i<count; i++)
+			foreach ( var team in Enum.GetValues(typeof(Team)) )
 			{
-				tokens[i] = new AIToken(cooldown);
+				tokens[(Team)team] = new AIToken[ count ];
+
+				for (int i=0; i<count; i++)
+				{
+					tokens[(Team)team][i] = new AIToken(cooldown);
+				}
 			}
+
 		}
 
 
 		public void Update( GameTime gameTime )
 		{
-			foreach (var token in tokens)
+			foreach (var tokenArray in tokens)
 			{
-				token.Update(gameTime);
+				foreach ( var token in tokenArray.Value )
+				{
+					token.Update(gameTime);
+				}
 			}
 		}
 
 
-		public void RestoreTokens(Entity deadEntity)
+		public AIToken Acquire(Team team, Entity owner)
 		{
-			foreach (var token in tokens)
-			{
-				token.Restore(deadEntity);
-			}
-		}
-
-
-		public AIToken Acquire(Entity owner)
-		{
-			foreach (var token in tokens)
+			foreach (var token in tokens[team])
 			{
 				if (token.IsReady)
 				{
@@ -54,16 +55,6 @@ namespace IronStar.AI
 			}
 
 			return null;
-		}
-
-		public IEnumerator<AIToken> GetEnumerator()
-		{
-			return ( (IEnumerable<AIToken>)tokens ).GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return ( (IEnumerable<AIToken>)tokens ).GetEnumerator();
 		}
 	}
 }

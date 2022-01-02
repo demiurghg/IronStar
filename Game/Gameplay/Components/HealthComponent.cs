@@ -8,28 +8,21 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public enum HealthStatus
-	{
-		Alive,
-		JustDied,
-		Dead,
-	}
-
 	public class HealthComponent : IComponent
 	{
+		const int DamageCooldownTimeout = 1000;
+
 		public int MaxHealth = 100;
 		public int MaxArmor  = 100;
 
-		public int Health { get; set; }
-		public int Armor { get; set; }
+		public int Health;
+		public int Armor;
 
-		public int LastDamage { get; set; }
-		public Entity LastAttacker { get; set; }
+		public int DamageCooldown;
+		public int DamageAccumulator;
+		public int LastDamage;
+		public Entity LastAttacker;
 
-		public string Action;
-
-		Entity attacker;
-		int accumulatedDamage;
 
 		public HealthComponent()
 		{
@@ -39,13 +32,6 @@ namespace IronStar.Gameplay.Components
 		{
 			Health	=	health;
 			Armor	=	armor;
-		}
-
-		public HealthComponent( int health, int armor, string action )
-		{
-			Health	=	health;
-			Armor	=	armor;
-			Action	=	action;
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -62,10 +48,10 @@ namespace IronStar.Gameplay.Components
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
-			 MaxHealth	=	reader.ReadInt32();
-			 MaxArmor	=	reader.ReadInt32();
-			 Health		=	reader.ReadInt32();
-			 Armor		=	reader.ReadInt32();
+			MaxHealth	=	reader.ReadInt32();
+			MaxArmor	=	reader.ReadInt32();
+			Health		=	reader.ReadInt32();
+			Armor		=	reader.ReadInt32();
 		}
 
 		public IComponent Clone()
@@ -112,21 +98,21 @@ namespace IronStar.Gameplay.Components
 		
 		public void InflictDamage( int damage, Entity attacker )
 		{
-			this.attacker		=	attacker;
-			accumulatedDamage	+=	damage;
+			LastAttacker		=	attacker;
+			DamageAccumulator	+=	damage;
+			DamageCooldown		=	DamageCooldownTimeout;
 		}
 
 
-		public HealthStatus ApplyDamage(bool protect)
+		public void ApplyDamage(bool protect, int msec)
 		{
 			bool wasAlive	=	Health > 0;
-			LastDamage		=	accumulatedDamage;
-			LastAttacker	=	attacker;
+			LastDamage		=	DamageAccumulator;
 
 			if (!protect)
 			{
-				int armorDamage		=	accumulatedDamage * 66 / 100;
-				int healthDamage	=	accumulatedDamage - armorDamage;
+				int armorDamage		=	DamageAccumulator * 66 / 100;
+				int healthDamage	=	DamageAccumulator - armorDamage;
 
 				Armor	-=	armorDamage;
 
@@ -139,15 +125,17 @@ namespace IronStar.Gameplay.Components
 				Health -= healthDamage;
 			}
 
-			accumulatedDamage = 0;
-			attacker = null;
+			DamageAccumulator = 0;
 
-			if (wasAlive && Health<=0)
+			if (DamageCooldown>0)
 			{
-				return HealthStatus.JustDied;
+				DamageCooldown -= msec;
+			} 
+			else
+			{
+				DamageCooldown = 0;
+				LastAttacker = null;
 			}
-
-			return Health > 0 ? HealthStatus.Alive : HealthStatus.Dead;
 		}
 	}
 }

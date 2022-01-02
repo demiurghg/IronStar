@@ -81,6 +81,7 @@ namespace IronStar.AI
 			if (ai.ThinkTimer.IsElapsed)
 			{
 				LookForEnemies( gameTime, entity, ai, cfg );
+				DetectAttacker( gameTime, entity, ai, cfg );
 				SelectTarget( entity, ai, cfg );
 				SetAimError( ai, cfg );
 				
@@ -165,15 +166,16 @@ namespace IronStar.AI
 			ai.NextAimError =	MathUtil.Random.UniformRadialDistribution( 0, cfg.Accuracy ) * new Vector3( 1, 0.5f, 1 );
 		}
 
-		float AssessTarget( AIComponent ai, Vector3 attackerPos, AITarget target )
+		float AssessTarget( AIComponent ai, Vector3 attackerPos, AITarget target, Entity attacker )
 		{
 			float distance	=	Vector3.Distance( attackerPos, target.LastKnownPosition );
 			float curve		=	AIUtils.Falloff( distance, 15 );
 
 			float visFactor		=	target.Visible ? 1 : target.ForgettingTimer.Fraction * 0.5f;
 			float stickFactor	=	(ai.Target == target) ? 1.0f : 0.5f;
+			float attackFactor	=	target.Entity == attacker ? 3 : 1;
 
-			return curve * stickFactor * visFactor;
+			return curve * stickFactor * visFactor * attackFactor;
 		}
 
 
@@ -181,18 +183,28 @@ namespace IronStar.AI
 		{
 			var uc		= e.GetComponent<UserCommandComponent>();
 			var t		= e.GetComponent<Transform>();
+			var attacker= e.GetComponent<HealthComponent>()?.LastAttacker; 
 			var dr		= e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 			var pos		= t.Position;
 
-			ai.Target	=	AIUtils.Select( (tt) => AssessTarget(ai,pos,tt), ai.Targets );
+			ai.Target	=	AIUtils.Select( (tt) => AssessTarget(ai,pos,tt,attacker), ai.Targets );
 		}
 
 
 		void AcquireCombatToken( Entity e, AIComponent ai )
 		{
-			if (ai.CombatToken==null)
+			var team = e.GetComponent<TeamComponent>();
+
+			if (team!=null)
 			{
-				ai.CombatToken	=	tokenPool.Acquire(e);
+				if (ai.CombatToken==null)
+				{
+					ai.CombatToken	=	tokenPool.Acquire(team.Team, e);
+				}
+			}
+			else
+			{
+				Log.Warning("Entity #{0} has no TeamComponent, token can not be acquired", e.ID );
 			}
 		}
 
@@ -250,7 +262,7 @@ namespace IronStar.AI
 
 		void LookForEnemies( GameTime gameTime, Entity entity, AIComponent ai, AIConfig cfg )
 		{
-			if (IronStar.IsNoTarget) return;
+			var noTarget = IronStar.IsNoTarget;
 
 			Vector3 pov;
 			BoundingFrustum frustum;
@@ -272,7 +284,7 @@ namespace IronStar.AI
 					var hasLOS		=	entity.HasLineOfSight( enemy, ref frustum, ref sphere, cfg.VisibilityRange );
 					var isAlive		=	health.Health > 0;
 
-					if (isEnemies && hasLOS && isAlive)
+					if (isEnemies && hasLOS && isAlive && !noTarget)
 					{
 						visibility = true;
 						AIUtils.SpotTarget( ai, cfg, enemy );
@@ -284,6 +296,33 @@ namespace IronStar.AI
 					var color	=	visibility ? Color.Red : Color.Lime;
 					dr.DrawFrustum( frustum, color, 0.02f, 2 );
 					dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, color, 32, 2, 1 );
+				}
+			}
+		}
+
+
+		void DetectAttacker( GameTime gameTime, Entity entity, AIComponent ai, AIConfig cfg )
+		{
+			var health = entity.GetComponent<HealthComponent>();
+
+			if ( health!=null )
+			{
+				var attacker = health.LastAttacker;
+
+				if (attacker!=null)
+				{
+					if (AIUtils.IsEnemies( entity, attacker ))
+					{
+						var attackerTransform = attacker.GetComponent<Transform>();
+
+						if (!ai.Targets.Any( t => t.Entity == attacker ))
+						{
+							if (attackerTransform!=null)
+							{
+								 ai.Targets.Add( new AITarget( attacker, attackerTransform.Position, cfg.TimeToForget ) );
+							}
+						}
+					}
 				}
 			}
 		}

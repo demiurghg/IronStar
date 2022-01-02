@@ -52,7 +52,7 @@ namespace IronStar.Gameplay.Systems
 				var health	=	entity.GetComponent<HealthComponent>();
 				var godMode	=	entity.ContainsComponent<PlayerComponent>() && IronStar.IsGodMode;
 
-				var status	=	health.ApplyDamage(godMode);
+				health.ApplyDamage(godMode, gameTime.Milliseconds);
 			}
 		}
 	}

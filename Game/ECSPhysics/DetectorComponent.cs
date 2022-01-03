@@ -33,6 +33,8 @@ namespace IronStar.ECSPhysics
 {
 	public class DetectorComponent : IComponent
 	{
+		public bool	DetectPlayer	=	true;
+		public bool DetectMonsters	=	true;
 		public BoundingBox LocalBounds;
 		public string Target = "";
 

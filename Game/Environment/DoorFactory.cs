@@ -47,7 +47,7 @@ namespace IronStar.Environment
 			{
 				e.AddComponent( new DoorComponent() { Mode = DoorControlMode.Automatic } );
 				e.AddComponent( new TriggerComponent() );
-				e.AddComponent( new DetectorComponent( bbox ) );
+				e.AddComponent( new DetectorComponent( bbox ) { DetectMonsters=true, DetectPlayer=true } );
 			}
 			else
 			{

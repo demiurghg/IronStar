@@ -10,6 +10,7 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Systems;
+using IronStar.AI;
 
 namespace IronStar.ECSPhysics 
 {
@@ -18,6 +19,7 @@ namespace IronStar.ECSPhysics
 		readonly PhysicsCore physics;
 
 		readonly Aspect playerAspect	=	new Aspect().Include<PlayerComponent>();
+		readonly Aspect monsterAspect	=	new Aspect().Include<AIComponent>();
 
 
 		public DetectorSystem ( PhysicsCore physics )
@@ -57,20 +59,25 @@ namespace IronStar.ECSPhysics
 			var activatorEntity = toucher.Tag as Entity;
 
 			//Log.Debug("DETECT : {0} : {1}", beginTouch, activatorEntity );
+			var acceptMonster	=	monsterAspect.Accept(activatorEntity);
+			var acceptPlayer	=	playerAspect.Accept(activatorEntity);
 
-			if (playerAspect.Accept(activatorEntity))
+			if (acceptMonster || acceptPlayer)
 			{
 				var detector	=	detectorEntity.GetComponent<DetectorComponent>();
 				var target		=	detectorEntity.GetComponent<DetectorComponent>().Target;
 
-				if (beginTouch)
+				if ((detector.DetectMonsters && acceptMonster) || (detector.DetectPlayer && acceptPlayer))
 				{
-					activatorEntity.gs.Trigger( target, detectorEntity, activatorEntity );
-					detector.Touchers.Add( activatorEntity );
-				}
-				else
-				{
-					detector.Touchers.Remove( activatorEntity );
+					if (beginTouch)
+					{
+						activatorEntity.gs.Trigger( target, detectorEntity, activatorEntity );
+						detector.Touchers.Add( activatorEntity );
+					}
+					else
+					{
+						detector.Touchers.Remove( activatorEntity );
+					}
 				}
 			}
 		}

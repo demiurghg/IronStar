@@ -22,11 +22,11 @@ namespace IronStar.AI
 		public Vector3		HoldPoint;
 
 		//	general AI stuff :
-		public Timer	ThinkTimer;
+		public Timer	ThinkTimer = new Timer();
 		public DMNode	DMNode = DMNode.Stand;
 
 		//	standing stuff :
-		public Timer	StandTimer;
+		public Timer	StandTimer = new Timer();
 
 		//	movement stuff :
 		public Route	Route	=	null;
@@ -35,8 +35,8 @@ namespace IronStar.AI
 		//	combat stuff :
 		public AIToken		CombatToken = null;
 		public bool			AllowFire = true;
-		public Timer		AttackTimer;
-		public Timer		GapeTimer;
+		public Timer		AttackTimer = new Timer();
+		public Timer		GapeTimer = new Timer();
 		public AITarget		Target = null;
 		public readonly List<AITarget>	Targets =	new List<AITarget>();
 		public Vector3		PrevAimError = Vector3.Zero;

@@ -45,6 +45,7 @@ namespace IronStar.Gameplay.Weaponry
 		public int			Damage			{ get; private set; }	=	0;
 		public float		Impulse			{ get; private set; }	=	0;
 		public float		MaxSpread		{ get; private set; }	=	0;
+		public float		NoiseLevel		{ get; private set; }	=	0;
 
 		public SpreadMode	SpreadMode		{ get; private set; }	=	SpreadMode.Const;
 		public float		Spread			{ get; private set; }	=	0;
@@ -116,6 +117,13 @@ namespace IronStar.Gameplay.Weaponry
 		{
 			TimeCooldown		=	TimeSpan.FromMilliseconds(cooldown);
 
+			return this;
+		}
+
+
+		public Weapon Noise( float noise )
+		{
+			NoiseLevel	=	noise;
 			return this;
 		}
 	}

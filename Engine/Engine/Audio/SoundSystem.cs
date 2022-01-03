@@ -157,7 +157,7 @@ namespace Fusion.Engine.Audio
 		}
 
 
-		public float GetEventLength( string path )
+		public SoundDescriptor GetEventDescriptor( string path )
 		{
 			EventDescription eventDesc;
 			string eventPath = Path.Combine(@"event:/", path);
@@ -166,13 +166,20 @@ namespace Fusion.Engine.Audio
 
 			if (result!=FMOD.RESULT.OK) 
 			{
-				return 0;
+				return null;
 			}
 
-			int lengthMSec;
-			eventDesc.getLength( out lengthMSec );
+			var desc = new SoundDescriptor();
+			eventDesc.getLength( out desc.LengthMSec );
+			eventDesc.getMaximumDistance( out desc.MaxDistance );
+			eventDesc.getMinimumDistance( out desc.MinDistance );
+			return desc;
+		}
 
-			return lengthMSec / 1000.0f;
+
+		public float GetEventLength( string path )
+		{
+			return GetEventDescriptor(path).LengthMSec / 1000.0f;
 		}
 
 		/// <summary>

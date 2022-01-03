@@ -13,6 +13,7 @@ using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using System.Diagnostics;
 using Fusion.Core.Configuration;
+using IronStar.SFX;
 
 namespace IronStar.AI
 {
@@ -258,7 +259,8 @@ namespace IronStar.AI
 		 *	Target management :
 		-----------------------------------------------------------------------------------------------*/
 
-		Aspect enemyAspect = new Aspect().Include<Transform,HealthComponent>().Any<PlayerComponent,AIComponent>();
+		readonly Aspect enemyAspect = new Aspect().Include<Transform,HealthComponent>().Any<PlayerComponent,AIComponent>();
+		readonly Aspect noiseAspect = new Aspect().Include<Transform,NoiseComponent>();
 
 		void LookForEnemies( GameTime gameTime, Entity entity, AIComponent ai, AIConfig cfg )
 		{
@@ -270,7 +272,7 @@ namespace IronStar.AI
 
 			var dr = entity.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 
-			AIUtils.ForgetTargetsAndResetVisibility( gameTime, ai ); 
+			AIUtils.ForgetTargetsAndResetVisibility( cfg.ThinkTime, ai ); 
 
 			bool visibility = false;
 
@@ -279,10 +281,14 @@ namespace IronStar.AI
 				foreach ( var enemy in entity.gs.QueryEntities( enemyAspect ) )
 				{
 					var health		=	enemy.GetComponent<HealthComponent>();
+					var noise		=	enemy.GetComponent<NoiseComponent>();
 					var transform	=	enemy.GetComponent<Transform>();
 					var isEnemies	=	AIUtils.IsEnemies( entity, enemy );
-					var hasLOS		=	entity.HasLineOfSight( enemy, ref frustum, ref sphere, cfg.VisibilityRange );
 					var isAlive		=	health.Health > 0;
+
+					var noiseLevel	=	noise==null ? 0 : noise.Level;
+
+					var hasLOS		=	entity.HasLineOfSight( enemy, ref frustum, cfg.VisibilityRange, noiseLevel );
 
 					if (isEnemies && hasLOS && isAlive && !noTarget)
 					{

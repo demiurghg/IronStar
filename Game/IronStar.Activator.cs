@@ -138,6 +138,7 @@ namespace IronStar
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );
 			gs.AddSystem( new ExplosionSystem() );
+			gs.AddSystem( new NoiseSystem() );
 
 			//	AI :
 			var navSystem	=	new NavSystem(gs, mapName);

@@ -38,6 +38,10 @@ namespace IronStar.Gameplay.Weaponry
 		const float IMPULSE_MEDIUM	=	200.0f;
 		const float IMPULSE_HEAVY	=	500.0f;
 
+		const float NOISE_LIGHT		=	130.0f;
+		const float NOISE_MEDIUM	=	210.0f;
+		const float NOISE_HEAVY		=	340.0f;
+
 		static Arsenal()
 		{
 			machinegun	=	new Weapon("MACHINEGUN")
@@ -46,6 +50,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
 								.Beam		( 1, "*trail_bullet", "bulletHit" )
+								.Noise		( NOISE_LIGHT )
 								;
 
 			machinegun2	=	new Weapon("MACHINEGUN2")
@@ -54,6 +59,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 100 )
 								.Attack		( 5, IMPULSE_LIGHT, 1.0f, SpreadMode.Variable, "machinegunMuzzle" )
 								.Beam		( 1, "*trail_bullet", "bulletHit" )
+								.Noise		( NOISE_LIGHT )
 								;
 
 			shotgun		=	new Weapon("SHOTGUN")
@@ -62,6 +68,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 750 )
 								.Attack		( 10, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
 								.Beam		( 10, null, "shotgunHit" )
+								.Noise		( NOISE_MEDIUM )
 								;
 
 			plasmagun		=	new Weapon("PLASMAGUN")
@@ -70,6 +77,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 100 )
 								.Attack		( 7, IMPULSE_LIGHT, 0.0f, SpreadMode.Const, "plasmaMuzzle" )
 								.Projectile	( 1, (gs,ad)=> gs.Spawn( new PlasmaFactory(ad) ) )
+								.Noise		( NOISE_LIGHT )
 								;
 
 			rlauncher		=	new Weapon("ROCKET_LAUNCHER")
@@ -78,6 +86,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 750 )
 								.Attack		( 100, IMPULSE_HEAVY, 0.0f, SpreadMode.Const, "rocketMuzzle" )
 								.Projectile	( 1, (gs,ad)=> gs.Spawn( new RocketFactory(ad) ) )
+								.Noise		( NOISE_HEAVY )
 								;
 
 			railgun			=	new Weapon("RAILGUN")
@@ -86,6 +95,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 1500 )
 								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "railMuzzle" )
 								.Beam		( 1, "*trail_gauss", "railHit" )
+								.Noise		( NOISE_HEAVY )
 								;
 		}
 

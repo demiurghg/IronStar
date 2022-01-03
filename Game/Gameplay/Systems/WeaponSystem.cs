@@ -255,6 +255,8 @@ namespace IronStar.Gameplay.Systems
 		{
 			var gs = attacker.gs;
 
+			attacker.GetComponent<NoiseComponent>()?.MakeNoise( weapon.NoiseLevel );
+
 			if (weapon.SpreadMode==SpreadMode.Const) state.Spread = weapon.MaxSpread;
 
 			if (weapon.IsBeamWeapon) 

@@ -9,21 +9,23 @@ using Fusion.Core;
 
 namespace IronStar.AI
 {
-	public struct Timer
+	public class Timer
 	{
 		private int counter;
 		private int timeout;
 
+		public Timer()
+		{
+		}
+
 		public Timer( int msec )
 		{
-			timeout	=	msec;
-			counter	=	timeout;
+			Set( msec );
 		}
 
 		public Timer( int msecMin, int msecMax )
 		{
-			timeout	=	MathUtil.Random.Next( msecMin, msecMax );
-			counter	=	timeout;
+			Set( msecMin, msecMax );
 		}
 
 		public void Set( int msec )
@@ -49,9 +51,18 @@ namespace IronStar.AI
 			counter -= gameTime.Milliseconds;
 		}
 
+		public void Update ( int msec )
+		{
+			counter -= msec;
+		}
+
 		public float Fraction
 		{
-			get { return MathUtil.Clamp( counter / (float)timeout, 0, 1); }
+			get 
+			{ 
+				if (timeout==0) return 0;
+				return MathUtil.Clamp( counter / (float)timeout, 0, 1); 
+			}
 		}
 
 		public bool IsElapsed

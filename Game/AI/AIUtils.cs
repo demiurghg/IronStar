@@ -12,6 +12,7 @@ using IronStar.Gameplay;
 using IronStar.Mathematics;
 using System.Diagnostics;
 using IronStar.Gameplay.Components;
+using IronStar.SFX;
 
 namespace IronStar.AI
 {
@@ -120,7 +121,7 @@ namespace IronStar.AI
 		}
 
 
-		public static bool HasLineOfSight( this Entity attacker, Entity target, ref BoundingFrustum frustum, ref BoundingSphere sphere, float maxDistance = float.MaxValue )
+		public static bool HasLineOfSight( this Entity attacker, Entity target, ref BoundingFrustum frustum, float visibilityRange, float hearingRange )
 		{
 			if (attacker==null || target==null) 
 			{
@@ -132,9 +133,21 @@ namespace IronStar.AI
 
 			if (attacker.TryGetPOV(out from) && target.TryGetPOV(out to))
 			{
-				if (Vector3.Distance(from,to) <= maxDistance)
+				var distance = Vector3.Distance(from,to);
+
+				//	audial detection :
+				if (distance < hearingRange)
 				{
-					if ((sphere.Contains(ref to)==ContainmentType.Contains) || (frustum.Contains(ref to)==ContainmentType.Contains))
+					if (attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target ))
+					{
+						return true;
+					}
+				}
+
+				//	visual detection :
+				if (distance < visibilityRange)
+				{
+					if (frustum.Contains(ref to)==ContainmentType.Contains)
 					{
 						if (attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target ))
 						{
@@ -167,11 +180,11 @@ namespace IronStar.AI
 		}
 
 
-		public static void ForgetTargetsAndResetVisibility( GameTime gameTime, AIComponent ai )
+		public static void ForgetTargetsAndResetVisibility( int msec, AIComponent ai )
 		{
 			foreach ( var target in ai.Targets )
 			{
-				target.ForgettingTimer.Update( gameTime );
+				target.ForgettingTimer.Update( msec );
 				target.Visible = false; // assume, SpotTarget will update visibility flag
 			}
 

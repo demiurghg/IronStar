@@ -194,6 +194,7 @@
     <Compile Include="Drivers\Graphics\RenderDoc\OverlayBits.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\RenderDoc.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\RenderDocApi.cs" />
+    <Compile Include="Engine\Audio\SoundDescriptor.cs" />
     <Compile Include="Engine\Frames\UIState.cs" />
     <Compile Include="Engine\Graphics\GUI\GuiRenderer.cs" />
     <Compile Include="Engine\Graphics\GUI\Gui.cs" />

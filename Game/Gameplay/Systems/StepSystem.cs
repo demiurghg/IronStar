@@ -25,6 +25,10 @@ namespace IronStar.Gameplay.Systems
 		const float STEP_VELOCITY_THRESHOLD = 0.1f;
 		const float ACCELERATION_FILTER		= 10.0f;
 
+		const float NOISE_STEP	=	30;
+		const float NOISE_JUMP	=	50;
+		const float NOISE_LAND	=	80;
+
 		public void Add( IGameState gs, Entity e ) {}
 		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
@@ -39,6 +43,7 @@ namespace IronStar.Gameplay.Systems
 			foreach ( var e in stepEntities )
 			{
 				var step		=	e.GetComponent<StepComponent>();
+				var noise		=	e.GetComponent<NoiseComponent>();
 
 				var wpnState	=	e.GetComponent<WeaponStateComponent>();
 				var controller	=	e.GetComponent<CharacterController>();
@@ -101,6 +106,15 @@ namespace IronStar.Gameplay.Systems
 				step.LocalAcceleration.MoveTo( ref acceleration, ACCELERATION_FILTER );
 				//acceleration		=	Vector3.TransformNormal( acceleration, Matrix.Invert( transform.TransformMatrix ) );
 				//step.LocalAcceleration	=	Vector3.Lerp( step.LocalAcceleration, acceleration, ACCELERATION_FILTER );
+
+				//
+				//	noise :
+				//
+				float scale = velocity / controller.standingSpeed;
+				if (step.LeftStep)	noise?.MakeNoise( NOISE_STEP  * scale );
+				if (step.RightStep) noise?.MakeNoise( NOISE_STEP  * scale );
+				if (step.Landed)	noise?.MakeNoise( NOISE_LAND );
+				if (step.Jumped)	noise?.MakeNoise( NOISE_JUMP );
 
 				//
 				//	debug :

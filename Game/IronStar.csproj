@@ -228,6 +228,7 @@
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />
+    <Compile Include="Gameplay\Components\NoiseComponent.cs" />
     <Compile Include="Gameplay\Components\TeamComponent.cs" />
     <Compile Include="Gameplay\Components\TriggerComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
     <Compile Include="Gameplay\Systems\InventorySystem.cs" />
+    <Compile Include="Gameplay\Systems\NoiseSystem.cs" />
     <Compile Include="Gameplay\Systems\PlayerInputSystem.cs" />
     <Compile Include="Gameplay\Systems\PlayerSpawnSystem.cs" />
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />

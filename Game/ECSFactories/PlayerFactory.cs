@@ -48,6 +48,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new CameraComponent() );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 			e.AddComponent( new BobbingComponent() );
+			e.AddComponent( new NoiseComponent() );
 
 			var inventory	=	new InventoryComponent();
 			var weaponState	=	new WeaponStateComponent();

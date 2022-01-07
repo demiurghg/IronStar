@@ -48,7 +48,7 @@ namespace Fusion.Engine.Tools
 		[AECategory("History")] [Config] public static string CommandHistory7 { get; set; }
 
 
-		void SetDefaults ()
+		static GameConsole()
 		{
 			FallSpeed		=	5;
 			

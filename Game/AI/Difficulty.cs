@@ -30,10 +30,10 @@ namespace IronStar.AI
 		{
 			switch (difficulty)
 			{
-				case Difficulty.Easy:	return TimeSpan.FromMilliseconds( 800 );
-				case Difficulty.Medium:	return TimeSpan.FromMilliseconds( 500 );
-				case Difficulty.Hard:	return TimeSpan.FromMilliseconds( 300 );
-				default:				return TimeSpan.FromMilliseconds(   0 );
+				case Difficulty.Easy:	return TimeSpan.FromMilliseconds( 1300 );
+				case Difficulty.Medium:	return TimeSpan.FromMilliseconds(  800 );
+				case Difficulty.Hard:	return TimeSpan.FromMilliseconds(  500 );
+				default:				return TimeSpan.FromMilliseconds(    0 );
 			}
 		}
 	}

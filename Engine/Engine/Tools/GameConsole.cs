@@ -80,8 +80,6 @@ namespace Fusion.Engine.Tools {
 		/// <param name="font"></param>
 		public GameConsole ( Game Game ) : base(Game)
 		{
-			SetDefaults();
-
 			this.font		=	FontName;
 
 			editBox		=	new EditBox(this);

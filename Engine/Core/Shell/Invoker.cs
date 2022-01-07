@@ -149,10 +149,10 @@ namespace Fusion.Core.Shell
 
 			propertyInfo = config.GetProperty(right);
 
-			if (propertyInfo==null) 
-			{
-				return false;
-			}
+			if (propertyInfo==null) { return false; }
+			if (!propertyInfo.HasAttribute<ConfigAttribute>()) { return false; }
+			if (!propertyInfo.GetGetMethod().IsStatic) { return false; }
+			if (!propertyInfo.GetSetMethod().IsStatic) { return false; }
 
 			return true;
 		}

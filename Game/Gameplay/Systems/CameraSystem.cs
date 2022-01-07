@@ -94,7 +94,7 @@ namespace IronStar.Gameplay
 		public void Remove( IGameState gs, Entity e ) {}
 
 		Aspect playerCameraAspect = new Aspect().Include<PlayerComponent,Transform>()
-												.Include<UserCommandComponent,CharacterController>();
+												.Include<UserCommandComponent>();
 
 
 		/*-----------------------------------------------------------------------------------------
@@ -125,7 +125,6 @@ namespace IronStar.Gameplay
 			var t		=	e.GetComponent<Transform>();
 			var v		=	t.LinearVelocity;
 			var uc		=	e.GetComponent<UserCommandComponent>();
-			var ch		=	e.GetComponent<CharacterController>();
 			var health	=	e.GetComponent<HealthComponent>();
 			var camera	=	e.GetComponent<CameraComponent>();
 
@@ -152,7 +151,6 @@ namespace IronStar.Gameplay
 			var t		=	e.GetComponent<Transform>();
 			var v		=	t.LinearVelocity;
 			var uc		=	e.GetComponent<UserCommandComponent>();
-			var ch		=	e.GetComponent<CharacterController>();
 			var step	=	e.GetComponent<StepComponent>();
 			var health	=	e.GetComponent<HealthComponent>();
 			var camera	=	e.GetComponent<CameraComponent>();

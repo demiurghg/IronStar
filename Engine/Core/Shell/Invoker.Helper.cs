@@ -272,11 +272,16 @@ namespace Fusion.Core.Shell {
 			//
 			//	Gather possible values :
 			//
-			if (type==typeof(bool)) {
+			if (type==typeof(bool)) 
+			{
 				candidates = new string[]{"True", "False"};
-			} else if (type.IsEnum) {
+			}
+			else if (type.IsEnum) 
+			{
 				candidates = Enum.GetNames(type);
-			} else {
+			}
+			else
+			{
 				var value = variable.GetValue(null)?.ToString();
 				candidates = new string[]{ value ?? "" };
 			}
@@ -285,7 +290,8 @@ namespace Fusion.Core.Shell {
 			//	Only name of the variables is entered.
 			//	Just show possible values.
 			//	
-			if (args.Length==1) {	
+			if (args.Length==1) 
+			{	
 				suggestion.Set( args[0] + " ");
 				suggestion.AddRange( candidates.Select( c1 => args[0] + " " + c1 ) );
 				return suggestion;
@@ -300,13 +306,17 @@ namespace Fusion.Core.Shell {
 			suggestion.AddRange( candidates.Select( c1 => args[0] + " " + c1 ) );
 
 			//	add quotes if longest common contains spaces :
-			if (longest!=null && longest.Any( c => char.IsWhiteSpace(c) )) {
+			if (longest!=null && longest.Any( c => char.IsWhiteSpace(c) )) 
+			{
 				longest = "\"" + longest;// + "\"";
-				if (candidates.Length==1) {
+				if (candidates.Length==1) 
+				{
 					//	only on suggestion - close quotes.
 					longest += "\"";
 				}
-			} else {
+			} 
+			else 
+			{
 			}
 
 			suggestion.Set( string.Format("{0} {1}", args[0], longest) );

@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures/plasmaColor.tga
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = textures/plasmaGlow.tga 
+Occlusion = 

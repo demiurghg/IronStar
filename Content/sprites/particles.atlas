@@ -4,6 +4,7 @@ Compression = false
 Padding		= 16
 
 [Textures]
+plasmaBall			=	plasmaBall.tga
 testNum				=	testSprites\numTest*.tga
 blood				=	blood\blood*.tga
 bloodSpray01		=	bloodSpray01.tga

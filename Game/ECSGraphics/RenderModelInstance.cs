@@ -101,7 +101,7 @@ namespace IronStar.SFX2
 
 			ri.NoShadow				=	rm.NoShadow;
 			ri.Group				=	group;
-			ri.Color				=	Color4.Zero;
+			ri.Color				=	rm.color.ToColor4() * MathUtil.Exp2(rm.intensity);
 			ri.LightMapRegionName	=	rm.lightmapName;// + "##" + scene.GetFullNodePath(node);
 			ri.LightMapSize			=	rm.lightmapSize;
 

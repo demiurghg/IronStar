@@ -177,6 +177,24 @@ namespace IronStar.ECS
 		}
 
 
+		public bool TryGetLocation( out Vector3 location )
+		{
+			var t = GetComponent<Transform>();
+
+			if (t!=null)
+			{
+				location	=	t.Position;
+				return true;
+			}
+			else
+			{
+				location	=	Vector3.Zero;
+				return false;
+			}
+		}
+
+
+		[Obsolete("Use TryGetPosition instead", true)]
 		public Vector3 Location
 		{
 			get 

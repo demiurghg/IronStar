@@ -15,10 +15,24 @@ namespace IronStar.ECS
 	public class Transform : IComponent
 	{
 		public Vector3		Position		=	Vector3.Zero;
-		public Quaternion	Rotation		=	Quaternion.Identity;
 		public float		Scaling			=	1.0f;
 		public Vector3		LinearVelocity	=	Vector3.Zero;
 		public Vector3		AngularVelocity	=	Vector3.Zero;
+
+		#warning TEMPORARY SOLUTION TO CATCH NAN-QUATERNION
+		Quaternion	rotation		=	Quaternion.Identity;
+		public Quaternion Rotation
+		{
+			get { return rotation; }
+			set 
+			{ 
+				if (IsBad(value))
+				{
+					Trace.Assert(false);
+				}
+				rotation = value; 
+			}
+		}
 
 		public Transform ()
 		{
@@ -34,7 +48,9 @@ namespace IronStar.ECS
 		public Transform ( Matrix t )
 		{
 			Vector3 s;
-			t.Decompose( out s, out Rotation, out Position );
+			Quaternion r;
+			t.Decompose( out s, out r, out Position );
+			Rotation = r;
 			Scaling = s.X;
 		}
 
@@ -95,7 +111,9 @@ namespace IronStar.ECS
 			set 
 			{
 				Vector3 s;
-				value.Decompose( out s, out Rotation, out Position );
+				Quaternion r;
+				value.Decompose( out s, out r, out Position );
+				Rotation = r;
 				Scaling = s.X;
 			}
 		}
@@ -135,6 +153,7 @@ namespace IronStar.ECS
 				Log.Warning("  Scaling         = " + (Scaling).ToString() );
 				Log.Warning("  LinearVelocity  = " + (LinearVelocity).ToString() );
 				Log.Warning("  AngularVelocity = " + (AngularVelocity).ToString() );
+				Trace.Assert(false);
 			}
 				
 			//if (IsBad( Scaling		)) Log.Warning("Bad transform {0}: {1} {2} = {3}", id, prefix, nameof(Scaling), Scaling ); 
@@ -189,9 +208,8 @@ namespace IronStar.ECS
 
 		Vector3 Vector3SafeLerp( Vector3 a, Vector3 b, float factor )
 		{
-			return Vector3.Lerp( a, b, factor );
-
 			const float eps = 1 / 512.0f;
+
 			if (   MathUtil.WithinEpsilon( a.X, b.X, eps )
 				&& MathUtil.WithinEpsilon( a.Y, b.Y, eps )
 				&& MathUtil.WithinEpsilon( a.Z, b.Z, eps ) )

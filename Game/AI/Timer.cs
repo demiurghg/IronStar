@@ -14,6 +14,8 @@ namespace IronStar.AI
 		private int counter;
 		private int timeout;
 
+		public int Timeout { get { return timeout; } }
+
 		public Timer()
 		{
 		}

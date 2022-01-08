@@ -96,16 +96,19 @@ namespace IronStar.AI
 
 			ai.UpdateTimers( gameTime );
 
-			Attack( dt, entity, ai, t, uc, cfg );
-			Move( dt, entity, ai, cfg );
+
+			var stun = Stun( dt, entity, ai, cfg );
+			//	only prevent fire on stun
+			Attack( dt, entity, ai, t, uc, cfg, stun );
+			Move( dt, entity, ai, cfg, false );
 		}
 
 		
 		/*-----------------------------------------------------------------------------------------------
-		 *	Routing :
+		 *	Movement :
 		-----------------------------------------------------------------------------------------------*/
 
-		void Move( float dt, Entity e, AIComponent ai, AIConfig cfg )
+		void Move( float dt, Entity e, AIComponent ai, AIConfig cfg, bool stun )
 		{
 			var uc		= e.GetComponent<UserCommandComponent>();
 			var t		= e.GetComponent<Transform>();
@@ -117,7 +120,7 @@ namespace IronStar.AI
 				return;
 			}
 
-			if (route!=null)
+			if (route!=null && !stun)
 			{
 				var origin	=	t.Position;
 				var target	=	Vector3.Zero;
@@ -155,6 +158,33 @@ namespace IronStar.AI
 				uc.Move		=	0;
 				uc.Strafe	=	0;
 			}
+		}
+
+		bool Stun( float dt, Entity e, AIComponent ai, AIConfig cfg )
+		{
+			var health = e.GetComponent<HealthComponent>();
+
+			if (health!=null)
+			{
+				if (health.LastDamage>0 && health.Health>0)
+				{
+					var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
+					
+					Log.Debug("#{0} stunning {1}%", e.ID, percentage);
+					
+					var timeout = cfg.StunMaxTimeout * percentage / 100;
+
+					if (AIUtils.RollTheDice(percentage/100.0f))
+					{
+						if (ai.StunTimer.Timeout<timeout)
+						{
+							ai.StunTimer.SetND( timeout );
+						}
+					}
+				}
+			}
+
+			return !ai.StunTimer.IsElapsed;
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -198,9 +228,12 @@ namespace IronStar.AI
 
 			if (team!=null)
 			{
-				if (ai.CombatToken==null)
+				if (!ai.Options.HasFlag(AIOptions.NoToken))
 				{
-					ai.CombatToken	=	tokenPool.Acquire(team.Team, e);
+					if (ai.CombatToken==null)
+					{
+						ai.CombatToken	=	tokenPool.Acquire(team.Team, e);
+					}
 				}
 			}
 			else
@@ -210,12 +243,13 @@ namespace IronStar.AI
 		}
 
 
-		bool Attack( float dt, Entity e, AIComponent ai, Transform t, UserCommandComponent uc, AIConfig cfg )
+		bool Attack( float dt, Entity e, AIComponent ai, Transform t, UserCommandComponent uc, AIConfig cfg, bool stun )
 		{
 			//	clear attack flag :
 			uc.Action &= ~UserAction.Attack;
 
 			if (ai.Target==null) return false;
+			if (stun) return false;
 
 			var dr = e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 
@@ -242,7 +276,7 @@ namespace IronStar.AI
 						dr.DrawPoint( aimPoint, 5.0f, Color.Red, 3 );
 					}
 
-					var token = ai.CombatToken!=null;
+					var token = (ai.CombatToken!=null) || ai.Options.HasFlag(AIOptions.NoToken);
 
 					if (error<cfg.AccuracyThreshold && ai.Target.Visible && ai.AllowFire && token)
 					{
@@ -293,7 +327,7 @@ namespace IronStar.AI
 					if (isEnemies && hasLOS && isAlive && !noTarget)
 					{
 						visibility = true;
-						AIUtils.SpotTarget( ai, cfg, enemy );
+						AIUtils.SpotTarget( entity, ai, cfg, enemy );
 					}
 				}
 
@@ -353,7 +387,7 @@ namespace IronStar.AI
 			return false;
 		}
 
-		void EnterNode( DMNode newNode, AIComponent ai, string reason )
+		void EnterNode( Entity e, DMNode newNode, AIComponent ai, string reason )
 		{
 			var oldNode		=	ai.DMNode;
 			ai.DMNode		=	newNode;	//	set new node
@@ -367,7 +401,7 @@ namespace IronStar.AI
 
 			if (LogDM)
 			{
-				Log.Debug("{0} -> {1} : {2}", oldNode, newNode, reason );
+				Log.Debug("#{0}: {1} -> {2} : {3}", e.ID, oldNode, newNode, reason );
 			}
 		}
 					
@@ -377,7 +411,7 @@ namespace IronStar.AI
 
 		void EnterDead( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
-			EnterNode( DMNode.Dead, ai, reason );
+			EnterNode( e, DMNode.Dead, ai, reason );
 		}
 
 		//-----------------------------------------------------------
@@ -385,7 +419,7 @@ namespace IronStar.AI
 		void EnterStand( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
 			ai.StandTimer.SetND( cfg.IdleTimeout );
-			EnterNode( DMNode.Stand, ai, reason );
+			EnterNode( e, DMNode.Stand, ai, reason );
 		}
 
 
@@ -431,7 +465,7 @@ namespace IronStar.AI
 			var location	=	nav.GetReachablePointInRadius( transform.Position, cfg.RoamRadius );
 			ai.Route		=	nav.FindRoute( transform.Position, location );
 
-			EnterNode( DMNode.Roaming, ai, reason );
+			EnterNode( e, DMNode.Roaming, ai, reason );
 		}
 
 
@@ -470,7 +504,7 @@ namespace IronStar.AI
 		void EnterStandGaping( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
 			ai.GapeTimer.SetND( cfg.GapeTimeout );
-			EnterNode( DMNode.StandGaping, ai, reason );
+			EnterNode( e, DMNode.StandGaping, ai, reason );
 
 			ai.AllowFire	=	false;	//	we
 			ai.Route		=	null;
@@ -488,13 +522,20 @@ namespace IronStar.AI
 
 			if (ai.GapeTimer.IsElapsed)
 			{
-				if (ai.Target!=null && ai.Target.Visible)
+				if (ai.Target!=null && (ai.Target.Visible || ai.Target.Confirmed))
 				{
+					if (true || !ai.Target.Confirmed)
+					{
+						AIUtils.BroadcastEnemyTarget( cfg, e, ai.Target.Entity );	
+					}
+
 					EnterCombatChase( e, ai, cfg, "target detected" );
 					return false;
 				}
 
 				EnterStand( e, ai, cfg, "false alarm");
+				ai.Targets.EraseEntity(ai.Target?.Entity);
+				ai.Target = null;
 				return false;
 			}
 
@@ -517,7 +558,7 @@ namespace IronStar.AI
 				ai.Route		=	nav.FindRoute( origin, randPoint );
 			}
 
-			EnterNode(DMNode.CombatChase, ai, reason);
+			EnterNode(e, DMNode.CombatChase, ai, reason);
 		}
 
 
@@ -534,7 +575,7 @@ namespace IronStar.AI
 
 			if (ai.Target!=null)
 			{
-				if (ai.Target.Visible)
+				if (ai.Target.Visible || ai.Options.HasFlag(AIOptions.Camper))
 				{
 					EnterCombatAttack( e, ai, cfg, "target is visible" );
 					return false;
@@ -553,7 +594,7 @@ namespace IronStar.AI
 
 		void EnterCombatAttack( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
-			EnterNode( DMNode.CombatAttack, ai, reason );
+			EnterNode( e, DMNode.CombatAttack, ai, reason );
 			ai.Route = null; // stop moving
 			AcquireCombatToken(e, ai);
 			ai.AttackTimer.SetND( cfg.AttackTime );
@@ -601,7 +642,7 @@ namespace IronStar.AI
 			var dst			=	nav.GetReachablePointInRadius( origin, cfg.CombatMoveRadius );
 			ai.Route		=	nav.FindRoute( origin, dst );
 			AcquireCombatToken(e, ai);
-			EnterNode( DMNode.CombatMove, ai, reason );
+			EnterNode( e, DMNode.CombatMove, ai, reason );
 
 			ai.AllowFire	=	AIUtils.RollTheDice( cfg.AttackWhileMoving );
 		}
@@ -617,7 +658,7 @@ namespace IronStar.AI
 				return false;
 			}
 
-			if ( ai.Route==null || ai.Route.Status!=Status.InProgress)
+			if ( ai.Route==null || ai.Route.Status!=Status.InProgress || ai.Options.HasFlag(AIOptions.Camper))
 			{
 				EnterCombatAttack( e, ai, cfg, "combat move is completed");
 				return false;

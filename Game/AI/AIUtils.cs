@@ -13,6 +13,7 @@ using IronStar.Mathematics;
 using System.Diagnostics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX;
+using Fusion;
 
 namespace IronStar.AI
 {
@@ -121,7 +122,8 @@ namespace IronStar.AI
 		}
 
 
-		public static bool HasLineOfSight( this Entity attacker, Entity target, ref BoundingFrustum frustum, float visibilityRange, float hearingRange )
+
+		public static bool HasLineOfSight( this Entity attacker, Entity target, ref BoundingFrustum frustum, float visibilityRange, float soundRange )
 		{
 			if (attacker==null || target==null) 
 			{
@@ -136,7 +138,13 @@ namespace IronStar.AI
 				var distance = Vector3.Distance(from,to);
 
 				//	audial detection :
-				if (distance < hearingRange)
+				if (distance < soundRange/2.0f)
+				{
+					return true;
+				}
+
+				//	audial detection :
+				if (distance < soundRange)
 				{
 					if (attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target ))
 					{
@@ -161,22 +169,26 @@ namespace IronStar.AI
 		}
 
 
-		public static void SpotTarget( AIComponent ai, AIConfig cfg, Entity enemy )
+		public static void SpotTarget( Entity e, AIComponent ai, AIConfig cfg, Entity enemy )
 		{
-			var enemyPosition = enemy.GetComponent<Transform>().Position;
+			var enemyTransform	=	enemy.GetComponent<Transform>(); 
 
-			foreach ( var target in ai.Targets )
+			if (enemyTransform!=null)
 			{
-				if (target.Entity==enemy)
+				foreach ( var target in ai.Targets )
 				{
-					target.ForgettingTimer.Set( cfg.TimeToForget );
-					target.LastKnownPosition = enemyPosition;
-					target.Visible = true;
-					return;
+					if (target.Entity==enemy)
+					{
+						target.ForgettingTimer.Set( cfg.TimeToForget );
+						target.LastKnownPosition = enemyTransform.Position;
+						target.Visible = true;
+					}
 				}
-			}
 
-			ai.Targets.Add( new AITarget( enemy, enemyPosition, cfg.TimeToForget ) );
+				var newTarget = new AITarget( enemy, enemyTransform.Position, cfg.TimeToForget );
+
+				ai.Targets.Add( newTarget );
+			}
 		}
 
 
@@ -198,6 +210,9 @@ namespace IronStar.AI
 			return health==null ? true : health.Health > 0;
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Enemy management :
+		-----------------------------------------------------------------------------------------*/
 
 		public static bool IsEnemies( Entity a, Entity b )
 		{
@@ -209,12 +224,68 @@ namespace IronStar.AI
 				return false;
 			}
 
-			if (teamA.Team!=teamB.Team)
+			return teamA.Team!=teamB.Team;
+		}
+
+
+		public static bool IsFriends( Entity a, Entity b )
+		{
+			var teamA = a.GetComponent<TeamComponent>();
+			var teamB = b.GetComponent<TeamComponent>();
+
+			if (teamA==null || teamB==null)
 			{
-				return true;
+				return false;
 			}
 
-			return false;
+			return teamA.Team==teamB.Team;
+		}
+
+
+		public static void BroadcastEnemyTarget( AIConfig cfg, Entity reporter, Entity target )
+		{
+			var allyAspect	=	new Aspect().Include<Transform,AIComponent,TeamComponent>();
+			var gs			=	reporter.gs;	
+
+			Vector3 reporterLocation;
+			Vector3 enemyLocation;
+			Vector3 allyLocation;
+
+			if (AISystem.LogDM)
+			{
+				Log.Debug("...#{0} reporting enemy #{1}", reporter.ID, target.ID );
+			}
+
+			if (reporter.TryGetLocation( out reporterLocation ))
+			{
+				if (target.TryGetLocation( out enemyLocation ))
+				{
+					foreach (var ally in gs.QueryEntities(allyAspect))
+					{
+						if (reporter!=ally && IsFriends(reporter,ally))
+						{
+							if (ally.TryGetLocation(out allyLocation))
+							{
+								if (Vector3.Distance( reporterLocation, allyLocation ) < cfg.BroadcastRange )
+								{
+									var allyAI = ally.GetComponent<AIComponent>();
+
+									if (allyAI!=null)
+									{
+										if (!allyAI.Targets.HasEntity(target))
+										{
+											var newTarget = new AITarget( target, enemyLocation, cfg.TimeToForget );
+											newTarget.Confirmed = true;
+
+											allyAI.Targets.Add( newTarget );
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

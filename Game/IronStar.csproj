@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="AI\AIConfig.cs" />
     <Compile Include="AI\AIComponent.cs" />
+    <Compile Include="AI\AITargetCollection.cs" />
     <Compile Include="AI\AITarget.cs" />
     <Compile Include="AI\AIToken.cs" />
     <Compile Include="AI\AITokenPool.cs" />

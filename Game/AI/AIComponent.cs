@@ -14,6 +14,8 @@ namespace IronStar.AI
 	{
 		None	=	0x0000,
 		Roaming	=	0x0001,
+		Camper	=	0x0002,
+		NoToken	=	0x0004,
 	}
 
 	public class AIComponent : IComponent
@@ -37,8 +39,9 @@ namespace IronStar.AI
 		public bool			AllowFire = true;
 		public Timer		AttackTimer = new Timer();
 		public Timer		GapeTimer = new Timer();
+		public Timer		StunTimer = new Timer();
 		public AITarget		Target = null;
-		public readonly List<AITarget>	Targets =	new List<AITarget>();
+		public readonly AITargetCollection	Targets =	new AITargetCollection();
 		public Vector3		PrevAimError = Vector3.Zero;
 		public Vector3		NextAimError = Vector3.Zero;
 
@@ -61,6 +64,7 @@ namespace IronStar.AI
 			StandTimer.Update( gameTime );
 			AttackTimer.Update( gameTime );
 			GapeTimer.Update( gameTime );
+			StunTimer.Update( gameTime );
 		}
 
 

@@ -21,6 +21,8 @@ namespace IronStar.ECSFactories
 		public Team Team { get; set; } = Team.Monsters;
 		public WeaponType Weapon { get; set; } = WeaponType.Machinegun;
 		public bool Roamer { get; set; } = false;
+		public bool Camper { get; set; } = false;
+		public bool NoToken { get; set; } = false;
 
 		void GiveWeapon(IGameState gs, Entity monster, InventoryComponent inventory, WeaponStateComponent state, WeaponType weapon)
 		{
@@ -45,7 +47,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new StepComponent() );
-			e.AddComponent( new HealthComponent(50,25) );
+			e.AddComponent( new HealthComponent(50,0) );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			var inventory	=	new InventoryComponent(InventoryFlags.InfiniteAmmo);
@@ -54,7 +56,9 @@ namespace IronStar.ECSFactories
 			e.AddComponent( weaponState );
 
 			var options = AIOptions.None;
-			if (Roamer) options |= AIOptions.Roaming;
+			if (Roamer)  options |= AIOptions.Roaming;
+			if (Camper)  options |= AIOptions.Camper;
+			if (NoToken) options |= AIOptions.NoToken;
 
 			e.AddComponent( new AIComponent(Position, options) );
 			e.AddComponent( new TeamComponent(Team) );

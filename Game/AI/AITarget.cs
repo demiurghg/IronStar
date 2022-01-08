@@ -14,6 +14,7 @@ namespace IronStar.AI
 		public readonly Timer ForgettingTimer;
 		public Vector3 LastKnownPosition;
 		public bool Visible;
+		public bool Confirmed; // means, that gapping period always complete with combat chase/attack/move
 
 		public AITarget( Entity e, Vector3 pos, int timeToForget )
 		{
@@ -22,6 +23,7 @@ namespace IronStar.AI
 			ForgettingTimer		=	new Timer();
 			ForgettingTimer.Set( timeToForget );
 			Visible = true;
+			Confirmed = false;
 		}
 	}
 }

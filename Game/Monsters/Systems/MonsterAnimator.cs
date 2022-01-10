@@ -31,6 +31,7 @@ namespace IronStar.Monsters.Systems
 		readonly BlendSpaceD4	tiltForward;
 		readonly BlendSpaceD4	rotateTorso;
 		readonly Sequencer		torsoLayer;
+		readonly Sequencer		painLayer;
 		LocomotionState		locomotionState;
 		WeaponState			prevWeaponState = WeaponState.Idle;
 
@@ -88,11 +89,13 @@ namespace IronStar.Monsters.Systems
 			rotateTorso			=	new BlendSpaceD4( scene, null, "rotation", AnimationBlendMode.Additive );
 			torsoLayer			=	new Sequencer( scene, "spine1", AnimationBlendMode.Override );
 			locomotionState		=	new Idle(this, uc, false);
+			painLayer			=	new Sequencer( scene, null, AnimationBlendMode.Additive );
 
 			composer.Tracks.Add( locomotionLayer );
 			composer.Tracks.Add( torsoLayer );
 			composer.Tracks.Add( rotateTorso );
 			composer.Tracks.Add( tiltForward );
+			composer.Tracks.Add( painLayer );
 			composer.Tracks.Add( new BaseBoneRotator( scene, baseIndex ) );
 		}
 
@@ -141,6 +144,15 @@ namespace IronStar.Monsters.Systems
 		}
 
 
+		void UpdatePain( HealthComponent health )
+		{
+			if (health.LastDamage>0 && health.Health>0)
+			{
+				var painCrossFade = TimeSpan.FromSeconds(0.1f);
+				painLayer.Sequence("pain" + MathUtil.Random.Next(3).ToString(), SequenceMode.Hold|SequenceMode.Immediate, painCrossFade);
+			}
+		}
+
 		Vector2 tiltFactor = Vector2.Zero;
 
 		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
@@ -149,6 +161,7 @@ namespace IronStar.Monsters.Systems
 
 			UpdateLocomotionState( gameTime, transform, step, uc, health );
 			UpdateWeaponState();
+			UpdatePain( health );
 
 			//	update tilt :
 			var run			= step.GroundVelocity.Length()>0.2f;

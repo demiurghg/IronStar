@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.10.00">
+    <object class="AudioFile" id="{e88103c1-385d-46db-9f2f-82245979cc5d}">
+        <property name="assetPath">
+            <value>weapon/grenade/Golf_Swing_Whoosh_01.wav</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>44.0999985</value>
+        </property>
+        <property name="channelCount">
+            <value>2</value>
+        </property>
+        <property name="length">
+            <value>1.242267573696145</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{63028330-1a67-44b7-ba85-881ae659ed7e}</destination>
+        </relationship>
+    </object>
+</objects>

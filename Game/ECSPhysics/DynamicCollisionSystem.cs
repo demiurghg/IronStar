@@ -60,6 +60,10 @@ namespace IronStar.ECSPhysics
 			cbox.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 			cbox.Tag				=	entity;
 
+			cbox.Material.Bounciness		=	box.Bounciness;
+			cbox.Material.KineticFriction	=	box.KinematicFriction;
+			cbox.Material.StaticFriction	=	box.StaticFriction;
+
 			cbox.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 			cbox.CollisionInformation.CollisionRules.Group = physics.GetCollisionGroup( box.Group );
 

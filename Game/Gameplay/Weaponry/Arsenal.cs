@@ -18,6 +18,7 @@ namespace IronStar.Gameplay.Weaponry
 		readonly static Weapon	plasmagun;
 		readonly static Weapon	rlauncher;
 		readonly static Weapon	railgun;
+		readonly static Weapon	handGrenade;
 
 		readonly static Ammo	bullets		=	new Ammo(200, "BULLETS"	);
 		readonly static Ammo	shells		=	new Ammo(200, "SHELLS"	);
@@ -67,7 +68,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
 								.Attack		( 10, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
-								.Beam		( 10, null, "shotgunHit" )
+								.Beam		(  8, null, "shotgunHit" )
 								.Noise		( NOISE_MEDIUM )
 								;
 
@@ -97,6 +98,15 @@ namespace IronStar.Gameplay.Weaponry
 								.Beam		( 1, "*trail_gauss", "railHit" )
 								.Noise		( NOISE_HEAVY )
 								;
+
+			handGrenade		=	new Weapon("HAND_GREANDE")
+								.Ammo		( 1, AmmoType.Grenades )
+								//.Warmup		( 300 )
+								.Cooldown	( 700 )
+								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "grenadeThrow" )
+								.Projectile	( 1, (gs,ad)=> gs.Spawn( new GrenadeFactory(ad) ) )
+								.Noise		( NOISE_LIGHT )
+								;
 		}
 
 
@@ -113,6 +123,9 @@ namespace IronStar.Gameplay.Weaponry
 				default: return null;
 			}
 		}
+
+
+		public static Weapon HandGrenade { get { return handGrenade; } }
 
 
 		public static Ammo Get( AmmoType ammoType )

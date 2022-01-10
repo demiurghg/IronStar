@@ -143,6 +143,19 @@ namespace IronStar.Gameplay.Systems
 					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, MUZZLE_SCALE );
 				}
 
+				//	recoil & cooldown :
+				if ( weaponState == WeaponState.Throw || weaponState == WeaponState.Throw2 ) 
+				{
+					//	#TODO #ANIMATION -- tilt weapon a little when grenade is thrown
+					//	trackWeapon.Sequence( ANIM_COOLDOWN, SequenceMode.Immediate );
+
+					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();
+					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
+					RunShakeAnimation( shakeName, shakeAmpl );
+
+					composer.SequenceFX( Arsenal.HandGrenade.MuzzleFX, JOINT_MUZZLE, MUZZLE_SCALE );
+				}
+
 				//	idle animation :
 				if ( weaponState == WeaponState.Idle ) {
 					trackWeapon.Sequence( ANIM_IDLE, SequenceMode.Looped );

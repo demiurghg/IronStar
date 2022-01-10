@@ -20,7 +20,7 @@ namespace IronStar.Gameplay.Weaponry
 		public float		Impulse;
 	}
 
-	public delegate Entity SpawnMethod( GameState gs, AttackData attackData );
+	public delegate Entity SpawnMethod( IGameState gs, AttackData attackData );
 	
 	public class Weapon
 	{
@@ -116,7 +116,13 @@ namespace IronStar.Gameplay.Weaponry
 		public Weapon Cooldown( int cooldown )
 		{
 			TimeCooldown		=	TimeSpan.FromMilliseconds(cooldown);
+			return this;
+		}
 
+
+		public Weapon Warmup( int cooldown )
+		{
+			TimeWarmup		=	TimeSpan.FromMilliseconds(cooldown);
 			return this;
 		}
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
@@ -46,6 +47,28 @@ namespace IronStar.ECSFactories
 		{
 			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 300, 12, 10, "rocketExplosion", ad.Damage, ad.Impulse) );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
+		}
+	}
+
+
+	public class GrenadeFactory : IFactory
+	{
+		AttackData ad;
+
+		public GrenadeFactory( AttackData attackData )
+		{
+			ad = attackData;
+		}
+
+		public void Construct( Entity e, IGameState gs )
+		{
+			var linearVelocity	=	ad.Direction.Normalized() * 100 + Vector3.Up * 5;
+			var angularVelocity	=	MathUtil.Random.NextVector3OnSphere() * 5;
+			e.AddComponent( new DynamicBox(0.5f,0.5f,0.8f,3) );
+			e.AddComponent( new RenderModel("scenes/projectiles/grenade", 1, Color.Red, 6, RMFlags.None ) );
+			e.AddComponent( new Transform( ad.Origin, ad.Rotation, 1, linearVelocity, angularVelocity ) );
+			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 0, 24, 1, "rocketExplosion", ad.Damage, ad.Impulse) );
+			e.AddComponent( new FXComponent("grenadeTrail", true) );
 		}
 	}
 }

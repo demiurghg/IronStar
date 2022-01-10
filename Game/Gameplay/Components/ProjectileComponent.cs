@@ -26,6 +26,9 @@ namespace IronStar.Gameplay.Components
 		public float		Radius;
 		public float		LifeTime;
 
+		public bool			SelfPropelled		=	true;
+		public bool			NoContactDetonation	=	false;
+
 		public ProjectileComponent()
 		{
 		}
@@ -86,6 +89,9 @@ namespace IronStar.Gameplay.Components
 			writer.Write( Velocity		);
 			writer.Write( Radius		);
 			writer.Write( LifeTime		);
+
+			writer.Write( SelfPropelled );
+			writer.Write( NoContactDetonation );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
@@ -103,6 +109,9 @@ namespace IronStar.Gameplay.Components
 			Velocity	=	reader.ReadSingle();
 			Radius		=	reader.ReadSingle();
 			LifeTime	=	reader.ReadSingle();
+
+			SelfPropelled		=	reader.ReadBoolean();
+			NoContactDetonation	=	reader.ReadBoolean();
 		}
 
 		public IComponent Clone()

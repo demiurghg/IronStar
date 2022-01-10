@@ -94,7 +94,7 @@ namespace IronStar.ECSPhysics
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( CharacterGroup, DymamicGroup	), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup		), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup	), CollisionRule.NoSolver );
-			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( RagdollGroup,	RagdollGroup	), CollisionRule.NoSolver );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( RagdollGroup,	RagdollGroup	), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( RagdollGroup,	CharacterGroup	), CollisionRule.NoSolver );
 
 			stopwatch	=	new Stopwatch();

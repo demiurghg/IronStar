@@ -87,11 +87,12 @@ namespace IronStar.Gameplay.Systems
 			//	#TODO #WAEPON #GUI -- drop weapon when close to wall, but immediatly aim on fire.
 			var hide	= userCmd.Action.HasFlag( UserAction.HideWeapon );
 			var attack	= userCmd.Action.HasFlag( UserAction.Attack ) && isAlive;
+			var throwG	= userCmd.Action.HasFlag( UserAction.ThrowGrenade ) && isAlive;
 			var weapon	= Arsenal.Get( wpnState.ActiveWeapon );
 
 			FadeSpread( gameTime, weapon, wpnState );
 			AdvanceWeaponTimer( gameTime, weapon, wpnState );
-			UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weapon, wpnState, !isAlive );
+			UpdateWeaponFSM( gameTime, attack, throwG, povTransform, entity, inventory, weapon, wpnState, !isAlive );
 		}
 
 		
@@ -134,7 +135,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void UpdateWeaponFSM (GameTime gameTime, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, Weapon weapon, WeaponStateComponent state, bool dead )
+		void UpdateWeaponFSM (GameTime gameTime, bool attack, bool throwG, Matrix povTransform, Entity attacker, InventoryComponent inventory, Weapon weapon, WeaponStateComponent state, bool dead )
 		{
 			var timeout	=	state.Timer <= TimeSpan.Zero;
 			var armed	=	weapon != null;
@@ -155,10 +156,29 @@ namespace IronStar.Gameplay.Systems
 							state.Timer += weapon.TimeNoAmmo;
 						}
 					}
+					if (throwG && armed)
+					{
+						if (TryConsumeAmmo(gs, inventory, Arsenal.HandGrenade))
+						{
+							state.State =  WeaponState.PullGrenade;	
+							state.Timer += Arsenal.HandGrenade.TimeWarmup;
+						}
+					}
 					if (state.HasPengingWeapon || dead) 
 					{
 						state.State =  WeaponState.Drop;	
 						state.Timer =  armed ? weapon.TimeDrop : TimeSpan.Zero;
+					}
+					break;
+
+				case WeaponState.PullGrenade:	
+					if (timeout) 
+					{
+						var grenadeThrowTransform = Matrix.Translation(-0.3f,0,0) * povTransform;
+						Fire(actualGameTime, Arsenal.HandGrenade, state, grenadeThrowTransform, attacker);
+
+						state.State =	(((state.Counter++)&1)==0) ? WeaponState.Throw : WeaponState.Throw2;
+						state.Timer +=	Arsenal.HandGrenade.TimeCooldown;
 					}
 					break;
 
@@ -167,30 +187,15 @@ namespace IronStar.Gameplay.Systems
 					{
 						Fire(actualGameTime, weapon, state, povTransform, attacker);
 
-						state.Counter++;
-						
-						if ((state.Counter&1)==0) 
-						{
-							state.State = WeaponState.Cooldown;	
-						} 
-						else 
-						{
-							state.State = WeaponState.Cooldown2;	
-						}
-
-						state.Timer += weapon.TimeCooldown;
+						state.State =	(((state.Counter++)&1)==0) ? WeaponState.Cooldown : WeaponState.Cooldown2;
+						state.Timer +=	weapon.TimeCooldown;
 					}
 					break;
-
 
 				case WeaponState.Cooldown:	
-					if (timeout) 
-					{
-						state.State = WeaponState.Idle;	
-					}
-					break;
-
 				case WeaponState.Cooldown2:	
+				case WeaponState.Throw:	
+				case WeaponState.Throw2:	
 					if (timeout) 
 					{
 						state.State = WeaponState.Idle;	
@@ -360,7 +365,7 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( GameState gs, GameTime gameTime, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
+		void FireProjectile ( IGameState gs, GameTime gameTime, Weapon weapon, WeaponStateComponent state, Matrix povTransform, Entity attacker )
 		{
 			var attackData	=	new AttackData();
 			var transform	=	attacker.GetComponent<Transform>();
@@ -460,7 +465,7 @@ namespace IronStar.Gameplay.Systems
 						var delta	=	location - origin;
 						var dist	=	delta.Length() + 0.00001f;
 						var ndir	=	delta / dist;
-						var factor	=	MathUtil.Clamp((radius - dist) / radius, 0, 1);
+						var factor	=	MathUtil.Clamp(2 * (radius - dist) / radius, 0, 1);
 						var imp		=	factor * impulse;
 						var loc		=	location + MathUtil.Random.UniformRadialDistribution(0.3f, 0.3f);
 						var dmg		=	(short)( factor * damage );

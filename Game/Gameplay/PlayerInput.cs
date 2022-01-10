@@ -56,7 +56,7 @@ namespace IronStar.Gameplay
 		[Config] public static Keys	MeleeAttack		{ get; set; }	=	Keys.Space;
 		[Config] public static Keys	SwitchWeapon	{ get; set; }	=	Keys.Q;	
 		[Config] public static Keys	ReloadWeapon	{ get; set; }	=	Keys.R;
-		[Config] public static Keys	ThrowGrenade	{ get; set; }	=	Keys.G;
+		[Config] public static Keys	ThrowGrenade	{ get; set; }	=	Keys.MiddleButton;
 																
 		[Config] public static Keys	Weapon1			{ get; set; }	=	Keys.D1;
 		[Config] public static Keys	Weapon2			{ get; set; }	=	Keys.D2;	

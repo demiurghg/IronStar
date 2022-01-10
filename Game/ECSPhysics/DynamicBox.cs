@@ -36,6 +36,10 @@ namespace IronStar.ECSPhysics
 		public float			Mass	{ get; set; } =	1;
 		public CollisionGroup	Group	{ get; set; } = CollisionGroup.StaticGroup;
 
+		public float			KinematicFriction	=	0.8f;
+		public float			StaticFriction		=	1.0f;
+		public float			Bounciness			=	0.0f;
+
 		public DynamicBox()
 		{
 		}

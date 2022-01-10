@@ -42,7 +42,7 @@ namespace IronStar.ECSFactories
 			//	e.AddComponent( new BoneComponent() );
 
 			e.AddComponent( new HealthComponent(100,0) );
-			e.AddComponent( new CharacterController(6,4,1.5f, 24,8, 20, 10, 2.2f) );
+			e.AddComponent( new CharacterController(6,4,1.5f, 24*1.5f,8, 20, 10, 2.2f) { tractionForce = 10000 } );
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new CameraComponent() );
@@ -53,6 +53,7 @@ namespace IronStar.ECSFactories
 			var inventory	=	new InventoryComponent();
 			var weaponState	=	new WeaponStateComponent();
 			inventory.TryGiveWeapon( WeaponType.Machinegun );
+			inventory.TryGiveAmmo( AmmoType.Grenades, 50 );
 			weaponState.TrySwitchWeapon( WeaponType.Machinegun );
 			
 			e.AddComponent( inventory );

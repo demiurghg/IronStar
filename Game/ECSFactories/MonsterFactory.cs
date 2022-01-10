@@ -47,7 +47,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new StepComponent() );
-			e.AddComponent( new HealthComponent(50,0) );
+			e.AddComponent( new HealthComponent(75,0) );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			var inventory	=	new InventoryComponent(InventoryFlags.InfiniteAmmo);

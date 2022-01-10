@@ -35,7 +35,7 @@ namespace IronStar.Monsters.Systems
 
 				var isMonster	  = monsterEntity.ContainsComponent<AIComponent>();
 
-				if (health.Health<-50)
+				if (health.Health<-80)
 				{
 					CreatGiblets( gs, t.Position, Vector3.Up );	
 

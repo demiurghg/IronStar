@@ -123,6 +123,7 @@ namespace IronStar.ECSPhysics
 			//--------------------------
 			foreach (var bone in ragdollBones)
 			{
+				bone.PhysEntity.CollisionInformation.CollisionRules.Group = physics.RagdollGroup;
 				Add( bone.PhysEntity );
 			}
 		}
@@ -168,17 +169,17 @@ namespace IronStar.ECSPhysics
 			joint.TwistLimit.IsActive = true;
 			joint.TwistLimit.MinimumAngle = -MathUtil.PiOverFour / 8;
 			joint.TwistLimit.MaximumAngle = +MathUtil.PiOverFour / 8;
-			joint.TwistLimit.SpringSettings.Damping = 100;
-			joint.TwistLimit.SpringSettings.Stiffness = 100;
+			joint.TwistLimit.SpringSettings.Damping		= 100;
+			joint.TwistLimit.SpringSettings.Stiffness	= 100;
 
 			//The joint is like a hinge, but it can't hyperflex.
 			joint.HingeLimit.IsActive = true;
 			joint.HingeLimit.MinimumAngle = 0;
 			joint.HingeLimit.MaximumAngle = MathUtil.Pi * 0.7f;
 			//joint.HingeLimit.MaximumAngle = MathUtil.Pi * 0.9f;
-			/*joint.HingeLimit.SpringSettings.Damping = 100;
-			joint.HingeLimit.SpringSettings.Stiffness = 100;*/
-			joint.HingeMotor.IsActive = true;
+			/*joint.HingeLimit.SpringSettings.Damping  = 100;
+			joint.HingeLimit.SpringSettings.Stiffness  = 100;*/
+			joint.HingeMotor.IsActive  = true;
 			joint.HingeMotor.Settings.VelocityMotor.Softness = 500f;
 			joint.HingeMotor.Settings.Mode =  BEPUphysics.Constraints.TwoEntity.Motors.MotorMode.VelocityMotor;
 

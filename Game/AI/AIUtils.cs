@@ -175,6 +175,8 @@ namespace IronStar.AI
 
 			if (enemyTransform!=null)
 			{
+				bool any = false;
+
 				foreach ( var target in ai.Targets )
 				{
 					if (target.Entity==enemy)
@@ -182,12 +184,15 @@ namespace IronStar.AI
 						target.ForgettingTimer.Set( cfg.TimeToForget );
 						target.LastKnownPosition = enemyTransform.Position;
 						target.Visible = true;
+						any = true;
 					}
 				}
 
-				var newTarget = new AITarget( enemy, enemyTransform.Position, cfg.TimeToForget );
-
-				ai.Targets.Add( newTarget );
+				if (!any)
+				{
+					var newTarget = new AITarget( enemy, enemyTransform.Position, cfg.TimeToForget );
+					ai.Targets.Add( newTarget );
+				}
 			}
 		}
 
@@ -200,11 +205,11 @@ namespace IronStar.AI
 				target.Visible = false; // assume, SpotTarget will update visibility flag
 			}
 
-			ai.Targets.RemoveAll( tt => tt.ForgettingTimer.IsElapsed || !IsAlive(tt.Entity) );
+			ai.Targets.EraseDeadAndForgotten();
 		}
 
 
-		static bool IsAlive( Entity a )
+		public static bool IsAlive( Entity a )
 		{
 			var health = a?.GetComponent<HealthComponent>();
 			return health==null ? true : health.Health > 0;

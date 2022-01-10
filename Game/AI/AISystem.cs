@@ -24,6 +24,7 @@ namespace IronStar.AI
 		[Config] public static bool DrawVisibility { get; set; } = false;
 		[Config] public static bool LogDM { get; set; } = false;
 		[Config] public static Difficulty Difficulty { get; set; } = Difficulty.Medium;
+		[Config] public static bool SkipAttackDelay { get; set; } = false;
 
 		readonly NavSystem nav;
 		readonly PhysicsCore physics;
@@ -99,7 +100,7 @@ namespace IronStar.AI
 
 			var stun = Stun( dt, entity, ai, cfg );
 			//	only prevent fire on stun
-			Attack( dt, entity, ai, t, uc, cfg, stun );
+			Attack( dt, entity, ai, t, uc, cfg, false );
 			Move( dt, entity, ai, cfg, false );
 		}
 
@@ -218,7 +219,21 @@ namespace IronStar.AI
 			var dr		= e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 			var pos		= t.Position;
 
-			ai.Target	=	AIUtils.Select( (tt) => AssessTarget(ai,pos,tt,attacker), ai.Targets );
+			var newTarget	=	AIUtils.Select( (tt) => AssessTarget(ai,pos,tt,attacker), ai.Targets );
+
+			//	reset aiming timer when target is changed
+			if (ai.Target!=newTarget)
+			{
+				ai.Target	=	newTarget;
+				ai.Target?.AimingTimer.Set( cfg.AimTime );
+			}
+
+			//	...also track visibility of current target
+			//	and reset timer if target not visible
+			if (ai.Target!=null && !ai.Target.Visible)
+			{
+				ai.Target.AimingTimer.Set( cfg.AimTime );
+			}
 		}
 
 
@@ -258,6 +273,13 @@ namespace IronStar.AI
 
 			dr.DrawPoint( ai.Target.LastKnownPosition, 1.0f, Color.Red, 3 );
 
+			if (ai.Target.Visible)
+			{
+				ai.Target.AimingTimer.Update((int)(dt*1000));
+			}
+
+			bool aimReady = ai.Target.AimingTimer.IsElapsed || SkipAttackDelay;
+
 			//	check stuff and try aim :
 			if (AIUtils.TryGetPOV(e, out attackPov))
 			{
@@ -278,7 +300,7 @@ namespace IronStar.AI
 
 					var token = (ai.CombatToken!=null) || ai.Options.HasFlag(AIOptions.NoToken);
 
-					if (error<cfg.AccuracyThreshold && ai.Target.Visible && ai.AllowFire && token)
+					if (error<cfg.AccuracyThreshold && ai.Target.Visible && aimReady && ai.AllowFire && token)
 					{
 						uc.Action |= UserAction.Attack;
 						return true;
@@ -641,8 +663,9 @@ namespace IronStar.AI
 			var origin		=	e.GetComponent<Transform>().Position;
 			var dst			=	nav.GetReachablePointInRadius( origin, cfg.CombatMoveRadius );
 			ai.Route		=	nav.FindRoute( origin, dst );
-			AcquireCombatToken(e, ai);
 			EnterNode( e, DMNode.CombatMove, ai, reason );
+
+			AcquireCombatToken(e, ai);
 
 			ai.AllowFire	=	AIUtils.RollTheDice( cfg.AttackWhileMoving );
 		}

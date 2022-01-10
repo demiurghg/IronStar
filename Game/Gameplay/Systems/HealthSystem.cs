@@ -49,11 +49,15 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var entity in entities )
 			{
+				var isPlayer	=	entity.GetComponent<PlayerComponent>()!=null;
+
 				var health	=	entity.GetComponent<HealthComponent>();
 				var godMode	=	entity.ContainsComponent<PlayerComponent>() && IronStar.IsGodMode;
 
 				health.ApplyDamage(godMode, gameTime.Milliseconds);
 			}
 		}
+
+
 	}
 }

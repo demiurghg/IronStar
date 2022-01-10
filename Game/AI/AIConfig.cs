@@ -12,13 +12,13 @@ namespace IronStar.AI
 {
 	public class AIConfig
 	{
-		public readonly int		ThinkTime		=	500;
+		public readonly int		ThinkTime		=	300;
 
 		public readonly float	RoamRadius		=	RenderSystem.MetersToGameUnit(50); 
 		public readonly int		IdleTimeout		=	3000; 
 		public readonly int		StunMaxTimeout	=	750;
 
-		public readonly	float	RotationRate	=	MathUtil.DegreesToRadians(600);
+		public readonly	float	RotationRate	=	MathUtil.DegreesToRadians(180);
 
 		public readonly float	VisibilityFov	=	MathUtil.DegreesToRadians(60);
 		public readonly float	VisibilityRange	=	450.0f;
@@ -34,5 +34,6 @@ namespace IronStar.AI
 
 		public readonly float	Accuracy			=	0.2f;
 		public readonly float	AccuracyThreshold	=	0.1f;
+		public readonly int		AimTime				=	300;
 	}
 }

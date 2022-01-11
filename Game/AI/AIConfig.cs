@@ -18,7 +18,6 @@ namespace IronStar.AI
 		public readonly int		IdleTimeout		=	3000; 
 
 		public readonly int		StunTimeout		=	1000;
-		public readonly float	StunProbability	=	0.3f;
 
 		public readonly	float	RotationRate	=	MathUtil.DegreesToRadians(180);
 
@@ -34,8 +33,8 @@ namespace IronStar.AI
 		public readonly float	CombatMoveRadius	=	30.0f;
 		public readonly float	AttackWhileMoving	=	0.5f;
 
-		public readonly float	Accuracy			=	0.2f;
-		public readonly float	AccuracyThreshold	=	0.1f;
-		public readonly int		AimTime				=	300;
+		public readonly float	Accuracy			=	0.2f;	//	#TODO #AI -- weapon dependency, target velocity
+		public readonly float	AccuracyThreshold	=	0.1f;	//	#TODO #AI -- weapon dependency, target velocity
+		public readonly int		AimTime				=	400;	//	#TODO #AI -- difficulty setting
 	}
 }

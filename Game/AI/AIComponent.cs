@@ -26,6 +26,7 @@ namespace IronStar.AI
 		//	general AI stuff :
 		public Timer	ThinkTimer = new Timer();
 		public DMNode	DMNode = DMNode.Stand;
+		public Timer	ActionTimer = new Timer();
 
 		//	standing stuff :
 		public Timer	StandTimer = new Timer();
@@ -65,6 +66,7 @@ namespace IronStar.AI
 			AttackTimer.Update( gameTime );
 			GapeTimer.Update( gameTime );
 			StunTimer.Update( gameTime );
+			ActionTimer.Update( gameTime );
 		}
 
 

@@ -43,6 +43,12 @@ namespace IronStar.AI
 		}
 
 
+		public bool IsTokenAvailable(Team team)
+		{
+			return tokens[team].Any( token => token.IsReady );
+		}
+
+
 		public AIToken Acquire(Team team, Entity owner)
 		{
 			foreach (var token in tokens[team])

@@ -100,8 +100,8 @@ namespace IronStar.AI
 
 			var stun = Stun( dt, entity, ai, cfg );
 			//	only prevent fire on stun
-			Attack( dt, entity, ai, t, uc, cfg, false );
-			Move( dt, entity, ai, cfg, false );
+			Attack( dt, entity, ai, t, uc, cfg, stun );
+			Move( dt, entity, ai, cfg, stun );
 		}
 
 		
@@ -119,6 +119,15 @@ namespace IronStar.AI
 			if (uc==null)
 			{
 				return;
+			}
+
+			if (stun)
+			{
+				uc.Action	|=	UserAction.GestureStun;
+			}
+			else
+			{
+				uc.Action	&=	~UserAction.GestureStun;
 			}
 
 			if (route!=null && !stun)
@@ -170,17 +179,20 @@ namespace IronStar.AI
 				if (health.LastDamage>0 && health.Health>0)
 				{
 					var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
+
+					//	unalerted NPCs get 100$ stun
+					if (ai.Target==null)
+					{
+						percentage = 100;
+					}
 					
 					Log.Debug("#{0} stunning {1}%", e.ID, percentage);
 					
-					var timeout = cfg.StunMaxTimeout * percentage / 100;
+					var timeout = cfg.StunTimeout;
 
 					if (AIUtils.RollTheDice(percentage/100.0f))
 					{
-						if (ai.StunTimer.Timeout<timeout)
-						{
-							ai.StunTimer.SetND( timeout );
-						}
+						ai.StunTimer.Set( timeout );
 					}
 				}
 			}
@@ -264,7 +276,11 @@ namespace IronStar.AI
 			uc.Action &= ~UserAction.Attack;
 
 			if (ai.Target==null) return false;
-			if (stun) return false;
+			if (stun) 
+			{
+				ai.Target = null;
+				return false;
+			}
 
 			var dr = e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
 

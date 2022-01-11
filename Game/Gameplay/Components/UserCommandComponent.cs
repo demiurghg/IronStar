@@ -29,6 +29,7 @@ namespace IronStar.Gameplay
 		public bool IsMoving { get { return Math.Abs(Move)>0.1f || Math.Abs(Strafe)>0.1f; } }
 		public bool IsRunning { get { return MovementVector.Length() > 0.5f; } }
 		public bool IsForward { get { return Move>=0; } }
+		public bool IsStunned { get { return Action.HasFlag(UserAction.GestureStun); } }
 
 		public void UpdateFromUserCommand ( float yaw, float pitch, float move, float strafe, UserAction action )
 		{

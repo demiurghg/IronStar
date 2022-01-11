@@ -16,7 +16,9 @@ namespace IronStar.AI
 
 		public readonly float	RoamRadius		=	RenderSystem.MetersToGameUnit(50); 
 		public readonly int		IdleTimeout		=	3000; 
-		public readonly int		StunMaxTimeout	=	750;
+
+		public readonly int		StunTimeout		=	1000;
+		public readonly float	StunProbability	=	0.3f;
 
 		public readonly	float	RotationRate	=	MathUtil.DegreesToRadians(180);
 

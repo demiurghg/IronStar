@@ -26,6 +26,11 @@ namespace IronStar.Animation
 
 		public Scene Scene { get { return scene; } }
 
+		public void SetWeight( float targetWeight, float rate )
+		{
+			Weight = MathUtil.Drift( Weight, targetWeight, rate );
+		}
+
 
 		/// <summary>
 		/// 

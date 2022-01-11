@@ -29,6 +29,7 @@ namespace IronStar.Monsters.Systems
 		const string		ANIM_RUN		=	"run"	;
 		const string		ANIM_JUMP		=	"run"	;//"jump"	;
 		const string		ANIM_LAND		=	"land"	;
+		const string		ANIM_STUN		=	"stun"	;
 		const string		ANIM_DEATH		=	"death1";
 		const float			YAW_THRESHOLD	=	MathUtil.PiOverFour; // 45 degrees
 		const float			TURN_RATE		=	MathUtil.Pi * 2;
@@ -114,6 +115,7 @@ namespace IronStar.Monsters.Systems
 				var fwd		=	uc.IsForward;
 				var cr		=	step.IsCrouching;
 				var run		=	uc.IsRunning;
+				var stun	=	uc.IsStunned;
 
 				var arc		=	MathUtil.ShortestAngle( baseYaw, uc.Yaw );
 
@@ -122,6 +124,7 @@ namespace IronStar.Monsters.Systems
 					return new Turn(animator, uc, baseYaw); 
 				}
 
+				if (stun) return new Stun(animator, uc);
 				if (crouch!=cr) return new Idle(animator, uc, cr);
 				if (move && trac) return new Move(animator, uc, run, fwd, cr);
 				if (!trac) return new Jump(animator, uc);
@@ -190,7 +193,9 @@ namespace IronStar.Monsters.Systems
 				var fwd		=	uc.IsForward;
 				var cr		=	step.IsCrouching;
 				var run		=	!cr && uc.IsRunning;
+				var stun	=	uc.IsStunned;
 
+				if (stun) return new Stun(animator, uc);
 				if (forward!=fwd || crouch!=cr || this.run!=run) return new Move(animator, uc, run, fwd, cr);
 				if (!move && trac) return new Idle(animator, uc, cr);
 				if (!trac) return new Jump(animator, uc);
@@ -233,6 +238,25 @@ namespace IronStar.Monsters.Systems
 			{
 				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc, step.IsCrouching);
 				timeout -= gameTime.Elapsed;
+				
+				return this;
+			}
+		}
+
+		
+		class Stun : LocomotionState
+		{
+			public Stun( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.Yaw)
+			{
+				sequencer.Sequence(ANIM_STUN + MathUtil.Random.Next(3).ToString(), SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
+			}
+
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
+			{
+				if (!uc.Action.HasFlag(UserAction.GestureStun))
+				{
+					return new Idle(animator, uc, step.IsCrouching);
+				}
 				
 				return this;
 			}

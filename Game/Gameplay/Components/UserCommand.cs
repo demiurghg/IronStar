@@ -22,6 +22,8 @@ namespace IronStar.Gameplay
 		MeleeAtack		=	0x00000040,
 		PushGUI			=	0x00000080,
 
+		GestureStun		=	0x00000100,
+
 		Jump			=	0x00001000,
 		Crouch			=	0x00002000,
 					

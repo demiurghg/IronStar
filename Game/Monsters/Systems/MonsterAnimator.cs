@@ -153,12 +153,24 @@ namespace IronStar.Monsters.Systems
 			}
 		}
 
+
+		void UpdateLayerWeights( GameTime gameTime, UserCommandComponent uc )
+		{
+			var fullBodyLocomotion = uc.IsStunned;
+			var targetWeight = fullBodyLocomotion ? 0 : 1;
+			var rate	= gameTime.ElapsedSec * 5.0f;
+
+			torsoLayer.SetWeight( targetWeight, rate ); 
+			rotateTorso.SetWeight( targetWeight, rate ); 
+		}
+
 		Vector2 tiltFactor = Vector2.Zero;
 
 		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
 		{
 			var health		=	monsterEntity.GetComponent<HealthComponent>();
 
+			UpdateLayerWeights( gameTime, uc );
 			UpdateLocomotionState( gameTime, transform, step, uc, health );
 			UpdateWeaponState();
 			UpdatePain( health );

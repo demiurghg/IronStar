@@ -171,7 +171,7 @@
           "Weapon": "plasmagun",
           "Roamer": true,
           "Camper": false,
-          "NoToken": false,
+          "NoToken": true,
           "NodeName": "MapEntity8",
           "Position": "6, 0, -15",
           "Rotation": "0, 0.130526185, 0, 0.9914448",

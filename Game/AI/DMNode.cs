@@ -12,6 +12,7 @@ namespace IronStar.AI
 		Stand,
 		StandGaping,
 		Roaming,
+		CombatRoot,
 		CombatChase,
 		CombatAttack,
 		CombatMove

@@ -87,12 +87,7 @@ namespace IronStar.AI
 				SelectTarget( entity, ai, cfg );
 				SetAimError( ai, cfg );
 				
-				for (int i=0; i<10; i++)
-				{
-					if (InvokeNode( entity, ai, cfg )) break;
-				}
-
-				ai.ThinkTimer.SetND( cfg.ThinkTime );
+				Think( entity, ai, cfg );
 			}
 
 			ai.UpdateTimers( gameTime );
@@ -207,7 +202,7 @@ namespace IronStar.AI
 		void SetAimError( AIComponent ai, AIConfig cfg )
 		{
 			ai.PrevAimError	=	ai.NextAimError;
-			ai.NextAimError =	MathUtil.Random.UniformRadialDistribution( 0, cfg.Accuracy ) * new Vector3( 1, 0.5f, 1 );
+			ai.NextAimError =	MathUtil.Random.UniformRadialDistribution( 0, cfg.Accuracy ) * new Vector3( 1, 0.5f, 1 ) * 1.26f /*(sqrt3(2)*/;
 		}
 
 		float AssessTarget( AIComponent ai, Vector3 attackerPos, AITarget target, Entity attacker )
@@ -409,20 +404,34 @@ namespace IronStar.AI
 		 *	Decision making utils :
 		-----------------------------------------------------------------------------------------------*/
 
-		bool InvokeNode( Entity e, AIComponent ai, AIConfig cfg )
+		void Think ( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			switch (ai.DMNode)
+			for (int i=0; i<10; i++)
 			{
-				case DMNode.Dead:			return true;
-				case DMNode.Stand:			return NodeStand( e, ai, cfg );
-				case DMNode.StandGaping:	return NodeStandGaping( e, ai, cfg );
-				case DMNode.Roaming:		return NodeRoaming( e, ai, cfg );
-				case DMNode.CombatChase:	return NodeCombatChase( e, ai, cfg );
-				case DMNode.CombatAttack:	return NodeCombatAttack( e, ai, cfg );
-				case DMNode.CombatMove:		return NodeCombatMove( e, ai, cfg );
+				if (InvokeNode( e, ai, cfg )) break;
 			}
 
-			return false;
+			ai.ThinkTimer.SetND( cfg.ThinkTime );
+		}
+
+
+		bool InvokeNode( Entity e, AIComponent ai, AIConfig cfg )
+		{
+			var prevNode = ai.DMNode;
+
+			switch (ai.DMNode)
+			{
+				case DMNode.Dead:			break;
+				case DMNode.Stand:			NodeStand		( e, ai, cfg ); break;
+				case DMNode.StandGaping:	NodeStandGaping	( e, ai, cfg ); break;
+				case DMNode.Roaming:		NodeRoaming		( e, ai, cfg ); break;
+				case DMNode.CombatRoot:		NodeCombatRoot	( e, ai, cfg ); break;
+				case DMNode.CombatChase:	NodeCombatChase	( e, ai, cfg ); break;
+				case DMNode.CombatAttack:	NodeCombatAttack( e, ai, cfg ); break;
+				case DMNode.CombatMove:		NodeCombatMove	( e, ai, cfg ); break;
+			}
+
+			return prevNode==ai.DMNode;
 		}
 
 		void EnterNode( Entity e, DMNode newNode, AIComponent ai, string reason )
@@ -452,47 +461,49 @@ namespace IronStar.AI
 			EnterNode( e, DMNode.Dead, ai, reason );
 		}
 
+		bool CheckVitality( Entity e, AIComponent ai, AIConfig cfg )
+		{
+			if (AIUtils.IsAlive(e))
+			{
+				return true;
+			}
+			else
+			{
+				EnterDead( e, ai, cfg, "not alive" );
+				return false;
+			}
+		}
+
 		//-----------------------------------------------------------
 
 		void EnterStand( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
 			ai.StandTimer.SetND( cfg.IdleTimeout );
+			ai.Route	=	null;
 			EnterNode( e, DMNode.Stand, ai, reason );
 		}
 
-
-		bool NodeStand( Entity e, AIComponent ai, AIConfig cfg )
+		void NodeStand( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			var transform	=	e.GetComponent<Transform>();
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
-			}
-
-			if (ai.Target!=null)
-			{
-				EnterStandGaping( e, ai, cfg, "WTF?" );
-				return false;
-			}
-
-			if (ai.StandTimer.IsElapsed)
-			{
-				if (ai.Options.HasFlag(AIOptions.Roaming))
+				if (ai.Target!=null)
 				{
-					EnterRoaming( e, ai, cfg, "stand timeout");
-					return false;
+					EnterStandGaping( e, ai, cfg, "WTF?" );
 				}
-				else
+				else 
+				if (ai.StandTimer.IsElapsed)
 				{
-					EnterStand( e, ai, cfg, "continue..." );
-					return false;
+					if (ai.Options.HasFlag(AIOptions.Roaming))
+					{
+						EnterRoaming( e, ai, cfg, "stand timeout");
+					}
+					else
+					{
+						EnterStand( e, ai, cfg, "continue..." );
+					}
 				}
 			}
-
-			return true;
 		}
 
 		//-----------------------------------------------------------
@@ -506,35 +517,23 @@ namespace IronStar.AI
 			EnterNode( e, DMNode.Roaming, ai, reason );
 		}
 
-
-		bool NodeRoaming( Entity e, AIComponent ai, AIConfig cfg )
+		void NodeRoaming( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
+				if (ai.Target!=null)
+				{
+					EnterStandGaping( e, ai, cfg, "WTF?" );
+				}
+				else if (ai.Route==null)
+				{
+					EnterStand( e, ai, cfg, "no route");
+				}
+				else if (ai.Route.Status!=Status.InProgress)
+				{
+					EnterStand( e, ai, cfg, ai.Route.Status==Status.Success ? "roam point is reached" : "routing failure");
+				}
 			}
-
-			if (ai.Target!=null)
-			{
-				EnterStandGaping( e, ai, cfg, "WTF?" );
-				return false;
-			}
-
-			if (ai.Route==null)
-			{
-				EnterStand( e, ai, cfg, "no route");
-				return false;
-			}
-			else if (ai.Route.Status!=Status.InProgress)
-			{
-				EnterStand( e, ai, cfg, ai.Route.Status==Status.Success ? "roam point is reached" : "routing failure");
-				return false;
-			}
-
-			return true;
 		}
 
 		//-----------------------------------------------------------
@@ -548,36 +547,64 @@ namespace IronStar.AI
 			ai.Route		=	null;
 		}
 
-		bool NodeStandGaping( Entity e, AIComponent ai, AIConfig cfg )
+		void NodeStandGaping( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
-			}
-
-			if (ai.GapeTimer.IsElapsed)
-			{
-				if (ai.Target!=null && (ai.Target.Visible || ai.Target.Confirmed))
+				if (ai.GapeTimer.IsElapsed)
 				{
-					if (true || !ai.Target.Confirmed)
+					if (ai.Target!=null && (ai.Target.Visible || ai.Target.Confirmed))
 					{
-						AIUtils.BroadcastEnemyTarget( cfg, e, ai.Target.Entity );	
+						if (true || !ai.Target.Confirmed)
+						{
+							AIUtils.BroadcastEnemyTarget( cfg, e, ai.Target.Entity );	
+						}
+
+						EnterCombatChase( e, ai, cfg, "target detected" );
 					}
-
-					EnterCombatChase( e, ai, cfg, "target detected" );
-					return false;
+					else
+					{
+						EnterStand( e, ai, cfg, "false alarm");
+						ai.Targets.EraseEntity(ai.Target?.Entity);
+						ai.Target = null;
+					}
 				}
-
-				EnterStand( e, ai, cfg, "false alarm");
-				ai.Targets.EraseEntity(ai.Target?.Entity);
-				ai.Target = null;
-				return false;
 			}
+		}
 
-			return true;
+		//-----------------------------------------------------------
+
+		void EnterCombatRoot( Entity e, AIComponent ai, AIConfig cfg, string reason )
+		{
+			EnterNode( e, DMNode.CombatRoot, ai, reason );
+		}
+
+		void NodeCombatRoot( Entity e, AIComponent ai, AIConfig cfg )
+		{
+			if (ai.Target!=null)
+			{
+				var distance	=	AIUtils.DistanceToTarget( e, ai.Target.Entity );
+
+				if (ai.Target.Visible)
+				{
+					if (AIUtils.RollTheDice(0.5f) || ai.Options.HasFlag(AIOptions.Camper))
+					{
+						EnterCombatAttack( e, ai, cfg, "Target visible, attack!");
+					}
+					else
+					{
+						EnterCombatMove( e, ai, cfg, "Target visible, move!");
+					}
+				}
+				else
+				{
+					EnterCombatChase( e, ai, cfg, "Target lost LOS");
+				}
+			}
+			else
+			{
+				EnterStand( e, ai, cfg, "Target lost");
+			}
 		}
 
 		//-----------------------------------------------------------
@@ -602,27 +629,23 @@ namespace IronStar.AI
 
 		bool NodeCombatChase( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			var transform	=	e.GetComponent<Transform>();
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
-			}
-
-			if (ai.Target!=null)
-			{
-				if (ai.Target.Visible || ai.Options.HasFlag(AIOptions.Camper))
+				if (ai.Target!=null)
 				{
-					EnterCombatAttack( e, ai, cfg, "target is visible" );
-					return false;
+					if (ai.Target.Visible)
+					{
+						EnterCombatRoot( e, ai, cfg, "target is visible" );
+					}
+					else if (AIUtils.IsRouteStopped(ai.Route))
+					{
+						EnterCombatRoot( e, ai, cfg, "route stopped" );
+					}
 				}
-			}
-			else
-			{
-				EnterStand( e, ai, cfg, "target lost" );
-				return false;
+				else
+				{
+					EnterCombatRoot( e, ai, cfg, "target lost" );
+				}
 			}
 
 			return true;
@@ -634,52 +657,33 @@ namespace IronStar.AI
 		{
 			EnterNode( e, DMNode.CombatAttack, ai, reason );
 			ai.Route = null; // stop moving
-			AcquireCombatToken(e, ai);
 			ai.AttackTimer.SetND( cfg.AttackTime );
+
+			AcquireCombatToken(e, ai);
 		}
 
 
-		bool NodeCombatAttack( Entity e, AIComponent ai, AIConfig cfg )
+		void NodeCombatAttack( Entity e, AIComponent ai, AIConfig cfg )
 		{
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
-			}
-
-			if (ai.Target==null)
-			{
-				EnterStand( e, ai, cfg, "target lost or destroyed");
-				return false;
-			}
-			else
-			{
-				if (!ai.Target.Visible)
+				if (ai.Target==null || !ai.Target.Visible || ai.AttackTimer.IsElapsed)
 				{
-					EnterCombatChase( e, ai, cfg, "target lost LOS");
-					return false;
-				}
-
-				if (ai.AttackTimer.IsElapsed)
-				{
-					EnterCombatMove( e, ai, cfg, "attack is timed out");
-					return false;
+					EnterCombatRoot( e, ai, cfg, "combat attack completed");
 				}
 			}
-
-			return true;
 		}
 
 		//-----------------------------------------------------------
 
 		void EnterCombatMove( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
+			EnterNode( e, DMNode.CombatMove, ai, reason );
+
 			var origin		=	e.GetComponent<Transform>().Position;
 			var dst			=	nav.GetReachablePointInRadius( origin, cfg.CombatMoveRadius );
 			ai.Route		=	nav.FindRoute( origin, dst );
-			EnterNode( e, DMNode.CombatMove, ai, reason );
+			ai.AttackTimer.SetND( cfg.AttackTime );
 
 			AcquireCombatToken(e, ai);
 
@@ -689,30 +693,11 @@ namespace IronStar.AI
 
 		bool NodeCombatMove( Entity e, AIComponent ai, AIConfig cfg ) 
 		{
-			var health		=	e.GetComponent<HealthComponent>();
-
-			if (health!=null && health.Health<=0) 
+			if (CheckVitality(e,ai,cfg))
 			{
-				EnterDead( e, ai, cfg, "health <= 0");
-				return false;
-			}
-
-			if ( ai.Route==null || ai.Route.Status!=Status.InProgress || ai.Options.HasFlag(AIOptions.Camper))
-			{
-				EnterCombatAttack( e, ai, cfg, "combat move is completed");
-				return false;
-			}
-
-			if ( ai.Target==null )
-			{
-				EnterStand( e, ai, cfg, "target is lost" );
-				return false;
-			}
-			else
-			{
-				if (!ai.Target.Visible)
+				if (ai.Target==null || !ai.Target.Visible || ai.AttackTimer.IsElapsed || AIUtils.IsRouteStopped(ai.Route))
 				{
-					ai.AllowFire = false;
+					EnterCombatRoot( e, ai, cfg, "combat move completed");
 				}
 			}
 

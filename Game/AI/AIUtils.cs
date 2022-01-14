@@ -209,10 +209,28 @@ namespace IronStar.AI
 		}
 
 
-		public static bool IsAlive( Entity a )
+		public static bool IsAlive( Entity e )
 		{
-			var health = a?.GetComponent<HealthComponent>();
+			var health = e?.GetComponent<HealthComponent>();
 			return health==null ? true : health.Health > 0;
+		}
+
+		public static bool IsRouteStopped( Route route )
+		{
+			return route==null || route.Status!=Status.InProgress;
+		}
+
+		public static float DistanceToTarget( Entity attacker, Entity target )
+		{
+			Vector3 attackPos, targetPos;
+			if (attacker.TryGetLocation(out attackPos) && target.TryGetLocation(out targetPos))
+			{
+				return Vector3.Distance( attackPos, targetPos );
+			}
+			else
+			{
+				return 999999;
+			}
 		}
 
 		/*-----------------------------------------------------------------------------------------

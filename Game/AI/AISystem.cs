@@ -187,21 +187,25 @@ namespace IronStar.AI
 			{
 				if (health.LastDamage>0 && health.Health>0)
 				{
-					var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
-
-					//	unalerted NPCs get 100% stun
-					if (ai.Target==null)
+					//	do not stun when stunning
+					if (ai.StunTimer.IsElapsed)
 					{
-						percentage = 100;
-					}
-					
-					Log.Debug("#{0} stunning {1}%", e.ID, percentage);
-					
-					var timeout = cfg.StunTimeout;
+						var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
 
-					if (AIUtils.RollTheDice(percentage/100.0f))
-					{
-						ai.StunTimer.Set( timeout );
+						//	unalerted NPCs get 100% stun
+						if (ai.Target==null)
+						{
+							percentage = 100;
+						}
+					
+						Log.Debug("#{0} stunning {1}%", e.ID, percentage);
+					
+						var timeout = cfg.StunTimeout;
+
+						if (AIUtils.RollTheDice(percentage/100.0f))
+						{
+							ai.StunTimer.Set( timeout );
+						}
 					}
 				}
 			}

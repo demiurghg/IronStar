@@ -227,11 +227,11 @@
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
-          "Roamer": true,
+          "Roamer": false,
           "Camper": false,
           "NoToken": false,
           "NodeName": "MapEntity11",
-          "Position": "80, 8, 79",
+          "Position": "57, 8, 79",
           "Rotation": "0, 0, 0, 1",
           "LinearVelocity": "0, 0, 0",
           "AngularVelocity": "0, 0, 0",
@@ -240,10 +240,10 @@
         "Name": "MapEntity11",
         "Visible": true,
         "Frozen": false,
-        "Translation": "80, 8, 79",
+        "Translation": "57, 8, 79",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
-        "TranslateX": 80.0,
+        "TranslateX": 57.0,
         "TranslateY": 8.0,
         "TranslateZ": 79.0
       },
@@ -1041,35 +1041,6 @@
           "Roamer": false,
           "Camper": false,
           "NoToken": false,
-          "NodeName": "MapEntity27",
-          "Position": "-39, 0, 71",
-          "Rotation": "0, -0.707106769, 0, 0.707106769",
-          "LinearVelocity": "0, 0, 0",
-          "AngularVelocity": "0, 0, 0",
-          "Scaling": 1.0
-        },
-        "Name": "MapEntity27",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-39, 0, 71",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.707106769, 0, 0.707106769",
-        "TranslateX": -39.0,
-        "TranslateY": 0.0,
-        "TranslateZ": 71.0
-      },
-      {
-        "$id": "85",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "86",
-          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
-          "Team": "monsters",
-          "Weapon": "machinegun",
-          "Roamer": true,
-          "Camper": false,
-          "NoToken": false,
           "NodeName": "MapEntity30",
           "Position": "85, 8, 18",
           "Rotation": "0, 0.130526185, 0, 0.9914449",
@@ -1088,11 +1059,11 @@
         "TranslateZ": 18.0
       },
       {
-        "$id": "87",
+        "$id": "85",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "88",
+          "$id": "86",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -1117,11 +1088,11 @@
         "TranslateZ": 14.0
       },
       {
-        "$id": "89",
+        "$id": "87",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "90",
+          "$id": "88",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -1146,11 +1117,11 @@
         "TranslateZ": 44.0
       },
       {
-        "$id": "91",
+        "$id": "89",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "92",
+          "$id": "90",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -1173,40 +1144,11 @@
         "TranslateX": 19.0,
         "TranslateY": 0.0,
         "TranslateZ": 30.0
-      },
-      {
-        "$id": "93",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "94",
-          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
-          "Team": "monsters",
-          "Weapon": "shotgun",
-          "Roamer": false,
-          "Camper": false,
-          "NoToken": false,
-          "NodeName": "MapEntity8",
-          "Position": "-110, 16, 0",
-          "Rotation": "0, -0.7071069, 0, 0.70710665",
-          "LinearVelocity": "0, 0, 0",
-          "AngularVelocity": "0, 0, 0",
-          "Scaling": 0.9999999
-        },
-        "Name": "MapEntity8",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-110, 16, 0",
-        "Scaling": "0.9999999, 1, 0.9999999",
-        "Rotation": "0, -0.7071069, 0, 0.70710665",
-        "TranslateX": -110.0,
-        "TranslateY": 16.0,
-        "TranslateZ": 0.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "95",
+    "$id": "91",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 1,

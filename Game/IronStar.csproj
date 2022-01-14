@@ -86,9 +86,10 @@
     <Compile Include="AI\AIUtils.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\AISystem.cs" />
-    <Compile Include="AI\CombatPoint.cs" />
+    <Compile Include="AI\EQPoint.cs" />
     <Compile Include="AI\Difficulty.cs" />
     <Compile Include="AI\DMNode.cs" />
+    <Compile Include="AI\EQSystem.cs" />
     <Compile Include="AI\NavBaker.cs" />
     <Compile Include="AI\Route.cs" />
     <Compile Include="AI\Timer.cs" />
@@ -182,8 +183,6 @@
     <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
     <Compile Include="ECS\Transform.cs" />
-    <Compile Include="ECS\Utils\Bag.cs" />
-    <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />
     <Compile Include="ECS\IComponent.cs" />
     <Compile Include="ECS\Entity.cs" />
@@ -438,6 +437,10 @@
     <ProjectReference Include="..\Engine\SDKs\KopiLua\KopiLua\KopiLua.Net45.csproj">
       <Project>{e8ddbc21-ef74-4aba-9c49-bfc702be25d8}</Project>
       <Name>KopiLua.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\SDKs\PowerCollections\PowerCollections.csproj">
+      <Project>{5821977d-ac2c-4912-bcd0-6e6b1a756167}</Project>
+      <Name>PowerCollections</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

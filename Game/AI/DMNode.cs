@@ -15,6 +15,8 @@ namespace IronStar.AI
 		CombatRoot,
 		CombatChase,
 		CombatAttack,
-		CombatMove
+		CombatMove,
+		CombatRunToCover,
+		CombatStayCover,
 	}
 }

@@ -32,10 +32,13 @@ namespace IronStar.AI
 		readonly AIConfig defaultConfig = new AIConfig();
 		readonly AITokenPool tokenPool;
 
+		readonly EQSystem eqs;
+
 		public AISystem( PhysicsCore physics, NavSystem nav )
 		{
 			this.nav		=	nav;
 			this.physics	=	physics;
+			this.eqs		=	new EQSystem( nav, physics );
 
 			aiAspect	=	new Aspect()
 						.Include<AIComponent,Transform>()
@@ -60,11 +63,18 @@ namespace IronStar.AI
 		}
 
 
+		protected override IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities.Shuffle( MathUtil.Random );
+		}
+
+
 		public override void Update( IGameState gs, GameTime gameTime )
 		{
 			base.Update( gs, gameTime );
 
 			tokenPool.Update( gameTime );
+			eqs.ScanEnvironment( gameTime );
 		}
 
 
@@ -87,17 +97,18 @@ namespace IronStar.AI
 				SelectTarget( entity, ai, cfg );
 				SetAimError( ai, cfg );
 
-				ScanEnvironment( gameTime, entity, ai, cfg );
+				eqs.RequestPoints( entity, ai.Target );
+				//eqs.RefreshPoints( entity, ai.Target, 0.2f );
 				
 				Think( entity, ai, cfg );
 			}
 
 			ai.UpdateTimers( gameTime );
 
-			UpdateCombatPoints( gameTime, entity, ai, cfg );
+			eqs.TickEQPoints( gameTime, entity, ai );
 
 			var stun = Stun( dt, entity, ai, cfg );
-			//	only prevent fire on stun
+
 			Attack( dt, entity, ai, t, uc, cfg, stun );
 			Move( dt, entity, ai, cfg, stun );
 		}
@@ -137,7 +148,7 @@ namespace IronStar.AI
 			
 				var rate	=	dt * cfg.RotationRate;
 
-				if (ai.Target==null)
+				if (ai.Target==null || !ai.FocusTarget)
 				{
 					uc.RotateTo( origin, target, rate, 0 );
 					uc.ComputeMoveAndStrafe( origin, target, factor );
@@ -178,7 +189,7 @@ namespace IronStar.AI
 				{
 					var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
 
-					//	unalerted NPCs get 100$ stun
+					//	unalerted NPCs get 100% stun
 					if (ai.Target==null)
 					{
 						percentage = 100;
@@ -247,7 +258,7 @@ namespace IronStar.AI
 		}
 
 
-		void AcquireCombatToken( Entity e, AIComponent ai )
+		bool AcquireCombatToken( Entity e, AIComponent ai )
 		{
 			var team = e.GetComponent<TeamComponent>();
 
@@ -265,6 +276,8 @@ namespace IronStar.AI
 			{
 				Log.Warning("Entity #{0} has no TeamComponent, token can not be acquired", e.ID );
 			}
+
+			return ai.CombatToken!=null;
 		}
 
 
@@ -404,110 +417,6 @@ namespace IronStar.AI
 		}
 
 		/*-----------------------------------------------------------------------------------------------
-		 *	Environment analysis :
-		-----------------------------------------------------------------------------------------------*/
-
-		void ScanEnvironment( GameTime gameTime, Entity e, AIComponent ai, AIConfig cfg )
-		{
-			Vector3 origin;
-			
-			if (e.TryGetLocation(out origin))
-			{
-				int count = 0;
-
-				for (int i=0; i<50; i++)
-				{
-					Vector3 location;
-
-					if (nav.TryGetReachablePointInRadius( origin, 50, out location ))
-					{
-						var minDistance = 999999.0f;
-						foreach (var cp in ai.CombatPoints)
-						{
-							minDistance = Math.Min( minDistance, Vector3.Distance( cp.Location, location ));
-						}
-
-						if (minDistance>3)
-						{
-							ai.CombatPoints.Add( new CombatPoint(location, 1500) );
-							count++;
-						}
-					}
-
-					if (count>5) break;
-				}
-			}
-
-
-		}
-
-
-		void UpdateCombatPoints( GameTime gameTime, Entity e, AIComponent ai, AIConfig cfg )
-		{
-			//	draw :
-			var dr = e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
-
-			foreach ( var combatPoint in ai.CombatPoints )
-			{
-				var color = Color.Black;
-				if (!combatPoint.Dirty)
-				{
-					color = combatPoint.IsExposed ? Color.Lime : Color.Red;
-				}
-				dr.DrawWaypoint( combatPoint.Location, 1.0f, color, 2 );
-			}
-
-			var target = ai.Target?.Entity;
-			var pov = Vector3.Zero;
-
-			if (target!=null && target.TryGetPOV(out pov))
-			{
-				foreach ( var combatPoint in ai.CombatPoints )
-				{
-					if (combatPoint.Dirty)
-					{
-						combatPoint.Dirty = false;
-						if (physics.HasLineOfSight(pov, combatPoint.Location + Vector3.Up * 4, e, target))
-						{
-							combatPoint.IsExposed = true;
-						}
-						else
-						{
-							combatPoint.IsExposed = false;
-						}
-					}
-				}
-			}
-
-			//	update timers :
-			foreach ( var combatPoint in ai.CombatPoints )
-			{
-				combatPoint.Timer.Update( gameTime );
-			}
-			
-			ai.CombatPoints.RemoveAll( cp => cp.Timer.IsElapsed );
-		}
-
-
-		bool TryGetCombatPoint( Entity e, AIComponent ai, AIConfig cfg, bool exposed, out Vector3 location )
-		{
-			Vector3 origin;
-			location = Vector3.Zero;
-			
-			if (e.TryGetLocation(out origin))
-			{
-				var bestCP =	ai.CombatPoints.SelectMinOrDefault( cp => cp.IsExposed==exposed ? Vector3.Distance(cp.Location, origin) : 999999 );
-				if (bestCP!=null)
-				{
-					location = bestCP.Location;
-					return true;
-				}
-			}
-			
-			return false;
-		}
-
-		/*-----------------------------------------------------------------------------------------------
 		 *	Decision making utils :
 		-----------------------------------------------------------------------------------------------*/
 
@@ -528,14 +437,16 @@ namespace IronStar.AI
 
 			switch (ai.DMNode)
 			{
-				case DMNode.Dead:			break;
-				case DMNode.Stand:			NodeStand		( e, ai, cfg ); break;
-				case DMNode.StandGaping:	NodeStandGaping	( e, ai, cfg ); break;
-				case DMNode.Roaming:		NodeRoaming		( e, ai, cfg ); break;
-				case DMNode.CombatRoot:		NodeCombatRoot	( e, ai, cfg ); break;
-				case DMNode.CombatChase:	NodeCombatChase	( e, ai, cfg ); break;
-				case DMNode.CombatAttack:	NodeCombatAttack( e, ai, cfg ); break;
-				case DMNode.CombatMove:		NodeCombatMove	( e, ai, cfg ); break;
+				case DMNode.Dead:				break;
+				case DMNode.Stand:				NodeStand			( e, ai, cfg ); break;
+				case DMNode.StandGaping:		NodeStandGaping		( e, ai, cfg ); break;
+				case DMNode.Roaming:			NodeRoaming			( e, ai, cfg ); break;
+				case DMNode.CombatRoot:			NodeCombatRoot		( e, ai, cfg ); break;
+				case DMNode.CombatChase:		NodeCombatChase		( e, ai, cfg ); break;
+				case DMNode.CombatAttack:		NodeCombatAttack	( e, ai, cfg ); break;
+				case DMNode.CombatMove:			NodeCombatMove		( e, ai, cfg ); break;
+				case DMNode.CombatRunToCover:	NodeCombatRunToCover( e, ai, cfg ); break;
+				case DMNode.CombatStayCover:	NodeCombatStayCover	( e, ai, cfg ); break;
 			}
 
 			return prevNode==ai.DMNode;
@@ -546,6 +457,7 @@ namespace IronStar.AI
 			var oldNode		=	ai.DMNode;
 			ai.DMNode		=	newNode;	//	set new node
 			ai.AllowFire	=	true;		//	reset fire prevention
+			ai.FocusTarget	=	true;
 
 			if ( ai.CombatToken!=null )
 			{
@@ -691,22 +603,36 @@ namespace IronStar.AI
 		{
 			if (ai.Target!=null)
 			{
-				var distance	=	AIUtils.DistanceToTarget( e, ai.Target.Entity );
+				var targetDistance		=	AIUtils.DistanceToTarget( e, ai.Target.Entity );
+				var normalizedHealth	=	AIUtils.GetNormalizedHealth( e );
+				var targetVisible		=	ai.Target.Visible;
+				var isCamper			=	ai.Options.HasFlag(AIOptions.Camper);
 
-				if (ai.Target.Visible)
+				if (AIUtils.GetNormalizedHealth(e) > 0.33f )
 				{
-					if (AIUtils.RollTheDice(0.5f) || ai.Options.HasFlag(AIOptions.Camper))
+					if (ai.Target.Visible)
 					{
-						EnterCombatAttack( e, ai, cfg, "Target visible, attack!");
+						if (AIUtils.RollTheDice(0.5f) || ai.Options.HasFlag(AIOptions.Camper))
+						{
+							EnterCombatAttack( e, ai, cfg, "Target visible, attack!");
+						}
+						else if (AIUtils.RollTheDice(0.66f))
+						{
+							EnterCombatMove( e, ai, cfg, "Target visible, move!");
+						}
+						else
+						{
+							EnterCombatRunToCover( e, ai, cfg, "Target visible, cover!");
+						}
 					}
 					else
 					{
-						EnterCombatMove( e, ai, cfg, "Target visible, move!");
+						EnterCombatChase( e, ai, cfg, "Target lost LOS");
 					}
 				}
 				else
 				{
-					EnterCombatChase( e, ai, cfg, "Target lost LOS");
+					EnterCombatRunToCover( e, ai, cfg, "Low health" );
 				}
 			}
 			else
@@ -724,9 +650,12 @@ namespace IronStar.AI
 			var origin	=	e.GetComponent<Transform>().Position;
 			var target	=	Vector3.Zero;
 
-			if (TryGetCombatPoint(e,ai,cfg, true, out target))
+			if (AIUtils.RollTheDice(1-cfg.Pushiness))
 			{
-				ai.Route = nav.FindRoute( origin, target );
+				if (eqs.TryGetPoint(e,ai, EQState.Exposed, d => d, out target))
+				{
+					ai.Route = nav.FindRoute( origin, target );
+				}
 			}
 
 			if (ai.Route==null)
@@ -802,13 +731,14 @@ namespace IronStar.AI
 			ai.Route		=	nav.FindRoute( origin, dst );
 			ai.AttackTimer.SetND( cfg.AttackTime );
 
-			AcquireCombatToken(e, ai);
-
-			ai.AllowFire	=	AIUtils.RollTheDice( cfg.AttackWhileMoving );
+			if (!AcquireCombatToken(e, ai))
+			{
+				ai.FocusTarget = false;
+			}
 		}
 
 
-		bool NodeCombatMove( Entity e, AIComponent ai, AIConfig cfg ) 
+		void NodeCombatMove( Entity e, AIComponent ai, AIConfig cfg ) 
 		{
 			if (CheckVitality(e,ai,cfg))
 			{
@@ -817,8 +747,62 @@ namespace IronStar.AI
 					EnterCombatRoot( e, ai, cfg, "combat move completed");
 				}
 			}
+		}
 
-			return true;
+		//-----------------------------------------------------------
+
+		void EnterCombatRunToCover( Entity e, AIComponent ai, AIConfig cfg, string reason )
+		{
+			EnterNode( e, DMNode.CombatRunToCover, ai, reason );
+
+			var origin	=	e.GetComponent<Transform>().Position;
+			var target	=	Vector3.Zero;
+
+			if (eqs.TryGetPoint(e,ai, EQState.Protected, d => d, out target))
+			{
+				ai.Route	=	nav.FindRoute( origin, target );
+				
+				if (ai.Target.Visible)
+				{
+					AcquireCombatToken(e, ai);
+				}
+			}
+		}
+
+
+		void NodeCombatRunToCover( Entity e, AIComponent ai, AIConfig cfg ) 
+		{
+			if (CheckVitality(e,ai,cfg))
+			{
+				if (ai.Route==null)
+				{
+					EnterCombatMove( e, ai, cfg, "nowhere to hide");
+				}
+				else if (ai.Target==null ||  AIUtils.IsRouteStopped(ai.Route) )
+				{
+					EnterCombatStayCover( e, ai, cfg, "cover point is reached");
+				}
+			}
+		}
+		
+		//-----------------------------------------------------------
+
+		void EnterCombatStayCover( Entity e, AIComponent ai, AIConfig cfg, string reason )
+		{
+			ai.CoverTimer.SetND( cfg.CoverTimeout );
+			EnterNode( e, DMNode.CombatStayCover, ai, reason );
+		}
+
+
+		void NodeCombatStayCover( Entity e, AIComponent ai, AIConfig cfg ) 
+		{
+			if (CheckVitality(e,ai,cfg))
+			{
+				if (ai.Target==null || ai.CoverTimer.IsElapsed || ai.Target.Visible)
+				{
+					EnterCombatRoot( e, ai, cfg, "stay in cover is timed out");
+				}
+			}
 		}
 	}
 }

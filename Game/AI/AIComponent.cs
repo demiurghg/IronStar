@@ -29,6 +29,7 @@ namespace IronStar.AI
 
 		//	standing stuff :
 		public Timer	StandTimer = new Timer();
+		public Timer	CoverTimer = new Timer();
 
 		//	movement stuff :
 		public Route	Route	=	null;
@@ -37,6 +38,7 @@ namespace IronStar.AI
 		//	combat stuff :
 		public AIToken		CombatToken = null;
 		public bool			AllowFire = true;
+		public bool			FocusTarget = true;
 		public Timer		AttackTimer = new Timer();
 		public Timer		GapeTimer = new Timer();
 		public Timer		StunTimer = new Timer();
@@ -45,7 +47,7 @@ namespace IronStar.AI
 		public Vector3		PrevAimError = Vector3.Zero;
 		public Vector3		NextAimError = Vector3.Zero;
 
-		public readonly List<CombatPoint> CombatPoints = new List<CombatPoint>();
+		public readonly List<EQPoint> CombatPoints = new List<EQPoint>();
 
 		public AIComponent()
 		{
@@ -66,6 +68,7 @@ namespace IronStar.AI
 			AttackTimer.Update( gameTime );
 			GapeTimer.Update( gameTime );
 			StunTimer.Update( gameTime );
+			CoverTimer.Update( gameTime );
 		}
 
 

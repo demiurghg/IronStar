@@ -22,7 +22,7 @@ using IronStar.Gameplay;
 
 namespace IronStar.AI
 {
-	class NavSystem : ISystem
+	public class NavSystem : ISystem
 	{
 		readonly IGameState	gs;
 		readonly string		navMeshPath;

@@ -53,6 +53,34 @@ namespace IronStar.AI
 			return options.FirstOrDefault();
 		}
 
+
+		public static int Select( params float[] weights )
+		{
+			unsafe
+			{
+				var sum = 0f;
+				var acc = 0f;
+
+				for (int i=0; i<weights.Length; i++)
+				{
+					sum		+=	weights[i];
+				}
+
+				float selector = MathUtil.Random.NextFloat(0, sum);
+
+				for (int i=0; i<weights.Length; i++)
+				{
+					acc += weights[i];
+					if (selector<=acc)
+					{
+						return i;
+					}
+				}
+			}
+
+			return -1;
+		}
+
 		
 		public static float Falloff( float distance, float radius )
 		{
@@ -213,6 +241,12 @@ namespace IronStar.AI
 		{
 			var health = e?.GetComponent<HealthComponent>();
 			return health==null ? true : health.Health > 0;
+		}
+
+		public static float GetNormalizedHealth( Entity e )
+		{
+			var health = e?.GetComponent<HealthComponent>();
+			return health==null ? 1.0f : (health.Health / (float)health.MaxHealth);
 		}
 
 		public static bool IsRouteStopped( Route route )

@@ -119,7 +119,7 @@ namespace IronStar.AI
 			config.WalkableSlopeAngle		=	30.0f;
 			config.WalkableHeight			=	6.0f;
 			config.WalkableClimb			=	1.0f;
-			config.WalkableRadius			=	1.0f;
+			config.WalkableRadius			=	2.0f;
 			config.MaxEdgeLen				=	24;
 			config.MaxSimplificationError	=	1.3f;
 			config.MinRegionSize			=	16;

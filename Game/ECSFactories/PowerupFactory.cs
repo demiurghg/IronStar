@@ -47,7 +47,7 @@ namespace IronStar.ECSFactories
 	public class PowerupMedkitFactory : PowerupFactory
 	{
 		public PowerupMedkitFactory():
-		base( 50, 0, "pickupHealth", 0.3f, "scenes\\items\\medkit\\medkit10" ) {}
+		base( 30, 0, "pickupHealth", 0.3f, "scenes\\items\\medkit\\medkit10" ) {}
 	}
 
 

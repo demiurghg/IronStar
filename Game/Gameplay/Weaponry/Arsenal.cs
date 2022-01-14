@@ -49,7 +49,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorMachinegun, ColorIntensity, 1, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
-								.Attack		( 7, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
+								.Attack		( 8, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
 								.Beam		( 1, "*trail_bullet", "bulletHit" )
 								.Noise		( NOISE_LIGHT )
 								;
@@ -67,7 +67,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorShotgun, ColorIntensity, 1, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
-								.Attack		( 10, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
+								.Attack		(  8, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
 								.Beam		(  8, null, "shotgunHit" )
 								.Noise		( NOISE_MEDIUM )
 								;

@@ -25,11 +25,16 @@ namespace IronStar.ECS
 		public virtual void Add( IGameState gs, Entity e ) {}
 		public virtual void Remove( IGameState gs, Entity e ) {}
 
+		protected virtual IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities;
+		}
+
 		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 
-			foreach ( var e in entities )
+			foreach ( var e in OrderEntities(entities) )
 			{
 				var c1	=	e.GetComponent<T1>();
 				Process( e, gameTime, c1 );

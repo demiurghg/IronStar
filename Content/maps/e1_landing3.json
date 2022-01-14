@@ -168,7 +168,7 @@
           "$id": "15",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
-          "Weapon": "plasmagun",
+          "Weapon": "machinegun",
           "Roamer": true,
           "Camper": false,
           "NoToken": false,

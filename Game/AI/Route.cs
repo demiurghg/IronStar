@@ -16,7 +16,7 @@ namespace IronStar.AI
 		
 		int stuckCounter = 0;
 		Vector3 lastOrigin;
-		float stuckThreshold = 0.01f;
+		float stuckThreshold = 0.0001f;
 
 		readonly Vector3[] route;
 
@@ -50,7 +50,7 @@ namespace IronStar.AI
 			var distance = 0f;
 			int lastSegmentIndex = route.Length-2;
 
-			if (Vector3.Distance(origin, lastOrigin) < stuckThreshold)
+			/*if (Vector3.Distance(origin, lastOrigin) < stuckThreshold)
 			{
 				stuckCounter++;
 				if (stuckCounter>5)
@@ -61,7 +61,7 @@ namespace IronStar.AI
 			else
 			{
 				stuckCounter = 0;
-			}
+			}*/
 
 			lastOrigin	=	origin;
 

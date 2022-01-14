@@ -45,6 +45,7 @@ namespace IronStar.AI
 		public Vector3		PrevAimError = Vector3.Zero;
 		public Vector3		NextAimError = Vector3.Zero;
 
+		public readonly List<CombatPoint> CombatPoints = new List<CombatPoint>();
 
 		public AIComponent()
 		{

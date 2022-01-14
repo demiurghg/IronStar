@@ -91,20 +91,21 @@ namespace IronStar.AI
 			return null;
 		}
 
+
+		public bool TryGetReachablePointInRadius( Vector3 startPoint, float maxRadius, out Vector3 result )
+		{
+			result = startPoint;
+
+			if (navMesh==null) return false;
+
+			return navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result );
+		}
+
 		public Vector3 GetReachablePointInRadius( Vector3 startPoint, float maxRadius )
 		{
-			if (navMesh==null) return startPoint;
-
-			Vector3 result = startPoint;
-
-			if (navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result ))
-			{
-				return result;
-			}
-			else
-			{
-				return startPoint;
-			}
+			Vector3 result;
+			TryGetReachablePointInRadius( startPoint, maxRadius, out result );
+			return result;
 		}
 	}
 }

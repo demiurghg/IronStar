@@ -86,12 +86,15 @@ namespace IronStar.AI
 				DetectAttacker( gameTime, entity, ai, cfg );
 				SelectTarget( entity, ai, cfg );
 				SetAimError( ai, cfg );
+
+				ScanEnvironment( gameTime, entity, ai, cfg );
 				
 				Think( entity, ai, cfg );
 			}
 
 			ai.UpdateTimers( gameTime );
 
+			UpdateCombatPoints( gameTime, entity, ai, cfg );
 
 			var stun = Stun( dt, entity, ai, cfg );
 			//	only prevent fire on stun
@@ -401,6 +404,110 @@ namespace IronStar.AI
 		}
 
 		/*-----------------------------------------------------------------------------------------------
+		 *	Environment analysis :
+		-----------------------------------------------------------------------------------------------*/
+
+		void ScanEnvironment( GameTime gameTime, Entity e, AIComponent ai, AIConfig cfg )
+		{
+			Vector3 origin;
+			
+			if (e.TryGetLocation(out origin))
+			{
+				int count = 0;
+
+				for (int i=0; i<50; i++)
+				{
+					Vector3 location;
+
+					if (nav.TryGetReachablePointInRadius( origin, 50, out location ))
+					{
+						var minDistance = 999999.0f;
+						foreach (var cp in ai.CombatPoints)
+						{
+							minDistance = Math.Min( minDistance, Vector3.Distance( cp.Location, location ));
+						}
+
+						if (minDistance>3)
+						{
+							ai.CombatPoints.Add( new CombatPoint(location, 1500) );
+							count++;
+						}
+					}
+
+					if (count>5) break;
+				}
+			}
+
+
+		}
+
+
+		void UpdateCombatPoints( GameTime gameTime, Entity e, AIComponent ai, AIConfig cfg )
+		{
+			//	draw :
+			var dr = e.gs.Game.RenderSystem.RenderWorld.Debug.Async;
+
+			foreach ( var combatPoint in ai.CombatPoints )
+			{
+				var color = Color.Black;
+				if (!combatPoint.Dirty)
+				{
+					color = combatPoint.IsExposed ? Color.Lime : Color.Red;
+				}
+				dr.DrawWaypoint( combatPoint.Location, 1.0f, color, 2 );
+			}
+
+			var target = ai.Target?.Entity;
+			var pov = Vector3.Zero;
+
+			if (target!=null && target.TryGetPOV(out pov))
+			{
+				foreach ( var combatPoint in ai.CombatPoints )
+				{
+					if (combatPoint.Dirty)
+					{
+						combatPoint.Dirty = false;
+						if (physics.HasLineOfSight(pov, combatPoint.Location + Vector3.Up * 4, e, target))
+						{
+							combatPoint.IsExposed = true;
+						}
+						else
+						{
+							combatPoint.IsExposed = false;
+						}
+					}
+				}
+			}
+
+			//	update timers :
+			foreach ( var combatPoint in ai.CombatPoints )
+			{
+				combatPoint.Timer.Update( gameTime );
+			}
+			
+			ai.CombatPoints.RemoveAll( cp => cp.Timer.IsElapsed );
+		}
+
+
+		bool TryGetCombatPoint( Entity e, AIComponent ai, AIConfig cfg, bool exposed, out Vector3 location )
+		{
+			Vector3 origin;
+			location = Vector3.Zero;
+			
+			if (e.TryGetLocation(out origin))
+			{
+				var bestCP =	ai.CombatPoints.SelectMinOrDefault( cp => cp.IsExposed==exposed ? Vector3.Distance(cp.Location, origin) : 999999 );
+				if (bestCP!=null)
+				{
+					location = bestCP.Location;
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+		/*-----------------------------------------------------------------------------------------------
 		 *	Decision making utils :
 		-----------------------------------------------------------------------------------------------*/
 
@@ -577,6 +684,7 @@ namespace IronStar.AI
 		void EnterCombatRoot( Entity e, AIComponent ai, AIConfig cfg, string reason )
 		{
 			EnterNode( e, DMNode.CombatRoot, ai, reason );
+			ai.Route = null;
 		}
 
 		void NodeCombatRoot( Entity e, AIComponent ai, AIConfig cfg )
@@ -614,8 +722,17 @@ namespace IronStar.AI
 			Trace.Assert( ai.Target!=null );
 
 			var origin	=	e.GetComponent<Transform>().Position;
+			var target	=	Vector3.Zero;
 
-			ai.Route	=	nav.FindRoute( origin, ai.Target.LastKnownPosition );
+			if (TryGetCombatPoint(e,ai,cfg, true, out target))
+			{
+				ai.Route = nav.FindRoute( origin, target );
+			}
+
+			if (ai.Route==null)
+			{
+				ai.Route = nav.FindRoute( origin, ai.Target.LastKnownPosition );
+			}
 
 			if (ai.Route==null)
 			{
@@ -695,7 +812,7 @@ namespace IronStar.AI
 		{
 			if (CheckVitality(e,ai,cfg))
 			{
-				if (ai.Target==null || !ai.Target.Visible || ai.AttackTimer.IsElapsed || AIUtils.IsRouteStopped(ai.Route))
+				if (ai.Target==null || ai.AttackTimer.IsElapsed || AIUtils.IsRouteStopped(ai.Route))
 				{
 					EnterCombatRoot( e, ai, cfg, "combat move completed");
 				}

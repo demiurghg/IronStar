@@ -86,6 +86,7 @@
     <Compile Include="AI\AIUtils.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\AISystem.cs" />
+    <Compile Include="AI\CombatPoint.cs" />
     <Compile Include="AI\Difficulty.cs" />
     <Compile Include="AI\DMNode.cs" />
     <Compile Include="AI\NavBaker.cs" />

@@ -66,9 +66,12 @@ namespace IronStar.ECSFactories
 			var angularVelocity	=	MathUtil.Random.NextVector3OnSphere() * 5;
 			e.AddComponent( new DynamicBox(0.5f,0.5f,0.8f,3) );
 			e.AddComponent( new RenderModel("scenes/projectiles/grenade", 1, Color.Red, 6, RMFlags.None ) );
-			e.AddComponent( new Transform( ad.Origin, ad.Rotation, 1, linearVelocity, angularVelocity ) );
-			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 0, 24, 1, "rocketExplosion", ad.Damage, ad.Impulse) );
 			e.AddComponent( new FXComponent("grenadeTrail", true) );
+
+			var projectile = new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 100, 24, 1, "rocketExplosion", ad.Damage, ad.Impulse);
+			projectile.Options = ProjectileOptions.TimeoutDetonation | ProjectileOptions.RandomRotation;
+
+			e.AddComponent( projectile );
 		}
 	}
 }

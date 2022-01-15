@@ -10,6 +10,17 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
+	[Flags]
+	public enum ProjectileOptions : byte
+	{
+		None				=	0x00,
+		Default				=	SelfPropelled | ContactDetonation,
+		SelfPropelled		=	0x01,
+		ContactDetonation	=	0x02,
+		RandomRotation		=	0x04,
+		TimeoutDetonation	=	0x10,
+	}
+
 	public class ProjectileComponent : IComponent
 	{
 		public Vector3		Origin;
@@ -26,8 +37,7 @@ namespace IronStar.Gameplay.Components
 		public float		Radius;
 		public float		LifeTime;
 
-		public bool			SelfPropelled		=	true;
-		public bool			NoContactDetonation	=	false;
+		public ProjectileOptions Options	= 	ProjectileOptions.Default;
 
 		public ProjectileComponent()
 		{
@@ -90,8 +100,7 @@ namespace IronStar.Gameplay.Components
 			writer.Write( Radius		);
 			writer.Write( LifeTime		);
 
-			writer.Write( SelfPropelled );
-			writer.Write( NoContactDetonation );
+			writer.Write( (byte)Options );
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
@@ -110,8 +119,7 @@ namespace IronStar.Gameplay.Components
 			Radius		=	reader.ReadSingle();
 			LifeTime	=	reader.ReadSingle();
 
-			SelfPropelled		=	reader.ReadBoolean();
-			NoContactDetonation	=	reader.ReadBoolean();
+			Options		=	(ProjectileOptions)reader.ReadByte();
 		}
 
 		public IComponent Clone()

@@ -226,7 +226,9 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.PullGrenade:	
 					if (timeout) 
 					{
-						var grenadeThrowTransform = Matrix.Translation(-0.3f,0,0) * povTransform;
+						var offset = -0.3f;
+						var angle  = MathUtil.DegreesToRadians(5);
+						var grenadeThrowTransform = Matrix.Translation(offset,0,0) * Matrix.RotationX(angle) * povTransform;
 						Fire(actualGameTime, Arsenal.HandGrenade, state, grenadeThrowTransform, attacker);
 
 						state.State =	(((state.Counter++)&1)==0) ? WeaponState.Throw : WeaponState.Throw2;

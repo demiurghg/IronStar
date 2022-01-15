@@ -237,7 +237,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		internal static bool SkipEntityFilter( BroadPhaseEntry bpe, Entity skipEntity )
+		internal static bool SkipEntityFilter( BroadPhaseEntry bpe, Entity skipEntity, Entity skipEntity2 = null )
 		{
 			if (skipEntity==null) return true;
 
@@ -255,6 +255,11 @@ namespace IronStar.ECSPhysics
 				}
 
 				if (hitEnt==skipEntity) 
+				{
+					return false;
+				}
+				
+				if (skipEntity2!=null && hitEnt==skipEntity2)
 				{
 					return false;
 				}

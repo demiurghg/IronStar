@@ -57,6 +57,14 @@ namespace IronStar.Gameplay.Systems
 			var targetPos	=	position + direction * traceDist;
 
 			var transform	=	entity.GetComponent<Transform>();
+			var angularV	=	Vector3.Zero;
+
+
+			if (projectile.Options.HasFlag(ProjectileOptions.RandomRotation))
+			{
+				angularV	=	MathUtil.Random.NextVector3OnSphere() * 8;
+				orient		=	Quaternion.RotationAxis( MathUtil.Random.NextVector3OnSphere(), MathUtil.Random.NextFloat(0, MathUtil.TwoPi) );
+			}
 
 			//	no transoform is specified
 			//	search by raycasting against the world
@@ -67,27 +75,42 @@ namespace IronStar.Gameplay.Systems
 
 				if (raycastResult!=null)
 				{
-					 InflictDamageAndDestroyProjectile( entity, projectile, raycastResult.HitEntity, raycastResult.Location, direction, raycastResult.Normal );
-					 return null;
+					if (projectile.Options.HasFlag(ProjectileOptions.ContactDetonation))
+					{
+						InflictDamageAndDestroyProjectile( entity, projectile, raycastResult.HitEntity, raycastResult.Location, direction, raycastResult.Normal );
+						return null;
+					}
+					else
+					{
+						transform	 = new Transform( raycastResult.Location + raycastResult.Normal, orient, 1.0f, velocity, angularV );
+						entity.AddComponent( transform );
+					}
 				}
 				else
 				{
-					transform	 = new Transform( targetPos, orient, 1.0f );
+					transform	 = new Transform( targetPos, orient, 1.0f, velocity, angularV );
 					entity.AddComponent( transform );
 				}
 			}
 
-			var bpPosition	=	MathConverter.Convert( transform.Position );
-			var bpRotation	=	MathConverter.Convert( transform.Rotation );
-			var bpVelocity	=	MathConverter.Convert( velocity );
+			//	self-propelled projectile, create physical controller :
+			if (projectile.Options.HasFlag(ProjectileOptions.SelfPropelled))
+			{
+				var bpPosition	=	MathConverter.Convert( transform.Position );
+				var bpRotation	=	MathConverter.Convert( transform.Rotation );
+				var bpVelocity	=	MathConverter.Convert( velocity );
 
-			var projectileController = new ProjectileController( bpPosition, bpRotation, bpVelocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Attacker ) );
-				projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
-				projectileController.Tag = entity;
+				var projectileController = new ProjectileController( bpPosition, bpRotation, bpVelocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Attacker, entity ) );
+					projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
+					projectileController.Tag = entity;
 
-			physics.Add( projectileController );
-
-			return projectileController;
+				physics.Add( projectileController );
+				return projectileController;
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 
@@ -108,7 +131,10 @@ namespace IronStar.Gameplay.Systems
 			var normal		=	MathConverter.Convert( e.Normal );		
 			var hitEntity	=	(e.HitObject as ConvexCollidable)?.Entity.Tag as Entity;
 
-			InflictDamageAndDestroyProjectile( entity, projectile, hitEntity, location, direction, normal );
+			if (projectile.Options.HasFlag(ProjectileOptions.ContactDetonation))
+			{
+				InflictDamageAndDestroyProjectile( entity, projectile, hitEntity, location, direction, normal );
+			}
 		}
 
 		
@@ -131,18 +157,28 @@ namespace IronStar.Gameplay.Systems
 		{
 			var transform	=	entity.GetComponent<Transform>();
 
-			if (controller!=null && transform!=null)
+			if (transform!=null)
 			{
-				if (!MathUtil.NearEqual(projectile.Velocity, 0))
+				if (controller!=null)
 				{
-					PhysicsCore.UpdateTransformFromMotionState( controller.MotionState, transform );
+					if (projectile.Options.HasFlag(ProjectileOptions.SelfPropelled))
+					{
+						PhysicsCore.UpdateTransformFromMotionState( controller.MotionState, transform );
+					}
 				}
 
 				projectile.LifeTime	-= gameTime.ElapsedSec;
 
 				if (projectile.LifeTime<0)
 				{
-					InflictDamageAndDestroyProjectile( entity, projectile, null, transform.Position, transform.TransformMatrix.Forward, Vector3.Up );
+					if (projectile.Options.HasFlag(ProjectileOptions.TimeoutDetonation))
+					{
+						InflictDamageAndDestroyProjectile( entity, projectile, null, transform.Position, transform.TransformMatrix.Forward, Vector3.Up );
+					}
+					else
+					{
+						entity.Kill();
+					}
 				}
 			}
 		}

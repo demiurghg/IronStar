@@ -143,11 +143,11 @@ namespace IronStar.Animation
 		readonly TimeMode timeMode;
 		public readonly AnimationTake Take;
 
-		public Animation ( Sequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold, bool reverse )
-		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, sequencer.Scene.TimeMode ), looped, hold, reverse )
+		public Animation ( Sequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold, bool reverse, TimeMode timeMode )
+		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, timeMode==TimeMode.Unknown ? sequencer.Scene.TimeMode : timeMode ), looped, hold, reverse )
 		{
-			this.Take		=	take;
-			this.timeMode	=	sequencer.Scene.TimeMode;
+			this.Take			=	take;
+			this.timeMode		=	timeMode==TimeMode.Unknown ? sequencer.Scene.TimeMode : timeMode;
 		}
 
 

@@ -119,7 +119,9 @@ namespace IronStar.Gameplay.Systems
 			var weaponState	=	state.State;
 			var weapon		=	Arsenal.Get( state.ActiveWeapon );
 
-			var fireEvent	=	oldWeaponState != weaponState;
+			var fireEvent		=	oldWeaponState != weaponState;
+			var crossfadeFast	=	TimeSpan.FromMilliseconds( 60);
+			var crossfadeSlow	=	TimeSpan.FromMilliseconds(300);
 			oldWeaponState	=	weaponState;
 
 			bool	recoil	=	fireEvent && ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 );
@@ -132,8 +134,7 @@ namespace IronStar.Gameplay.Systems
 				//	recoil & cooldown :
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 
 				{
-
-					trackWeapon.Sequence( ANIM_COOLDOWN, SequenceMode.Immediate );
+					trackWeapon.Sequence( ANIM_COOLDOWN, SequenceMode.Immediate, crossfadeFast );
 					//trackWeapon.Frame ++;
 
 					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();
@@ -158,22 +159,22 @@ namespace IronStar.Gameplay.Systems
 
 				//	idle animation :
 				if ( weaponState == WeaponState.Idle ) {
-					trackWeapon.Sequence( ANIM_IDLE, SequenceMode.Looped );
+					trackWeapon.Sequence( ANIM_IDLE, SequenceMode.Looped, crossfadeSlow );
 				}
 
 				//	raising
 				if ( weaponState == WeaponState.Raise ) {
-					trackWeapon.Sequence( ANIM_RAISE, SequenceMode.Immediate );
+					trackWeapon.Sequence( ANIM_RAISE, SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.Zero, TimeMode.Frames72 );
 				}
 
 				//	dropping
 				if ( weaponState == WeaponState.Drop ) {
-					trackWeapon.Sequence( ANIM_DROP, SequenceMode.Immediate );
+					trackWeapon.Sequence( ANIM_DROP, SequenceMode.Immediate|SequenceMode.Hold, crossfadeFast, TimeMode.Frames48 );
 				}
 
 				//	no ammo animation :
-				if ( weaponState == WeaponState.NoAmmo ) {
-
+				if ( weaponState == WeaponState.NoAmmo ) 
+				{
 					composer.SequenceSound( SOUND_NO_AMMO );
 
 					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();

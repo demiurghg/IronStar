@@ -31,8 +31,8 @@ namespace IronStar.Gameplay.Weaponry
 		public TimeSpan		TimeCooldown	{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
 		public TimeSpan		TimeOverheat	{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
 		public TimeSpan		TimeReload		{ get; private set; }	=	TimeSpan.FromMilliseconds(0);
-		public TimeSpan		TimeDrop		{ get; private set; }	=	TimeSpan.FromMilliseconds(350);
-		public TimeSpan		TimeRaise		{ get; private set; }	=	TimeSpan.FromMilliseconds(350);
+		public TimeSpan		TimeDrop		{ get; private set; }	=	TimeSpan.FromMilliseconds(250);
+		public TimeSpan		TimeRaise		{ get; private set; }	=	TimeSpan.FromMilliseconds(150);
 		public TimeSpan		TimeNoAmmo		{ get; private set; }	=	TimeSpan.FromMilliseconds(250);
 
 		public string		BeamHitFX		{ get; private set; }	=	null;

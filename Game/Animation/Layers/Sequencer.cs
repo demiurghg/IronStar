@@ -81,7 +81,7 @@ namespace IronStar.Animation
 		/// <param name="take"></param>
 		/// <param name="sequenceMode"></param>
 		/// <param name="crossfade"></param>
-		public void Sequence( AnimationTake take, SequenceMode sequenceMode, TimeSpan crossfade )
+		public void Sequence( AnimationTake take, SequenceMode sequenceMode, TimeSpan crossfade, TimeMode timeModeOverride = TimeMode.Unknown )
 		{
 			var immediate	=	sequenceMode.HasFlag( SequenceMode.Immediate );
 			var looped		=	sequenceMode.HasFlag( SequenceMode.Looped );
@@ -104,7 +104,7 @@ namespace IronStar.Animation
 			var lastAnim	=	animations.LastOrDefault();
 			var startTime	=	(lastAnim==null || immediate) ? trackTime : lastAnim.GetTerminationTime(trackTime);
 
-			var newAnim			=	new Animation( this, startTime, take, looped, hold, reverse );
+			var newAnim			=	new Animation( this, startTime, take, looped, hold, reverse, timeModeOverride );
 			newAnim.Crossfade	=	(lastAnim==null) ? TimeSpan.Zero : crossfade;
 
 			StopAllAnimationsAt( startTime + crossfade );
@@ -136,7 +136,7 @@ namespace IronStar.Animation
 		}
 
 
-		public void Sequence ( string takeName, SequenceMode sequenceMode, TimeSpan crossfade )
+		public void Sequence ( string takeName, SequenceMode sequenceMode, TimeSpan crossfade, TimeMode timeMode = TimeMode.Unknown )
 		{
 			var take	=	scene.Takes[ takeName ];
 
@@ -146,7 +146,7 @@ namespace IronStar.Animation
 				return;
 			}
 
-			Sequence( take, sequenceMode, crossfade );
+			Sequence( take, sequenceMode, crossfade, timeMode );
 		}
 
 

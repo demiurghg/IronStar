@@ -45,5 +45,6 @@ namespace IronStar.AI
 
 		//	cover settings :
 		public readonly int		CoverTimeout		=	1500;
+		public readonly bool	GainHealthInCover	=	true;
 	}
 }

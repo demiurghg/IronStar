@@ -68,6 +68,11 @@ namespace IronStar.Gameplay.Components
 		 *	Utils :
 		-----------------------------------------------------------------------------------------*/
 
+		public void RestoreHealth()
+		{
+			Health = MaxHealth;
+		}
+
 		public bool TryGiveHealth( int amount )
 		{
 			if ( Health < MaxHealth && amount > 0 )

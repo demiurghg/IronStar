@@ -802,9 +802,21 @@ namespace IronStar.AI
 		{
 			if (CheckVitality(e,ai,cfg))
 			{
-				if (ai.Target==null || ai.CoverTimer.IsElapsed || ai.Target.Visible)
+				if (ai.CoverTimer.IsElapsed)
 				{
+					if (cfg.GainHealthInCover)
+					{
+						e.GetComponent<HealthComponent>()?.RestoreHealth();
+					}
 					EnterCombatRoot( e, ai, cfg, "stay in cover is timed out");
+				}
+				else if (ai.Target.Visible)
+				{
+					EnterCombatRoot( e, ai, cfg, "target is visible");
+				}
+				else if (ai.Target==null)
+				{
+					EnterCombatRoot( e, ai, cfg, "target is null");
 				}
 			}
 		}

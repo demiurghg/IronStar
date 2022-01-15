@@ -260,14 +260,6 @@ namespace IronStar.AI
 			if (ai.Target!=newTarget)
 			{
 				ai.Target	=	newTarget;
-				ai.Target?.AimingTimer.Set( cfg.AimTime );
-			}
-
-			//	...also track visibility of current target
-			//	and reset timer if target not visible
-			if (ai.Target!=null && !ai.Target.Visible)
-			{
-				ai.Target.AimingTimer.Set( cfg.AimTime );
 			}
 		}
 
@@ -317,6 +309,10 @@ namespace IronStar.AI
 			if (ai.Target.Visible)
 			{
 				ai.Target.AimingTimer.Update((int)(dt*1000));
+			}
+			else
+			{
+				ai.Target.AimingTimer.Set(cfg.AimTime);
 			}
 
 			bool aimReady = ai.Target.AimingTimer.IsElapsed || SkipAttackDelay;

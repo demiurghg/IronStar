@@ -95,7 +95,7 @@ namespace IronStar.AI
 				LookForEnemies( gameTime, entity, ai, cfg );
 				DetectAttacker( gameTime, entity, ai, cfg );
 				SelectTarget( entity, ai, cfg );
-				SetAimError( ai, cfg );
+				SetAimError( entity, ai, cfg );
 
 				eqs.RequestPoints( entity, ai.Target );
 				//eqs.RefreshPoints( entity, ai.Target, 0.2f );
@@ -190,7 +190,7 @@ namespace IronStar.AI
 					//	do not stun when stunning
 					if (ai.StunTimer.IsElapsed)
 					{
-						var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 0, 100);
+						var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 20, 100);
 
 						//	unalerted NPCs get 100% stun
 						if (ai.Target==null)
@@ -217,10 +217,20 @@ namespace IronStar.AI
 		 *	Shooting :
 		-----------------------------------------------------------------------------------------------*/
 
-		void SetAimError( AIComponent ai, AIConfig cfg )
+		void SetAimError( Entity e, AIComponent ai, AIConfig cfg )
 		{
+			Vector3 targetVelocity = Vector3.Zero;
+			float	targetDistance = 0;
+
+			if (ai.Target!=null)
+			{
+				ai.Target?.Entity?.TryGetVelocity( out targetVelocity );
+				AIUtils.TryGetDistanceToTarget( e, ai.Target.Entity, out targetDistance );
+			}
+
 			ai.PrevAimError	=	ai.NextAimError;
-			ai.NextAimError =	MathUtil.Random.UniformRadialDistribution( 0, cfg.Accuracy ) * new Vector3( 1, 0.5f, 1 ) * 1.26f /*(sqrt3(2)*/;
+			ai.NextAimError =	targetDistance * MathUtil.Random.GaussRadialDistribution( 0, cfg.Accuracy ) * new Vector3( 1, 0.5f, 1 ) * 1.26f /*(sqrt3(2)*/
+							+	targetVelocity * MathUtil.Random.GaussDistribution(0, cfg.AccuracyLeading);
 		}
 
 		float AssessTarget( AIComponent ai, Vector3 attackerPos, AITarget target, Entity attacker )
@@ -316,17 +326,19 @@ namespace IronStar.AI
 			{
 				if (AIUtils.TryGetPOV( ai.Target.Entity, out aimPoint, 0.66f ))
 				{
+					var velocity	=	ai.Target.Entity.GetComponent<Transform>().LinearVelocity;
+
 					float rateYaw	=	dt * cfg.RotationRate;
 					float ratePitch	=	dt * cfg.RotationRate;
 					float distance	=	Vector3.Distance( attackPov, aimPoint );
 
-					aimPoint		=	aimPoint + distance * aimError;
+					aimPoint		=	aimPoint + aimError;
 
 					float error		=	uc.RotateTo( attackPov, aimPoint, rateYaw, ratePitch );
 
 					if (DrawVisibility)
 					{
-						dr.DrawPoint( aimPoint, 5.0f, Color.Red, 3 );
+						dr.DrawPoint( aimPoint, 5.0f, Color.Orange, 5 );
 					}
 
 					var token = (ai.CombatToken!=null) || ai.Options.HasFlag(AIOptions.NoToken);
@@ -607,11 +619,6 @@ namespace IronStar.AI
 		{
 			if (ai.Target!=null)
 			{
-				var targetDistance		=	AIUtils.DistanceToTarget( e, ai.Target.Entity );
-				var normalizedHealth	=	AIUtils.GetNormalizedHealth( e );
-				var targetVisible		=	ai.Target.Visible;
-				var isCamper			=	ai.Options.HasFlag(AIOptions.Camper);
-
 				if (AIUtils.GetNormalizedHealth(e) > 0.33f )
 				{
 					if (ai.Target.Visible)
@@ -810,13 +817,13 @@ namespace IronStar.AI
 					}
 					EnterCombatRoot( e, ai, cfg, "stay in cover is timed out");
 				}
-				else if (ai.Target.Visible)
-				{
-					EnterCombatRoot( e, ai, cfg, "target is visible");
-				}
 				else if (ai.Target==null)
 				{
 					EnterCombatRoot( e, ai, cfg, "target is null");
+				}
+				else if (ai.Target!=null && ai.Target.Visible)
+				{
+					EnterCombatRoot( e, ai, cfg, "target is visible");
 				}
 			}
 		}

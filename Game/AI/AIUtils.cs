@@ -254,18 +254,22 @@ namespace IronStar.AI
 			return route==null || route.Status!=Status.InProgress;
 		}
 
-		public static float DistanceToTarget( Entity attacker, Entity target )
+		public static bool TryGetDistanceToTarget( Entity attacker, Entity target, out float distance )
 		{
 			Vector3 attackPos, targetPos;
 			if (attacker.TryGetLocation(out attackPos) && target.TryGetLocation(out targetPos))
 			{
-				return Vector3.Distance( attackPos, targetPos );
+				distance = Vector3.Distance( attackPos, targetPos );
+				return true;
 			}
 			else
 			{
-				return 999999;
+				distance = 0;
+				return false;
 			}
 		}
+
+
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Enemy management :

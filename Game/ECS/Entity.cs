@@ -194,6 +194,23 @@ namespace IronStar.ECS
 		}
 
 
+		public bool TryGetVelocity( out Vector3 velocity )
+		{
+			var t = GetComponent<Transform>();
+
+			if (t!=null)
+			{
+				velocity	=	t.LinearVelocity;
+				return true;
+			}
+			else
+			{
+				velocity	=	Vector3.Zero;
+				return false;
+			}
+		}
+
+
 		[Obsolete("Use TryGetPosition instead", true)]
 		public Vector3 Location
 		{

@@ -57,7 +57,8 @@ namespace IronStar.ECSPhysics
 				{
 					motionState.Position	=	result.HitData.Location;
 					var normal				=	result.HitData.Normal;
-						normal.Normalize();
+
+					if (normal.Length()>0) normal.Normalize();
 
 					CollisionDetected?.Invoke( this, new CollisionDetectedEventArgs(result.HitObject, motionState.Position, normal) );
 

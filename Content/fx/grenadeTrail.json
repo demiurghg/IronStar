@@ -30,7 +30,7 @@
     "Enabled": true,
     "Sprite": "railDot",
     "UseRandomImages": true,
-    "Effect": "soft",
+    "Effect": "hard",
     "Count": 2000,
     "Period": 1.0,
     "Timing": {
@@ -44,9 +44,9 @@
     "Alpha": 0.7,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 100.0,
-    "Scattering": 1.0,
-    "BeamFactor": 0,
+    "Intensity": 300.0,
+    "Scattering": 0.0,
+    "BeamFactor": -1,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -80,7 +80,7 @@
       "LinearVelocityMax": 0.0,
       "RadialDistribution": "gauss",
       "RadialVelocity": 0.0,
-      "Advection": 0.0
+      "Advection": 0.005
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",

@@ -27,7 +27,7 @@ namespace Fusion.Core.Shell
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
 		readonly Stack<IUndoable> undoStack = new Stack<IUndoable>(1024);
 		readonly Stack<IUndoable> redoStack = new Stack<IUndoable>(1024);
-		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
+		readonly Dictionary<string,CommandEntry> commandsRegistry;
 		readonly Type[] configClasses;
 
 		public IEnumerable<IUndoable> UndoStack { get { return undoStack; } }
@@ -58,6 +58,9 @@ namespace Fusion.Core.Shell
 		public Invoker ( Game game )
 		{
 			this.Game = game; // optional ComponentCollection???
+
+			commandsRegistry	=	new Dictionary<string, CommandEntry>( StringComparer.OrdinalIgnoreCase );
+
 			RegisterCommand("set",		()=>new Set(this)		);
 			RegisterCommand("get",		()=>new Get(this)		);
 			RegisterCommand("wait",		()=>new WaitCmd(this)	);
@@ -314,7 +317,8 @@ namespace Fusion.Core.Shell
 		{
 			CommandEntry entry;
 
-			if (commandsRegistry.TryGetValue( name, out entry )) {
+			if (commandsRegistry.TryGetValue( name, out entry )) 
+			{
 				return entry.Parser;
 			}
 			

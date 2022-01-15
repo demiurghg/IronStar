@@ -9,9 +9,10 @@ using System.Reflection;
 using Fusion.Core.Extensions;
 using System.Runtime.CompilerServices;
 
-namespace Fusion.Core.Shell {
-	public partial class Invoker {
-
+namespace Fusion.Core.Shell 
+{
+	public partial class Invoker 
+	{
 		/// <summary>
 		/// 
 		/// </summary>
@@ -74,7 +75,6 @@ namespace Fusion.Core.Shell {
 				}
 			}
 		}
-
 
 
 		/// <summary>

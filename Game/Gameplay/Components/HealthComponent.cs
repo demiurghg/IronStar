@@ -73,6 +73,7 @@ namespace IronStar.Gameplay.Components
 			Health = MaxHealth;
 		}
 
+		
 		public bool TryGiveHealth( int amount )
 		{
 			if ( Health < MaxHealth && amount > 0 )
@@ -106,41 +107,6 @@ namespace IronStar.Gameplay.Components
 			LastAttacker		=	attacker;
 			DamageAccumulator	+=	damage;
 			DamageCooldown		=	DamageCooldownTimeout;
-		}
-
-
-		public void ApplyDamage(bool protect, int msec)
-		{
-			bool wasAlive	=	Health > 0;
-			LastDamage		=	DamageAccumulator;
-
-			if (!protect)
-			{
-				int armorDamage		=	DamageAccumulator * 66 / 100;
-				int healthDamage	=	DamageAccumulator - armorDamage;
-
-				Armor	-=	armorDamage;
-
-				if (Armor<0) 
-				{
-					Health	+=	Armor;
-					Armor	=	0;
-				}
-
-				Health -= healthDamage;
-			}
-
-			DamageAccumulator = 0;
-
-			if (DamageCooldown>0)
-			{
-				DamageCooldown -= msec;
-			} 
-			else
-			{
-				DamageCooldown = 0;
-				LastAttacker = null;
-			}
 		}
 	}
 }

@@ -38,13 +38,6 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			//PickupPowerups( gs, gameTime );
-			ApplyDamage( gs, gameTime );
-		}
-
-
-		void ApplyDamage( IGameState gs, GameTime gameTime )
-		{
 			var entities = gs.QueryEntities(healthAspect);
 
 			foreach ( var entity in entities )
@@ -53,11 +46,52 @@ namespace IronStar.Gameplay.Systems
 
 				var health	=	entity.GetComponent<HealthComponent>();
 				var godMode	=	entity.ContainsComponent<PlayerComponent>() && IronStar.IsGodMode;
+				var divider	=	1;
 
-				health.ApplyDamage(godMode, gameTime.Milliseconds);
+				if (isPlayer && (health.Health <= health.MaxHealth/4))
+				{
+					divider =	2;
+				}
+
+				ApplyDamage(health, godMode, divider, gameTime.Milliseconds);
 			}
 		}
 
 
+		void ApplyDamage(HealthComponent health, bool protect, int divider, int msec)
+		{
+			bool wasAlive		=	health.Health > 0;
+			var  totalDamage	=	health.DamageAccumulator / divider;
+			
+			health.LastDamage			=	totalDamage;
+			health.DamageAccumulator	=	0;
+
+			if (!protect)
+			{
+				int armorDamage		=	totalDamage * 66 / 100;
+				int healthDamage	=	totalDamage - armorDamage;
+
+				health.Armor	-=	armorDamage;
+
+				if (health.Armor<0) 
+				{
+					health.Health	+=	health.Armor;
+					health.Armor	=	0;
+				}
+
+				health.Health -= healthDamage;
+			}
+
+			//	AI need to keep attacker longer than one frame
+			if (health.DamageCooldown>0)
+			{
+				health.DamageCooldown -= msec;
+			} 
+			else
+			{
+				health.DamageCooldown = 0;
+				health.LastAttacker = null;
+			}
+		}
 	}
 }

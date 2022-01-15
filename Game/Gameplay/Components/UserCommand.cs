@@ -36,6 +36,8 @@ namespace IronStar.Gameplay
 		Weapon6			=	0x04000000,
 		Weapon7			=	0x08000000,
 		Weapon8			=	0x10000000,
+		WeaponNext		=	0x40000000,
+		WeaponPrev		=	0x80000000,
 	}	
 
 

@@ -27,6 +27,7 @@ namespace IronStar {
 		{
 			Invoker.RegisterCommand("godMode"		, () => new GodMode() );
 			Invoker.RegisterCommand("noTarget"		, () => new NoTarget() );
+			Invoker.RegisterCommand("giveAll"		, () => new GiveAll() );
 		}
 
 
@@ -47,6 +48,16 @@ namespace IronStar {
 			{
 				IsNoTarget = !IsNoTarget;
 				Log.Message("AI " + (IsNoTarget ? "disabled" : "enabled"));
+				return null;
+			}
+		}
+
+		
+		class GiveAll : ICommand 
+		{
+			public object Execute()
+			{
+				Gameplay.Systems.PickupSystem.RequestGiveAll = true;
 				return null;
 			}
 		}

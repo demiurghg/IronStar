@@ -48,8 +48,8 @@ namespace IronStar.Gameplay
 			if (action.HasFlag( UserAction.Weapon3 )) Weapon = WeaponType.Shotgun		;
 			if (action.HasFlag( UserAction.Weapon4 )) Weapon = WeaponType.Plasmagun		;
 			if (action.HasFlag( UserAction.Weapon5 )) Weapon = WeaponType.RocketLauncher;
-			if (action.HasFlag( UserAction.Weapon6 )) Weapon = WeaponType.Railgun		;
-			if (action.HasFlag( UserAction.Weapon7 )) Weapon = WeaponType.Machinegun	;
+			if (action.HasFlag( UserAction.Weapon6 )) Weapon = WeaponType.Machinegun	;
+			if (action.HasFlag( UserAction.Weapon7 )) Weapon = WeaponType.Railgun		;
 			if (action.HasFlag( UserAction.Weapon8 )) Weapon = WeaponType.Machinegun	;
 		}
 

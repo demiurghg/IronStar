@@ -67,12 +67,26 @@ namespace IronStar.Gameplay
 		[Config] public static Keys	Weapon7			{ get; set; }	=	Keys.D7;
 		[Config] public static Keys	Weapon8			{ get; set; }	=	Keys.D8;
 
+		[Config] public static bool AutoSwitch		{ get; set; }	=	true;
+
+		int scrollAccum = 0;
 
 		public PlayerInput( Game game ) : base( game )
 		{
+			game.Mouse.Scroll += Mouse_Scroll;
 		}
 
-
+		private void Mouse_Scroll( object sender, MouseScrollEventArgs e )
+		{
+			if (e.WheelDelta>0)
+			{
+				scrollAccum++;
+			}
+			else if (e.WheelDelta<0)
+			{
+				scrollAccum--;
+			}
+		}
 
 		public void UpdateUserInput ( GameTime gameTime, ref UserCommand userCommand, bool guiEnaged )
 		{
@@ -120,6 +134,10 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Action |= UserAction.Weapon6;
 			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Action |= UserAction.Weapon7;
 			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Action |= UserAction.Weapon8;
+
+			if (scrollAccum>0) { userCommand.Action |= UserAction.WeaponNext; scrollAccum--; }
+			if (scrollAccum<0) { userCommand.Action |= UserAction.WeaponPrev; scrollAccum++; }
+			
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:

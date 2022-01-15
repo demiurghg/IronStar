@@ -20,6 +20,8 @@ namespace IronStar.Gameplay.Weaponry
 		readonly static Weapon	railgun;
 		readonly static Weapon	handGrenade;
 
+		readonly static int WeaponCount = Enum.GetValues(typeof(WeaponType)).GetLength(0);
+
 		readonly static Ammo	bullets		=	new Ammo(200, "BULLETS"	);
 		readonly static Ammo	shells		=	new Ammo(200, "SHELLS"	);
 		readonly static Ammo	cells		=	new Ammo(200, "CELLS"	);
@@ -142,6 +144,17 @@ namespace IronStar.Gameplay.Weaponry
 					Log.Warning("Bad ammo type " + ammoType.ToString());
 					return null;
 			}
+		}
+
+
+		public static WeaponType Next( WeaponType current )
+		{
+			return (WeaponType)MathUtil.Wrap( (int)current + 1, 1, WeaponCount - 1 );
+		}
+
+		public static WeaponType Prev( WeaponType current )
+		{
+			return (WeaponType)MathUtil.Wrap( (int)current - 1, 1, WeaponCount - 1 );
 		}
 	}
 }

@@ -494,6 +494,14 @@ namespace Fusion.Core.Extensions
 		  
 
 
+		public static IEnumerable<T> GetEnumValues<T>()
+		{
+			if (!typeof(T).IsEnum) throw new ArgumentException("T is not enum");
+
+			return Enum.GetValues(typeof(T)).Cast<T>();
+		}
+
+
 		/// <summary>
 		/// Build relative path from given full path, even wrong one :
 		/// </summary>

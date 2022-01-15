@@ -84,6 +84,12 @@ namespace IronStar.Gameplay.Components
 		}
 
 
+		public bool HasAmmo ( AmmoType ammoType )
+		{
+			return ammo[ (int)ammoType ] > 0;
+		}
+
+
 		public bool TryGiveWeapon ( WeaponType weaponType, WeaponStateComponent weaponState = null )
 		{
 			if (weaponType!=WeaponType.None && !HasWeapon(weaponType))

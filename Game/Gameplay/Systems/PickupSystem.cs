@@ -10,11 +10,15 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX;
 using Fusion.Core.Mathematics;
+using IronStar.Gameplay.Weaponry;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Gameplay.Systems
 {
 	public class PickupSystem : ISystem
 	{
+		public static bool RequestGiveAll = false;
+
 		public void Add( IGameState gs, Entity e )  {}
 		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
@@ -44,6 +48,43 @@ namespace IronStar.Gameplay.Systems
 						{
 							break;
 						}
+					}
+				}
+			}
+
+			if (RequestGiveAll)
+			{
+				GiveAllToPlayer(gs);
+				RequestGiveAll = false;
+			}
+		}
+
+
+		void GiveAllToPlayer(IGameState gs)
+		{
+			var playerAspect = new Aspect().Include<PlayerComponent>();
+
+			foreach (var e in gs.QueryEntities(playerAspect))
+			{
+				var health		=	e.GetComponent<HealthComponent>();
+				var inventory	=	e.GetComponent<InventoryComponent>();
+
+				if (health!=null)
+				{
+					health.Health	=	health.MaxHealth;
+					health.Armor	=	health.MaxArmor;
+				}
+
+				if (inventory!=null)
+				{
+					foreach (var ammo in Misc.GetEnumValues<AmmoType>())
+					{
+						inventory.TryGiveAmmo( ammo, 999999 );
+					}
+
+					foreach (var weapon in Misc.GetEnumValues<WeaponType>())
+					{
+						inventory.TryGiveWeapon( weapon );
 					}
 				}
 			}

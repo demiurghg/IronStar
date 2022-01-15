@@ -12,12 +12,13 @@ using IronStar.Gameplay.Components;
 using IronStar.ECSPhysics;
 using System.Collections.Concurrent;
 using IronStar.Environment;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay
 {
 	/// <summary>
 	/// In MASTER mode PlayerInputSystem scans input devices and form UserCommand. UserCommand is sent to shared UserCommandQueue.
-	/// Once player spawns, UserCommand is updated based on data from player transform to align view abgles.
+	/// Once player spawns, UserCommand is updated based on data from player transform to align view angles.
 	/// 
 	/// In SLAVE mode PlayerInputSystem read shared	UserCommandQueue and applies command to all players.
 	/// #TODO UserCommand is applied to all players, its OK for single player, but for multiplayer command must be
@@ -129,14 +130,13 @@ namespace IronStar.Gameplay
 
 					foreach ( var player in players )
 					{
-						var ucc		=	player.GetComponent<UserCommandComponent>();
-						var health	=	player.GetComponent<HealthComponent>();
-						var alive	=	health==null ? true : health.Health > 0;
+						var ucc			=	player.GetComponent<UserCommandComponent>();
+						var health		=	player.GetComponent<HealthComponent>();
+						var alive		=	health==null ? true : health.Health > 0;
 
 						ucc.UpdateFromUserCommand( yaw + dYaw, pitch + dPitch, move, strafe, action );
 					}
 				}
-				//if (count!=1) Log.Debug("UC Count : {0}", count );
 			}
 		}
 	}

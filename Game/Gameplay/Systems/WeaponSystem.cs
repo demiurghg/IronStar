@@ -105,10 +105,62 @@ namespace IronStar.Gameplay.Systems
 					return wpnState.TrySwitchWeapon(userCmd.Weapon);
 				}
 			}
+			else
+			{
+				var currentWeapon	=	wpnState.PendingWeapon==WeaponType.None ? wpnState.ActiveWeapon : wpnState.PendingWeapon;
+				var nextWeapon		=	currentWeapon;
+
+				var next = userCmd.Action.HasFlag(UserAction.WeaponNext);
+				var prev = userCmd.Action.HasFlag(UserAction.WeaponPrev);
+
+				if (next || prev)
+				{
+					do 
+					{
+						if (next) nextWeapon = Arsenal.Next( nextWeapon );
+						if (prev) nextWeapon = Arsenal.Prev( nextWeapon );
+
+						if (WeaponExistsAndHasAmmo(nextWeapon, inventory))
+						{
+							wpnState.TrySwitchWeapon(nextWeapon);
+							break;
+						}
+					}
+					while (nextWeapon!=currentWeapon);
+				}
+			}
 
 			return false;
 		}
 
+
+		void AutoswitchWeapon( WeaponStateComponent wpnState, InventoryComponent inventory )
+		{
+			foreach ( var weapon in Misc.GetEnumValues<WeaponType>().Reverse() )
+			{
+				if (WeaponExistsAndHasAmmo(weapon, inventory))
+				{
+					wpnState.TrySwitchWeapon(weapon);
+					return;
+				}
+			}
+		}
+
+		
+		bool WeaponExistsAndHasAmmo( WeaponType weapon, InventoryComponent inventory )
+		{
+			if (inventory.HasWeapon(weapon))
+			{
+				var wpnDesc = Arsenal.Get(weapon);
+
+				if (inventory.HasAmmo(wpnDesc.AmmoType))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 * Weapon state
@@ -196,6 +248,12 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Cooldown2:	
 				case WeaponState.Throw:	
 				case WeaponState.Throw2:	
+					//	fast switch
+					if (state.HasPengingWeapon || dead) 
+					{
+						state.State =  WeaponState.Drop;	
+						state.Timer =  armed ? weapon.TimeDrop : TimeSpan.Zero;
+					}
 					if (timeout) 
 					{
 						state.State = WeaponState.Idle;	
@@ -241,6 +299,10 @@ namespace IronStar.Gameplay.Systems
 					{
 						state.State = WeaponState.Idle;
 						state.Timer = TimeSpan.Zero;
+						if (PlayerInput.AutoSwitch)
+						{
+							AutoswitchWeapon( state, inventory );
+						}
 					}
 					break;
 			}

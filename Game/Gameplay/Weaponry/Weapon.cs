@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
+using Fusion.Core;
 using Fusion.Core.Mathematics;
 using IronStar.ECS;
+using IronStar.Gameplay.Components;
 using IronStar.SFX2;
 
 namespace IronStar.Gameplay.Weaponry
@@ -44,11 +47,12 @@ namespace IronStar.Gameplay.Weaponry
 
 		public int			Damage			{ get; private set; }	=	0;
 		public float		Impulse			{ get; private set; }	=	0;
-		public float		MaxSpread		{ get; private set; }	=	0;
 		public float		NoiseLevel		{ get; private set; }	=	0;
 
-		public SpreadMode	SpreadMode		{ get; private set; }	=	SpreadMode.Const;
-		public float		Spread			{ get; private set; }	=	0;
+		public SpreadMode	SpreadMode			{ get; private set; }	=	SpreadMode.Const;
+		public float		MaxSpread			{ get; private set; }	=	0;
+		public float		MaxSpreadShots		{ get; private set; }	=	0;
+		public float		SpreadRecoveryTime	{ get; private set; }	=	0;
 
 		public AmmoType		AmmoType		{ get; private set; }	=	AmmoType.Bullets;
 		public int			AmmoConsumption	{ get; private set; }=	1;
@@ -56,6 +60,9 @@ namespace IronStar.Gameplay.Weaponry
 		public bool			IsBeamWeapon { get { return ProjectileSpawn==null; } }
 
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Copnstruction methods :
+		-----------------------------------------------------------------------------------------*/
 
 		public Weapon(string niceName)
 		{
@@ -101,14 +108,32 @@ namespace IronStar.Gameplay.Weaponry
 		}
 
 
-		public Weapon Attack( int damage, float impulse, float spread, SpreadMode spreadMode, string muzzleFx )
+		public Weapon Attack( int damage, float impulse, string muzzleFx )
 		{
 			Damage		=	damage;
 			Impulse		=	impulse;
-			MaxSpread	=	spread;
 			MuzzleFX	=	muzzleFx;
-			SpreadMode	=	spreadMode;
 
+			return this;
+		}
+
+
+		public Weapon Spread( float spread )
+		{
+			MaxSpread			=	spread;
+			SpreadMode			=	SpreadMode.Const;
+			MaxSpreadShots		=	1;
+			SpreadRecoveryTime	=	0;
+			return this;
+		}
+
+
+		public Weapon Spread( float spread, float maxShots, float recoveryTime )
+		{
+			MaxSpread			=	spread;
+			SpreadMode			=	SpreadMode.Variable;
+			MaxSpreadShots		=	maxShots;
+			SpreadRecoveryTime	=	recoveryTime;
 			return this;
 		}
 
@@ -131,6 +156,67 @@ namespace IronStar.Gameplay.Weaponry
 		{
 			NoiseLevel	=	noise;
 			return this;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Utility methods :
+		-----------------------------------------------------------------------------------------*/
+
+		public void ResetSpread( WeaponStateComponent state )
+		{
+			if ( SpreadMode==SpreadMode.Const)
+			{
+				state.Spread	=	MaxSpread;
+			}
+			else if ( SpreadMode==SpreadMode.Variable)
+			{
+				state.Spread	=	0;
+			}
+			else
+			{
+				state.Spread = 0;
+			}
+		}
+
+		public void IncreaseSpread( WeaponStateComponent state )
+		{
+			if ( SpreadMode==SpreadMode.Const)
+			{
+				state.Spread	=	MaxSpread;
+			}
+			else if ( SpreadMode==SpreadMode.Variable)
+			{
+				var addition	=	MaxSpread / SpreadRecoveryTime * (float)TimeCooldown.TotalSeconds;
+				var increment	=	MaxSpread / MaxSpreadShots;
+				state.Spread	+=	increment + addition;
+				state.Spread	=	MathUtil.Clamp( state.Spread, 0, MaxSpread + addition );
+			}
+			else
+			{
+				state.Spread = 0;
+			}
+		}
+
+
+		public void DecreaseSpread( GameTime gameTime, WeaponStateComponent state )
+		{
+			if ( SpreadMode==SpreadMode.Const)
+			{
+				state.Spread	=	MaxSpread;
+			}
+			else if (SpreadMode==SpreadMode.Variable)
+			{								
+				if (state.Spread>0)
+				{
+					float dt = gameTime.ElapsedSec;
+					state.Spread = Math.Max( 0, state.Spread - dt / SpreadRecoveryTime * MaxSpread );
+				}
+			}
+			else
+			{
+				state.Spread = 0;
+			}
 		}
 	}
 }

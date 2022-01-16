@@ -52,7 +52,7 @@ namespace IronStar.ECSFactories
 
 		public override void Construct( Entity e, IGameState gs )
 		{
-			float timeout = MathUtil.Random.NextFloat(0.1f, 1.7f);
+			float timeout = MathUtil.Random.NextFloat(0.2f, 0.3f);
 
 			base.Construct( e, gs );
 

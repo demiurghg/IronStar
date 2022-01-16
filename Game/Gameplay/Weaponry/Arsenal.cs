@@ -51,7 +51,8 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorMachinegun, ColorIntensity, 1, "scenes\\weapon2\\assault_rifle\\assault_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
-								.Attack		( 9, IMPULSE_LIGHT, 2.0f, SpreadMode.Variable, "machinegunMuzzle" )
+								.Attack		( 9, IMPULSE_LIGHT, "machinegunMuzzle" )
+								.Spread		( 2.5f, 8, 0.5f )
 								.Beam		( 1, "*trail_bullet", "bulletHit" )
 								.Noise		( NOISE_LIGHT )
 								;
@@ -60,8 +61,8 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorMachinegun, ColorIntensity, 1, "scenes\\weapon2\\battle_rifle\\battle_rifle_view")
 								.Ammo		( 1, AmmoType.Bullets )
 								.Cooldown	( 100 )
-								.Attack		( 5, IMPULSE_LIGHT, 1.0f, SpreadMode.Variable, "machinegunMuzzle" )
-								.Beam		( 1, "*trail_bullet", "bulletHit" )
+								.Attack		( 5, IMPULSE_LIGHT, "machinegunMuzzle" )
+								.Spread		( 1.0f, 10, 0.5f )
 								.Noise		( NOISE_LIGHT )
 								;
 
@@ -69,7 +70,8 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorShotgun, ColorIntensity, 1, "scenes\\weapon2\\canister_rifle\\canister_rifle_view")
 								.Ammo		( 1, AmmoType.Shells )
 								.Cooldown	( 750 )
-								.Attack		(  8, IMPULSE_MEDIUM/10, 3.0f, SpreadMode.Const, "shotgunMuzzle" )
+								.Attack		( 10, IMPULSE_MEDIUM/10, "shotgunMuzzle" )
+								.Spread		( 4.5f )
 								.Beam		(  8, null, "shotgunHit" )
 								.Noise		( NOISE_MEDIUM )
 								;
@@ -78,7 +80,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorPlasmagun, ColorIntensity, 1, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_view")
 								.Ammo		( 1, AmmoType.Cells )
 								.Cooldown	( 100 )
-								.Attack		( 7, IMPULSE_LIGHT, 0.0f, SpreadMode.Const, "plasmaMuzzle" )
+								.Attack		( 7, IMPULSE_LIGHT, "plasmaMuzzle" )
 								.Projectile	( 1, (gs,ad)=> gs.Spawn( new PlasmaFactory(ad) ) )
 								.Noise		( NOISE_LIGHT )
 								;
@@ -87,7 +89,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorRocketLauncher, ColorIntensity, 1, "scenes\\weapon2\\rocket_launcher\\rocket_launcher_view")
 								.Ammo		( 1, AmmoType.Rockets )
 								.Cooldown	( 750 )
-								.Attack		( 100, IMPULSE_HEAVY, 0.0f, SpreadMode.Const, "rocketMuzzle" )
+								.Attack		( 100, IMPULSE_HEAVY, "rocketMuzzle" )
 								.Projectile	( 1, (gs,ad)=> gs.Spawn( new RocketFactory(ad) ) )
 								.Noise		( NOISE_HEAVY )
 								;
@@ -96,7 +98,7 @@ namespace IronStar.Gameplay.Weaponry
 								.ViewModel	( ColorRailgun, ColorIntensity, 1, "scenes\\weapon2\\gauss_rifle\\gauss_rifle_view")
 								.Ammo		( 1, AmmoType.Slugs )
 								.Cooldown	( 1500 )
-								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "railMuzzle" )
+								.Attack		( 100, IMPULSE_HEAVY, "railMuzzle" )
 								.Beam		( 1, "*trail_gauss", "railHit" )
 								.Noise		( NOISE_HEAVY )
 								;
@@ -105,7 +107,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Ammo		( 1, AmmoType.Grenades )
 								//.Warmup		( 300 )
 								.Cooldown	( 700 )
-								.Attack		( 100, IMPULSE_HEAVY, 0, SpreadMode.Const, "grenadeThrow" )
+								.Attack		( 100, IMPULSE_HEAVY, "grenadeThrow" )
 								.Projectile	( 1, (gs,ad)=> gs.Spawn( new GrenadeFactory(ad) ) )
 								.Noise		( NOISE_LIGHT )
 								;

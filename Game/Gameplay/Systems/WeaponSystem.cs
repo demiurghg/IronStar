@@ -21,9 +21,10 @@ namespace IronStar.Gameplay.Systems
 {
 	class WeaponSystem : ISystem
 	{
-		const float BEAM_RANGE			=	8192;
-		const float SPREAD_INCREMENT	=	0.2f;
-		const float SPREAD_FADEOUT		=	0.2f;
+		const float BEAM_RANGE				=	8192;
+		const float SPREAD_INCREMENT		=	0.1f;
+		const float SPREAD_RECOVERY_TIME	=	0.3f;
+		//const float SPREAD_FADEOUT		=	0.2f;
 
 		Random rand = new Random();
 
@@ -90,7 +91,7 @@ namespace IronStar.Gameplay.Systems
 			var throwG	= userCmd.Action.HasFlag( UserAction.ThrowGrenade ) && isAlive;
 			var weapon	= Arsenal.Get( wpnState.ActiveWeapon );
 
-			FadeSpread( gameTime, weapon, wpnState );
+			weapon?.DecreaseSpread( gameTime, wpnState );
 			AdvanceWeaponTimer( gameTime, weapon, wpnState );
 			UpdateWeaponFSM( gameTime, attack, throwG, povTransform, entity, inventory, weapon, wpnState, !isAlive );
 		}
@@ -171,18 +172,6 @@ namespace IronStar.Gameplay.Systems
 			if ( state.Timer > TimeSpan.Zero ) 
 			{
 				state.Timer = state.Timer - gameTime.Elapsed;
-			}
-		}
-
-
-		void FadeSpread( GameTime gameTime, Weapon weapon, WeaponStateComponent state  )
-		{
-			if (weapon!=null)
-			{
-				if (weapon.SpreadMode==SpreadMode.Variable)
-				{
-					state.Spread *= (float)Math.Pow( SPREAD_FADEOUT, Math.Min(1, gameTime.ElapsedSec) );
-				}
 			}
 		}
 
@@ -293,6 +282,7 @@ namespace IronStar.Gameplay.Systems
 					{
 						state.State = WeaponState.Idle;
 						state.Timer = TimeSpan.Zero;
+						Arsenal.Get( state.ActiveWeapon )?.ResetSpread(state);
 					}
 					break;
 
@@ -326,8 +316,6 @@ namespace IronStar.Gameplay.Systems
 
 			attacker.GetComponent<NoiseComponent>()?.MakeNoise( weapon.NoiseLevel );
 
-			if (weapon.SpreadMode==SpreadMode.Const) state.Spread = weapon.MaxSpread;
-
 			if (weapon.IsBeamWeapon) 
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
@@ -343,11 +331,7 @@ namespace IronStar.Gameplay.Systems
 				}
 			}
 
-			if (weapon.SpreadMode==SpreadMode.Variable)
-			{
-				state.Spread	+=	weapon.MaxSpread * SPREAD_INCREMENT;
-				state.Spread	=	MathUtil.Clamp( state.Spread, 0, weapon.MaxSpread );
-			}
+			weapon?.IncreaseSpread( state );
 
 			return true;
 		}

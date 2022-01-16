@@ -190,7 +190,7 @@ namespace IronStar.AI
 					//	do not stun when stunning
 					if (ai.StunTimer.IsElapsed)
 					{
-						var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 20, 100);
+						var percentage = MathUtil.Clamp(100 * health.LastDamage / health.Health, 15, 100);
 
 						//	unalerted NPCs get 100% stun
 						if (ai.Target==null)

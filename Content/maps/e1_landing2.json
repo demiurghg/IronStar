@@ -47,29 +47,10 @@
       },
       {
         "$id": "5",
-        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "Width": 248.0,
-        "Height": 56.0,
-        "Depth": 216.0,
-        "ShellWidth": 8.0,
-        "ShellHeight": 8.0,
-        "ShellDepth": 8.0,
-        "Name": "MapLightProbeBox0",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-18, 16, 0",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": -18.0,
-        "TranslateY": 16.0,
-        "TranslateZ": 0.0
-      },
-      {
-        "$id": "6",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "7",
+          "$id": "6",
           "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
           "NodeName": "MapEntity0",
           "Position": "14, 8, -88",
@@ -89,11 +70,11 @@
         "TranslateZ": -88.0
       },
       {
-        "$id": "8",
+        "$id": "7",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "9",
+          "$id": "8",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity1",
           "Position": "11, 8.345921, -78",
@@ -113,11 +94,11 @@
         "TranslateZ": -78.0
       },
       {
-        "$id": "10",
+        "$id": "9",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "11",
+          "$id": "10",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity2",
           "Position": "15, 8.345921, -78",
@@ -137,11 +118,11 @@
         "TranslateZ": -78.0
       },
       {
-        "$id": "12",
+        "$id": "11",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "13",
+          "$id": "12",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity3",
           "Position": "19, 8.345921, -78",
@@ -161,11 +142,11 @@
         "TranslateZ": -78.0
       },
       {
-        "$id": "14",
+        "$id": "13",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "15",
+          "$id": "14",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -190,11 +171,11 @@
         "TranslateZ": -8.0
       },
       {
-        "$id": "16",
+        "$id": "15",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "17",
+          "$id": "16",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "plasmagun",
@@ -219,11 +200,11 @@
         "TranslateZ": 68.0
       },
       {
-        "$id": "18",
+        "$id": "17",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "19",
+          "$id": "18",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -248,11 +229,11 @@
         "TranslateZ": 79.0
       },
       {
-        "$id": "20",
+        "$id": "19",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "21",
+          "$id": "20",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity12",
           "Position": "11, 8.345921, -74",
@@ -272,11 +253,11 @@
         "TranslateZ": -74.0
       },
       {
-        "$id": "22",
+        "$id": "21",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "23",
+          "$id": "22",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity13",
           "Position": "15, 8.345921, -74",
@@ -296,11 +277,11 @@
         "TranslateZ": -74.0
       },
       {
-        "$id": "24",
+        "$id": "23",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "25",
+          "$id": "24",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
           "NodeName": "MapEntity14",
           "Position": "19, 8.345921, -74",
@@ -320,11 +301,11 @@
         "TranslateZ": -74.0
       },
       {
-        "$id": "26",
+        "$id": "25",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "27",
+          "$id": "26",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity15",
           "Position": "-13, 1, -20",
@@ -344,11 +325,11 @@
         "TranslateZ": -20.0
       },
       {
-        "$id": "28",
+        "$id": "27",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "29",
+          "$id": "28",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity16",
           "Position": "101, 9, -25",
@@ -368,11 +349,11 @@
         "TranslateZ": -25.0
       },
       {
-        "$id": "30",
+        "$id": "29",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "31",
+          "$id": "30",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity17",
           "Position": "84, 9, 87",
@@ -392,11 +373,11 @@
         "TranslateZ": 87.0
       },
       {
-        "$id": "32",
+        "$id": "31",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "33",
+          "$id": "32",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity18",
           "Position": "-103, 9, 87",
@@ -416,11 +397,11 @@
         "TranslateZ": 87.0
       },
       {
-        "$id": "34",
+        "$id": "33",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "35",
+          "$id": "34",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity20",
           "Position": "-123, 16.5859184, -85",
@@ -440,11 +421,11 @@
         "TranslateZ": -85.0
       },
       {
-        "$id": "36",
+        "$id": "35",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "37",
+          "$id": "36",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity21",
           "Position": "-84, 9, -85",
@@ -464,26 +445,7 @@
         "TranslateZ": -85.0
       },
       {
-        "$id": "38",
-        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "Width": 48.0,
-        "Height": 48.0,
-        "Depth": 64.0,
-        "ShellWidth": 8.0,
-        "ShellHeight": 8.0,
-        "ShellDepth": 8.0,
-        "Name": "MapLightProbeBox1",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "0, 16, 0",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": 0.0,
-        "TranslateY": 16.0,
-        "TranslateZ": 0.0
-      },
-      {
-        "$id": "39",
+        "$id": "37",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 71.25,
         "Height": 40.0,
@@ -502,7 +464,7 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "40",
+        "$id": "38",
         "$type": "IronStar.Mapping.MapLightVolume, IronStar",
         "ResolutionX": 20,
         "ResolutionY": 8,
@@ -521,11 +483,11 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "41",
+        "$id": "39",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "42",
+          "$id": "40",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity22",
           "Position": "-13, 1, 20",
@@ -545,11 +507,11 @@
         "TranslateZ": 20.0
       },
       {
-        "$id": "43",
+        "$id": "41",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "44",
+          "$id": "42",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity23",
           "Position": "13, 1, 20",
@@ -569,11 +531,11 @@
         "TranslateZ": 20.0
       },
       {
-        "$id": "45",
+        "$id": "43",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "46",
+          "$id": "44",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity24",
           "Position": "13, 1, -20",
@@ -593,11 +555,11 @@
         "TranslateZ": -20.0
       },
       {
-        "$id": "47",
+        "$id": "45",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "48",
+          "$id": "46",
           "$type": "IronStar.ECSFactories.PowerupMedkitFactory, IronStar",
           "NodeName": "MapEntity25",
           "Position": "-56.0168724, 0.5874415, 69.9758148",
@@ -617,11 +579,11 @@
         "TranslateZ": 69.9758148
       },
       {
-        "$id": "49",
+        "$id": "47",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "50",
+          "$id": "48",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity31",
           "Position": "12.9943094, 1.11052394, -12.9878225",
@@ -641,11 +603,11 @@
         "TranslateZ": -12.9878225
       },
       {
-        "$id": "51",
+        "$id": "49",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "52",
+          "$id": "50",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity32",
           "Position": "12.9999475, 3.3456986, -12.9931936",
@@ -665,11 +627,11 @@
         "TranslateZ": -12.9931936
       },
       {
-        "$id": "53",
+        "$id": "51",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "54",
+          "$id": "52",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity37",
           "Position": "-100.010323, 17, -43.01396",
@@ -689,11 +651,11 @@
         "TranslateZ": -43.01396
       },
       {
-        "$id": "55",
+        "$id": "53",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "56",
+          "$id": "54",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity38",
           "Position": "-100, 17, -38",
@@ -713,11 +675,11 @@
         "TranslateZ": -38.0
       },
       {
-        "$id": "57",
+        "$id": "55",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "58",
+          "$id": "56",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity39",
           "Position": "68.98968, 9.112621, -42.01396",
@@ -737,11 +699,11 @@
         "TranslateZ": -42.01396
       },
       {
-        "$id": "59",
+        "$id": "57",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "60",
+          "$id": "58",
           "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
           "NodeName": "MapEntity40",
           "Position": "69, 9.11262, -37",
@@ -761,11 +723,11 @@
         "TranslateZ": -37.0
       },
       {
-        "$id": "61",
+        "$id": "59",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "62",
+          "$id": "60",
           "$type": "IronStar.ECSFactories.WeaponShotgunFactory, IronStar",
           "NodeName": "MapEntity26",
           "Position": "20.9362087, 8.257191, -71.9723053",
@@ -785,11 +747,11 @@
         "TranslateZ": -71.9723053
       },
       {
-        "$id": "63",
+        "$id": "61",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "64",
+          "$id": "62",
           "$type": "IronStar.ECSFactories.AmmoShotgunFactory, IronStar",
           "NodeName": "MapEntity43",
           "Position": "12, 8.345921, -76",
@@ -809,11 +771,11 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "65",
+        "$id": "63",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "66",
+          "$id": "64",
           "$type": "IronStar.ECSFactories.AmmoShotgunFactory, IronStar",
           "NodeName": "MapEntity44",
           "Position": "16, 8.345921, -76",
@@ -833,11 +795,11 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "67",
+        "$id": "65",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "68",
+          "$id": "66",
           "$type": "IronStar.ECSFactories.AmmoShotgunFactory, IronStar",
           "NodeName": "MapEntity45",
           "Position": "18, 8.345921, -76",
@@ -857,11 +819,11 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "69",
+        "$id": "67",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "70",
+          "$id": "68",
           "$type": "IronStar.ECSFactories.AmmoShotgunFactory, IronStar",
           "NodeName": "MapEntity46",
           "Position": "20, 8.345921, -76",
@@ -881,11 +843,11 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "71",
+        "$id": "69",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "72",
+          "$id": "70",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -910,11 +872,11 @@
         "TranslateZ": -13.0
       },
       {
-        "$id": "73",
+        "$id": "71",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "74",
+          "$id": "72",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -939,11 +901,11 @@
         "TranslateZ": 18.0
       },
       {
-        "$id": "75",
+        "$id": "73",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "76",
+          "$id": "74",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "shotgun",
@@ -968,11 +930,11 @@
         "TranslateZ": 14.0
       },
       {
-        "$id": "77",
+        "$id": "75",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "78",
+          "$id": "76",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -997,11 +959,11 @@
         "TranslateZ": 44.0
       },
       {
-        "$id": "79",
+        "$id": "77",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "80",
+          "$id": "78",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -1026,11 +988,11 @@
         "TranslateZ": 30.0
       },
       {
-        "$id": "81",
+        "$id": "79",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "82",
+          "$id": "80",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeVertical",
           "TargetName": "",
@@ -1053,11 +1015,11 @@
         "TranslateZ": 113.0
       },
       {
-        "$id": "83",
+        "$id": "81",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "84",
+          "$id": "82",
           "$type": "IronStar.Environment.DoorFactory, IronStar",
           "Door": "largeVertical",
           "TargetName": "",
@@ -1080,11 +1042,11 @@
         "TranslateZ": -113.0
       },
       {
-        "$id": "85",
+        "$id": "83",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "86",
+          "$id": "84",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -1109,11 +1071,11 @@
         "TranslateZ": 79.0
       },
       {
-        "$id": "87",
+        "$id": "85",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "88",
+          "$id": "86",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
           "Team": "monsters",
           "Weapon": "machinegun",
@@ -1136,11 +1098,87 @@
         "TranslateX": -20.0,
         "TranslateY": 0.0,
         "TranslateZ": 30.0
+      },
+      {
+        "$id": "87",
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "Width": 48.0,
+        "Height": 48.0,
+        "Depth": 64.0,
+        "ShellWidth": 8.0,
+        "ShellHeight": 3.0,
+        "ShellDepth": 8.0,
+        "Name": "MapLightProbeBox3",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "81, 24, -71",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 81.0,
+        "TranslateY": 24.0,
+        "TranslateZ": -71.0
+      },
+      {
+        "$id": "88",
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "Width": 112.0,
+        "Height": 48.0,
+        "Depth": 56.0,
+        "ShellWidth": 8.0,
+        "ShellHeight": 3.0,
+        "ShellDepth": 8.0,
+        "Name": "MapLightProbeBox4",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "16, 24, -80",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 16.0,
+        "TranslateY": 24.0,
+        "TranslateZ": -80.0
+      },
+      {
+        "$id": "89",
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "Width": 48.0,
+        "Height": 48.0,
+        "Depth": 64.0,
+        "ShellWidth": 8.0,
+        "ShellHeight": 8.0,
+        "ShellDepth": 8.0,
+        "Name": "MapLightProbeBox1",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "0, 16, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 0.0,
+        "TranslateY": 16.0,
+        "TranslateZ": 0.0
+      },
+      {
+        "$id": "90",
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "Width": 248.0,
+        "Height": 56.0,
+        "Depth": 216.0,
+        "ShellWidth": 8.0,
+        "ShellHeight": 8.0,
+        "ShellDepth": 8.0,
+        "Name": "MapLightProbeBox0",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-18, 16, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": -18.0,
+        "TranslateY": 16.0,
+        "TranslateZ": 0.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "89",
+    "$id": "91",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 1,

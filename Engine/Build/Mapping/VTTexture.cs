@@ -245,7 +245,7 @@ namespace Fusion.Build.Mapping {
 
 			var colorMap		=	LoadTexture( BaseColor, Color.Gray );
 			var normalMap		=	LoadTexture( NormalMap, Color.FlatNormals );
-			var roughness		=	LoadTexture( Roughness, Color.Black );
+			var roughness		=	LoadTexture( Roughness, Color.Gray );
 			var metallic		=	LoadTexture( Metallic,	Color.Black );
 			var emission		=	LoadTexture( Emission,	Color.Black );
 			var	occlusion		=	LoadTexture( Occlusion,	Color.White );

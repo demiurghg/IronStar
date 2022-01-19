@@ -5,9 +5,9 @@ MaskEmission  = False
 InvertYNormal = False
 
 [Textures]
-BaseColor = textures\planeLo_phong1_BaseColor_Light.png
-NormalMap = textures\planeLo_phong1_Normal.png
-Metallic  = textures\planeLo_phong1_Metallic.png
-Roughness = textures\planeLo_phong1_Roughness.png
-Emission  = 
-Occlusion = textures\planeLo_phong1_Occlusion.png
+BaseColor = textures\panels_medium.png
+NormalMap =
+Metallic  =
+Roughness =
+Emission  =
+Occlusion =

@@ -1,4 +1,3 @@
-
 #if 0
 $ubershader 	ILLUMINATE
 $ubershader 	COLLAPSE
@@ -336,7 +335,7 @@ void CSMain(
 			lmNormal	=	normalize(lmNormal);
 	float3	lmPosition	=	Position[ loadXY ].xyz;// + lmNormal * 0.01;
 	uint  num_samples	=	Radiosity.NumRays;
-	float k = 1.0f / num_samples;
+	float k = 2.0f / num_samples;
 	
 	
 	float3	random_vector	=	GetRandomVector( loadXY.xy );
@@ -371,9 +370,9 @@ void CSMain(
 				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
 			}
 
-			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir );
-			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir );
-			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir );
+			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir ) * Radiosity.IndirectFactor;
+			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir ) * Radiosity.IndirectFactor;
+			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir ) * Radiosity.IndirectFactor;
 		}
 	}
 	
@@ -447,9 +446,9 @@ void CSMain(
 				skyFactor	+=	2;
 			}
 
-			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir );
-			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir );
-			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir );
+			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir ) * Radiosity.IndirectFactor;
+			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir ) * Radiosity.IndirectFactor;
+			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir ) * Radiosity.IndirectFactor;
 		}
 	}
 

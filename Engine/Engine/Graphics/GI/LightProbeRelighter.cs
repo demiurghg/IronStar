@@ -207,7 +207,7 @@ namespace Fusion.Engine.Graphics.GI
 				var radiosity		=	Game.GetService<Radiosity>();
 
 				relightParams.CubeIndex			=	(uint)lightProbe.ImageIndex;
-				relightParams.RadiosityLevel	=	Radiosity.MasterIntensity - Radiosity.SecondBounce;
+				relightParams.RadiosityLevel	=	Radiosity.MasterIntensity;// - Radiosity.SecondBounce;
 				cbRelightParams.SetData( ref relightParams );
 
 

@@ -24,6 +24,10 @@ namespace Fusion.Engine.Graphics.GI
 		public int NumBounces { get; set; } = 1;
 
 		[AECategory("Quality")]
+		[AESlider( 0.5f, 6f, 1, 0.1f )]
+		public int IndirectFactor { get; set; } = 1;
+
+		[AECategory("Quality")]
 		[AESlider( -1, 1, 1, 1 )]
 		public int Bias { get; set; } = 0;
 

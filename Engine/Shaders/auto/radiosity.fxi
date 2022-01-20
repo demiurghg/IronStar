@@ -75,13 +75,10 @@ struct RADIOSITY {
 	uint2      RegionXY;                      // offset:   64
 	uint       RegionWidth;                   // offset:   72
 	uint       RegionHeight;                  // offset:   76
-	float      SkyFactor;                     // offset:   80
-	float      IndirectFactor;                // offset:   84
-	float      SecondBounce;                  // offset:   88
-	float      ShadowFilter;                  // offset:   92
-	float      ColorBounce;                   // offset:   96
-	uint       NumRays;                       // offset:  100
-	float      WhiteAlbedo;                   // offset:  104
+	float      IndirectFactor;                // offset:   80
+	float      ShadowFilter;                  // offset:   84
+	uint       NumRays;                       // offset:   88
+	float      WhiteAlbedo;                   // offset:   92
 };
 #endif
 

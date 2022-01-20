@@ -29,15 +29,10 @@ namespace Fusion.Engine.Graphics.GI
 		[AESlider(0,10,0.5f,0.01f)]
 		static public float MasterIntensity { get; set; } = 1;
 
-		[Config]
+		/*[Config]
 		[AECategory("Radiosity")]
 		[AESlider(0,5,1f,0.01f)]
 		static public float SkyFactor { get; set; } = 1;
-
-		[Config]
-		[AECategory("Radiosity")]
-		[AESlider(0,5,1f,0.01f)]
-		static public float IndirectFactor { get; set; } = 1;
 
 		[Config]
 		[AECategory("Radiosity")]
@@ -47,7 +42,7 @@ namespace Fusion.Engine.Graphics.GI
 		[Config]
 		[AECategory("Radiosity")]
 		[AESlider(0,1,0.25f,0.01f)]
-		static public float ColorBounce { get; set; } = 1.0f;
+		static public float ColorBounce { get; set; } = 1.0f;*/
 
 		[Config]
 		[AECategory("Radiosity")]

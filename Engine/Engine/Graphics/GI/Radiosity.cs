@@ -89,12 +89,9 @@ namespace Fusion.Engine.Graphics.GI
 			public uint		RegionWidth;
 			public uint		RegionHeight;
 
-			public float	SkyFactor;
 			public float	IndirectFactor;
-			public float	SecondBounce;
 			public float	ShadowFilter;
 
-			public float	ColorBounce;
 			public uint		NumRays;
 			public float	WhiteAlbedo;
 		}
@@ -373,12 +370,9 @@ namespace Fusion.Engine.Graphics.GI
 			radiosity.RegionWidth		=	(uint)width;
 			radiosity.RegionHeight		=	(uint)height;
 
-			radiosity.SkyFactor			=	SkyFactor;
-			radiosity.IndirectFactor	=	IndirectFactor;
-			radiosity.SecondBounce		=	SecondBounce;
+			radiosity.IndirectFactor	=	settings.IndirectFactor;
 			radiosity.ShadowFilter		=	ShadowFilterRadius;
 
-			radiosity.ColorBounce		=	ColorBounce;
 			radiosity.NumRays			=	(uint)settings.NumRays;
 			radiosity.WhiteAlbedo		=	settings.WhiteDiffuse ? 1.0f : 0.0f;
 

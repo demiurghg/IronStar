@@ -157,7 +157,7 @@ namespace Fusion.Engine.Graphics
 
 		[Config]
 		[AESlider(-8, 8, 1, 0.1f)]
-		public float AdaptEVMax {
+		static public float AdaptEVMax {
 			get { return adaptMaxEv; }
 			set { adaptMaxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
@@ -274,14 +274,14 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		[Config]
 		[AESlider(0, 16, 1f, 1f/16f)]
-		public float Dithering { get; set; } = 4;
+		static public float Dithering { get; set; } = 4;
 
 		/// <summary>
 		/// Dither pattern amount
 		/// </summary>
 		[Config]
 		[AESlider(0, 1, 1f/16f, 1f/256f)]
-		public float Vignette { get; set; } = 1;
+		static public float Vignette { get; set; } = 1;
 
 
 		Ubershader	shader;

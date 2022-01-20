@@ -22,6 +22,7 @@ using Fusion.Drivers.Graphics.RenderDoc;
 
 namespace Fusion.Engine.Graphics.GI
 {
+	[ConfigClass]
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{

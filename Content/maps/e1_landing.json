@@ -95,6 +95,7 @@
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 2,
+    "IndirectFactor": 1,
     "Bias": 0,
     "UseBilateral": true,
     "UseDilate": true,

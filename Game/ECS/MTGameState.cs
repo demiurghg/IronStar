@@ -130,7 +130,10 @@ namespace IronStar.ECS
 
 			if (stopwatch.Elapsed > dt)
 			{
-				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+				if (IronStar.ShowSimulationFreezes)
+				{
+					Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+				}
 			}
 		}
 
@@ -149,7 +152,10 @@ namespace IronStar.ECS
 			}
 			else
 			{
-				Log.Warning("SNAPSHOT STARVATION");
+				if (IronStar.ShowSnapshotStarvation)
+				{
+					Log.Warning("SNAPSHOT STARVATION");
+				}
 			}
 		}
 

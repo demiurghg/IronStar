@@ -15,13 +15,19 @@ using IronStar.Editor;
 using Fusion.Build;
 using IronStar.SinglePlayer;
 using System.Reflection;
+using Fusion.Core.Configuration;
 
-namespace IronStar {
+namespace IronStar 
+{
+	[ConfigClass]
 	partial class IronStar : Game
 	{
 		public static bool IsGodMode = false;
 		public static bool IsInfiniteAmmo = false;
 		public static bool IsNoTarget = false;
+
+		[Config]	public static bool ShowSnapshotStarvation { get; set; } = false;
+		[Config]	public static bool ShowSimulationFreezes  { get; set; } = false;
 
 		void RegisterCheats()
 		{

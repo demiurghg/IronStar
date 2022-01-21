@@ -242,10 +242,11 @@ namespace Fusion.Build.Mapping {
 			var pageSize		=	VTConfig.PageSize;
 			var pageSizeBorder	=	VTConfig.PageSizeBordered;
 			var border			=	VTConfig.PageBorderWidth;
+			var defaultRoughness=	new Color(0.7f, 0.7f, 0.7f, 1.0f);
 
 			var colorMap		=	LoadTexture( BaseColor, Color.Gray );
 			var normalMap		=	LoadTexture( NormalMap, Color.FlatNormals );
-			var roughness		=	LoadTexture( Roughness, Color.Gray );
+			var roughness		=	LoadTexture( Roughness, defaultRoughness );
 			var metallic		=	LoadTexture( Metallic,	Color.Black );
 			var emission		=	LoadTexture( Emission,	Color.Black );
 			var	occlusion		=	LoadTexture( Occlusion,	Color.White );

@@ -19,6 +19,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public int		Index1			;
 		public int		Index2			;
 		public int		MaterialIndex	;
+		public int		ShellIndex		;
 
 
 		/// <summary>
@@ -34,8 +35,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Index1				=	i1;
 			Index2				=	i2;
 			MaterialIndex		=	mtrlId;
+			ShellIndex			=	-1;
 		}
-
 
 
 		/// <summary>

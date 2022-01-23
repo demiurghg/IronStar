@@ -23,6 +23,15 @@ namespace Fusion.Engine.Graphics
 		static FXConstantBuffer<FilterParams>		regParams	=	new CRegister( 0, "filterParams" );
 		static FXConstantBuffer<GpuData.CAMERA>		regCamera	=	new CRegister( 1, "Camera" );
 
+		static FXTexture2D<Vector4>			regSource		=	new TRegister( 0, "Source" );
+
+		[ShaderIfDef("MASK_DEPTH,MASK_ALPHA")]
+		static FXTexture2D<Vector4>			regMaskFloat	=	new TRegister( 1, "Mask" );
+		[ShaderIfDef("MASK_INDEX")]
+		static FXTexture2D<int>				regIndexInt		=	new TRegister( 1, "Mask" );
+
+		static FXRWTexture2D<Vector4>		regTarget		=	new URegister( 0, "Target" );
+
 		[Flags]
 		enum Flags : int {
 			DOUBLE_PASS		=	0x0001,
@@ -31,7 +40,8 @@ namespace Fusion.Engine.Graphics
 			HORIZONTAL		=	0x0008,
 			MASK_DEPTH		=	0x0010,
 			MASK_ALPHA		=	0x0020,
-			LUMA_ONLY		=	0x0040,
+			MASK_INDEX		=	0x0040,
+			LUMA_ONLY		=	0x0080,
 		}
 
 
@@ -132,13 +142,13 @@ namespace Fusion.Engine.Graphics
 			int width	=	Math.Min( targetRect.Width, sourceRect.Width );
 			int height	=	Math.Min( targetRect.Height, sourceRect.Height );
 
-			var filterData          =   new FilterParams();
+			var filterData			=	new FilterParams();
 			filterData.TargetXY		=	new UInt2( (uint)targetRect.X, (uint)targetRect.Y );
 			filterData.SourceXY		=	new UInt2( (uint)sourceRect.X, (uint)sourceRect.Y );
 			filterData.LumaVector	=	lumaVector;
-			filterData.MaskFactor	=   maskFactor;
+			filterData.MaskFactor	=	maskFactor;
 			filterData.GaussFalloff	=	falloff;
-			filterData.ColorFactor	=   colorFactor;
+			filterData.ColorFactor	=	colorFactor;
 			cbuffer.SetData( ref filterData );
 
 			int blockSize	=	flags.HasFlag( Flags.DOUBLE_PASS ) ? BlockSize16 : BlockSize8;
@@ -148,8 +158,8 @@ namespace Fusion.Engine.Graphics
 			int tgz = 1;
 
 			//	HORIZONTAL pass :
-			device.ComputeResources[0]    =   source;
-			device.ComputeResources[1]    =   mask;
+			device.ComputeResources[ regSource ]	=	source;
+			device.ComputeResources[ regMaskFloat ]	=	mask;
 
 			device.ComputeConstants[ regParams	]	=	cbuffer;
 			device.ComputeConstants[ regCamera	]	=	camera?.CameraData;
@@ -208,6 +218,20 @@ namespace Fusion.Engine.Graphics
 		{
 			Color4 luma = new Color4(0.33f, 0.33f, 0.33f, 0.33f);
 			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, targetRect, null, source, sourceRect, albedo, sourceRect, intensityFactor, alphaFactor, falloff, luma );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dst"></param>
+		/// <param name="src"></param>
+		/// <param name="filter"></param>
+		/// <param name="rect"></param>
+		public void FilterSHL1ByIndexSinglePass ( RenderTarget2D target, Rectangle targetRect, RenderTarget2D source, ShaderResource indices, Rectangle sourceRect, float intensityFactor, float alphaFactor, float falloff )
+		{
+			Color4 luma = new Color4(0.33f, 0.33f, 0.33f, 0.33f);
+			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_INDEX, target, targetRect, null, source, sourceRect, indices, sourceRect, intensityFactor, alphaFactor, falloff, luma );
 		}
 	}
 }

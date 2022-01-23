@@ -526,14 +526,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 			return minDistance;//*/
 		}
 
-
-
-
-
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Tangent space :
-		 * 
 		-----------------------------------------------------------------------------------------*/
 	
 		/// <summary>
@@ -606,11 +600,95 @@ namespace Fusion.Engine.Graphics.Scenes {
 			}
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	UV shell
+		-----------------------------------------------------------------------------------------*/
+
+		public int BuildShellIndices( int baseShellIndex )
+		{
+			var adjacency = new Dictionary<Vector2, HashSet<int>>();
+			var triangles = Triangles.ToArray();
+
+			for (int i=0; i<TriangleCount; i++)
+			{
+				var tri	=	Triangles[i];
+				var uvs =	new Vector2[3];
+				uvs[0]	=	Vertices[ tri.Index0 ].TexCoord1;
+				uvs[1]	=	Vertices[ tri.Index1 ].TexCoord1;
+				uvs[2]	=	Vertices[ tri.Index2 ].TexCoord1;
+
+				triangles[i].ShellIndex = -1;
+
+				HashSet<int> adjTris;
+
+				for (int j=0; j<3; j++)
+				{
+					if (adjacency.TryGetValue( uvs[j], out adjTris ))
+					{
+						adjTris.Add( i );
+					}
+					else
+					{
+						adjTris = new HashSet<int>();
+						adjTris.Add( i );
+						adjacency.Add( uvs[j], adjTris ); 
+					}
+				}
+			}
+
+			int shellIndexCounter = baseShellIndex;
+			int nextStartingTri = 0;
+
+			var trisQueue = new Queue<int>();
+
+			while ( nextStartingTri < TriangleCount )
+			{											
+				if ( triangles[nextStartingTri].ShellIndex < 0 )
+				{
+					shellIndexCounter++;
+
+					trisQueue.Enqueue( nextStartingTri );
+
+					while (trisQueue.Any())
+					{
+						var triIndex = trisQueue.Dequeue();
+
+						if ( triangles[ triIndex ].ShellIndex < 0 )
+						{
+							triangles[ triIndex ].ShellIndex = shellIndexCounter;
+
+							var uvs =	new Vector2[3];
+							uvs[0]	=	Vertices[ triangles[ triIndex ].Index0 ].TexCoord1;
+							uvs[1]	=	Vertices[ triangles[ triIndex ].Index1 ].TexCoord1;
+							uvs[2]	=	Vertices[ triangles[ triIndex ].Index2 ].TexCoord1;
+
+							for (int j=0; j<3; j++)
+							{
+								foreach ( var adjTriIndex in adjacency[ uvs[j] ] )
+								{
+									if ( adjTriIndex!=triIndex && triangles[ adjTriIndex ].ShellIndex < 0 )
+									{	 
+										trisQueue.Enqueue( adjTriIndex );
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					nextStartingTri++;
+				}
+			}
+
+			Triangles.Clear();
+			Triangles.AddRange( triangles );
+
+			return shellIndexCounter;
+		}
 
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Some stuff
-		 * 
 		-----------------------------------------------------------------------------------------*/
 
 		public void BuildSurfels ( float maxArea )
@@ -682,14 +760,9 @@ namespace Fusion.Engine.Graphics.Scenes {
 			//Log.Message("{0} surfels are built", Surfels.Count );
 		}
 
-
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Some stuff
-		 * 
 		-----------------------------------------------------------------------------------------*/
-
-
 
 		/// <summary>
 		///	Removes degenerate triangles
@@ -698,7 +771,6 @@ namespace Fusion.Engine.Graphics.Scenes {
 		{
 			Triangles.RemoveAll( tri => tri.IsDegenerate() );
 		}
-
 
 
 		/// <summary>
@@ -710,7 +782,6 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Console.WriteLine("Triangle count : {0}", Triangles.Count );
 			Console.WriteLine("Shading groups : {0}", Subsets.Count );
 		}
-
 
 
 		/// <summary>

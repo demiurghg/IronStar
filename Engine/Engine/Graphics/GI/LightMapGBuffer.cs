@@ -36,6 +36,7 @@ namespace Fusion.Engine.Graphics.GI
 		public readonly Image<Vector3>		Normal;
 		public readonly Image<float>		Area;
 		public readonly Image<byte>			Coverage;
+		public readonly Image<int>			Shells;
 		public readonly Image<Vector3>		BBoxMin;
 		public readonly Image<Vector3>		BBoxMax;
 
@@ -44,6 +45,7 @@ namespace Fusion.Engine.Graphics.GI
 		internal Texture2D	normalTexture	;
 		internal Texture2D	bboxMinTexture	;
 		internal Texture2D	bboxMaxTexture	;
+		internal Texture2D	shellTexture	;
 
 		public ShaderResource AlbedoTexture { get { return albedoTexture; } }
 		public ShaderResource PositionTexture { get { return positionTexture; } }
@@ -74,12 +76,14 @@ namespace Fusion.Engine.Graphics.GI
 			Area		=	new Image<float>	( Width,  Height, 0 );
 			BBoxMin		=	new Image<Vector3>	( TileX,  TileY,  Vector3.Zero );
 			BBoxMax		=	new Image<Vector3>	( TileX,  TileY,  Vector3.Zero );
+			Shells		=	new Image<int>		( Width,  Height, 0 );
 
 			albedoTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
 			positionTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	1,	false );
 			normalTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
 			bboxMinTexture	=	new Texture2D( rs.Device, TileX,  TileY,  ColorFormat.Rgb32F,	1,	false );
 			bboxMaxTexture	=	new Texture2D( rs.Device, TileX,  TileY,  ColorFormat.Rgb32F,	1,	false );
+			shellTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32,		1,	false );
 		}
 
 
@@ -92,6 +96,7 @@ namespace Fusion.Engine.Graphics.GI
 				SafeDispose( ref normalTexture	 );
 				SafeDispose( ref bboxMinTexture	 );
 				SafeDispose( ref bboxMaxTexture	 );
+				SafeDispose( ref shellTexture	 );
 			}
 
 			base.Dispose( disposing );
@@ -103,6 +108,7 @@ namespace Fusion.Engine.Graphics.GI
 			positionTexture.SetData( Position.RawImageData );
 			albedoTexture.SetData( Albedo.RawImageData );
 			normalTexture.SetData( Normal.Convert( EncodeNormalRGB8 ).RawImageData );
+			shellTexture.SetData( Shells.RawImageData );
 
 			bboxMinTexture.SetData( BBoxMin.RawImageData );
 			bboxMaxTexture.SetData( BBoxMax.RawImageData );

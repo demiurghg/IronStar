@@ -88,24 +88,24 @@ namespace Fusion.Engine.Graphics.Scenes
 			Vector2 ac	=	new Vector2(C.X - A.X, C.Y - A.Y);
 			float s, t;
 			float cs, ct;
-			byte coverage = 0;
 
 			for (int x = minX; x <= maxX; x++)
 			{
 				for (int y = minY; y <= maxY; y++)
 				{
+					byte coverage = 0;
 					//	compute barycentric coordinates for pixel centroid:
 					Vector2 q = new Vector2(x - A.X + 0.5f, y - A.Y + 0.5f);
 					ComputeBarycentric( ref ab, ref ac, ref q, out cs, out ct ); 
 
 					for (int k=0; k<samples.Length; k++)
 					{
-						q = new Vector2(x - A.X + samples[k].X, y - A.Y +  + samples[k].Y);
+						q = new Vector2(x - A.X + samples[k].X, y - A.Y + samples[k].Y);
 						ComputeBarycentric( ref ab, ref ac, ref q, out s, out t ); 
 	
 						if ( (s >= 0) && (t >= 0) && (s + t <= 1) )
 						{
-							coverage++;
+							coverage ++;
 						}
 					}
 
@@ -132,13 +132,16 @@ namespace Fusion.Engine.Graphics.Scenes
 			Vector2 ab	=	new Vector2(B.X - A.X, B.Y - A.Y);
 			Vector2 ac	=	new Vector2(C.X - A.X, C.Y - A.Y);
 
-			float eps = 1 / 4096.0f;
+			Rectangle rect = new Rectangle( minX, minY, maxX - minX, maxY - minY );
+			Point point = new Point(37,185);
+
+			float eps = 1 / 8192.0f;
 
 			for (int x = minX; x <= maxX; x++)
 			{
 				for (int y = minY; y <= maxY; y++)
 				{
-					var pixel	=	new RectangleF( x - eps, y - eps, 1f + 2*eps, 1f + 2*eps );
+					var pixel	=	new RectangleF( x + eps, y + eps, 1f - 2*eps, 1f - 2*eps );
 
 					var q		=	new Vector2(x - A.X + 0.5f, y - A.Y + 0.5f);
 

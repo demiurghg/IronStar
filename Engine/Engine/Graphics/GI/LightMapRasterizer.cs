@@ -138,12 +138,14 @@ namespace Fusion.Engine.Graphics.GI
 
 			Log.Message("Rasterizing lightmap G-buffer...");
 
+			int shellIndex = 0;
+
 			foreach ( var group in lmGroups ) 
 			{
 				foreach ( var instance in group.Instances ) 
 				{
 					instance.BakingLMRegion = group.Region;
-					RasterizeInstance( lmGBuffer, instance, group.Region );
+					RasterizeInstance( lmGBuffer, instance, group.Region, ref shellIndex );
 				}
 			}
 
@@ -271,9 +273,11 @@ namespace Fusion.Engine.Graphics.GI
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapGBuffer lightmap, RenderInstance instance, Rectangle viewport )
+		void RasterizeInstance ( LightMapGBuffer lightmap, RenderInstance instance, Rectangle viewport, ref int shellIndex )
 		{
 			var mesh		=	instance.Mesh;
+
+			shellIndex		=	mesh.BuildShellIndices( shellIndex );
 
 			var scale		=	new Vector2( viewport.Width, viewport.Height );
 			var offset		=	new Vector2( viewport.X, viewport.Y );
@@ -308,6 +312,8 @@ namespace Fusion.Engine.Graphics.GI
 
 				for (int i=subset.StartPrimitive; i<subset.StartPrimitive+subset.PrimitiveCount; i++) 
 				{
+					var uvShell = mesh.Triangles[i].ShellIndex;
+
 					var i0 = indices[i*3+0];
 					var i1 = indices[i*3+1];
 					var i2 = indices[i*3+2];
@@ -332,26 +338,47 @@ namespace Fusion.Engine.Graphics.GI
 					var area	=	ComputeLightMapTexelArea( p0, p1, p2,  d0, d1, d2 );
 					var bias	=	n * NormalBias;
 
+					Rectangle conflictRect = new Rectangle();
+
 					Rasterizer.RasterizeTriangleConservative( d0, d1, d2, //Rasterizer.Samples8x,
+					//Rasterizer.RasterizeTriangleMsaa( d0, d1, d2, Rasterizer.Samples8x, 
 						(xy,s,t,coverage) => 
 						{
 							if (lightmap.Coverage[xy]==0) 
 							{
-								lightmap.Albedo	 [xy] =	albedo;
-								lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
-								lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
-								lightmap.Area	 [xy] = area;
-								lightmap.Coverage[xy] = coverage;
+								lightmap.Albedo	 [xy]	=	albedo;
+								lightmap.Position[xy]	=	InterpolatePosition	( p0, p1, p2, s, t ) + bias;
+								lightmap.Normal  [xy]	=	InterpolateNormal	( n0, n1, n2, s, t );
+								lightmap.Area	 [xy]	=	area;
+								lightmap.Shells  [xy]	=	uvShell;
+								lightmap.Coverage[xy]	=	coverage;
 							}
 							else
 							{
-								if (coverage!=0) 
+								/*if (coverage>127) 
 								{
-									//Log.Warning("LM coverage conflict: {0}", xy );
-								}
+									var pixelRect = new Rectangle(xy.X, xy.Y, 1, 1);
+
+									if (conflictRect.IsEmpty) 
+									{
+										conflictRect = pixelRect;
+									}
+									else
+									{
+										conflictRect = Rectangle.Union(conflictRect, pixelRect);
+									}
+								}*/
 							}
 						} 
 					);
+
+					if (!conflictRect.IsEmpty)
+					{
+						Log.Warning("LM coverage conflict - region:{0}", conflictRect );
+					}
+
+					//	copy coverage to alpha :
+					//lightmap.Albedo.ForEachPixel( (x,y,c) => new Color(c.R, c.G, c.B, lightmap.Coverage[x,y]) );
 				}
 			}
 		}

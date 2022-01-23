@@ -125,7 +125,7 @@ namespace Fusion.Engine.Graphics.GI {
 				//	read volume :
 				reader.ExpectFourCC("VOL1", "bad lightmap format");
 				var dataSize3	=	header.VolumeSize.TotalVolume * 4;
-				var dataBuffer3	=	new byte[ dataSize2 ];
+				var dataBuffer3	=	new byte[ dataSize3 ];
 
 				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL0.SetData( dataBuffer3 );
 				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL1.SetData( dataBuffer3 );
@@ -164,7 +164,7 @@ namespace Fusion.Engine.Graphics.GI {
 				writer.WriteFourCC("VOL1");
 
 				var dataSize3	=	header.VolumeSize.TotalVolume * 4;
-				var dataBuffer3	=	new byte[ dataSize2 ];
+				var dataBuffer3	=	new byte[ dataSize3 ];
 
 				lightVolumeL0.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );
 				lightVolumeL1.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );

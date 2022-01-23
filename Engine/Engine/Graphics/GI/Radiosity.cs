@@ -287,10 +287,10 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Denoising/Dilation" ) )
 			{
-				FilterLightmap( lightMap.irradianceL0, lightMap.tempHdr, gbuffer.AlbedoTexture, fullRegion, settings );
-				FilterLightmap( lightMap.irradianceL1, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
-				FilterLightmap( lightMap.irradianceL2, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
-				FilterLightmap( lightMap.irradianceL3, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL0, lightMap.tempHdr, gbuffer.AlbedoTexture, gbuffer.shellTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL1, lightMap.tempLdr, gbuffer.AlbedoTexture, gbuffer.shellTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL2, lightMap.tempLdr, gbuffer.AlbedoTexture, gbuffer.shellTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL3, lightMap.tempLdr, gbuffer.AlbedoTexture, gbuffer.shellTexture, fullRegion, settings );
 			}
 		}
 
@@ -446,28 +446,51 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, Rectangle region, RadiositySettings settings )
+		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, ShaderResource indices, Rectangle region, RadiositySettings settings )
 		{
 			float falloff		=	settings.FilterWeight;
 			float lumaWeight	=	settings.FilterWeight;
-			float alphaWeight	=	20.0f;
+			float alphaWeight	=	settings.AlphaWeight;
 
-			if (settings.UseDilate)
+			if (!settings.DilateFirst)
 			{
-				rs.DilateFilter.DilateByMaskAlpha( temp, region, irradiance, region, albedo, region, 0, 1 );
+				if (settings.UseBilateral)
+				{
+					rs.BilateralFilter.FilterSHL1ByIndexSinglePass( temp, region, irradiance, indices, region, lumaWeight, alphaWeight, falloff ); 
+				}
+				else
+				{
+					rs.Filter.Copy( temp.Surface, irradiance );
+				}
+
+				if (settings.UseDilate)
+				{
+					rs.DilateFilter.DilateByMaskAlpha( irradiance, region, temp, region, albedo, region, 0, 1 );
+				}
+				else
+				{
+					rs.Filter.Copy( irradiance.Surface, temp );
+				}
 			}
 			else
 			{
-				rs.Filter.Copy( temp.Surface, irradiance );
-			}
+				if (settings.UseDilate)
+				{
+					rs.DilateFilter.DilateByMaskAlpha( temp, region, irradiance, region, albedo, region, 0, 1 );
+				}
+				else
+				{
+					rs.Filter.Copy( temp.Surface, irradiance );
+				}
 
-			if (settings.UseBilateral)
-			{
-				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( irradiance, region, temp, albedo, region, lumaWeight, alphaWeight, falloff ); 
-			}
-			else
-			{
-				rs.Filter.Copy( irradiance.Surface, temp );
+				if (settings.UseBilateral)
+				{
+					rs.BilateralFilter.FilterSHL1ByIndexSinglePass( irradiance, region, temp, indices, region, lumaWeight, alphaWeight, falloff ); 
+				}
+				else
+				{
+					rs.Filter.Copy( irradiance.Surface, temp );
+				}
 			}
 		}
 

@@ -43,7 +43,14 @@ namespace Fusion.Engine.Graphics.GI
 		[AECategory("Filtering")]
 		public float FilterWeight { get; set; } = 0.5f;
 
+		[AECategory("Filtering")]
+		[AESlider( 0, 100, 10, 1 )]
+		public float AlphaWeight { get; set; } = 20.0f;
+
 		[AECategory("Debug")]
 		public bool WhiteDiffuse { get; set; } = true;
+
+		[AECategory("Debug")]
+		public bool DilateFirst { get; set; } = false;
 	}
 }

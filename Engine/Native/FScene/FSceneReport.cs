@@ -80,8 +80,9 @@ namespace FScene {
 				int depth	=	scene.CalculateNodeDepth(node);
 				var padding	=	new string(' ', depth*2);
 				var hasMesh =	node.MeshIndex >= 0 ? "mesh #" + node.MeshIndex.ToString() : "";
+				var comment =	node.Comment==null ? "--" : node.Comment;
 				
-				sb.AppendFormat("{0,4}:  {1,-30}{2,4}  {3}\r\n", index, padding + name, parent, hasMesh );
+				sb.AppendFormat("{0,4}:  {1,-30}{2,4}  {3} {4}\r\n", index, padding + name, parent, hasMesh, comment );
 			}
 
 			sb.AppendLine();

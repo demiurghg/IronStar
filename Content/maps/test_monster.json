@@ -50,7 +50,7 @@
         "GlowColor": "255, 0, 0, 255",
         "SkipShadow": false,
         "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap512",
+        "LightMapSize": "lightMap256",
         "UseLightVolume": false,
         "UseCollisionMesh": false,
         "Collidable": true,
@@ -220,7 +220,7 @@
   "RadiositySettings": {
     "$id": "13",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
-    "NumRays": 256,
+    "NumRays": 1024,
     "NumBounces": 1,
     "IndirectFactor": 1,
     "Bias": 0,

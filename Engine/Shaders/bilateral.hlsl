@@ -1,6 +1,6 @@
 #if 0
-$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
-$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA +LUMA_ONLY HORIZONTAL|VERTICAL
+$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA|MASK_INDEX
+$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA|MASK_INDEX +LUMA_ONLY HORIZONTAL|VERTICAL
 #endif
 
 #include "auto/bilateral.fxi"
@@ -16,10 +16,6 @@ float LinearizeDepth(float z)
 	return 1.0f / (z * a + b);
 }
 
-Texture2D 	Source 	: register(t0); 
-Texture2D 	Mask  	: register(t1); 
-RWTexture2D<float4> Target  : register(u0); 
-
 
 float ExtractMaskFactor( float4 mask )
 {
@@ -28,6 +24,9 @@ float ExtractMaskFactor( float4 mask )
 #endif	
 #ifdef MASK_ALPHA
 	return mask.a;
+#endif	
+#ifdef MASK_INDEX
+	return 0;
 #endif	
 	return 0;
 }
@@ -70,6 +69,10 @@ PIXEL ExtractPixelData( float4 color, float4 mask )
 #ifdef MASK_ALPHA
 	px.Luma	=	ExtractLuma( color );
 	px.Mask	= 	mask.a;
+#endif	
+#ifdef MASK_INDEX
+	px.Luma	=	ExtractLuma( color );
+	px.Mask	= 	mask.r;
 #endif	
 #ifndef LUMA_ONLY
 	px.Data = color;
@@ -213,19 +216,6 @@ void CSMain(
 
 #ifdef SINGLE_PASS
 
-groupshared uint2 cache[16][16];
-
-void CacheStore( uint2 location, float4 value )
-{
-	cache[ location.y ][ location.x ]	=	pack_color4( value );
-}
-
-
-float4 CacheLoad( uint2 location )
-{
-	return unpack_color4( cache[ location.y ][ location.x ] );
-}
-
 [numthreads(BlockSize8,BlockSize8,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -233,63 +223,42 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	int2 loadXY		=	dispatchThreadId.xy + filterParams.SourceXY;
-	int2 storeXY	=	dispatchThreadId.xy + filterParams.TargetXY;
+	int3 loadXY		=	int3( dispatchThreadId.xy + filterParams.SourceXY.xy, 0 );
+	int3 storeXY	=	int3( dispatchThreadId.xy + filterParams.TargetXY.xy, 0 );
 	
 	float3 accumValue 	= 0;
 	float  accumWeight	= 0;
-	int3   centerPoint	= int3( loadXY.xy, 0 );
-	
-	//	load cache :
-	uint2 offset = uint2( 4, 4 );
-	uint2 scale  = uint2( BlockSize8, BlockSize8 );
-	
-	// for (uint i=0; i<3; i++) // 144 / 64 round up
-	// {
-		// uint  	base	=	i * BlockSize8 * BlockSize8;
-		// uint  	addr	=	base + groupIndex;
-		// uint2 	xy		=	uint2( addr%12, addr/12 );
-		// uint3 	uv 		=	uint3( groupId.xy*scale + xy - offset, 0 );
-		// float3	source	=	Source.Load( uv ).rgb;
-		// float	mask	=	ExtractMaskFactor( Mask.Load( uv ) );
-		// CacheStore( xy, float4( source, mask ) );
-	// }
-	
-	uint3 uv00	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,0) + filterParams.SourceXY - offset, 0 );
-	uint3 uv01	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,1) + filterParams.SourceXY - offset, 0 );
-	uint3 uv10	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,0) + filterParams.SourceXY - offset, 0 );
-	uint3 uv11	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,1) + filterParams.SourceXY - offset, 0 );
-	
-	CacheStore( groupThreadId.xy*2 + uint2(0,0), float4( Source.Load( uv00 ).rgb, ExtractMaskFactor( Mask.Load( uv00 ) ) ) );
-	CacheStore( groupThreadId.xy*2 + uint2(0,1), float4( Source.Load( uv01 ).rgb, ExtractMaskFactor( Mask.Load( uv01 ) ) ) );
-	CacheStore( groupThreadId.xy*2 + uint2(1,0), float4( Source.Load( uv10 ).rgb, ExtractMaskFactor( Mask.Load( uv10 ) ) ) );
-	CacheStore( groupThreadId.xy*2 + uint2(1,1), float4( Source.Load( uv11 ).rgb, ExtractMaskFactor( Mask.Load( uv11 ) ) ) );
 	
 	GroupMemoryBarrierWithGroupSync();
 	
-	float4	valueCenter	=	CacheLoad( groupThreadId.xy + offset );
-	float	lumaCenter	=	ExtractLuma( valueCenter );
-	float	maskCenter	=	valueCenter.a;
+	float3	centerColor		=	Source.Load( loadXY ).rgb;
+	float	centerLuma		=	ExtractLuma( centerColor );
+	int		centerIndex		=	Mask.Load( loadXY ).r;
+	float	centerMask		=	ExtractMaskFactor( Source.Load( loadXY ) );
 
 	//[unroll]
-	for (int y=-2; y<=2; y++) {
-		for (int x=-2; x<=2; x++) {
-	
+	for (int y=-2; y<=2; y++) 
+	{
+		for (int x=-2; x<=2; x++) 
+		{
 			float	k			=	filterParams.GaussFalloff;
 			float	falloff		=	(x*x+y*y) * k*k;
+			int3	localLoadXY	=	int3( loadXY.xy + int2(x,y), loadXY.z );
 			
-			float4 	localValue	=	CacheLoad( groupThreadId.xy + offset + int2(x,y) );
-			float3	localColor	=	localValue.rgb;
+			float3	localColor	=	Source.Load( localLoadXY ).rgb;
 			float	localLuma	=	ExtractLuma( localColor );
-			float	localMask	=	localValue.a;
+			float	localMask	=	ExtractMaskFactor( Source.Load( localLoadXY ) );
+			int		localIndex	=	Mask.Load( localLoadXY ).r;
 			
-			float	deltaL		=	localLuma - lumaCenter;
-			float	deltaM		=	localMask - maskCenter;
+			float	deltaL		=	localLuma - centerLuma;
+			float	deltaM		=	localMask - centerMask;
 			
 			float 	powerL		=	deltaL * deltaL * filterParams.ColorFactor;
 			float	powerM		=	deltaM * deltaM * filterParams.MaskFactor;
 			
-			float	weight		=	exp( - powerL - powerM - falloff );
+			float	indexFactor	=	( localIndex == centerIndex ) ? 1 : 0;
+			
+			float	weight		=	exp( - powerL - powerM - falloff ) * indexFactor;
 			
 			accumWeight			+=	weight;
 			accumValue 			+=	localColor * weight;

@@ -88,3 +88,11 @@ cbuffer __buffer0 : register(b0) {
 cbuffer __buffer1 : register(b1) {
 	CAMERA Camera : packoffset(c0);
 };
+Texture2D<float4>              Source                         : register(t0);
+RWTexture2D<float4>            Target                         : register(u0);
+#if defined(MASK_DEPTH) || defined(MASK_ALPHA)
+Texture2D<float4>              Mask                           : register(t1);
+#endif
+#if defined(MASK_INDEX)
+Texture2D<int>                 Mask                           : register(t1);
+#endif

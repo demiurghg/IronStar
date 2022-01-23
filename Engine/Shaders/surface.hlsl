@@ -330,9 +330,9 @@ SURFACE SampleVirtualTexture( PSInput input, out uint feedback )
 		float 	checkerX	=	frac(checkerTC.x*4) > 0.5 ? 1 : 0;
 		float 	checkerY	=	frac(checkerTC.y*4) > 0.5 ? 1 : 0;
 		float	checker		=	(checkerX+checkerY) % 2;
-		surf.baseColor	=	pow(0.1*checker+0.5, 2);
+		surf.baseColor	=	pow(0.01*checker+0.5, 2);
 		surf.normal		=	float3(0,0,1);
-		surf.roughness	=	0.5;
+		surf.roughness	=	0.7;
 		surf.metallic	=	0;
 		surf.emission	=	0;
 		surf.alpha		=	0.5f;

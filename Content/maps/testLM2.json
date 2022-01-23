@@ -1,0 +1,65 @@
+{
+  "$id": "1",
+  "$type": "IronStar.Mapping.Map, IronStar",
+  "Environment": {
+    "$id": "2",
+    "$type": "IronStar.Mapping.MapEnvironment, IronStar",
+    "Gravity": 48.0,
+    "SkyTrubidity": 2.0,
+    "SunAltitude": 45.0,
+    "SkyIntensity": 1.0,
+    "SunAzimuth": 45.0,
+    "SunIntensity": 100.0,
+    "FogDistance": 0.001,
+    "FogHeight": 0.05,
+    "FogColor": "10, 10, 10, 0"
+  },
+  "Nodes": {
+    "$id": "3",
+    "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
+    "$values": [
+      {
+        "$id": "4",
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\grayBoxing\\modules\\testlm.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "SkipShadow": false,
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap128",
+        "UseLightVolume": false,
+        "UseCollisionMesh": false,
+        "Collidable": true,
+        "Walkable": true,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
+        "Animated": false,
+        "Name": "MapModel0",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "0, 0, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0
+      }
+    ]
+  },
+  "RadiositySettings": {
+    "$id": "5",
+    "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
+    "NumRays": 128,
+    "NumBounces": 1,
+    "IndirectFactor": 1,
+    "Bias": 0,
+    "UseBilateral": true,
+    "UseDilate": true,
+    "FilterFalloff": 0.5,
+    "FilterWeight": 0.5,
+    "AlphaWeight": 20.0,
+    "WhiteDiffuse": true,
+    "DilateFirst": false
+  }
+}

@@ -34,6 +34,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Animated": false,
         "Name": "6633d15e-d528-4fa2-88d1-53b1cf2be124",
         "Visible": true,
         "Frozen": false,
@@ -51,8 +52,11 @@
         "Factory": {
           "$id": "6",
           "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
+          "NodeName": "d0287a3b-71c0-40a3-abed-c06822ad35f5",
           "Position": "-167.022385, 2.2136302, 168.490814",
           "Rotation": "0, 0, 0, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "d0287a3b-71c0-40a3-abed-c06822ad35f5",
@@ -198,8 +202,11 @@
         "Factory": {
           "$id": "14",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "098e5f61-2d7e-42c6-8e17-7bca584ea071",
           "Position": "-168.51152, 0.346312553, 117.313751",
           "Rotation": "1.526045E-05, -0.0007221169, 4.398758E-05, 0.999999762",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "098e5f61-2d7e-42c6-8e17-7bca584ea071",
@@ -219,8 +226,11 @@
         "Factory": {
           "$id": "16",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "28ebdd35-d584-4f9c-bd17-fa132e189967",
           "Position": "-169.452728, 0.346312135, 117.314018",
           "Rotation": "2.85983333E-05, -0.00143539382, 4.71435742E-05, 0.999999",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "28ebdd35-d584-4f9c-bd17-fa132e189967",
@@ -240,8 +250,11 @@
         "Factory": {
           "$id": "18",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "90f42fa2-f36a-4740-9d63-6e001aabe189",
           "Position": "-170.513153, 0.346425146, 117.3095",
           "Rotation": "-2.81227276E-05, -0.0009260403, 7.37287555E-05, 0.9999996",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "90f42fa2-f36a-4740-9d63-6e001aabe189",
@@ -261,8 +274,11 @@
         "Factory": {
           "$id": "20",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "6c728cf4-c51c-44bd-8221-5a45bfba7eba",
           "Position": "-171.352356, 0.3463093, 117.3127",
           "Rotation": "1.61839489E-06, 7.31243563E-05, 1.23024608E-06, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "6c728cf4-c51c-44bd-8221-5a45bfba7eba",
@@ -282,8 +298,11 @@
         "Factory": {
           "$id": "22",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "47181f4e-f860-46eb-8425-877b42e6be9d",
           "Position": "-168.515686, 1.05212247, 117.313934",
           "Rotation": "1.64144185E-05, -0.00154747663, 6.543028E-05, 0.9999988",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "47181f4e-f860-46eb-8425-877b42e6be9d",
@@ -303,8 +322,11 @@
         "Factory": {
           "$id": "24",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "6900aadd-f42a-4286-a5d6-3e54709d7a64",
           "Position": "-169.000809, 0.344483435, 115.355049",
           "Rotation": "1.82953954E-08, 0.0144875739, -0.003120301, 0.999890149",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "6900aadd-f42a-4286-a5d6-3e54709d7a64",
@@ -324,8 +346,11 @@
         "Factory": {
           "$id": "26",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "e2558a51-603d-40f2-9a80-adc1ccec368b",
           "Position": "-170.524857, 1.05218458, 117.310722",
           "Rotation": "-0.000154180874, -0.004076519, 0.000194865657, 0.9999917",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "e2558a51-603d-40f2-9a80-adc1ccec368b",
@@ -345,8 +370,11 @@
         "Factory": {
           "$id": "28",
           "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "NodeName": "a944662a-96c1-4843-8029-fc50a5f5a788",
           "Position": "-171.352249, 1.05211973, 117.31266",
           "Rotation": "1.24122948E-06, 3.79273333E-05, 4.27681982E-07, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "a944662a-96c1-4843-8029-fc50a5f5a788",
@@ -366,8 +394,11 @@
         "Factory": {
           "$id": "30",
           "$type": "IronStar.ECSFactories.WeaponRailgunFactory, IronStar",
+          "NodeName": "d341e142-7ab9-4bcf-9f90-868aa22ebaa8",
           "Position": "-173.413483, 0.436001956, 120.109093",
           "Rotation": "0, 0, 0, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "d341e142-7ab9-4bcf-9f90-868aa22ebaa8",
@@ -387,8 +418,11 @@
         "Factory": {
           "$id": "32",
           "$type": "IronStar.ECSFactories.WeaponMachinegunFactory, IronStar",
+          "NodeName": "e44fda1c-24d9-48ef-bfc0-47612e6761d8",
           "Position": "-170.068634, 0.5878017, 120.10408",
           "Rotation": "2.01367657E-05, 0.000116834126, -0.000117263524, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "e44fda1c-24d9-48ef-bfc0-47612e6761d8",
@@ -408,8 +442,11 @@
         "Factory": {
           "$id": "34",
           "$type": "IronStar.ECSFactories.WeaponShotgunFactory, IronStar",
+          "NodeName": "608b70da-4079-463e-bf0f-3bc4a2923556",
           "Position": "-167.812759, 0.5877198, 120.112732",
           "Rotation": "1.49292073E-05, 0.000125288032, 0.000179784431, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "608b70da-4079-463e-bf0f-3bc4a2923556",
@@ -429,8 +466,11 @@
         "Factory": {
           "$id": "36",
           "$type": "IronStar.ECSFactories.WeaponRocketLauncherFactory, IronStar",
+          "NodeName": "8d6113ee-9c24-4504-af11-f74ac15c3a06",
           "Position": "-166.491135, 0.4874189, 120.112785",
           "Rotation": "-4.721535E-09, 1.11099425E-05, -9.145684E-07, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "8d6113ee-9c24-4504-af11-f74ac15c3a06",
@@ -450,8 +490,11 @@
         "Factory": {
           "$id": "38",
           "$type": "IronStar.ECSFactories.WeaponMachinegun2Factory, IronStar",
+          "NodeName": "f129d362-0dee-4e69-b8bd-33ee5a4ede45",
           "Position": "-164.586716, 0.487421781, 120.109772",
           "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "f129d362-0dee-4e69-b8bd-33ee5a4ede45",
@@ -490,8 +533,16 @@
         "Factory": {
           "$id": "41",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "ce60499d-063b-46c2-846c-d1a708b81553",
           "Position": "49.913475, 0, 104.335152",
           "Rotation": "0, -0.5, 0, 0.8660254",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "ce60499d-063b-46c2-846c-d1a708b81553",
@@ -511,8 +562,16 @@
         "Factory": {
           "$id": "43",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "8eb36da4-7c5d-4893-bcb5-1bd851a7e1ab",
           "Position": "60.9883728, 0, 84.8771744",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "8eb36da4-7c5d-4893-bcb5-1bd851a7e1ab",
@@ -532,8 +591,16 @@
         "Factory": {
           "$id": "45",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "96a6aee8-7837-4627-900d-c5a68f4543d2",
           "Position": "73.10551, 0, 107.471748",
           "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "96a6aee8-7837-4627-900d-c5a68f4543d2",
@@ -553,8 +620,16 @@
         "Factory": {
           "$id": "47",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de45",
           "Position": "80.59734, 0, 67.17596",
           "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de45",
@@ -574,8 +649,16 @@
         "Factory": {
           "$id": "49",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "af4ab926-28e7-4317-be76-52b5fc5c2e0b",
           "Position": "-16, 0, -22",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "af4ab926-28e7-4317-be76-52b5fc5c2e0b",
@@ -595,8 +678,16 @@
         "Factory": {
           "$id": "51",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "92756088-3312-454d-ad39-719921b9510a",
           "Position": "-22.5379944, 0, -39.84649",
           "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "92756088-3312-454d-ad39-719921b9510a",
@@ -616,8 +707,16 @@
         "Factory": {
           "$id": "53",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "5fa4d057-9df7-4751-8fbb-b2fbe1b6c176",
           "Position": "-42.146965, 0, -38.9151764",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "5fa4d057-9df7-4751-8fbb-b2fbe1b6c176",
@@ -637,8 +736,16 @@
         "Factory": {
           "$id": "55",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "aeae6c43-c466-4d2f-bea0-f06d4c3591af",
           "Position": "-42, 0, -56",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "aeae6c43-c466-4d2f-bea0-f06d4c3591af",
@@ -658,8 +765,16 @@
         "Factory": {
           "$id": "57",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab81",
           "Position": "-42.146965, 0, -74.1047",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab81",
@@ -679,8 +794,16 @@
         "Factory": {
           "$id": "59",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "90f84561-d109-4cf5-99bd-74d485575725",
           "Position": "-22.6518478, 0, -74.1047",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "90f84561-d109-4cf5-99bd-74d485575725",
@@ -700,8 +823,16 @@
         "Factory": {
           "$id": "61",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d0",
           "Position": "-22, 0, -56",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d0",
@@ -721,8 +852,16 @@
         "Factory": {
           "$id": "63",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "62da475b-e066-4172-81ae-f9924b70852f",
           "Position": "-22.6518478, 0, -36.26701",
           "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "62da475b-e066-4172-81ae-f9924b70852f",
@@ -742,8 +881,11 @@
         "Factory": {
           "$id": "65",
           "$type": "IronStar.ECSFactories.WeaponPlasmagunFactory, IronStar",
+          "NodeName": "83c7ecdd-195f-47ac-bad1-34ece24ce65f",
           "Position": "-162.71843, 0.487421781, 120.109772",
           "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "83c7ecdd-195f-47ac-bad1-34ece24ce65f",
@@ -763,8 +905,11 @@
         "Factory": {
           "$id": "67",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "0edb288a-ebff-4813-96c9-85c71055c740",
           "Position": "-167.430313, 0.3444608, 115.341881",
           "Rotation": "0.000171793523, 0.00206272956, -5.850379E-05, 0.999997854",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "0edb288a-ebff-4813-96c9-85c71055c740",
@@ -784,8 +929,11 @@
         "Factory": {
           "$id": "69",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "8bd7f42a-9893-433c-9184-eb67a75091fa",
           "Position": "-167.432846, 1.046081, 115.345406",
           "Rotation": "0.000409718166, 0.0009108251, -0.0001783839, 0.9999995",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "8bd7f42a-9893-433c-9184-eb67a75091fa",
@@ -805,8 +953,11 @@
         "Factory": {
           "$id": "71",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "a9cb2365-8158-47db-a9ea-776192e2ae0c",
           "Position": "-168.835938, 1.045408, 115.349556",
           "Rotation": "-7.52864435E-06, 0.0153889591, -0.006337676, 0.9998615",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "a9cb2365-8158-47db-a9ea-776192e2ae0c",
@@ -826,8 +977,11 @@
         "Factory": {
           "$id": "73",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "774e3bfe-b607-43fd-8e49-4b3660f41260",
           "Position": "-168.8281, 3.71680474, 115.310135",
           "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "774e3bfe-b607-43fd-8e49-4b3660f41260",
@@ -847,8 +1001,11 @@
         "Factory": {
           "$id": "75",
           "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "NodeName": "7406e362-024a-4ce3-8728-6185ed6c83c8",
           "Position": "-167.385452, 3.71680474, 115.310135",
           "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "7406e362-024a-4ce3-8728-6185ed6c83c8",
@@ -877,6 +1034,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Animated": false,
         "Name": "2080d41f-a84d-4f07-a60e-f10663eb9178",
         "Visible": true,
         "Frozen": false,
@@ -889,32 +1047,6 @@
       },
       {
         "$id": "77",
-        "$type": "IronStar.Mapping.MapModel, IronStar",
-        "ScenePath": "scenes\\base_door\\big_door01.fbx",
-        "Scale": 1.0,
-        "GlowColor": "255, 0, 0, 255",
-        "SkipShadow": false,
-        "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap32",
-        "UseLightVolume": true,
-        "UseCollisionMesh": false,
-        "Collidable": true,
-        "Walkable": true,
-        "UseCustomNodes": false,
-        "CustomVisibleNode": "",
-        "CustomCollisionNode": "",
-        "Name": "7afb77a2-da1c-45c0-9189-05bed12e706d",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "16, 0, 90",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.707106769, 0, 0.707106769",
-        "TranslateX": 16.0,
-        "TranslateY": 0.0,
-        "TranslateZ": 90.0
-      },
-      {
-        "$id": "78",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 136.0,
         "Height": 64.0,
@@ -933,14 +1065,22 @@
         "TranslateZ": 96.0
       },
       {
-        "$id": "79",
+        "$id": "78",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "80",
+          "$id": "79",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "60df3389-b014-48f2-8370-59308f2335cd",
           "Position": "-58, 0, 68",
           "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "60df3389-b014-48f2-8370-59308f2335cd",
@@ -954,7 +1094,7 @@
         "TranslateZ": 68.0
       },
       {
-        "$id": "81",
+        "$id": "80",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -974,7 +1114,7 @@
         "TranslateZ": 48.0
       },
       {
-        "$id": "82",
+        "$id": "81",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -994,7 +1134,7 @@
         "TranslateZ": 48.0
       },
       {
-        "$id": "83",
+        "$id": "82",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1014,7 +1154,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "84",
+        "$id": "83",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1034,7 +1174,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "85",
+        "$id": "84",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1054,7 +1194,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "86",
+        "$id": "85",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1074,7 +1214,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "87",
+        "$id": "86",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1094,7 +1234,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "88",
+        "$id": "87",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -1114,7 +1254,7 @@
         "TranslateZ": 64.0
       },
       {
-        "$id": "89",
+        "$id": "88",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 136.0,
         "Height": 48.0,
@@ -1133,7 +1273,7 @@
         "TranslateZ": 50.0
       },
       {
-        "$id": "90",
+        "$id": "89",
         "$type": "IronStar.Mapping.MapLightVolume, IronStar",
         "ResolutionX": 16,
         "ResolutionY": 4,
@@ -1152,7 +1292,7 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "91",
+        "$id": "90",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 129, 40, 255",
         "LightIntensity": 3.0,
@@ -1178,7 +1318,7 @@
         "TranslateZ": -66.0
       },
       {
-        "$id": "92",
+        "$id": "91",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 156, 73, 255",
         "LightIntensity": 3.0,
@@ -1204,7 +1344,7 @@
         "TranslateZ": 103.0
       },
       {
-        "$id": "93",
+        "$id": "92",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonBigRock0.fbx",
         "Scale": 1.0,
@@ -1219,6 +1359,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Animated": false,
         "Name": "MapModel0",
         "Visible": true,
         "Frozen": false,
@@ -1230,7 +1371,7 @@
         "TranslateZ": -49.0
       },
       {
-        "$id": "94",
+        "$id": "93",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 22.0,
@@ -1245,7 +1386,7 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "95",
+        "$id": "94",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 22.0,
@@ -1260,7 +1401,7 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "96",
+        "$id": "95",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1275,7 +1416,7 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "97",
+        "$id": "96",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 22.0,
@@ -1290,7 +1431,7 @@
         "TranslateZ": -76.0
       },
       {
-        "$id": "98",
+        "$id": "97",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 22.0,
@@ -1305,7 +1446,7 @@
         "TranslateZ": -33.0
       },
       {
-        "$id": "99",
+        "$id": "98",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1320,7 +1461,7 @@
         "TranslateZ": -120.0
       },
       {
-        "$id": "100",
+        "$id": "99",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1335,7 +1476,7 @@
         "TranslateZ": -120.0
       },
       {
-        "$id": "101",
+        "$id": "100",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1350,7 +1491,7 @@
         "TranslateZ": -120.0
       },
       {
-        "$id": "102",
+        "$id": "101",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1365,7 +1506,7 @@
         "TranslateZ": -120.0
       },
       {
-        "$id": "103",
+        "$id": "102",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1380,7 +1521,7 @@
         "TranslateZ": -146.0
       },
       {
-        "$id": "104",
+        "$id": "103",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1395,7 +1536,7 @@
         "TranslateZ": -146.0
       },
       {
-        "$id": "105",
+        "$id": "104",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1410,7 +1551,7 @@
         "TranslateZ": -99.0
       },
       {
-        "$id": "106",
+        "$id": "105",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 25.0,
@@ -1425,7 +1566,7 @@
         "TranslateZ": -56.0
       },
       {
-        "$id": "107",
+        "$id": "106",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1440,7 +1581,7 @@
         "TranslateZ": -23.0
       },
       {
-        "$id": "108",
+        "$id": "107",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1455,7 +1596,7 @@
         "TranslateZ": 18.0
       },
       {
-        "$id": "109",
+        "$id": "108",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 40.0,
         "Transition": 25.0,
@@ -1470,7 +1611,7 @@
         "TranslateZ": 48.0
       },
       {
-        "$id": "110",
+        "$id": "109",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 160.0,
         "Height": 72.0,
@@ -1489,7 +1630,7 @@
         "TranslateZ": -129.0
       },
       {
-        "$id": "111",
+        "$id": "110",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 88.0,
         "Height": 72.0,
@@ -1508,7 +1649,7 @@
         "TranslateZ": -49.0
       },
       {
-        "$id": "112",
+        "$id": "111",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Width": 88.0,
         "Height": 72.0,
@@ -1527,14 +1668,22 @@
         "TranslateZ": 9.0
       },
       {
-        "$id": "113",
+        "$id": "112",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "114",
+          "$id": "113",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de46",
           "Position": "53.5973434, 0, 251.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683367",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.0
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de46",
@@ -1548,14 +1697,22 @@
         "TranslateZ": 251.175964
       },
       {
-        "$id": "115",
+        "$id": "114",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "116",
+          "$id": "115",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab82",
           "Position": "-69.146965, 0, 109.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab82",
@@ -1569,14 +1726,22 @@
         "TranslateZ": 109.8953
       },
       {
-        "$id": "117",
+        "$id": "116",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "118",
+          "$id": "117",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d1",
           "Position": "-49, 0, 128",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d1",
@@ -1590,7 +1755,7 @@
         "TranslateZ": 128.0
       },
       {
-        "$id": "119",
+        "$id": "118",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1605,14 +1770,22 @@
         "TranslateZ": 160.0
       },
       {
-        "$id": "120",
+        "$id": "119",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "121",
+          "$id": "120",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de47",
           "Position": "129.597351, 0, 251.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de47",
@@ -1626,14 +1799,22 @@
         "TranslateZ": 251.175964
       },
       {
-        "$id": "122",
+        "$id": "121",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "123",
+          "$id": "122",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab83",
           "Position": "6.853035, 0, 109.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab83",
@@ -1647,14 +1828,22 @@
         "TranslateZ": 109.8953
       },
       {
-        "$id": "124",
+        "$id": "123",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "125",
+          "$id": "124",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d2",
           "Position": "27, 0, 128",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d2",
@@ -1668,7 +1857,7 @@
         "TranslateZ": 128.0
       },
       {
-        "$id": "126",
+        "$id": "125",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1683,14 +1872,22 @@
         "TranslateZ": 160.0
       },
       {
-        "$id": "127",
+        "$id": "126",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "128",
+          "$id": "127",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de48",
           "Position": "89.59735, 0, 227.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de48",
@@ -1704,14 +1901,22 @@
         "TranslateZ": 227.175964
       },
       {
-        "$id": "129",
+        "$id": "128",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "130",
+          "$id": "129",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab84",
           "Position": "-33.146965, 0, 85.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab84",
@@ -1725,14 +1930,22 @@
         "TranslateZ": 85.8953
       },
       {
-        "$id": "131",
+        "$id": "130",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "132",
+          "$id": "131",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d3",
           "Position": "-13, 0, 104",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d3",
@@ -1746,7 +1959,7 @@
         "TranslateZ": 104.0
       },
       {
-        "$id": "133",
+        "$id": "132",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1761,14 +1974,22 @@
         "TranslateZ": 136.0
       },
       {
-        "$id": "134",
+        "$id": "133",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "135",
+          "$id": "134",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de49",
           "Position": "-18.4026489, 0, 251.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de49",
@@ -1782,14 +2003,22 @@
         "TranslateZ": 251.175964
       },
       {
-        "$id": "136",
+        "$id": "135",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "137",
+          "$id": "136",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab85",
           "Position": "-141.146973, 0, 109.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab85",
@@ -1803,14 +2032,22 @@
         "TranslateZ": 109.8953
       },
       {
-        "$id": "138",
+        "$id": "137",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "139",
+          "$id": "138",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d4",
           "Position": "-121, 0, 128",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d4",
@@ -1824,7 +2061,7 @@
         "TranslateZ": 128.0
       },
       {
-        "$id": "140",
+        "$id": "139",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1839,14 +2076,22 @@
         "TranslateZ": 160.0
       },
       {
-        "$id": "141",
+        "$id": "140",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "142",
+          "$id": "141",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de50",
           "Position": "-90.40265, 0, 255.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de50",
@@ -1860,14 +2105,22 @@
         "TranslateZ": 255.175964
       },
       {
-        "$id": "143",
+        "$id": "142",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "144",
+          "$id": "143",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab86",
           "Position": "-213.146973, 0, 113.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab86",
@@ -1881,14 +2134,22 @@
         "TranslateZ": 113.8953
       },
       {
-        "$id": "145",
+        "$id": "144",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "146",
+          "$id": "145",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d5",
           "Position": "-193, 0, 132",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d5",
@@ -1902,7 +2163,7 @@
         "TranslateZ": 132.0
       },
       {
-        "$id": "147",
+        "$id": "146",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1917,14 +2178,22 @@
         "TranslateZ": 164.0
       },
       {
-        "$id": "148",
+        "$id": "147",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "149",
+          "$id": "148",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de51",
           "Position": "-90.40265, 0, 219.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de51",
@@ -1938,14 +2207,22 @@
         "TranslateZ": 219.175964
       },
       {
-        "$id": "150",
+        "$id": "149",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "151",
+          "$id": "150",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab87",
           "Position": "-213.146973, 0, 77.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab87",
@@ -1959,14 +2236,22 @@
         "TranslateZ": 77.8953
       },
       {
-        "$id": "152",
+        "$id": "151",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "153",
+          "$id": "152",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d6",
           "Position": "-193, 0, 96",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d6",
@@ -1980,7 +2265,7 @@
         "TranslateZ": 96.0
       },
       {
-        "$id": "154",
+        "$id": "153",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -1995,14 +2280,22 @@
         "TranslateZ": 128.0
       },
       {
-        "$id": "155",
+        "$id": "154",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "156",
+          "$id": "155",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de52",
           "Position": "-58.40265, 0, 235.175964",
           "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de52",
@@ -2016,14 +2309,22 @@
         "TranslateZ": 235.175964
       },
       {
-        "$id": "157",
+        "$id": "156",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "158",
+          "$id": "157",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "328f1bb3-2f41-4095-bfdd-1dd72c1cab88",
           "Position": "-181.146973, 0, 93.8953",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab88",
@@ -2037,14 +2338,22 @@
         "TranslateZ": 93.8953
       },
       {
-        "$id": "159",
+        "$id": "158",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "160",
+          "$id": "159",
           "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Team": "monsters",
+          "Weapon": "machinegun",
+          "Roamer": false,
+          "Camper": false,
+          "NoToken": false,
+          "NodeName": "91a50b39-6fa2-4d4c-b075-8bd8434888d7",
           "Position": "-161, 0, 112",
           "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "LinearVelocity": "0, 0, 0",
+          "AngularVelocity": "0, 0, 0",
           "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d7",
@@ -2058,7 +2367,7 @@
         "TranslateZ": 112.0
       },
       {
-        "$id": "161",
+        "$id": "160",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 56.0,
         "Transition": 22.0,
@@ -2073,7 +2382,7 @@
         "TranslateZ": 144.0
       },
       {
-        "$id": "162",
+        "$id": "161",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 27.0,
         "TubeRadius": 0.125,
@@ -2095,15 +2404,18 @@
     ]
   },
   "RadiositySettings": {
-    "$id": "163",
+    "$id": "162",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 2,
+    "IndirectFactor": 1,
     "Bias": 0,
     "UseBilateral": true,
     "UseDilate": true,
     "FilterFalloff": 0.7,
     "FilterWeight": 0.5,
-    "WhiteDiffuse": false
+    "AlphaWeight": 20.0,
+    "WhiteDiffuse": false,
+    "DilateFirst": false
   }
 }

@@ -18,7 +18,7 @@ using Fusion.Build.Mapping;
 
 namespace Fusion.Engine.Graphics 
 {
-	internal class VTTileLoader
+	internal class VTTileLoader : DisposableBase
 	{
 		readonly VTSystem vt;
 
@@ -98,11 +98,14 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
-		public void StopAndWait()
+		protected override void Dispose( bool disposing )
 		{
-			stopLoader	=	true;
-			loaderThread.Join();
+			if (disposing)
+			{
+				stopLoader	=	true;
+				loaderThread.Join();
+			}
+			base.Dispose( disposing );
 		}
 
 

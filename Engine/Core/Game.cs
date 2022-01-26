@@ -331,13 +331,14 @@ namespace Fusion.Core
 		/// </summary>
 		public void Reload()
 		{
-			if (!IsInitialized) {
+			if (!IsInitialized) 
+			{
 				Log.Warning("Game is not initialized");
-			} else {
+			} else 
+			{
 				requestReload = true;
 			}
 		}
-
 
 
 		/// <summary>
@@ -346,7 +347,8 @@ namespace Fusion.Core
 		/// </summary>
 		public void Exit ()
 		{
-			if (!IsInitialized) {
+			if (!IsInitialized) 
+			{
 				Log.Warning("Game is not initialized");
 				return;
 			}
@@ -370,7 +372,8 @@ namespace Fusion.Core
 
 			var rs = Services.GetService<IRenderSystem>();
 
-			if (rs==null) {
+			if (rs==null) 
+			{
 				throw new InvalidOperationException("There is no IRenderSystem");
 			}
 
@@ -425,16 +428,18 @@ namespace Fusion.Core
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (!initialized) {
+			if (!initialized) 
+			{
 				return;
 			}
 
-			if (disposing) {
-
+			if (disposing) 
+			{
 				Log.Message("");
 				Log.Message("-------- Game Shutting Down --------");
 
-				for (int i=Components.Count-1; i>=0; i-- ) {
+				for (int i=Components.Count-1; i>=0; i-- )
+				{
 					Log.Message("Dispose : {0}", Components[i].GetType().Name );
 					(Components[i] as IDisposable)?.Dispose();
 				}
@@ -463,14 +468,20 @@ namespace Fusion.Core
 		/// </summary>
 		public void ReportActiveComObjects ()
 		{
-			if (SharpDX.Configuration.EnableObjectTracking) {
-				if (SharpDX.Diagnostics.ObjectTracker.FindActiveObjects().Any()) {
+			if (SharpDX.Configuration.EnableObjectTracking) 
+			{
+				if (SharpDX.Diagnostics.ObjectTracker.FindActiveObjects().Any()) 
+				{
 					Log.Warning("{0}", SharpDX.Diagnostics.ObjectTracker.ReportActiveObjects() );
-				} else {
+				}
+				else
+				{
 					Log.Message("Leaked COM objects are not detected.");
 				}
 				SharpDX.Configuration.EnableObjectTracking = false;
-			} else {
+			}
+			else
+			{
 				Log.Message("Object tracking disabled.");
 			}
 		}
@@ -480,8 +491,10 @@ namespace Fusion.Core
 		/// <summary>
 		/// Returns true if game is active and receive user input
 		/// </summary>
-		public bool IsActive {
-			get {
+		public bool IsActive 
+		{
+			get
+			{
 				return GraphicsDevice.Display.Window.Focused;
 			}
 		}
@@ -494,32 +507,40 @@ namespace Fusion.Core
 		/// </summary>
 		internal void UpdateAndDrawInternal ()
 		{
-			if (IsDisposed) {
+			if (IsDisposed) 
+			{
 				throw new ObjectDisposedException("Game");
 			}
 
-			if (!IsInitialized) {
+			if (!IsInitialized) 
+			{
 				throw new InvalidOperationException("Game is not initialized");
 			}
 
 			bool isActive = IsActive;  // to reduce access to winforms.
-			if (isActive!=isActiveLastFrame) {
+			if (isActive!=isActiveLastFrame) 
+			{
 				isActiveLastFrame = isActive;
-				if (isActive) {
+				if (isActive) 
+				{
 					Activated?.Invoke( this, EventArgs.Empty );
-				} else {
+				} 
+				else 
+				{
 					Deactivated?.Invoke( this, EventArgs.Empty );
 				}
 			}
 
-			if (Enabled) {
-
-				if (requestFullscreenOnStartup) {
+			if (Enabled) 
+			{
+				if (requestFullscreenOnStartup) 
+				{
 					graphicsDevice.FullScreen = true;
 					requestFullscreenOnStartup = false;
 				}
 
-				if (requestReload) {
+				if (requestReload) 
+				{
 					Reloading?.Invoke( this, EventArgs.Empty );
 					requestReload = false;
 				}
@@ -542,9 +563,12 @@ namespace Fusion.Core
 				InputDevice.EndUpdateInput();
 			}
 
-			try {
+			try 
+			{
 				invoker.ExecuteDeferredCommands();
-			} catch ( Exception e ) {
+			} 
+			catch ( Exception e ) 
+			{
 				Log.Error( e.ToString() );
 			}
 

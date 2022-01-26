@@ -255,6 +255,21 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		public void Suspend()
+		{
+			SafeDispose( ref tileLoader );
+		}
+
+
+		public void Resume()
+		{					
+			if (tileLoader==null)
+			{
+				tileLoader = new VTTileLoader(this, tileCache);
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -294,7 +309,7 @@ namespace Fusion.Engine.Graphics
 				pageDataCpu			=	new PageGpu[ maxTiles ];
 				Params				=	new ConstantBuffer( rs.Device, 16 );
 
-				tileLoader?.StopAndWait();
+				SafeDispose( ref tileLoader );
 
 				tileCache			=	new VTTileCache( physPages, physicalSize );
 				tileLoader			=	new VTTileLoader( this, tileCache ); 
@@ -329,7 +344,7 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing) 
 			{
-				tileLoader.StopAndWait();
+				SafeDispose( ref tileLoader );
 				
 				SafeDispose( ref PhysicalPages0	);
 				SafeDispose( ref PhysicalPages1	);
@@ -354,6 +369,7 @@ namespace Fusion.Engine.Graphics
 		public void Start ( VirtualTexture vt )
 		{
 			stopwatch.Restart();
+			Resume();
 		}
 
 
@@ -362,8 +378,8 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public void Stop ()
 		{
-			tileLoader.Purge();
-			tileCache.Purge();
+			tileLoader?.Purge();
+			tileCache?.Purge();
 		}
 
 
@@ -373,9 +389,9 @@ namespace Fusion.Engine.Graphics
 			{
 				ApplyVTState();
 
-				tileLoader.ReadFeedbackAndRequestTiles( rawAddressData );
+				tileLoader?.ReadFeedbackAndRequestTiles( rawAddressData );
 
-				DownloadTiles();
+				DownloadTiles(tileLoader, tileCache);
 
 				StressTest();
 
@@ -453,7 +469,7 @@ namespace Fusion.Engine.Graphics
 
 
 
-		void DownloadTiles()
+		void DownloadTiles(VTTileLoader tileLoader, VTTileCache tileCache)
 		{
 			if (tileLoader!=null && tileCache!=null) 
 			{

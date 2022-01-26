@@ -130,13 +130,13 @@ namespace IronStar
 
 		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
 		{
-			if (e.Key==Keys.F5) {
-				builder.Build();
-				Reload();	
+			if (e.Key==Keys.F5) 
+			{
+				Invoker.ExecuteStringImmediate("contentBuild");
 			}
 
 			if (e.Key==Keys.F11) {
-				this.GetService<RenderSystem>().Screenshot();
+				Invoker.ExecuteStringImmediate("screenshot");
 			}
 
 			if (e.Key==Keys.F2) {

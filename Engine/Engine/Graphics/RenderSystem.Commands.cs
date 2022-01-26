@@ -17,8 +17,8 @@ namespace Fusion.Engine.Graphics {
 
 		void RegisterCommands ()
 		{
-			Game.Invoker.RegisterCommand("screenshot"		,	() => new ScreenshotCmd(this)	);
-			Game.Invoker.RegisterCommand("vtrestart"		,	() => new VTRestartCmd(this)	);
+			Game.Invoker.RegisterCommand("screenshot"	,	() => new ScreenshotCmd(this)	);
+			Game.Invoker.RegisterCommand("vtrestart"	,	() => new VTRestartCmd(this)	);
 		}
 
 
@@ -43,7 +43,11 @@ namespace Fusion.Engine.Graphics {
 		class VTRestartCmd : ICommand 
 		{
 			readonly RenderSystem rs;
-			
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("suspend")]
+			public bool Suspend { get; set; } = false;
+
 			public VTRestartCmd ( RenderSystem rs ) 
 			{
 				this.rs = rs;
@@ -51,8 +55,15 @@ namespace Fusion.Engine.Graphics {
 			
 			public object Execute()
 			{
-				rs.RenderWorld.VirtualTexture = null;
-				rs.RenderWorld.VirtualTexture = rs.Game.Content.Load<VirtualTexture>("*megatexture");
+				if (Suspend)
+				{
+					rs.VTSystem.Suspend();
+				}
+				else
+				{
+					rs.RenderWorld.VirtualTexture = null;
+					rs.RenderWorld.VirtualTexture = rs.Game.Content.Load<VirtualTexture>("*megatexture");
+				}
 				return null;
 			}
 		}

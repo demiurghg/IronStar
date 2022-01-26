@@ -340,39 +340,43 @@ void CSMain(
 	
 	float3	random_vector	=	GetRandomVector( loadXY.xy );
 	
-	[loop]
-	for (uint i=0; i<num_samples; i++)
+	[branch]
+	if (any(Albedo[loadXY].xyz))
 	{
-		float3	rayDir		=	normalize(hammersley_sphere_uniform( i, num_samples ));
-				rayDir		=	reflect( rayDir, random_vector );
-		
-		if (dot(rayDir, lmNormal)>0.01)
+		[loop]
+		for (uint i=0; i<num_samples; i++)
 		{
-			RAY 	ray		=	ConstructRay( lmPosition, rayDir );
-			bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
-			float3	light	=	float3(0,0,0);
+			float3	rayDir		=	normalize(hammersley_sphere_uniform( i, num_samples ));
+					rayDir		=	reflect( rayDir, random_vector );
 			
-			if (hit)
+			if (dot(rayDir, lmNormal)>0.01)
 			{
-				uint 	triIndex	=	ray.index;
-				float3	hitNormal	=	normalize(ray.norm);
-				float2 	lmCoord0	=	RtLmVerts[ triIndex*3+0 ].LMCoord;
-				float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
-				float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
-				float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
-				float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
-				float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
-						albedo		=	lerp( albedo, 0.9f, Radiosity.WhiteAlbedo );
-				light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;//*/
-			}
-			else
-			{
-				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
-			}
+				RAY 	ray		=	ConstructRay( lmPosition, rayDir );
+				bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
+				float3	light	=	float3(0,0,0);
+				
+				if (hit)
+				{
+					uint 	triIndex	=	ray.index;
+					float3	hitNormal	=	normalize(ray.norm);
+					float2 	lmCoord0	=	RtLmVerts[ triIndex*3+0 ].LMCoord;
+					float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
+					float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
+					float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
+					float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
+					float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
+							albedo		=	lerp( albedo, 0.9f, Radiosity.WhiteAlbedo );
+					light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;//*/
+				}
+				else
+				{
+					light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
+				}
 
-			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir ) * Radiosity.IndirectFactor;
-			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir ) * Radiosity.IndirectFactor;
-			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir ) * Radiosity.IndirectFactor;
+				irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir ) * Radiosity.IndirectFactor;
+				irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir ) * Radiosity.IndirectFactor;
+				irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir ) * Radiosity.IndirectFactor;
+			}
 		}
 	}
 	

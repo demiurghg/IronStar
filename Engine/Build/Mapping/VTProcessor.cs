@@ -18,8 +18,8 @@ using Fusion.Core.Content;
 using System.Threading;
 using Fusion.Engine.Graphics.Scenes;
 
-namespace Fusion.Build.Mapping {
-
+namespace Fusion.Build.Mapping 
+{
 	public class VTGenerator : AssetGenerator 
 	{
 		string rootDir;
@@ -38,12 +38,12 @@ namespace Fusion.Build.Mapping {
 
 
 	[AssetProcessor("MegaTexture", "Performs megatexture assembly")]
-	public class VTProcessor : AssetProcessor {
-
-
-		const string targetMegatexture		=	".megatexture";
-		const string targetAllocator		=	".allocator";
-		const string targetMegatexturePath	=	"Content\\.vtstorage\\.megatexture";
+	public class VTProcessor : AssetProcessor 
+	{
+		//public const string targetMegatexture		=	".megatexture";
+		//public const string targetAllocator			=	".allocator";
+		public const string targetAllocatorPath		=	"Content\\.vtstorage\\allocator.bin";
+		public const string targetMegatexturePath	=	"Content\\.vtstorage\\index.bin";
 
 		/// <summary>
 		/// 
@@ -87,14 +87,15 @@ namespace Fusion.Build.Mapping {
 				//	
 				Allocator2D allocator = null;
 
-				if (tileStorage.FileExists( targetAllocator ) && tileStorage.FileExists( targetMegatexture ) ) 
+				if (File.Exists( targetAllocatorPath ) && File.Exists( targetMegatexturePath ) ) 
 				{
 					Log.Message("Loading VT allocator...");
 
-					using ( var allocStream = tileStorage.OpenRead( targetAllocator ) ) 
+					using ( var allocStream = File.OpenRead( targetAllocatorPath ) ) 
 					{
 						allocator		=	Allocator2D.LoadState( allocStream );
-						var targetTime	=	tileStorage.GetLastWriteTimeUtc(targetMegatexture);
+						Log.Message("Loading VT allocator...");
+						var targetTime	=	File.GetLastWriteTimeUtc( targetMegatexturePath );
 
 						Log.Message("Repacking textures to atlas...");
 						RepackTextureAtlas( pageTable, allocator, targetTime );
@@ -119,7 +120,7 @@ namespace Fusion.Build.Mapping {
 
 				Log.Message("Saving VT allocator...");
 
-				using ( var allocStream = tileStorage.OpenWrite( targetAllocator ) ) 
+				using ( var allocStream = File.OpenWrite( targetAllocatorPath ) ) 
 				{
 					Allocator2D.SaveState( allocStream, allocator );
 				}
@@ -145,7 +146,7 @@ namespace Fusion.Build.Mapping {
 				//
 				//	Write asset :
 				//
-				using ( var stream = tileStorage.OpenWrite( targetMegatexture ) ) 
+				using ( var stream = File.OpenWrite( targetMegatexturePath ) ) 
 				{
 					using ( var assetStream = AssetStream.OpenWrite( stream, "", new[] {""}, typeof(VirtualTexture) ) ) 
 					{
@@ -296,6 +297,7 @@ namespace Fusion.Build.Mapping {
 			int totalCount = textures.Count;
 			int counter = 1;
 
+			//foreach (var texture in textures)
 			Parallel.ForEach( textures, texture => 
 			{
 				if (texture.TilesDirty) 
@@ -305,7 +307,8 @@ namespace Fusion.Build.Mapping {
 					Log.Message("...{0}/{1} - {2}", counterValue, totalCount, texture.Name );
 					texture.SplitIntoPages( context, pageTable, mapStorage );
 				}
-			});
+			}
+			);
 		}
 
 

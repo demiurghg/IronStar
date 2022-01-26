@@ -123,14 +123,15 @@ namespace Fusion.Build.Mapping {
 		/// <returns></returns>
 		public Image<Color> LoadPage ( VTAddress address, IStorage storage )
 		{
-			if (pages.Contains(address)) {
-				
-				var path	=	address.GetFileNameWithoutExtension("C.tga");
+			if (pages.Contains(address)) 
+			{
+				var path	=	address.GetFileNameWithoutExtension() + "C.tga";
 				var image	=	ImageLib.LoadTga( storage.OpenRead(path) );
 
 				return image;
-
-			} else {
+			} 
+			else 
+			{
 				return new Image<Color>( VTConfig.PageSize, VTConfig.PageSize, Color.Black );
 			}
 		}
@@ -147,7 +148,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="image"></param>
 		public void SavePage ( VTAddress address, IStorage storage, Image<Color> image, string postFix )
 		{
-			var name	=	address.GetFileNameWithoutExtension(postFix) + ".tga";
+			var name	=	address.GetFileNameWithoutExtension() + ".tga";
 
 			ImageLib.SaveTga( image, storage.OpenWrite(name) );
 		}
@@ -161,13 +162,14 @@ namespace Fusion.Build.Mapping {
 		/// <param name="tile"></param>
 		public void SaveTile ( VTAddress address, IStorage storage, VTTile tile )
 		{
-			var name	=	address.GetFileNameWithoutExtension("") + ".tile";
+			var name	=	address.GetFileNameWithoutExtension();
 
 			tile.GenerateMipLevel();
 
 			tile.Write( storage.OpenWrite(name) );
 
-			if (VTConfig.DebugOutput) {
+			if (VTConfig.DebugOutput) 
+			{
 				tile.WriteDebug( storage.OpenWrite(name + ".tga") );
 			}
 		}			  

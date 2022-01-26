@@ -20,7 +20,6 @@ namespace Fusion.Engine.Graphics
 {
 	internal class VTTileLoader
 	{
-		readonly IStorage storage;
 		readonly VTSystem vt;
 
 		object lockObj = new object();
@@ -44,9 +43,8 @@ namespace Fusion.Engine.Graphics
 		/// 
 		/// </summary>
 		/// <param name="baseDirectory"></param>
-		public VTTileLoader ( VTSystem vt, IStorage storage, VTTileCache tileCache )
+		public VTTileLoader ( VTSystem vt, VTTileCache tileCache )
 		{
-			this.storage		=	storage;
 			this.vt				=	vt;
 			this.tileCache		=	tileCache;
 
@@ -213,11 +211,16 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		/// <summary>
-		/// Functionas running in separate thread
-		/// </summary>
+		VTStorage LoadStorage()
+		{
+			return new VTStorage(@"Content\.vtstorage", true);
+		}
+
+
 		void LoaderTask ()
 		{
+			var storage		=	LoadStorage();
+
 			while (!stopLoader) 
 			{
 				using ( new CVEvent( "VT Loader Task" ) ) 
@@ -245,7 +248,7 @@ namespace Fusion.Engine.Graphics
 						address = result.Value;
 					}
 
-					var fileName = address.GetFileNameWithoutExtension(".tile");
+					var fileName = address.GetFileNameWithoutExtension();
 
 					try 
 					{
@@ -270,6 +273,9 @@ namespace Fusion.Engine.Graphics
 					}
 				}
 			}
+
+			storage?.Dispose();
+			storage = null;
 		}
 
 	}

@@ -29,17 +29,6 @@ namespace Fusion.Core.Content {
 		List<ContentLoader> loaders;
 		readonly string contentDirectory;
 
-		DirectoryStorage	vtStorage;
-
-
-		/// <summary>
-		/// Gets virtual texture page storage
-		/// </summary>
-		public IStorage VTStorage {
-			get { return vtStorage; }
-		}
-
-
 
 		/// <summary>
 		/// Overloaded. Initializes a new instance of ContentManager. 
@@ -55,8 +44,6 @@ namespace Fusion.Core.Content {
 			loaders	=	ContentLoader.GatherContentLoaders()
 						.Select( clt => (ContentLoader)Activator.CreateInstance( clt ) )
 						.ToList();
-
-			vtStorage	=	new DirectoryStorage(Path.Combine(contentDirectory, ".vtstorage"));
 		}
 
 
@@ -67,9 +54,9 @@ namespace Fusion.Core.Content {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				Unload();
-				SafeDispose( ref vtStorage );
 			}
 			base.Dispose(disposing);
 		}
@@ -116,11 +103,13 @@ namespace Fusion.Core.Content {
 		string GetRealAssetFileName ( string assetPath )
 		{
 			//	special case for megatexture :
-			if (assetPath=="*megatexture") {	
-				return Path.Combine(contentDirectory, @".vtstorage\.megatexture");
+			if (assetPath=="*megatexture") 
+			{	
+				return Path.Combine(contentDirectory, @".vtstorage\index.bin");
 			}
 
-			if ( string.IsNullOrWhiteSpace(assetPath) ) {
+			if ( string.IsNullOrWhiteSpace(assetPath) ) 
+			{
 				throw new ArgumentException("Asset path can not be null, empty or whitespace.");
 			}
 

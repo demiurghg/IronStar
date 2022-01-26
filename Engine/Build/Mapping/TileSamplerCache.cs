@@ -37,7 +37,7 @@ namespace Fusion.Build.Mapping {
 
 			if (!cache.TryGetValue(address, out tile)) {
 				
-				var path	=	address.GetFileNameWithoutExtension(".tile");
+				var path	=	address.GetFileNameWithoutExtension();
 
 				if (storage.FileExists(path)) {
 					tile	=	new VTTile(address);

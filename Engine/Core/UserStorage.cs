@@ -19,15 +19,15 @@ using Fusion.Core.IniParser;
 using Fusion.Engine.Common;
 using Fusion.Engine.Server;
 
-namespace Fusion.Core {
-
+namespace Fusion.Core 
+{
 	/// <summary>
 	/// User storage refers to the read-write storage supported by the game platform 
 	/// for saving information from the game at runtime. The data can be associated 
 	/// with a particular player's profile, or available to all players.
 	/// </summary>
-	public class UserStorage : DirectoryStorage {
-
+	public class UserStorage : DirectoryStorage 
+	{
 		/// <summary>
 		/// 
 		/// </summary>

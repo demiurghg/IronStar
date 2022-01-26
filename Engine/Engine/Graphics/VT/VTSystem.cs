@@ -196,7 +196,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -298,7 +297,7 @@ namespace Fusion.Engine.Graphics
 				tileLoader?.StopAndWait();
 
 				tileCache			=	new VTTileCache( physPages, physicalSize );
-				tileLoader			=	new VTTileLoader( this, Game.Content.VTStorage, tileCache ); 
+				tileLoader			=	new VTTileLoader( this, tileCache ); 
 
 				PageScaleRCP		=	VTConfig.PageSize / (float)physSize;
 				

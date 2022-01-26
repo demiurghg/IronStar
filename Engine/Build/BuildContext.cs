@@ -12,6 +12,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
 using Microsoft.Win32;
+using Fusion.Engine.Graphics;
 
 namespace Fusion.Build 
 {
@@ -85,7 +86,7 @@ namespace Fusion.Build
 		public IStorage GetVTStorage ()
 		{
 			var path = Path.Combine( targetDir, ".vtstorage" );
-			return new DirectoryStorage(path);
+			return new VTStorage( path, false );
 		}
 
 		enum ResolveResult

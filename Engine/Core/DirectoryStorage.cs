@@ -26,7 +26,8 @@ namespace Fusion.Core {
 	/// for saving information from the game at runtime. The data can be associated 
 	/// with a particular player's profile, or available to all players.
 	/// </summary>
-	public class DirectoryStorage : DisposableBase, IStorage  {
+	public class DirectoryStorage : DisposableBase, IStorage
+	{
 
 		DirectoryInfo storageDir;
 

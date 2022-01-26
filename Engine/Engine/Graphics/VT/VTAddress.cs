@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Mathematics;
+using System.Globalization;
 
 namespace Fusion.Engine.Graphics {
 
@@ -116,6 +118,23 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public static bool TryParse(string s, out VTAddress address)
+		{
+			uint rawAddr = 0;
+			
+			if (uint.TryParse(s, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out rawAddr))
+			{
+				address = new VTAddress(rawAddr);
+				return true;
+			}
+			else
+			{
+				address	= VTAddress.CreateBadAddress(0);
+				return false;
+			}
+		}
+
+
 		private bool Equals(ref VTAddress other)
 		{
 			return	rawAddr==other.rawAddr;
@@ -144,13 +163,24 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public uint GetClusterIndex()
+		{
+			unchecked
+			{
+				uint x =	(uint)(( PageX << MipLevel ) / 32 ) & 0xFFFF;
+				uint y =	(uint)(( PageY << MipLevel ) / 32 ) & 0xFFFF;
+				return (y << 16) | x;
+			}
+		}
+
+
 		public UInt32 ComputeUIntAddress () { return unchecked((uint)rawAddr); }
 
 		public Int32 ComputeIntAddress () {	return unchecked((int)rawAddr);	}
 
-		public string GetFileNameWithoutExtension (string postfix)
+		public string GetFileNameWithoutExtension ()
 		{
-			return ComputeUIntAddress().ToString("X8") + postfix;
+			return ComputeUIntAddress().ToString("X8");
 		}
 	}
 

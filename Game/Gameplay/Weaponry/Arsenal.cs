@@ -72,7 +72,7 @@ namespace IronStar.Gameplay.Weaponry
 								.Cooldown	( 750 )
 								.Attack		( 9, IMPULSE_MEDIUM/10, "shotgunMuzzle" )
 								.Spread		( 4.5f )
-								.Beam		(  8, null, "shotgunHit" )
+								.Beam		(  8, "*trail_bullet", "shotgunHit" )
 								.Noise		( NOISE_MEDIUM )
 								;
 

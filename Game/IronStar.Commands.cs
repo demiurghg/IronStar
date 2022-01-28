@@ -158,8 +158,6 @@ namespace IronStar {
 
 			public object Execute ()
 			{
-				game.Invoker.ExecuteStringImmediate("vtrestart /suspend");
-
 				if (Force) 
 				{
 					builder.RebuildAll();

@@ -15,8 +15,6 @@ namespace Fusion.Engine.Graphics
 {
 	public static class VTConfig 
 	{
-		public const bool DebugOutput			=	false;
-
 		public const int PageSize				=	128;
 		public const int PageBorderWidth		=	4;
 		public const int PageSizeBordered		=	PageSize + PageBorderWidth * 2;

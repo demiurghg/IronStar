@@ -83,7 +83,7 @@ namespace Fusion.Build
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public IStorage GetVTStorage ()
+		public VTStorage GetVTStorage ()
 		{
 			var path = Path.Combine( targetDir, ".vtstorage" );
 			return new VTStorage( path, false );

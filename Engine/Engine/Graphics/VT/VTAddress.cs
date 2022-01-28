@@ -178,7 +178,7 @@ namespace Fusion.Engine.Graphics {
 
 		public Int32 ComputeIntAddress () {	return unchecked((int)rawAddr);	}
 
-		public string GetFileNameWithoutExtension ()
+		public string GetFileName()
 		{
 			return ComputeUIntAddress().ToString("X8");
 		}

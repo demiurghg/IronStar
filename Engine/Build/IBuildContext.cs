@@ -8,12 +8,13 @@ using Fusion.Core;
 using Fusion.Core.Content;
 using Microsoft.Win32;
 using System.IO;
+using Fusion.Engine.Graphics;
 
 namespace Fusion.Build 
 {
 	public interface IBuildContext 
 	{
-		IStorage	GetVTStorage ();
+		VTStorage	GetVTStorage ();
 
 		IEnumerable<string>	ContentDirectories { get; }
 

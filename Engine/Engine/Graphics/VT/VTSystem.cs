@@ -18,6 +18,7 @@ using Fusion.Engine.Graphics.Ubershaders;
 using System.ComponentModel;
 using Fusion.Widgets.Advanced;
 using Fusion.Core.Utils;
+using Fusion.Build;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -213,6 +214,8 @@ namespace Fusion.Engine.Graphics
 			feedbackBufferPool	=	new FixedObjectPool<VTAddress[]>( buffers );
 
 			MaxPPF	=	16;
+
+			Game.GetService<Builder>().Building += (s,e) => Suspend();
 		}
 
 

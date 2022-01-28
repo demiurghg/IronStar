@@ -178,7 +178,7 @@ namespace Fusion.Build.Mapping
 		/// <param name="iniData"></param>
 		/// <param name="baseDirectory"></param>
 		/// <returns></returns>
-		VTTextureTable CreateVTTextureTable ( IEnumerable<string> materialFilePaths, IBuildContext context, IStorage tileStorage )
+		VTTextureTable CreateVTTextureTable ( IEnumerable<string> materialFilePaths, IBuildContext context, VTStorage tileStorage )
 		{
 			var texTable	=	new VTTextureTable();
 
@@ -228,7 +228,9 @@ namespace Fusion.Build.Mapping
 				tex.TexelOffsetY	=	addr.Y * VTConfig.PageSize;
 				tex.TilesDirty		=	true;
 
-				Log.Message("...add: {0} : {1}x{2} : tile[{3},{4}]", tex.Name, tex.Width, tex.Height, addr.X, addr.Y );
+				var cluster = new VTAddress(addr.X, addr.Y, 0).GetClusterIndex();
+
+				Log.Message("...add: {0} : {1}x{2} : tile[{3},{4},{5:X8}]", tex.Name, tex.Width, tex.Height, addr.X, addr.Y, cluster );
 			}
 		}
 
@@ -292,7 +294,7 @@ namespace Fusion.Build.Mapping
 		/// Split textures on tiles.
 		/// </summary>
 		/// <param name="textures"></param>
-		void GenerateMostDetailedPages ( ICollection<VTTexture> textures, IBuildContext context, VTTextureTable pageTable, IStorage mapStorage )
+		void GenerateMostDetailedPages ( ICollection<VTTexture> textures, IBuildContext context, VTTextureTable pageTable, VTStorage mapStorage )
 		{
 			int totalCount = textures.Count;
 			int counter = 1;
@@ -314,13 +316,15 @@ namespace Fusion.Build.Mapping
 
 		int RoundUp2( int value, int mip )
 		{
-			return MathUtil.IntDivUp( value, 2 << mip ) * 2;
+			return MathUtil.IntDivUp( value, 1 << mip );
+			//return MathUtil.IntDivUp( value, 2 << mip ) * 2;
 		}
 
 
 		int RoundDown2( int value, int mip )
 		{
-			return (value >> mip) & 0x7FFFFFFE;
+			return value >> mip;
+			//return (value >> mip) & 0x7FFFFFFE;
 		}
 
 
@@ -331,7 +335,7 @@ namespace Fusion.Build.Mapping
 		/// <param name="pageTable"></param>
 		/// <param name="sourceMipLevel"></param>
 		/// <param name="mapStorage"></param>
-		void GenerateMipLevels( IBuildContext buildContext, VTTextureTable pageTable, int sourceMipLevel, IStorage mapStorage )
+		void GenerateMipLevels( IBuildContext buildContext, VTTextureTable pageTable, int sourceMipLevel, VTStorage mapStorage )
 		{
 			if ( sourceMipLevel>=VTConfig.MipCount ) {
 				throw new ArgumentOutOfRangeException( "mipLevel" );
@@ -348,7 +352,7 @@ namespace Fusion.Build.Mapping
 					continue;
 				}
 
-				int startX	= RoundDown2( vttex.AddressX, sourceMipLevel );
+				/*int startX	= RoundDown2( vttex.AddressX, sourceMipLevel );
 				int startY	= RoundDown2( vttex.AddressY, sourceMipLevel );
 
 				int wTiles  = (vttex.Width / VTConfig.PageSize);
@@ -361,12 +365,25 @@ namespace Fusion.Build.Mapping
 				{
 					for ( int pageY = startY; pageY < endExY; pageY+=2 ) 
 					{
-						var address			=	new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );
+						var address			=	new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );*/
+
+				int wTiles		=	(vttex.Width / VTConfig.PageSize);
+				int hTiles		=	(vttex.Height / VTConfig.PageSize);
+				int startPageX	=	vttex.AddressX >> (sourceMipLevel+1);
+				int startPageY	=	vttex.AddressY >> (sourceMipLevel+1);
+				int endPageX	=	MathUtil.IntDivUp( vttex.AddressX + wTiles, 1 << (sourceMipLevel+1));
+				int endPageY	=	MathUtil.IntDivUp( vttex.AddressY + hTiles, 1 << (sourceMipLevel+1));
+
+				for ( int pageX = startPageX; pageX < endPageX; pageX++)
+				{
+					for ( int pageY = startPageY; pageY < endPageY; pageY++)
+					{
+						var address			=	new VTAddress( pageX, pageY, sourceMipLevel+1 );
 
 						var tile			=	new VTTile(address);
 
-						var offsetX			=   (pageX) * VTConfig.PageSize;
-						var offsetY			=   (pageY) * VTConfig.PageSize;
+						var offsetX			=   (pageX * 2) * VTConfig.PageSize;
+						var offsetY			=   (pageY * 2) * VTConfig.PageSize;
 						var border			=   VTConfig.PageBorderWidth;
 
 						var colorValue		=   Color.Zero;
@@ -426,7 +443,7 @@ namespace Fusion.Build.Mapping
 		/// <summary>
 		/// Generate one big texture where all textures are presented.
 		/// </summary>
-		void GenerateFallbackImage ( IBuildContext buildContext, VTTextureTable pageTable, int sourceMipLevel, IStorage storage )
+		void GenerateFallbackImage ( IBuildContext buildContext, VTTextureTable pageTable, int sourceMipLevel, VTStorage storage )
 		{
 			int	pageSize		=	VTConfig.PageSize;
 			int	numPages		=	VTConfig.VirtualPageCount >> sourceMipLevel;
@@ -434,25 +451,26 @@ namespace Fusion.Build.Mapping
 
 			var fallbackImage	=	new Image<Color>( fallbackSize, fallbackSize, Color.Black );
 
-			for ( int pageX=0; pageX<numPages; pageX++) {
-				for ( int pageY=0; pageY<numPages; pageY++) {
-
-					var addr	=	new VTAddress( pageX, pageY, sourceMipLevel );
+			for ( int pageX=0; pageX<numPages; pageX++) 
+			{
+				for ( int pageY=0; pageY<numPages; pageY++) 
+				{
+					throw new NotImplementedException();
+					/*var addr	=	new VTAddress( pageX, pageY, sourceMipLevel );
 					var image	=	pageTable.LoadPage( addr, storage );
 
-					for ( int x=0; x<pageSize; x++) {
-						for ( int y=0; y<pageSize; y++) {
-
+					for ( int x=0; x<pageSize; x++) 
+					{
+						for ( int y=0; y<pageSize; y++) 
+						{
 							int u = pageX * pageSize + x;
 							int v = pageY * pageSize + y;
 
 							fallbackImage.SetPixel( u, v, image.GetPixel( x, y ) );
 						}
-					}
+					}*/
 				}
 			}
-
-			ImageLib.SaveTga( fallbackImage, storage.OpenWrite("fallback.tga") );
 		}
 
 

@@ -237,7 +237,7 @@ namespace Fusion.Build.Mapping {
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="pageTable"></param>
-		public void SplitIntoPages ( IBuildContext context, VTTextureTable pageTable, IStorage storage )
+		public void SplitIntoPages ( IBuildContext context, VTTextureTable pageTable, VTStorage storage )
 		{
 			var pageSize		=	VTConfig.PageSize;
 			var pageSizeBorder	=	VTConfig.PageSizeBordered;

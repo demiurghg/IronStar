@@ -251,17 +251,16 @@ namespace Fusion.Engine.Graphics
 						address = result.Value;
 					}
 
-					var fileName = address.GetFileNameWithoutExtension();
-
 					try 
 					{
 						using ( new CVEvent( "Reading Tile" ) ) 
 						{
 							var tile = VTTilePool.Alloc(address);
 
-							tile.Read( storage.OpenFile( fileName, FileMode.Open, FileAccess.Read ) );
-
-							loadedTiles.Enqueue( tile );
+							if (storage.TryLoadTile(address, tile))
+							{
+								loadedTiles.Enqueue( tile );
+							}
 						}
 					} 
 					catch ( OutOfMemoryException oome ) 

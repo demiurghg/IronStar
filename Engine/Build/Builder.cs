@@ -21,7 +21,6 @@ namespace Fusion.Build
 {
 	public class Builder 
 	{
-
 		readonly List<string> ignorePatterns = new List<string>();
 		readonly List<string> inputDirs = new List<string>();
 		readonly List<string> toolsDirs = new List<string>();
@@ -31,6 +30,9 @@ namespace Fusion.Build
 		string targetDirectory;
 
 		DirectoryInfo targetDirInfo;
+
+		public event EventHandler	Building;
+
 
 		/// <summary>
 		/// Creates instance of Builder
@@ -319,6 +321,8 @@ namespace Fusion.Build
 		/// <returns></returns>
 		private BuildResult BuildInternal( bool rebuild, string pattern )
 		{
+			Building?.Invoke(this, EventArgs.Empty);
+
 			Log.Message("");
 			Log.Message("-------- Build started --------" );
 

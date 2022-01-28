@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Build.Mapping;
 using Fusion.Core;
+using BEPUutilities.Threading;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -15,14 +16,14 @@ namespace Fusion.Engine.Graphics
 	{
 		readonly object lockObj = new object();
 		readonly string path;
-		readonly ZipArchiveMode mode;
 		readonly Dictionary<uint,ZipArchive> clusters = new Dictionary<uint, ZipArchive>();
+		readonly bool parallelDispose;
 
 
-		public VTStorage( string path, bool read )
+		public VTStorage( string path, bool parallelDispose )
 		{
-			this.path	=	path;
-			this.mode	=	read ? ZipArchiveMode.Read : ZipArchiveMode.Update;
+			this.path				=	path;
+			this.parallelDispose	=	parallelDispose;
 		}
 
 
@@ -30,12 +31,27 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing)
 			{
-				foreach ( var pair in clusters )
+				if (parallelDispose)
 				{
-					Log.Message("Unloading VT cluster: {0:X8}...", pair.Key);
-					pair.Value?.Dispose();
+					Parallel.ForEach( 
+						clusters, 
+						new ParallelOptions { MaxDegreeOfParallelism = 16 },
+						pair => 
+						{
+							Log.Message("Unloading VT cluster: {0:X8}...", pair.Key);
+							pair.Value?.Dispose();
+						}
+					);
 				}
-				clusters.Clear();
+				else
+				{
+					foreach ( var pair in clusters )
+					{
+						Log.Message("Unloading VT cluster: {0:X8}...", pair.Key);
+						pair.Value?.Dispose();
+					}
+					clusters.Clear();
+				}
 			}
 			base.Dispose( disposing );
 		}

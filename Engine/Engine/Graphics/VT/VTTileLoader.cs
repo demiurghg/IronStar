@@ -216,7 +216,7 @@ namespace Fusion.Engine.Graphics
 
 		VTStorage LoadStorage()
 		{
-			return new VTStorage(@"Content\.vtstorage", true);
+			return new VTStorage(@"Content\.vtstorage", false);
 		}
 
 

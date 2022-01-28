@@ -297,20 +297,36 @@ namespace Fusion.Build.Mapping
 		void GenerateMostDetailedPages ( ICollection<VTTexture> textures, IBuildContext context, VTTextureTable pageTable, VTStorage mapStorage )
 		{
 			int totalCount = textures.Count;
-			int counter = 1;
+			int counter = 0;
 
-			//foreach (var texture in textures)
-			Parallel.ForEach( textures, texture => 
+			int dirtyTexCount	=	textures.Count( t => t.TilesDirty );
+
+			int outerThreads = 1;
+			int innerThreads = 1;
+
+			if (dirtyTexCount > 4)
+			{
+				outerThreads	=	4;
+				innerThreads	=	2;
+			}
+			else
+			{
+				outerThreads	=	2;
+				innerThreads	=	4;
+			}
+
+			Log.Message("Parallel split : {0} / {1}", outerThreads, innerThreads );
+			
+			var pOptions = new ParallelOptions { MaxDegreeOfParallelism = outerThreads };
+
+			Parallel.ForEach( textures, pOptions, texture =>
 			{
 				if (texture.TilesDirty) 
 				{
-					int counterValue = Interlocked.Increment( ref counter );
-
-					Log.Message("...{0}/{1} - {2}", counterValue, totalCount, texture.Name );
-					texture.SplitIntoPages( context, pageTable, mapStorage );
+					Log.Message("...{0}/{1} - {2}", counter++, totalCount, texture.Name );
+					texture.SplitIntoPages( context, pageTable, mapStorage, innerThreads );
 				}
-			}
-			);
+			});
 		}
 
 
@@ -352,21 +368,6 @@ namespace Fusion.Build.Mapping
 					continue;
 				}
 
-				/*int startX	= RoundDown2( vttex.AddressX, sourceMipLevel );
-				int startY	= RoundDown2( vttex.AddressY, sourceMipLevel );
-
-				int wTiles  = (vttex.Width / VTConfig.PageSize);
-				int hTiles  = (vttex.Height / VTConfig.PageSize);
-
-				int endExX	= RoundUp2( vttex.AddressX + wTiles, sourceMipLevel );
-				int endExY	= RoundUp2( vttex.AddressY + hTiles, sourceMipLevel );
-
-				for ( int pageX = startX; pageX < endExX; pageX+=2 ) 
-				{
-					for ( int pageY = startY; pageY < endExY; pageY+=2 ) 
-					{
-						var address			=	new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );*/
-
 				int wTiles		=	(vttex.Width / VTConfig.PageSize);
 				int hTiles		=	(vttex.Height / VTConfig.PageSize);
 				int startPageX	=	vttex.AddressX >> (sourceMipLevel+1);
@@ -374,7 +375,8 @@ namespace Fusion.Build.Mapping
 				int endPageX	=	MathUtil.IntDivUp( vttex.AddressX + wTiles, 1 << (sourceMipLevel+1));
 				int endPageY	=	MathUtil.IntDivUp( vttex.AddressY + hTiles, 1 << (sourceMipLevel+1));
 
-				for ( int pageX = startPageX; pageX < endPageX; pageX++)
+				//for ( int pageX = startPageX; pageX < endPageX; pageX++)
+				Parallel.For( startPageX, endPageX, buildContext.ParallelOptions, (pageX) =>
 				{
 					for ( int pageY = startPageY; pageY < endPageY; pageY++)
 					{
@@ -407,7 +409,7 @@ namespace Fusion.Build.Mapping
 
 						pageTable.SaveTile( address, mapStorage, tile );
 					}
-				}
+				});
 			}
 		}
 

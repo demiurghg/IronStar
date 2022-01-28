@@ -11,18 +11,19 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
 using Fusion.Core;
 
-namespace Fusion.Build.Mapping {
-
-	class TileSamplerCache {
-
+namespace Fusion.Build.Mapping 
+{
+	class TileSamplerCache 
+	{
 		LRUCache<VTAddress, VTTile> cache;
 
 		readonly VTStorage storage;
+		readonly object lockobj = new object();
 			
 		public TileSamplerCache ( VTStorage mapStorage )
 		{
 			this.storage	=	mapStorage;
-			this.cache		=	new LRUCache<VTAddress,VTTile>(128);
+			this.cache		=	new LRUCache<VTAddress,VTTile>(128*8);
 		}
 
 
@@ -35,17 +36,20 @@ namespace Fusion.Build.Mapping {
 		{
 			VTTile tile;
 
-			if (!cache.TryGetValue(address, out tile)) 
+			lock (lockobj)
 			{
-				var path	=	address.GetFileName();
-					tile	=	new VTTile(address);
-
-				if (!storage.TryLoadTile(address, tile)) 
+				if (!cache.TryGetValue(address, out tile)) 
 				{
-					tile.Clear( Color.Black );
-				}
+					var path	=	address.GetFileName();
+						tile	=	new VTTile(address);
 
-				cache.Add( address, tile );
+					if (!storage.TryLoadTile(address, tile)) 
+					{
+						tile.Clear( Color.Black );
+					}
+
+					cache.Add( address, tile );
+				}
 			}
 			
 			return tile;

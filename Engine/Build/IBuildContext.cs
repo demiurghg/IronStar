@@ -9,12 +9,15 @@ using Fusion.Core.Content;
 using Microsoft.Win32;
 using System.IO;
 using Fusion.Engine.Graphics;
+using BEPUutilities.Threading;
 
 namespace Fusion.Build 
 {
 	public interface IBuildContext 
 	{
 		VTStorage	GetVTStorage ();
+
+		ParallelOptions	ParallelOptions { get; }
 
 		IEnumerable<string>	ContentDirectories { get; }
 

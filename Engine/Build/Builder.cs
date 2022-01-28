@@ -328,30 +328,31 @@ namespace Fusion.Build
 
 			var result = new BuildResult();
 
-			IBuildContext context = new BuildContext( targetDirectory, inputDirs, toolsDirs, tempDirectory );
-
-			Log.Message("Gathering files...");
-			var assetSources = GatherAssetFiles( context, ref result );
-
-			Log.Message("Cleaning stale content up...");
-			CleanStaleContent( targetDirInfo.FullName, assetSources );			
-			Log.Message("");
-
-			Log.Message("Building assets...");
-			foreach ( var assetFile in assetSources ) 
+			using ( var context = new BuildContext( targetDirectory, inputDirs, toolsDirs, tempDirectory ) )
 			{
-				BuildAsset( context, assetFile, rebuild, pattern, ref result );
+				Log.Message( "Gathering files..." );
+				var assetSources = GatherAssetFiles( context, ref result );
+
+				Log.Message("Cleaning stale content up...");
+				CleanStaleContent( targetDirInfo.FullName, assetSources );			
+				Log.Message("");
+
+				Log.Message("Building assets...");
+				foreach ( var assetFile in assetSources ) 
+				{
+					BuildAsset( context, assetFile, rebuild, pattern, ref result );
+				}
+
+				Log.Message("-------- {5} total, {0} succeeded, {1} failed, {2} up-to-date, {3} ignored, {4} skipped --------", 
+					result.Succeded,
+					result.Failed,
+					result.UpToDate,
+					result.Ignored,
+					result.Skipped,
+					result.Total );
+
+				Log.Message("");
 			}
-
-			Log.Message("-------- {5} total, {0} succeeded, {1} failed, {2} up-to-date, {3} ignored, {4} skipped --------", 
-				result.Succeded,
-				result.Failed,
-				result.UpToDate,
-				result.Ignored,
-				result.Skipped,
-				result.Total );
-
-			Log.Message("");
 
 			return result;
 		}

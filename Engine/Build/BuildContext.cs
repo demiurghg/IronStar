@@ -13,10 +13,11 @@ using Fusion.Core;
 using Fusion.Core.Content;
 using Microsoft.Win32;
 using Fusion.Engine.Graphics;
+using BEPUutilities.Threading;
 
 namespace Fusion.Build 
 {
-	public class BuildContext : IBuildContext 
+	public class BuildContext : DisposableBase, IBuildContext
 	{
 		readonly List<string> contentDirs = new List<string>();
 		readonly List<string> toolsDirs = new List<string>();
@@ -24,6 +25,10 @@ namespace Fusion.Build
 		string targetDir;
 
 		public IEnumerable<string> ContentDirectories { get { return contentDirs; } }
+
+		readonly ParallelOptions parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 8 };
+		public ParallelOptions ParallelOptions { get { return parallelOptions; } }
+
 
 		/// <summary>
 		/// 
@@ -70,6 +75,16 @@ namespace Fusion.Build
 		}
 
 
+
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+			}
+			base.Dispose( disposing );
+		}
+
+
 		public string FullOutputDirectory 
 		{
 			get 
@@ -86,7 +101,7 @@ namespace Fusion.Build
 		public VTStorage GetVTStorage ()
 		{
 			var path = Path.Combine( targetDir, ".vtstorage" );
-			return new VTStorage( path, false );
+			return new VTStorage( path, true );
 		}
 
 		enum ResolveResult

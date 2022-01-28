@@ -237,7 +237,7 @@ namespace Fusion.Build.Mapping {
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="pageTable"></param>
-		public void SplitIntoPages ( IBuildContext context, VTTextureTable pageTable, VTStorage storage )
+		public void SplitIntoPages ( IBuildContext context, VTTextureTable pageTable, VTStorage storage, int threadCount )
 		{
 			var pageSize		=	VTConfig.PageSize;
 			var pageSizeBorder	=	VTConfig.PageSizeBordered;
@@ -255,17 +255,21 @@ namespace Fusion.Build.Mapping {
 
 			var pageCountX	=	colorMap.Width / pageSize;
 			var pageCountY	=	colorMap.Height / pageSize;
+			var pOptions	=	new ParallelOptions { MaxDegreeOfParallelism = threadCount };
 
-			for (int x=0; x<pageCountX; x++) {
-				for (int y=0; y<pageCountY; y++) {
-
+			Parallel.For( 0, pageCountY, pOptions, y =>
+			//for (int y=0; y<pageCountY; y++) 
+			{
+				for (int x=0; x<pageCountX; x++) 
+				{
 					var pageC	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
 					var pageN	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
 					var pageS	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
 					
-					for ( int i=0; i<pageSizeBorder; i++) {
-						for ( int j=0; j<pageSizeBorder; j++) {
-
+					for ( int i=0; i<pageSizeBorder; i++) 
+					{
+						for ( int j=0; j<pageSizeBorder; j++) 
+						{
 							int srcX		=	(x)*pageSize + i - border;
 							int srcY		=	(y)*pageSize + j - border;
 
@@ -294,7 +298,7 @@ namespace Fusion.Build.Mapping {
 					var tile	=	new VTTile( address, pageC, pageN, pageS );
 					pageTable.SaveTile( address, storage, tile );
 				}
-			}
+			});
 		}
 
 

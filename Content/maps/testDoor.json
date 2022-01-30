@@ -1455,6 +1455,8 @@
     "UseDilate": true,
     "FilterFalloff": 0.2,
     "FilterWeight": 0.5,
-    "WhiteDiffuse": false
+    "AlphaWeight": 20.0,
+    "WhiteDiffuse": false,
+    "DilateFirst": false
   }
 }

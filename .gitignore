@@ -15,6 +15,9 @@ _outsource
 Content/maps/lightmaps/
 Content/maps/lightprobes/
 
+# Autosaves
+*_autosave*.spp
+
 # FMOD
 .cache/
 .user/
@@ -275,7 +278,6 @@ paket-files/
 .idea/
 *.sln.iml
 *.bak
-*.spp
 *.assbin
 *.irrcache
 *.irrmap

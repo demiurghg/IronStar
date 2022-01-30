@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\doorLargeVertical_doorLargeVerticalMaterial_BaseColor.png
+NormalMap = textures\doorLargeVertical_doorLargeVerticalMaterial_Normal.png
+Metallic  = textures\doorLargeVertical_doorLargeVerticalMaterial_Metallic.png
+Roughness = textures\doorLargeVertical_doorLargeVerticalMaterial_Roughness.png
+Emission  = textures\doorLargeVertical_doorLargeVerticalMaterial_Emissive.png
+Occlusion = textures\doorLargeVertical_doorLargeVerticalMaterial_Occlusion.png

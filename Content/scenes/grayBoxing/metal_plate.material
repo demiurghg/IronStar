@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\TexturesCom_MetalSheet_Aged_4K_albedo.jpg
+NormalMap = 
+Metallic  = textures\TexturesCom_MetalSheet_Aged_4K_metallic.jpg 
+Roughness = textures\TexturesCom_MetalSheet_Aged_4K_roughness.jpg 
+Emission  = 
+Occlusion = 

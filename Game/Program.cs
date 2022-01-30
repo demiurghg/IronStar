@@ -86,6 +86,7 @@ namespace IronStar
 				.Ignore("*.ma"          )
 				.Ignore("*.psd"         )
 				.Ignore("*_highPoly.fbx")
+				.Ignore("*HighPoly.fbx" )
 				.Ignore("*_lowPoly.fbx" )
 				.Ignore("*_highpoly.fbx")
 				.Ignore("*_lowpoly.fbx" )

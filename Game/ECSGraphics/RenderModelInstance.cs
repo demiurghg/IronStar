@@ -64,7 +64,7 @@ namespace IronStar.SFX2
 							node		=> rm.AcceptVisibleNode( node )
 							);
 
-			preTransform	=	rm.transform;
+			preTransform	=	rm.Transform;
 
 			if (fpvEnabled)
 			{
@@ -97,13 +97,23 @@ namespace IronStar.SFX2
 		{
 			var ri = new RenderInstance( rs, scene, mesh );
 
-			var group				=	rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
+			var group	=	rm.IsStatic ? InstanceGroup.Static : InstanceGroup.Kinematic;
+
+			if (rm.AcceptLightmapNode(node))
+			{
+				group	|=	InstanceGroup.Lightmap;
+			}
+
+			if (rm.AcceptLightmapProxyNode(node))
+			{
+				group	|=	InstanceGroup.LightmapProxy;
+			}
 
 			ri.NoShadow				=	rm.NoShadow;
 			ri.Group				=	group;
-			ri.Color				=	rm.color.ToColor4() * MathUtil.Exp2(rm.intensity);
-			ri.LightMapRegionName	=	rm.lightmapName;// + "##" + scene.GetFullNodePath(node);
-			ri.LightMapSize			=	rm.lightmapSize;
+			ri.Color				=	rm.Color.ToColor4() * MathUtil.Exp2(rm.Intensity);
+			ri.LightMapRegionName	=	rm.LightmapName;
+			ri.LightMapSize			=	rm.LightmapSize;
 
 			return ri;
 		}

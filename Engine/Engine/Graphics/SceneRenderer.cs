@@ -333,7 +333,7 @@ namespace Fusion.Engine.Graphics
 
 			if ( stageFlag==SurfaceFlags.FORWARD || stageFlag==SurfaceFlags.RADIANCE ) 
 			{
-				if ( instance.Group==InstanceGroup.Static ) 
+				if ( instance.Group.HasFlag(InstanceGroup.Lightmap) ) 
 				{
 					flag |= SurfaceFlags.IRRADIANCE_MAP;
 				} 
@@ -476,26 +476,36 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		bool Accept( RenderInstance instance, InstanceGroup include )
+		{
+			#warning HACK, USE MORE SMART APPROACH + OPTION TO VIEW LM PROXIES
+			if (instance.Group.HasFlag(InstanceGroup.LightmapProxy) && !instance.Group.HasFlag(InstanceGroup.Lightmap))
+			{
+				return false;
+			}
+			return ( 0 != (instance.Group & include) );
+		}
 
-		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
+
+		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup include )
 		{	
 			var context		=	new ForwardSolidContext( camera, frame );
-			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => Accept(inst, include) );
 
-			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
+			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, include );
 		}
 
 
-		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
+		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup include )
 		{		
 			var context		=	new ForwardTransparentContext( camera, frame );
-			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => Accept(inst, include) );
 
-			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
+			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, include );
 		}
 
 
-		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
+		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup include )
 		{		
 			if (RenderSystem.SkipZPass) 
 			{
@@ -503,46 +513,46 @@ namespace Fusion.Engine.Graphics
 			}
 
 			var context		=	new ForwardZPassContext( camera, frame );
-			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => Accept(inst, include) );
 
 			rs.Device.ResetStates();
 
-			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances, mask );
+			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances, include );
 		}
 		
 
-		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask, bool csm )
+		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup include, bool csm )
 		{
 			if (RenderSystem.SkipShadows)
 			{
 				return;
 			}
 
-			var instances	=	renderList.Where( inst => ((inst.Group & mask) != 0) && !inst.NoShadow );
+			var instances	=	renderList.Where( inst => Accept(inst, include) && !inst.NoShadow );
 
 			var flags = SurfaceFlags.SHADOW | (csm ? SurfaceFlags.CSM : SurfaceFlags.SPOT );
 
-			RenderGeneric("ShadowMap", null, StereoEye.Mono, flags, shadowContext, instances, mask );
+			RenderGeneric("ShadowMap", null, StereoEye.Mono, flags, shadowContext, instances, include );
 		}
 
 
-		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
+		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, InstanceGroup include )
 		{
-			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	rw.Instances.Where( inst => Accept(inst, include) );
 
 			rs.Device.ResetStates();
 
-			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, mask );
+			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, include );
 		}
 
 
-		internal void RenderLightProbeRadiance ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
+		internal void RenderLightProbeRadiance ( LightProbeContext context, RenderWorld rw, InstanceGroup include )
 		{
-			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	rw.Instances.Where( inst => Accept(inst, include) );
 
 			rs.Device.ResetStates();
 
-			RenderGeneric("LightProbeRadiance", null, StereoEye.Mono, SurfaceFlags.RADIANCE, context, instances, mask );
+			RenderGeneric("LightProbeRadiance", null, StereoEye.Mono, SurfaceFlags.RADIANCE, context, instances, include );
 		}
 	}
 }

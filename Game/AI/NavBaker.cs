@@ -174,9 +174,9 @@ namespace IronStar.AI
 				var model			=	entity.GetComponent<RenderModel>();
 				var staticCollision	=	entity.GetComponent<StaticCollisionComponent>();
 
-				if (!string.IsNullOrWhiteSpace( model.scenePath ) && staticCollision.Collidable) 
+				if (!string.IsNullOrWhiteSpace( model.ScenePath ) && staticCollision.Collidable) 
 				{
-					var scene			=	gs.Content.Load( model.scenePath, Scene.Empty );
+					var scene			=	gs.Content.Load( model.ScenePath, Scene.Empty );
 					var nodeCount		=	scene.Nodes.Count;
 					var worldMatricies	=	new Matrix[nodeCount];
 

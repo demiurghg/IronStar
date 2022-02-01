@@ -325,7 +325,8 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach ( var instance in Instances ) 
 				{
-					if (instance.Group==InstanceGroup.Static) 
+					var group = instance.Group;
+					if (group.HasFlag(InstanceGroup.Lightmap) || group.HasFlag(InstanceGroup.LightmapProxy)) 
 					{
 						instance.LightMapScaleOffset = LightMap.GetRegionMadST( instance.LightMapRegionName );
 					}
@@ -483,7 +484,7 @@ namespace Fusion.Engine.Graphics
 					rs.Sky.RenderSkyCube( gameTime, Camera );
 
 					//	Z-pass without weapon :
-					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.WorldInstances );
 
 					//	Ambient occlusion :
 					rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
@@ -493,7 +494,7 @@ namespace Fusion.Engine.Graphics
 
 					//------------------------------------------------------------
 					//	Forward+
-					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, rlMainView, InstanceGroup.WorldInstances );
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, WeaponCamera	, viewHdrFrame, rlMainView, InstanceGroup.Weapon );
 
 					rs.LightMapDebugger.Render( Camera, viewHdrFrame );
@@ -522,7 +523,7 @@ namespace Fusion.Engine.Graphics
 						}
 					}
 
-					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.All );
+					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.WorldInstances );
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
 
 					rs.GuiRenderer.DrawGUIs( gameTime, Camera, viewHdrFrame );

@@ -41,7 +41,7 @@ namespace IronStar.Environment
 
 			BoundingBox	bbox	=	ComputeDoorBounds( Door );
 
-			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, Intensity, RMFlags.None ) { lightmapName = NodeName + ":Door", lightmapSize = new Size2(16,16) } );
+			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, Intensity, RMFlags.None ) { LightmapName = NodeName + ":Door", LightmapSize = new Size2(16,16) } );
 			e.AddComponent( new KinematicComponent( KinematicState.StoppedInitial) );
 			e.AddComponent( new BoneComponent() );
 
@@ -82,8 +82,8 @@ namespace IronStar.Environment
 			var attachment	=	new AttachmentComponent(rootEntity);
 			var collision	=	new StaticCollisionComponent() { Collidable = true, Walkable = true };
 
-			renderModel.lightmapName	=	NodeName + ":DoorFrame";
-			renderModel.lightmapSize	=	new Size2(32,32);
+			renderModel.LightmapName	=	NodeName + ":DoorFrame";
+			renderModel.LightmapSize	=	new Size2(32,32);
 
 			rootEntity.gs.Spawn( new EntityFactory( Position, Rotation, Scaling, renderModel, attachment, collision ) );
 		}

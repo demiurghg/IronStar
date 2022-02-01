@@ -218,7 +218,7 @@ namespace Fusion.Engine.Graphics
 
 			AllocateShadows( renderList );
 
-			RenderShadowsInternal( gameTime, rw, renderList, InstanceGroup.NotWeapon );
+			RenderShadowsInternal( gameTime, rw, renderList, InstanceGroup.WorldInstances );
 		}
 
 

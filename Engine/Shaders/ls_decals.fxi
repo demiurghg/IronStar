@@ -34,7 +34,7 @@ SURFACE ApplyDecal( GEOMETRY geometry, SURFACE surface, CAMERA camera, DECAL dec
 	float	falloff			=	saturate( ( 1 - localZ ) / ( 1 - falloffFactor ) );
 			falloff			*=	saturate( 3 * dot( normalize(decal.BasisZ.xyz), geometry.normal ) - 1 );
 	
-	if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && group==decal.AssignmentGroup ) 
+	if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && (group & decal.AssignmentGroup) ) 
 	{
 		float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
 	

@@ -13,15 +13,15 @@ using Fusion.Engine.Graphics.Scenes;
 
 namespace Fusion.Engine.Graphics 
 {
+	[Flags]
 	public enum InstanceGroup : uint 
 	{
-		Static		=	0x00000001,
-		Kinematic	=	0x00000002,
-		Dynamic		=	0x00000004,
-		Character	=	0x00000008,
-		Weapon		=	0x00000010,
-		NotWeapon	=	~Weapon,
-		All			=	0xFFFFFFFF,
+		Static			=	0x00000001,
+		Kinematic		=	0x00000002,
+		Lightmap		=	0x00000004,
+		LightmapProxy	=	0x00000008,
+		Weapon			=	0x00000010,
+		WorldInstances	=	Static | Kinematic | Lightmap,
 	}
 
 	public interface ITransformable

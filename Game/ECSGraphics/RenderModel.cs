@@ -25,26 +25,34 @@ namespace IronStar.SFX2
 	[Flags]
 	public enum RMFlags
 	{	
-		None			=	0x0000,
-		FirstPointView	=	0x0001,
+		None				=	0x0000,
+		Static				=	0x0001,
+		FirstPointView		=	0x0002,
+		UseLightmap			=	0x0004,
+		NoShadow			=	0x0008,
+		UseLightmapProxy	=	0x0010,
+		UseCollisionProxy	=	0x0020,
 	}
 
 	public partial class RenderModel : IComponent
 	{
-		//	pure component data :
-		public string	scenePath;
-		public Matrix	transform;
-		public Color	color;
-		public float	intensity;
+		public const string	CollisionProxyPrefix	=	"collisionProxy";
+		public const string	LightmapProxyPrefix		=	"lightmapProxy";
+
+		public string	ScenePath;
+		public Matrix	Transform;
+		public Color	Color;
+		public float	Intensity;
 		public RMFlags	rmFlags;
 
-		public Size2	lightmapSize;
-		public string	lightmapName	=	"";
+		public Size2	LightmapSize;
+		public string	LightmapName	=	"";
 
-		public string	cmPrefix	=	"";
-
-		public bool		NoShadow;
-		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
+		public bool IsStatic			{ get { return rmFlags.HasFlag(RMFlags.Static);				} }
+		public bool UseCollisionProxy	{ get { return rmFlags.HasFlag(RMFlags.UseCollisionProxy);	} }
+		public bool UseLightmapProxy	{ get { return rmFlags.HasFlag(RMFlags.UseLightmapProxy);	} }
+		public bool UseLightmap			{ get { return rmFlags.HasFlag(RMFlags.UseLightmap);		} }
+		public bool NoShadow			{ get { return rmFlags.HasFlag(RMFlags.NoShadow);			} }
 
 
 		public RenderModel ()
@@ -54,10 +62,10 @@ namespace IronStar.SFX2
 
 		public RenderModel ( string scenePath, Matrix transform, Color color, float intensity, RMFlags flags )
 		{
-			this.scenePath	=	scenePath	;
-			this.transform	=	transform	;
-			this.color		=	color		;
-			this.intensity	=	intensity	;
+			this.ScenePath	=	scenePath	;
+			this.Transform	=	transform	;
+			this.Color		=	color		;
+			this.Intensity	=	intensity	;
 			this.rmFlags	=	flags		;
 		}
 
@@ -70,26 +78,36 @@ namespace IronStar.SFX2
 
 		public void SetupLightmap( int width, int height, string regionId )
 		{
-			lightmapSize	=	new Size2( width, height );
-			lightmapName	=	regionId;
+			LightmapSize	=	new Size2( width, height );
+			LightmapName	=	regionId;
 		}
 
 
 		public bool AcceptCollisionNode ( Node node )
-		{	  
-			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : node.Name.StartsWith(cmPrefix);
+		{
+			return UseCollisionProxy ? node.Name.StartsWith(CollisionProxyPrefix) : true;
 		}
 
 		public bool AcceptVisibleNode ( Node node )
 		{
-			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : !node.Name.StartsWith(cmPrefix);
+			return UseCollisionProxy ? !node.Name.StartsWith(CollisionProxyPrefix) : true;
+		}
+
+		public bool AcceptLightmapNode ( Node node )
+		{
+			return UseLightmap && ( UseLightmapProxy ? !node.Name.StartsWith(LightmapProxyPrefix) : true );
+		}
+
+		public bool AcceptLightmapProxyNode ( Node node )
+		{
+			return UseLightmap && ( UseLightmapProxy ? node.Name.StartsWith(LightmapProxyPrefix) : true );
 		}
 
 		public Scene LoadScene( IGameState gs )
 		{
 			Scene scene;
 
-			if (!gs.Content.TryLoad( scenePath, out scene ))
+			if (!gs.Content.TryLoad( ScenePath, out scene ))
 			{
 				scene	=	Scene.CreateEmptyScene();
 			}
@@ -103,7 +121,7 @@ namespace IronStar.SFX2
 			float scale;
 			Quaternion r;
 			Vector3 t;
-			this.transform.DecomposeUniformScale( out scale, out r, out t );
+			this.Transform.DecomposeUniformScale( out scale, out r, out t );
 			return scale;
 		}
 
@@ -113,32 +131,26 @@ namespace IronStar.SFX2
 
 		public void Save( GameState gs, BinaryWriter writer )
 		{
-			writer.Write( scenePath		);
-			writer.Write( transform		);
-			writer.Write( color			);
-			writer.Write( intensity		);
+			writer.Write( ScenePath		);
+			writer.Write( Transform		);
+			writer.Write( Color			);
+			writer.Write( Intensity		);
 			writer.Write( (int)rmFlags	);
 
-			writer.Write( lightmapSize	);
-			writer.Write( lightmapName	);
-
-			writer.Write( cmPrefix		);
-			writer.Write( NoShadow		);
+			writer.Write( LightmapSize	);
+			writer.Write( LightmapName	);
 		}
 
 		public void Load( GameState gs, BinaryReader reader )
 		{
-			scenePath		=	reader.ReadString();
-			transform		=	reader.ReadMatrix();
-			color			=	reader.ReadColor();
-			intensity		=	reader.ReadSingle();
+			ScenePath		=	reader.ReadString();
+			Transform		=	reader.ReadMatrix();
+			Color			=	reader.ReadColor();
+			Intensity		=	reader.ReadSingle();
 			rmFlags			=	(RMFlags)reader.ReadInt32();
 
-			lightmapSize	=	reader.ReadSize2();
-			lightmapName	=	reader.ReadString();
-
-			cmPrefix		=	reader.ReadString();
-			NoShadow		=	reader.ReadBoolean();
+			LightmapSize	=	reader.ReadSize2();
+			LightmapName	=	reader.ReadString();
 		}
 
 		public IComponent Clone()

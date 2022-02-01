@@ -40,8 +40,8 @@ namespace IronStar.Monsters.Systems
 
 		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step, UserCommandComponent uc )
 		{
-			var scene		=	entity.gs.Content.Load( rm.scenePath, Scene.Empty );
-			var transform	=	rm.transform;
+			var scene		=	entity.gs.Content.Load( rm.ScenePath, Scene.Empty );
+			var transform	=	rm.Transform;
 			var animator	=	new MonsterAnimator( fxPlayback, entity, scene, physics, uc );
 
 			return animator;

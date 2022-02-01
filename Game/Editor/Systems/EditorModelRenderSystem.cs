@@ -38,13 +38,13 @@ namespace IronStar.Editor.Systems
 
 			Scene scene;
 
-			if (string.IsNullOrWhiteSpace(model.scenePath)) 
+			if (string.IsNullOrWhiteSpace(model.ScenePath)) 
 			{
 				scene = Scene.CreateEmptyScene();
 			}
 			else
 			{
-				scene = content.Load( model.scenePath, Scene.Empty );
+				scene = content.Load( model.ScenePath, Scene.Empty );
 			}
 			
 			var transforms	=	scene.ComputeAbsoluteTransforms();

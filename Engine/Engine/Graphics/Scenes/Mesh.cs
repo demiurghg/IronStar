@@ -56,6 +56,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 			//	it works, bacause runtime meshes are created usually once.
 			InstanceRef		=	Interlocked.Increment( ref meshInstanceCounter );
 
+			Trace.Assert( InstanceRef < 16000000 );
+
 			Vertices		=	new List<MeshVertex>();
 			Triangles		=	new List<MeshTriangle>();
 			Subsets			=	new List<MeshSubset>();
@@ -71,7 +73,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref vertexBuffer );
 				SafeDispose( ref indexBuffer );
 			}

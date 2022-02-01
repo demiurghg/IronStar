@@ -142,6 +142,8 @@ namespace Fusion.Engine.Graphics.GI
 
 			foreach ( var group in lmGroups ) 
 			{
+				Log.Debug( group.Name );
+
 				foreach ( var instance in group.Instances ) 
 				{
 					instance.BakingLMRegion = group.Region;

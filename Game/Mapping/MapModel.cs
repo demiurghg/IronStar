@@ -19,6 +19,7 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using Fusion.Widgets.Advanced;
 using IronStar.Animation;
+using IronStar.SFX2;
 
 namespace IronStar.Mapping 
 {
@@ -80,14 +81,18 @@ namespace IronStar.Mapping
 		[Description( "Model glow color multiplier" )]
 		public float GlowIntensity { get; set; } = 100;
 
+
+		[AECategory( "Light Mapping" )]
+		public bool UseLightMap { get; set; } = false;
+
+		[AECategory( "Light Mapping" )]
+		public bool UseLightmapProxy { get; set; } = false;
+
 		[AECategory( "Light Mapping" )]
 		public LightMapSize LightMapSize { get; set; } = LightMapSize.LightMap32;
 
-		[AECategory( "Light Mapping" )]
-		public bool UseLightVolume { get; set; } = false;
-
 		[AECategory( "Physics" )]
-		public bool UseCollisionMesh { get; set; } = false;
+		public bool UseCollisionProxy { get; set; } = false;
 
 		[AECategory( "Physics" )]
 		public bool Collidable { get; set; } = true;
@@ -95,18 +100,33 @@ namespace IronStar.Mapping
 		[AECategory( "Navigation" )]
 		public bool Walkable { get; set; } = true;
 
-		[AECategory( "Custom Node" )]
-		public bool UseCustomNodes { get; set; } = false;
 
-		[AECategory( "Custom Node" )]
-		public string CustomVisibleNode { get; set; } = "";
+		//[AECategory( "Obsolete!" )]	[Obsolete]
+		//public bool UseCustomNodes { get; set; } = false;
 
-		[AECategory( "Custom Node" )]
-		public string CustomCollisionNode { get; set; } = "";
+		//[AECategory( "Obsolete!" )]	[Obsolete]
+		//public bool UseLightVolume 
+		//{ 
+		//	get { return !UseLightMap; } 
+		//	set { UseLightMap=!value; } 
+		//}
 
-		[AECategory( "Kinematics" )]
-		public bool Animated { get; set; } = false;
-		
+		//[AECategory( "Obsolete!" )]	[Obsolete]
+		//public string CustomVisibleNode { get; set; } = "";
+
+		//[AECategory( "Obsolete!" )]	[Obsolete]
+		//public bool Animated { get; set; } = false;
+
+		//[AECategory( "Obsolete!" )]	[Obsolete]
+		//public string CustomCollisionNode { get; set; } = "";
+
+		//[AECategory( "Physics" )]
+		//public bool UseCollisionMesh { 
+		//	get { return UseCollisionProxy; }
+		//	set { UseCollisionProxy = value; }
+		//}
+
+
 
 		public MapModel ()
 		{
@@ -118,24 +138,22 @@ namespace IronStar.Mapping
 			var t		=	new Transform( Translation, Rotation, Scale );
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 
-			rm.NoShadow	=	SkipShadow;
-			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
+			var flags	=	RMFlags.Static;
 
-			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
-			rm.SetupLightmap( lmSize, lmSize, Name );
+			if (SkipShadow)			flags	|=	RMFlags.NoShadow;
+			if (UseLightMap)		flags	|=	RMFlags.UseLightmap;
+			if (UseCollisionProxy)	flags	|=	RMFlags.UseCollisionProxy;
+			if (UseLightmapProxy)	flags	|=	RMFlags.UseLightmapProxy;
+			
+			var lmSize	=	UseLightMap ? (int)LightMapSize : 0;
+			rm.LightmapSize	=	new Size2( lmSize, lmSize );
+			rm.LightmapName	=	Name;
+			rm.rmFlags		=	flags;
 
 			entity.AddComponent( t );
 			entity.AddComponent( rm );			
 
-			if (!Animated)
-			{
-				entity.AddComponent( new StaticCollisionComponent { Walkable = Walkable, Collidable = Collidable } );
-			}
-			else
-			{
-				entity.AddComponent( new KinematicComponent() );
-				entity.AddComponent( new BoneComponent() );
-			}
+			entity.AddComponent( new StaticCollisionComponent { Walkable = Walkable, Collidable = Collidable } );
 		}
 
 

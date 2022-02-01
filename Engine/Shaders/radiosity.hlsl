@@ -363,7 +363,7 @@ void CSMain(
 					float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
 					float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
 					float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
-					float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
+					float	nDotL		=	saturate( -dot( hitNormal, rayDir ) );
 					float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
 							albedo		=	lerp( albedo, 0.9f, Radiosity.WhiteAlbedo );
 					light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;//*/

@@ -161,7 +161,7 @@ namespace Fusion.Engine.Graphics.GI
 			RenderDoc.StartFrameCapture();
 
 			var instances	=	rs.RenderWorld.Instances
-				.Where( inst => inst.Group.HasFlag( InstanceGroup.Static ) )
+				.Where( inst => inst.Group.HasFlag( InstanceGroup.LightmapProxy ) )
 				.ToArray();
 
 			var sw = new Stopwatch();

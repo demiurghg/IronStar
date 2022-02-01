@@ -146,20 +146,20 @@ namespace IronStar.Monsters.Systems
 
 				var scene = rm.LoadScene(gs);
 
-				if (!scene.TryGetNodeTransform("muzzle", out weaponMuzzle)) Log.Warning("Missing {0} muzzle: {1}", weapon, rm.scenePath);
-				if (!scene.TryGetNodeTransform("handle", out weaponHandle)) Log.Warning("Missing {0} handle: {1}", weapon, rm.scenePath);
+				if (!scene.TryGetNodeTransform("muzzle", out weaponMuzzle)) Log.Warning("Missing {0} muzzle: {1}", weapon, rm.ScenePath);
+				if (!scene.TryGetNodeTransform("handle", out weaponHandle)) Log.Warning("Missing {0} handle: {1}", weapon, rm.ScenePath);
 
 				weaponEntity?.AddComponent( new AttachmentComponent() 
 				{ 
 					AutoAttach		=	false, 
 					Bone			=	"weapon", 
 					Target			=	monster,
-					LocalTransform	=	Matrix.Invert(weaponHandle * rm.transform)
+					LocalTransform	=	Matrix.Invert(weaponHandle * rm.Transform)
 				});
 
 				var muzzleFx = Arsenal.Get(weapon).MuzzleFX;
 
-				return new MonsterWeaponBinding( weaponEntity, weapon, weaponMuzzle * rm.transform, muzzleFx );
+				return new MonsterWeaponBinding( weaponEntity, weapon, weaponMuzzle * rm.Transform, muzzleFx );
 			}
 			else
 			{

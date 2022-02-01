@@ -29,7 +29,8 @@ namespace IronStar.ECSFactories
 			var color = new Color(107, 136, 255, 255);
 			e.AddComponent( new ProjectileComponent( ad.Attacker, ad.Origin, ad.Rotation, ad.Direction, ad.DeltaTime, 500, 3, 10, "plasmaExplosion", ad.Damage, ad.Impulse) );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
-			e.AddComponent( new RenderModel("scenes/projectiles/plasma", 1.0f, color, 9, RMFlags.None) { NoShadow = true } );
+
+			e.AddComponent( new RenderModel("scenes/projectiles/plasma", 1.0f, color, 9, RMFlags.NoShadow ) );
 		}
 	}
 

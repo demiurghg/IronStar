@@ -24,8 +24,8 @@ static const uint LightProbeMaxMips = 7;
 static const uint LightProbeMaxMip = 6;
 static const uint LightProbeMaxSpecularMip = 5;
 static const uint InstanceGroupStatic = 1;
-static const uint InstanceGroupDynamic = 4;
-static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupLightmap = 4;
+static const uint InstanceGroupLightmapProxy = 8;
 static const uint InstanceGroupWeapon = 16;
 
 // ---------------- DATA STRUCTURES ---------------- //

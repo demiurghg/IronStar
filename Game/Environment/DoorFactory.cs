@@ -41,7 +41,7 @@ namespace IronStar.Environment
 
 			BoundingBox	bbox	=	ComputeDoorBounds( Door );
 
-			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, Intensity, RMFlags.None ) { LightmapName = NodeName + ":Door", LightmapSize = new Size2(16,16) } );
+			e.AddComponent( new RenderModel( scenePath, 1.0f, Color.White, Intensity, RMFlags.UseLightmap ) { LightmapName = NodeName + ":Door", LightmapSize = new Size2(16,16) } );
 			e.AddComponent( new KinematicComponent( KinematicState.StoppedInitial) );
 			e.AddComponent( new BoneComponent() );
 
@@ -65,13 +65,15 @@ namespace IronStar.Environment
 		{
 			RenderModel renderModel;
 
+			var flags	=	RMFlags.UseLightmap|RMFlags.UseLightmapProxy;
+
 			switch (Door)
 			{
 				case Door.LargeFourway:
 				case Door.LargeVertical:
 				case Door.LargeVerticalSplit:
 				case Door.LargeSplit:
-					renderModel = new RenderModel( BasePath + "LargeFrame", 1.0f, Color.White, Intensity, RMFlags.None );
+					renderModel	=	new RenderModel( BasePath + "LargeFrame", 1.0f, Color.White, Intensity, flags );
 					break;
 				case Door.Small:
 					return;

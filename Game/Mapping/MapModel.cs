@@ -77,7 +77,7 @@ namespace IronStar.Mapping
 
 		[AECategory( "Appearance" )]
 		[AEDisplayName("Glow Intensity")]
-		[AESlider(0,5000,100,1)]
+		[AESlider(0,12,1,0.01f)]
 		[Description( "Model glow color multiplier" )]
 		public float GlowIntensity { get; set; } = 100;
 
@@ -136,7 +136,7 @@ namespace IronStar.Mapping
 		public void Construct( Entity entity, IGameState gs )
 		{
 			var t		=	new Transform( Translation, Rotation, Scale );
-			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
+			var rm		=	new RenderModel( ScenePath, Matrix.Identity, GlowColor, GlowIntensity, SFX2.RMFlags.None );
 
 			var flags	=	RMFlags.Static;
 

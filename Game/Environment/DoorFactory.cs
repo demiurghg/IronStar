@@ -65,7 +65,7 @@ namespace IronStar.Environment
 		{
 			RenderModel renderModel;
 
-			var flags	=	RMFlags.UseLightmap|RMFlags.UseLightmapProxy;
+			var flags	=	RMFlags.UseLightmap|RMFlags.UseLightmapProxy|RMFlags.Static;
 
 			switch (Door)
 			{

@@ -138,11 +138,13 @@ namespace Fusion.Build.Mapping {
 		/// <param name="color"></param>
 		public void MakeMirror()
 		{
+			byte roughness = MathUtil.Lerp((byte)0, (byte)255, VTSystem.MirrorRoughness );
+
 			colorData.Fill( Color.White );
-			specularData.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularData.ForEachPixel( spec => new Color( roughness, (byte)255, (byte)0, spec.A ) );
 
 			colorDataMip?.Fill( Color.White );
-			specularDataMip?.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularDataMip?.ForEachPixel( spec => new Color( roughness, (byte)255, (byte)0, spec.A ) );
 		}
 
 

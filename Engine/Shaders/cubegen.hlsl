@@ -6,6 +6,7 @@ $ubershader		DIFFUSE
 
 #include "auto/cubegen.fxi"
 #include "rgbe.fxi"
+#include "hammersley.fxi"
 
 /*------------------------------------------------------------------------------
 // Copyright 2016 Activision Publishing, Inc.
@@ -356,8 +357,23 @@ float3 GetUpVector( in uint face )
 	}
 }
 
-//#define REFERENCE	
 
+float NDF(float perceptualRoughness, float3 R, float3 L)
+{
+	float3	N	=	R;
+	float3	V	=	R;
+			L	=	normalize(L);
+			V	=	normalize(V);
+	float3	H	=	normalize(V+L);
+	
+    float 	NoH	= 	saturate(dot(N, H));
+	
+    float  roughness = perceptualRoughness * perceptualRoughness;
+
+    float 	D	=	D_GGX(NoH, roughness);
+			
+	return D;
+}
 
 #define GROUP_SIZE 64
 [numthreads( GROUP_SIZE, 1, 1 )]
@@ -401,18 +417,34 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	}
 
 #ifdef REFERENCE
-	int range = 7;
+	int range = 32;
 	float4 refColor;
 	float dxy = rcp( (float)(BASE_RESOLUTION >> level) ) * 1.5;
 	
-	for (int x=-range; x<=range; x++)
-	for (int y=-range; y<=range; y++)
+	if (level<=1)
 	{
-		float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
-		float	weight		=	1;//NDF( roughness, direction, localDir, 0 );
-		refColor.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
-		refColor.a				+=	weight;
+		for (int x=-range; x<=range; x++)
+		for (int y=-range; y<=range; y++)
+		{
+			float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
+			float	nDotL		=	saturate( dot( direction, localDir ) );
+			float	weight		=	NDF( roughness, direction, localDir ) * nDotL;
+			refColor.rgb		+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
+			refColor.a			+=	weight;
+		}
 	}
+	else
+	{
+		for (int i=0; i<512; i++)
+		{
+			float3	localDir	=	hammersley_sphere_uniform( i, 512 );
+			float	nDotL		=	saturate( dot( direction, localDir ) );
+			float	weight		=	NDF( roughness, direction, localDir );
+			refColor.rgb		+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight * nDotL;
+			refColor.a			+=	weight;
+		}
+	}
+	
 	refColor /= refColor.w;
 	
 	#ifndef DIFFERENCE

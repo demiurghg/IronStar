@@ -64,8 +64,8 @@ namespace Fusion.Engine.Graphics
 		}
 		
 
-		[AECategory("General")] public bool UseReference { get; set; } = false;
-		[AECategory("General")] public bool UseDifference { get; set; } = false;
+		[Config] [AECategory("General")] static public bool UseReference { get; set; } = true;
+		[Config] [AECategory("General")] static public bool UseDifference { get; set; } = false;
 
 		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip0_Weight1  { get; set; } =  -9.0f;
 		[Config] [AECategory("MipLevel0")] [AESlider(-12, 0, 1.0f, 0.1f)] static public float Mip0_Weight2  { get; set; } = -12.0f;

@@ -123,8 +123,12 @@ namespace Fusion.Engine.Graphics
 
 		[Config]
 		[AECategory("Tiles")]
-		[Description("Show thrashing.")]
 		static public bool ShowMirror { get; set; } = false;
+
+		[Config]
+		[AECategory("Tiles")]
+		[AESlider(0,1,1f/6f,0.01f)]
+		static public float MirrorRoughness { get; set; } = 0;
 
 		[Config]
 		[AECategory("Performamce")]

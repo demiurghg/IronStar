@@ -417,27 +417,27 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	}
 
 #ifdef REFERENCE
-	int range = 32;
+	int range = 8;
 	float4 refColor;
-	float dxy = rcp( (float)(BASE_RESOLUTION >> level) ) * 1.5;
+	float dxy = rcp( (float)(BASE_RESOLUTION >> level) ) * 1.5f;
 	
-	if (level<=1)
+	if (level<=0)
 	{
 		for (int x=-range; x<=range; x++)
 		for (int y=-range; y<=range; y++)
 		{
 			float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
 			float	nDotL		=	saturate( dot( direction, localDir ) );
-			float	weight		=	NDF( roughness, direction, localDir ) * nDotL;
-			refColor.rgb		+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
+			float	weight		=	NDF( roughness, direction, localDir );
+			refColor.rgb		+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight * nDotL;
 			refColor.a			+=	weight;
 		}
 	}
 	else
 	{
-		for (int i=0; i<512; i++)
+		for (int i=0; i<4096; i++)
 		{
-			float3	localDir	=	hammersley_sphere_uniform( i, 512 );
+			float3	localDir	=	hammersley_sphere_uniform( i, 4096 );
 			float	nDotL		=	saturate( dot( direction, localDir ) );
 			float	weight		=	NDF( roughness, direction, localDir );
 			refColor.rgb		+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight * nDotL;

@@ -17,13 +17,14 @@ using FX = SharpDX.D3DCompiler;
 using SharpDX.D3DCompiler;
 using Fusion.Core.Shell;
 using Fusion.Core.Content;
+using System.Collections.Concurrent;
+using Fusion.Build.Processors.Ubershaders;
 
-
-namespace Fusion.Build.Processors {
-
+namespace Fusion.Build.Processors 
+{
 	[AssetProcessor("Shaders","")]
-	public partial class UbershaderProcessor : AssetProcessor {
-			
+	public partial class UbershaderProcessor : AssetProcessor 
+	{
 		public const string UbershaderSignature = "USH1";
 		public const string PSBytecodeSignature = "PSBC";
 		public const string VSBytecodeSignature = "VSBC";
@@ -127,13 +128,12 @@ namespace Fusion.Build.Processors {
 
 			var defineList = new List<string>();
 
-			foreach ( var comb in ubershaderDecl ) {
+			foreach ( var comb in ubershaderDecl ) 
+			{
 				var ue = new UbershaderEnumerator( comb, "$ubershader" );
 				defineList.AddRange( ue.DefineList );
 			}
-
 			
-
 			//
 			//	Start listing builder :
 			//	
@@ -160,8 +160,7 @@ namespace Fusion.Build.Processors {
 
 			var usdb = new List<UsdbEntry>();
 
-			var include = new IncludeHandler(buildContext);
-
+			var includeList		=	new List<string>();
 
 			#if false
 			Parallel.ForEach( defineList, (defines) => {
@@ -196,9 +195,12 @@ namespace Fusion.Build.Processors {
 
 			#else
 
-			foreach ( var defines in defineList ) {
-
+			Parallel.ForEach( defineList, (defines) =>
+			//foreach ( var defines in defineList ) 
+			{
 				var id		=	defineList.IndexOf( defines );
+
+				var include	=	new IncludeHandler(buildContext, includeList);
 
 				var psbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".PS.dxbc" );
 				var vsbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".VS.dxbc" );
@@ -214,12 +216,15 @@ namespace Fusion.Build.Processors {
 				var dshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".DS.html" );
 				var cshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".CS.html" );
 
-				var ps = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ps_5_0", PSEntryPoint, defines, psbc, pshtm );
-				var vs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "vs_5_0", VSEntryPoint, defines, vsbc, vshtm );
-				var gs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "gs_5_0", GSEntryPoint, defines, gsbc, gshtm );
-				var hs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "hs_5_0", HSEntryPoint, defines, hsbc, hshtm );
-				var ds = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ds_5_0", DSEntryPoint, defines, dsbc, dshtm );
-				var cs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "cs_5_0", CSEntryPoint, defines, csbc, cshtm );
+				byte[] ps,vs,gs,hs,ds,cs;
+				ps = vs = gs = hs = ds = cs = null;
+				
+				ps = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ps_5_0", PSEntryPoint, defines, psbc, pshtm );
+				vs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "vs_5_0", VSEntryPoint, defines, vsbc, vshtm );
+				gs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "gs_5_0", GSEntryPoint, defines, gsbc, gshtm );
+				hs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "hs_5_0", HSEntryPoint, defines, hsbc, hshtm );
+				ds = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ds_5_0", DSEntryPoint, defines, dsbc, dshtm );
+				cs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "cs_5_0", CSEntryPoint, defines, csbc, cshtm );
 				
 				Log.Message("    {0}", defines );
 
@@ -233,13 +238,16 @@ namespace Fusion.Build.Processors {
 				htmlBuilder.Append( "[" + defines + "]<br>" );
 
 				usdb.Add( new UsdbEntry( defines, ps, vs, gs, hs, ds, cs ) );
-			}
+			});
 			#endif
 
+			includeList	=	includeList	
+							.Distinct()
+							.ToList();
 
 			htmlBuilder.Insert( includeInsert, 
 				"<b>Includes:</b>\r\n" 
-				+ string.Join("", include.Includes.Select(s=>"  <i>" + s + "</i>\r\n") )
+				+ string.Join("", includeList.Select(s=>"  <i>" + s + "</i>\r\n") )
 				+ "\r\n");
 
 
@@ -249,19 +257,17 @@ namespace Fusion.Build.Processors {
 			//
 			//	Write ubershader :
 			//
-			using ( var fs = assetFile.OpenTargetStream(include.Includes, typeof(Ubershader) ) ) {
-
-				using ( var bw = new BinaryWriter( fs ) ) {
-
+			using ( var fs = assetFile.OpenTargetStream(includeList, typeof(Ubershader) ) ) 
+			{
+				using ( var bw = new BinaryWriter( fs ) ) 
+				{
 					bw.WriteFourCC( UbershaderSignature );
-
-					//	params :
 
 					//	bytecodes :
 					bw.Write( usdb.Count );
 
-					foreach ( var entry in usdb ) {
-
+					foreach ( var entry in usdb ) 
+					{
 						bw.Write( entry.Defines );
 
 						bw.WriteFourCC( PSBytecodeSignature );
@@ -293,64 +299,6 @@ namespace Fusion.Build.Processors {
 		}
 
 
-		class IncludeHandler : FX.Include {
-
-			object lockObj = new object();
-
-			public readonly HashSet<string> Includes = new HashSet<string>();
-
-			readonly IBuildContext buildContext;
-		
-			public IncludeHandler ( IBuildContext buildContext )
-			{
-				this.buildContext	=	buildContext;
-			}
-
-
-			public Stream Open( IncludeType type, string fileName, Stream parentStream )
-			{
-
-				lock (lockObj) 
-				{
-					//Log.Message("...include: {0} {1}", fileName, type);
-					if (!Includes.Contains(fileName)) 
-					{
-						Includes.Add(fileName);
-					}
-
-					try 
-					{
-						return new MemoryStream( File.ReadAllBytes( buildContext.ResolveContentPath( fileName ) ) );
-					}
-					catch (Exception e)
-					{
-						Log.Error( e.Message );
-						return null;
-					}
-					///return File.Open( , FileMode.Open, FileAccess.Read, FileShare.Read );
-				}
-			}
-
-
-			public void Close( Stream stream )
-			{
-				stream.Close();
-			}
-
-
-			IDisposable ICallbackable.Shadow {
-				get; set;
-			}
-
-
-			public void Dispose ()
-			{
-				
-			}
-				
-		}
-
-
 
 		/// <summary>
 		/// Extracts pipeline states
@@ -373,30 +321,38 @@ namespace Fusion.Build.Processors {
 
 			var stateList = new List<KeyValuePair<string,string>>();
 
-			using ( var sr = new StringReader(preprocessed) ) {
-
-				while (true) {
+			using ( var sr = new StringReader(preprocessed) ) 
+			{
+				while (true) 
+				{
 					var line = sr.ReadLine();
 
-					if (line==null) {
+					if (line==null) 
+					{
 						break;
 					}
 
 					line = line.Trim();
 
-					if (line.StartsWith("$")) {
+					if (line.StartsWith("$")) 
+					{
 						var words = line.Split(new[]{' ','\t'}, StringSplitOptions.RemoveEmptyEntries );
 
-						if (words.Contains("ubershader")) {
+						if (words.Contains("ubershader")) 
+						{
 							continue;
 						}
 
-						if (words.Length==2) {
+						if (words.Length==2) 
+						{
 							stateList.Add( new KeyValuePair<string,string>( words[1], "" ) );
-						} else
-						if (words.Length==3) {
+						} 
+						else if (words.Length==3) 
+						{
 							stateList.Add( new KeyValuePair<string,string>( words[1], words[2] ) );
-						} else {
+						}
+						else
+						{
 							Log.Warning("Bad ubershader $-statement: {0}", line);
 						}
 					}
@@ -454,23 +410,24 @@ namespace Fusion.Build.Processors {
 			var sourceBytes = Encoding.UTF8.GetBytes(shaderSource);
 			var result = FX.ShaderBytecode.Compile( sourceBytes, entryPoint, profile, flags, FX.EffectFlags.None, defs, include, sourceFile );
 			
-			lock ( consoleLock ) {
-
-				if ( result.Message!=null ) {
-
-					if (result.Bytecode==null) {
-
-						if (result.Message.Contains("X3501")) {
-
-							Log.Debug("No entry point '{0}'. It's ok", entryPoint );
+			lock ( consoleLock ) 
+			{
+				if ( result.Message!=null ) 
+				{
+					if (result.Bytecode==null) 
+					{
+						if (result.Message.Contains("X3501")) 
+						{
+							//Log.Debug("No entry point '{0}'. It's ok", entryPoint );
 							return new byte[0];
 						}
 
 						Log.Error("FAILED: [{0}]", defines);
 						Log.Error( result.Message );
 						throw new BuildException( result.Message );
-
-					} else {
+					} 
+					else 
+					{
 						Log.Warning("WARNINGS: [{0}]", defines);
 						Log.Warning( result.Message );
 					}

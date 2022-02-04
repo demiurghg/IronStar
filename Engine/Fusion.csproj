@@ -173,9 +173,10 @@
     <Compile Include="Build\Processors\TextureAtlasNode.cs" />
     <Compile Include="Build\Processors\TextureAtlasProcessor.cs" />
     <Compile Include="Build\Processors\TextureProcessor.cs" />
-    <Compile Include="Build\Processors\UbershaderEnumerator.cs" />
-    <Compile Include="Build\Processors\UbershaderProcessor.cs" />
-    <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
+    <Compile Include="Build\Processors\Ubershaders\IncludeHandler.cs" />
+    <Compile Include="Build\Processors\Ubershaders\UbershaderEnumerator.cs" />
+    <Compile Include="Build\Processors\Ubershaders\UbershaderProcessor.cs" />
+    <Compile Include="Build\Processors\Ubershaders\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
     <Compile Include="Core\Extensions\SortingExtensions.cs" />
     <Compile Include="Core\Logging\ColoredConsoleTarget.cs" />

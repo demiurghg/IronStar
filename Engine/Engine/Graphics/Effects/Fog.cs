@@ -272,9 +272,9 @@ namespace Fusion.Engine.Graphics {
 
 			switch (fogQuality)
 			{
-				case QualityLevel.None:	   fogGridSize	=	new Size3(  16,   8,  64 );	break;
-				case QualityLevel.Low:	   fogGridSize	=	new Size3(  64,  48,  64 );	break;
-				case QualityLevel.Medium:  fogGridSize	=	new Size3( 160,  96,  64 );	break;
+				case QualityLevel.None:	   fogGridSize	=	new Size3(  64,  48,  64 );	break;
+				case QualityLevel.Low:	   fogGridSize	=	new Size3( 128,  96,  64 );	break;
+				case QualityLevel.Medium:  fogGridSize	=	new Size3( 192, 128,  64 );	break;
 				case QualityLevel.High:	   fogGridSize	=	new Size3( 256, 192,  64 );	break;
 				case QualityLevel.Ultra:   fogGridSize	=	new Size3( 256, 192, 128 );	break;
 			}

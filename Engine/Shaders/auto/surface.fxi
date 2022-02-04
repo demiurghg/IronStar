@@ -97,6 +97,8 @@ struct STAGE {
 	float      DepthBias;                     // offset:  104
 	float      DirectLightFactor;             // offset:  108
 	float      IndirectLightFactor;           // offset:  112
+	float      SpecularLightmapFactor;        // offset:  116
+	float      SpecularLightmapThreshold;     // offset:  120
 };
 #endif
 

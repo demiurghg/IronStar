@@ -102,6 +102,8 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 		
 			specTerm		=	specTerm * mad( surface.specular, ab.x, ab.y ) * selfOcclusion;
 			
+			factor			=	smoothstep(0,1,factor);
+			
 	return float4( specTerm, factor );
 }		
 

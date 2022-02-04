@@ -231,17 +231,19 @@ namespace Fusion.Engine.Graphics
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 
-			cbDataStage.WorldToLightVolume		=	rw.LightMap.WorldToVolume;
-			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)vt.PhysicalPages0.Width;
-			cbDataStage.VTPageScaleRCP			=	vt.PageScaleRCP;
-			cbDataStage.VTInvertedPhysicalSize	=	1.0f / VTSystem.PhysicalSize;
-			cbDataStage.SsaoWeight				=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
-			cbDataStage.ViewportSize			=	new Vector4( width, height, 1.0f / width, 1.0f / height );
-			cbDataStage.DepthBias				=	context.DepthBias;
-			cbDataStage.SlopeBias				=	context.SlopeBias;
-			cbDataStage.DirectLightFactor		=	RenderSystem.SkipDirectLighting ? 0 : 1;
-			cbDataStage.IndirectLightFactor		=	Radiosity.MasterIntensity;
-			cbDataStage.ShowLightComplexity		=	RenderSystem.ShowLightComplexity ? 1 : 0;
+			cbDataStage.WorldToLightVolume			=	rw.LightMap.WorldToVolume;
+			cbDataStage.VTGradientScaler			=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)vt.PhysicalPages0.Width;
+			cbDataStage.VTPageScaleRCP				=	vt.PageScaleRCP;
+			cbDataStage.VTInvertedPhysicalSize		=	1.0f / VTSystem.PhysicalSize;
+			cbDataStage.SsaoWeight					=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
+			cbDataStage.ViewportSize				=	new Vector4( width, height, 1.0f / width, 1.0f / height );
+			cbDataStage.DepthBias					=	context.DepthBias;
+			cbDataStage.SlopeBias					=	context.SlopeBias;
+			cbDataStage.DirectLightFactor			=	RenderSystem.SkipDirectLighting ? 0 : 1;
+			cbDataStage.IndirectLightFactor			=	Radiosity.MasterIntensity;
+			cbDataStage.ShowLightComplexity			=	RenderSystem.ShowLightComplexity ? 1 : 0;
+			cbDataStage.SpecularLightmapFactor		=	RenderSystem.SpecularLightmapFactor;
+			cbDataStage.SpecularLightmapThreshold	=	RenderSystem.SpecularLightmapThreshold;
 
 			constBufferStage.SetData( ref cbDataStage );
 

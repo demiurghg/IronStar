@@ -300,6 +300,15 @@ namespace Fusion.Engine.Graphics
 
 		[AECategory("Lightmap")] [Config]	public static bool UsePointLightmapSampling { get; set; } = false;
 
+		[Config]	
+		[AECategory("Lightmap")] 
+		[AESlider(0,10,1f,0.1f)]
+		public static float SpecularLightmapFactor { get; set; } = 1.0f;
+		[Config]	
+		[AECategory("Lightmap")]
+		[AESlider(0,1,0.1f,0.01f)]
+		public static float SpecularLightmapThreshold { get; set; } = 0.5f;
+
 		[AECommand]
 		public static void KillParticles ()
 		{

@@ -68,8 +68,8 @@ namespace IronStar.SFX2
 				var depth	=	lpBox.Depth;
 
 				var shellWidth	=	lpBox.ShellWidth;
-				var shellHeight	=	lpBox.ShellWidth;
-				var shellDepth	=	lpBox.ShellWidth;
+				var shellHeight	=	lpBox.ShellHeight;
+				var shellDepth	=	lpBox.ShellDepth;
 
 				light.ProbeMatrix		=	Matrix.Scaling( width/2.0f, height/2.0f, depth/2.0f ) * transform;
 

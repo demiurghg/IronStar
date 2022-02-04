@@ -89,7 +89,13 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	//	Reflection :
 	//----------------------------------------------------------------------------------------------
 	
-	float4 reflection = float4(0,0,0,0);
+	float4 	reflection 			=	float4(0,0,0,0);
+	#ifdef IRRADIANCE_MAP
+	float	roughnessThreshold	=	Stage.SpecularLightmapThreshold;
+	float 	specularLMFactor	=	smoothstep( roughnessThreshold, roughnessThreshold + 0.16f, surface.roughness );
+	#else
+	float 	specularLMFactor	=	0;
+	#endif
 	
 #ifndef DIFFUSE_ONLY	
 	[loop]
@@ -101,7 +107,9 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		light_complexity++;
 	}
 	
-	totalLight.specular.rgb		=	reflection.rgb * ssaoFactor * ssaoFactor;
+	reflection.a *= ( 1 - specularLMFactor );
+	
+	totalLight.specular.rgb		=	reflection.rgb * ssaoFactor * ssaoFactor * reflection.a;
 #endif
 
 	//----------------------------------------------------------------------------------------------
@@ -109,12 +117,14 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	//----------------------------------------------------------------------------------------------
 	
 	#ifdef IRRADIANCE_MAP
-		LIGHTING lightmap	= 	EvaluateLightmap( reflection.a, rcLightMap, geometry, surface, Camera, lmCoord );
+		LIGHTING lightmap		= 	EvaluateLightmap( rcLightMap, geometry, surface, Camera, lmCoord );
+		lightmap.specular.rgb	*=	Stage.SpecularLightmapFactor * (1 - reflection.a );
 		AccumulateLighting( totalLight, lightmap, ssaoFactor * Stage.IndirectLightFactor );
 	#endif
 	#ifdef IRRADIANCE_VOLUME
-		float3	volumeCoord	=	mul( float4(geometry.position.xyz, 1), Stage.WorldToLightVolume ).xyz;
-		LIGHTING lightmap	=	EvaluateLightVolume( reflection.a, rcLightMap, geometry, surface, Camera, volumeCoord );
+		float3	volumeCoord		=	mul( float4(geometry.position.xyz, 1), Stage.WorldToLightVolume ).xyz;
+		LIGHTING lightmap		=	EvaluateLightVolume( rcLightMap, geometry, surface, Camera, volumeCoord );
+		lightmap.specular.rgb	=	0;
 		AccumulateLighting( totalLight, lightmap, ssaoFactor * Stage.IndirectLightFactor );
 	#endif
 

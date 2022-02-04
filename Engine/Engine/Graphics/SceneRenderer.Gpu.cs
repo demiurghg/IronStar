@@ -64,6 +64,8 @@ namespace Fusion.Engine.Graphics {
 			public float	DirectLightFactor		;
 			public float	IndirectLightFactor		;
 
+			public float	SpecularLightmapFactor		;
+			public float	SpecularLightmapThreshold	;
 		}
 
 

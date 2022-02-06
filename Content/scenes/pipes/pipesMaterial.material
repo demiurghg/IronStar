@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\pipes_paint_lopoly_pipesMaterial_BaseColor.png
+NormalMap = textures\pipes_paint_lopoly_pipesMaterial_Normal.png
+Metallic  = textures\pipes_paint_lopoly_pipesMaterial_Metallic.png
+Roughness = textures\pipes_paint_lopoly_pipesMaterial_Roughness.png
+Emission  = 
+Occlusion = textures\pipes_paint_lopoly_pipesMaterial_Occlusion.png

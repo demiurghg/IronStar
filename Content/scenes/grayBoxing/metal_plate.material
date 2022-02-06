@@ -5,9 +5,9 @@ MaskEmission  = False
 InvertYNormal = False
 
 [Textures]
-BaseColor = textures\TexturesCom_MetalSheet_Aged_4K_albedo.jpg
-NormalMap = 
-Metallic  = textures\TexturesCom_MetalSheet_Aged_4K_metallic.jpg 
-Roughness = textures\TexturesCom_MetalSheet_Aged_4K_roughness.jpg 
-Emission  = 
-Occlusion = 
+BaseColor = ..\textures\base\textures\base_textures_metalBareTexture_BaseColor.png
+NormalMap =                                                   
+Metallic  = ..\textures\base\textures\base_textures_metalBareTexture_Metallic.png
+Roughness = ..\textures\base\textures\base_textures_metalBareTexture_Roughness.png
+Emission  =
+Occlusion =

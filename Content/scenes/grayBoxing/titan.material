@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = ..\textures\base\textures\base_textures_titanTexture_BaseColor.png
+NormalMap = 
+Metallic  = ..\textures\base\textures\base_textures_titanTexture_Metallic.png
+Roughness = ..\textures\base\textures\base_textures_titanTexture_Roughness.png
+Emission  = 
+Occlusion = 

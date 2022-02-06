@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = ..\textures\base\textures\base_textures_rubberTexture_BaseColor.png
+NormalMap = ..\textures\base\textures\base_textures_rubberTexture_Normal.png
+Metallic  = ..\textures\base\textures\base_textures_rubberTexture_Metallic.png
+Roughness = ..\textures\base\textures\base_textures_rubberTexture_Roughness.png
+Emission  = 
+Occlusion = 

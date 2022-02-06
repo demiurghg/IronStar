@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\floor_tiles_low_floor_tiles_BaseColor.png
+NormalMap = textures\floor_tiles_low_floor_tiles_Normal.png
+Metallic  = textures\floor_tiles_low_floor_tiles_Metallic.png
+Roughness = textures\floor_tiles_low_floor_tiles_Roughness.png
+Emission  = 
+Occlusion = textures\floor_tiles_low_floor_tiles_Occlusion.png

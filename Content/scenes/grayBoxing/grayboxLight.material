@@ -5,9 +5,9 @@ MaskEmission  = False
 InvertYNormal = False
 
 [Textures]
-BaseColor = textures\panels_light.png
-NormalMap = 
-Metallic  = 
-Roughness = 
-Emission  = 
-Occlusion = 
+BaseColor = ..\textures\base\textures\base_textures_metalPaintLightTexture_BaseColor.png
+NormalMap =
+Metallic  = ..\textures\base\textures\base_textures_metalPaintLightTexture_Metallic.png
+Roughness = ..\textures\base\textures\base_textures_metalPaintLightTexture_Roughness.png
+Emission  =
+Occlusion =

@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = rockSet2Textures\Rock_7_d.jpg
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 
+Occlusion = 

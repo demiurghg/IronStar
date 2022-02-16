@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = Rock_3_Tex\rock_3_Base_Color.jpg
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 
+Occlusion = 

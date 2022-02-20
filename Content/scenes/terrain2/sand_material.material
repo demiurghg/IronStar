@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\TexturesCom_DesertSand3_2x2_1K_albedo.jpg
+NormalMap = textures\TexturesCom_DesertSand3_2x2_1K_normal.jpg
+Metallic  = 
+Roughness = textures\TexturesCom_DesertSand3_2x2_1K_roughness.jpg
+Emission  = 
+Occlusion = textures\TexturesCom_DesertSand3_2x2_1K_ao.jpg

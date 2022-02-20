@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = True
+
+[Textures]
+BaseColor = textures\rock_shale_brown_s_006_LOD1_albedo.jpg
+NormalMap = textures\rock_shale_brown_s_006_LOD1_normal.jpg
+Metallic  = 
+Roughness = textures\rock_shale_brown_s_006_LOD1_roughness.jpg
+Emission  = 
+Occlusion = 

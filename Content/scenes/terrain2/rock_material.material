@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = True
+
+[Textures]
+BaseColor = textures\TexturesCom_Rock_Cliff_A_2x2_4K_albedo.jpg
+NormalMap = textures\TexturesCom_Rock_Cliff_A_2x2_4K_normal.jpg
+Metallic  = 
+Roughness = textures\TexturesCom_Rock_Cliff_A_2x2_4K_roughness.jpg
+Emission  = 
+Occlusion = textures\TexturesCom_Rock_Cliff_A_2x2_4K_ao.jpg

@@ -65,6 +65,8 @@ namespace Fusion.Engine.Graphics.GI {
 		internal Texture3DCompute	lightVolumeL2;
 		internal Texture3DCompute	lightVolumeL3;
 
+		HashSet<string> warnings = new HashSet<string>();
+
 
 
 		readonly Dictionary<string,Rectangle> regions = new Dictionary<string, Rectangle>();
@@ -268,7 +270,11 @@ namespace Fusion.Engine.Graphics.GI {
 			}
 			else 
 			{
-				Log.Warning("Irradiance map region [{0}] not found", regionName );
+				var warning = string.Format("Irradiance map region [{0}] not found", regionName );
+				if (warnings.Add(warning))
+				{
+					Log.Warning(warning);
+				}
 				return new Rectangle(0,0,0,0);
 			}
 		}

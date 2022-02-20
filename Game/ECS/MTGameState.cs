@@ -39,7 +39,7 @@ namespace IronStar.ECS
 		TimeSpan	timestep;
 
 		const int SnapshotCount = 5;
-		const int SnapshotSize	= 512 * 1024;
+		const int SnapshotSize	= 512 * 1024 * 4;
 
 		ConcurrentQueue<byte[]>	recycleQueue	=	new ConcurrentQueue<byte[]>();
 		ConcurrentQueue<byte[]>	dispatchQueue	=	new ConcurrentQueue<byte[]>();

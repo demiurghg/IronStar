@@ -85,22 +85,38 @@ namespace IronStar.SFX2
 
 		public bool AcceptCollisionNode ( Node node )
 		{
-			return UseCollisionProxy ? node.Name.StartsWith(CollisionProxyPrefix) : true;
+			if (node?.Name!=null)
+			{
+				return UseCollisionProxy ? node.Name.StartsWith(CollisionProxyPrefix) : true;
+			}
+			return false;
 		}
 
 		public bool AcceptVisibleNode ( Node node )
 		{
-			return UseCollisionProxy ? !node.Name.StartsWith(CollisionProxyPrefix) : true;
+			if (node?.Name!=null)
+			{
+				return UseCollisionProxy ? !node.Name.StartsWith(CollisionProxyPrefix) : true;
+			}
+			return false;
 		}
 
 		public bool AcceptLightmapNode ( Node node )
 		{
-			return UseLightmap && ( UseLightmapProxy ? !node.Name.StartsWith(LightmapProxyPrefix) : true );
+			if (node?.Name!=null)
+			{
+				return UseLightmap && ( UseLightmapProxy ? !node.Name.StartsWith(LightmapProxyPrefix) : true );
+			}
+			return false;
 		}
 
 		public bool AcceptLightmapProxyNode ( Node node )
 		{
-			return UseLightmap && ( UseLightmapProxy ? node.Name.StartsWith(LightmapProxyPrefix) : true );
+			if (node?.Name!=null)
+			{
+				return UseLightmap && ( UseLightmapProxy ? node.Name.StartsWith(LightmapProxyPrefix) : true );
+			}
+			return false;
 		}
 
 		public Scene LoadScene( IGameState gs )

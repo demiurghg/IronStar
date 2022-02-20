@@ -302,7 +302,7 @@ namespace Fusion.Engine.Graphics
 				int maxTiles		=	physPages * physPages;
 				int tileSize		=	VTConfig.PageSizeBordered;
 
-				PhysicalPages0		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true );
+				PhysicalPages0		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true  );
 				PhysicalPages1		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
 				PhysicalPages2		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
 

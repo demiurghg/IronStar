@@ -39,7 +39,7 @@ namespace IronStar.AI
 		public readonly float	CombatMoveRadius	=	30.0f;
 
 		//	accuracy settings :
-		public readonly float	Accuracy			=	0.15f;	//	#TODO #AI -- weapon dependency, target velocity
+		public readonly float	Accuracy			=	0.15f * 0.1f;	//	#TODO #AI -- weapon dependency, target velocity
 		public readonly float	AccuracyLeading		=	0.25f;	//	
 		public readonly float	AccuracyThreshold	=	0.05f;	//	#TODO #AI -- weapon dependency, target velocity
 		public readonly int		AimTime				=	500;	//	#TODO #AI -- difficulty setting

@@ -2,7 +2,7 @@
   "$id": "1",
   "$type": "IronStar.SFX.FXFactory, IronStar",
   "Period": 0.5,
-  "OverallScale": 1.0,
+  "OverallScale": 3.0,
   "SoundStage": {
     "$id": "2",
     "$type": "IronStar.SFX.FXSoundStage, IronStar",

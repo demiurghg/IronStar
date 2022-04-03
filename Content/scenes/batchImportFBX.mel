@@ -1,0 +1,8 @@
+for ($x = 1; $x <= 21; $x++)
+{
+    $path = "E:/GITHUB/IronStar/Content/scenes/rocks2/rockSet2Models/Rock_" + string($x) + ".fbx";
+    $nms = "Rock_" + string($x);
+    print($path + "\r");
+    print($nms + "\r");
+    file -import -type "FBX"  -ignoreVersion -ra true -mergeNamespacesOnClash false -namespace $nms -options "v=0;"  -importFrameRate true  -importTimeRange "override" $path;
+};

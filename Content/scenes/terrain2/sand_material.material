@@ -5,9 +5,18 @@ MaskEmission  = False
 InvertYNormal = False
 
 [Textures]
-BaseColor = textures\TexturesCom_DesertSand3_2x2_1K_albedo.jpg
-NormalMap = textures\TexturesCom_DesertSand3_2x2_1K_normal.jpg
+BaseColor = textures\TexturesCom_Snow_Dunes_2x2_4K_albedo.jpg
+NormalMap = textures\TexturesCom_Snow_Dunes_2x2_4K_normal.jpg
 Metallic  = 
-Roughness = textures\TexturesCom_DesertSand3_2x2_1K_roughness.jpg
+Roughness = textures\TexturesCom_Snow_Dunes_2x2_4K_roughness.jpg
 Emission  = 
-Occlusion = textures\TexturesCom_DesertSand3_2x2_1K_ao.jpg
+Occlusion = textures\TexturesCom_Snow_Dunes_2x2_4K_ao.jpg
+
+# BaseColor = textures\TexturesCom_DesertSand3_2x2_1K_albedo.jpg
+# NormalMap = textures\TexturesCom_DesertSand3_2x2_1K_normal.jpg
+# Metallic  = 
+# Roughness = textures\TexturesCom_DesertSand3_2x2_1K_roughness.jpg
+# Emission  = 
+# Occlusion = textures\TexturesCom_DesertSand3_2x2_1K_ao.jpg
+
+

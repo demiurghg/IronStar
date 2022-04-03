@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = textures\wallLowPoly_wallMaterial_BaseColor.png
+NormalMap = textures\wallLowPoly_wallMaterial_Normal.png
+Metallic  = textures\wallLowPoly_wallMaterial_Metallic.png
+Roughness = textures\wallLowPoly_wallMaterial_Roughness.png
+Emission  =
+Occlusion = textures\wallLowPoly_wallMaterial_Occlusion.png
